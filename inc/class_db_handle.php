@@ -24,7 +24,7 @@ class db_handle
 	private		$fetchquery;
 	private		$error;
 
-    public function connect($DbHost, $DbUser, $DbPassword, $DbDatabase, $DBPrefix, $CHARSET)
+    public function connect($DbHost, $DbUser, $DbPassword, $DbDatabase, $DBPrefix = '', $CHARSET = 'utf8')
     {
         $this->DBPrefix = $DBPrefix;
         $this->CHARSET = $CHARSET;

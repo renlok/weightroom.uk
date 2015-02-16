@@ -1,24 +1,35 @@
 <?php
+// define the file dirs
+define('MAINDIR', dirname(__FILE__) . '/');
+define('INCDIR', MAINDIR . '/inc');
+define('PAGEDIR', MAINDIR . '/pages');
+
+// set the database
+require INCDIR . 'class_db_handle.php';
+$db = new db_handle();
+// join the db party
+$db->connect($DbHost, $DbUser, $DbPassword, $DbDatabase);
+
 // temp crappy layout, need to add templates
 switch ($_GET['do'])
 {
 	case 'login':
-		include 'login.php';
+		include PAGEDIR . 'login.php';
 		break;
 	case 'login_do':
-		include 'login_do.php';
+		include PAGEDIR . 'login_do.php';
 		break;
 	case 'register':
-		include 'register.php';
+		include PAGEDIR . 'register.php';
 		break;
 	case 'calendar':
-		include 'calendar.php';
+		include PAGEDIR . 'calendar.php';
 		break;
 	case 'add_log':
-		include 'add_log.php';
+		include PAGEDIR . 'add_log.php';
 		break;
 	case 'view_exercise':
-		include 'view_exercise.php';
+		include PAGEDIR . 'view_exercise.php';
 		break;
 }
 ?>
