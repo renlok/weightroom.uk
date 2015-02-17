@@ -5,6 +5,7 @@ if (isset($_POST['action']) && isset($_POST['username']) && isset($_POST['passwo
 	if ($user->user_login($_POST['username'], $_POST['password']))
 	{
 		// they are in :)
+		echo "<p>You are logged in</p>";
 	}
 	else
 	{
@@ -12,13 +13,14 @@ if (isset($_POST['action']) && isset($_POST['username']) && isset($_POST['passwo
 	}
 }
 
-echo "<form>
+echo <<<EOD
+<form action="?do=login" method="post">
 username:<br>
-<input type=\"text\" name=\"username\">
+<input type="text" name="username">
 <br>
 password:<br>
-<input type=\"text\" name=\"password\">
-<input type=\"submit\" name=\"action\" value=\"Login\";>
-</form>";
-}
+<input type="password" name="password"><br>
+<input type="submit" name="action" value="Login";>
+</form>
+EOD;
 ?>

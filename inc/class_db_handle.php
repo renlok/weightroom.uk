@@ -12,8 +12,6 @@
  *   sold. If you have been sold this script, get a refund.
  ***************************************************************************/
 
-if (!defined('InWeBid')) exit('Access denied');
-
 class db_handle 
 {
 	// database
@@ -30,7 +28,8 @@ class db_handle
         $this->CHARSET = $CHARSET;
 		try {
 			// MySQL with PDO_MYSQL
-			$this->pdo = new PDO("mysql:host=$DbHost;dbname=$DbDatabase;charset =$CHARSET", $DbUser, $DbPassword);
+			$this->pdo = new PDO("mysql:host=$DbHost;dbname=$DbDatabase;charset=$CHARSET", $DbUser, $DbPassword);
+			print_r($this->pdo);
 			// set error reporting up
 			$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			// actually use prepared statements
@@ -239,7 +238,7 @@ class db_handle
 		// DO SOMETHING
 		//$this->error = $error;
 		$this->error = debug_backtrace();
-		//print_r($this->error);
+		print_r($this->error);
 	}
 
 	// close everything down

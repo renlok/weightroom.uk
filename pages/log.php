@@ -1,8 +1,11 @@
 <?php
-// check login
-// ...
+if (!$user->is_logged_in())
+{
+	echo "You are not loged in?!";
+	exit;
+}
 
-$log_date = ''; // ???
+$log_date = (isset($_GET['date'])) ? $_GET['date'] : date("Y-m-d H:i:s");
 $user_id = (isset($_GET['user_id'])) ? $_GET['user_id'] : $user->user_id;
 
 $log_data = $log->get_log_data($user_id, $log_date);
