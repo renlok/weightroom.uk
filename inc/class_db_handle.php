@@ -194,6 +194,25 @@ class db_handle
 		}
 	}
 
+	// for when an unknown number of params are needed to be set i.e in a foreach loop
+	public function get_param_number($i)
+	{
+		$abc = 'abcdefghijklmnopqrstuvwxyz'; // because params dont like numbers
+		$abc = str_split($abc);
+		if ($i < 25)
+		{
+			$string = $abc[$i];
+		}
+		else
+		{
+			$first = floor($i/26) - 1;
+			$string = $abc[$first];
+			$second = $i - (($first + 1)*26);
+			$string .= $abc[$second];
+		}
+		return $string;
+	}
+
 	private function build_params($params)
 	{
 		$PDO_constants = array(

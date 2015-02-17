@@ -18,8 +18,10 @@ users
 user_id
 user_name
 user_pass
+user_hash
 user_email
 user_weight
+user_lastlogin
 
 log
 --------
