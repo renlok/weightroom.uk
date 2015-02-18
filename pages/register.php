@@ -35,6 +35,9 @@ if (isset($_POST['action']) && isset($_POST['username']) && isset($_POST['passwo
 			array(':user_hash', get_hash(), 'str'),
 		);
 		$db->query($query, $params);
+		// log that bitch in!
+		$user->user_login($_POST['username'], $_POST['password'])
+		echo "<p>You have registered</p>";
 	}
 	else
 	{
