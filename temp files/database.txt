@@ -21,6 +21,7 @@ user_pass
 user_hash
 user_email
 user_weight
+user_unit
 user_lastlogin
 
 log

@@ -37,14 +37,9 @@ if (isset($_POST['action']) && isset($_POST['username']) && isset($_POST['passwo
 		);
 		$db->query($query, $params);
 		// log that bitch in!
-		$user->user_login($_POST['username'], $_POST['password'])
-		$template->assign_vars(array(
-				'MESSAGE' => "You have registered",
-				));
-		$template->set_filenames(array(
-				'body' => 'message.tpl'
-				));
-		$template->display('body');
+		$user->user_login($_POST['username'], $_POST['password']);
+		print_message('You have registered');
+		exit;
 	}
 	else
 	{
@@ -55,7 +50,7 @@ if (isset($_POST['action']) && isset($_POST['username']) && isset($_POST['passwo
 $template->assign_vars(array(
 	'USERNAME' => (isset($_POST['username'])) ? $_POST['username'] : '',
 	'EMAIL' => (isset($_POST['email'])) ? $_POST['email'] : '',
-	'B_ERROR' => true
+	'B_ERROR' => $error
 	));
 $template->set_filenames(array(
 		'body' => 'register.tpl'

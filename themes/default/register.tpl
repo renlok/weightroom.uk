@@ -1,7 +1,7 @@
 <!-- IF ERROR -->
 	<p>registration faied</p>
 <!-- ENDIF -->
-<form action="?do=register" method="post">
+<form action="?page=register" method="post">
 username:<br>
 <input type="text" name="username" value="{USERNAME}">
 <br>

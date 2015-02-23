@@ -86,13 +86,13 @@ class user
 		return $this->logged_in;
 	}
 
-	public function is_valid_user($id) 
+	public function is_valid_user($user_id) 
     { 
-        global $system, $db;
+        global $db;
 
         $query = "SELECT user_id FROM users WHERE user_id = :user_id";
 		$params = array(
-			array(':user_id', $id, 'int')
+			array(':user_id', $user_id, 'int')
 		);
 		$db->query($query, $params);
         if ($db->numrows() == 0)

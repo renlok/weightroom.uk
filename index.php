@@ -5,6 +5,7 @@ session_start();
 define('MAINDIR', dirname(__FILE__) . '/');
 define('INCDIR', MAINDIR . 'inc/');
 define('PAGEDIR', MAINDIR . 'pages/');
+require INCDIR . 'functions_global.php';
 
 // set the database
 require INCDIR . 'class_db_handle.php';
@@ -26,7 +27,7 @@ require INCDIR . 'class_user.php';
 $user = new user();
 
 // temp crappy layout, need to add templates
-switch ($_GET['do'])
+switch ($_GET['page'])
 {
 	case 'login':
 		include PAGEDIR . 'login.php';

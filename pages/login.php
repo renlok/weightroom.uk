@@ -7,13 +7,7 @@ if (isset($_POST['action']) && isset($_POST['username']) && isset($_POST['passwo
 	if ($user->user_login($_POST['username'], $_POST['password']))
 	{
 		// they are in :)
-		$template->assign_vars(array(
-				'MESSAGE' => "<p>You are logged in</p>",
-				));
-		$template->set_filenames(array(
-				'body' => 'message.tpl'
-				));
-		$template->display('body');
+		print_message('You are logged in');
 	}
 	else
 	{
@@ -23,7 +17,7 @@ if (isset($_POST['action']) && isset($_POST['username']) && isset($_POST['passwo
 
 $template->assign_vars(array(
 	'USERNAME' => (isset($_POST['username'])) ? $_POST['username'] : '',
-	'B_ERROR' => true
+	'B_ERROR' => $error
 	));
 $template->set_filenames(array(
 		'body' => 'login.tpl'
