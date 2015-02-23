@@ -1,26 +1,32 @@
 <?php
+$error = false;
+
 // login
 if (isset($_POST['action']) && isset($_POST['username']) && isset($_POST['password']))
 {
 	if ($user->user_login($_POST['username'], $_POST['password']))
 	{
 		// they are in :)
-		echo "<p>You are logged in</p>";
+		$template->assign_vars(array(
+				'MESSAGE' => "<p>You are logged in</p>",
+				));
+		$template->set_filenames(array(
+				'body' => 'message.tpl'
+				));
+		$template->display('body');
 	}
 	else
 	{
-		echo '<p>Username/password incorrect</p>';
+		$error = true;
 	}
 }
 
-echo <<<EOD
-<form action="?do=login" method="post">
-username:<br>
-<input type="text" name="username">
-<br>
-password:<br>
-<input type="password" name="password"><br>
-<input type="submit" name="action" value="Login";>
-</form>
-EOD;
+$template->assign_vars(array(
+	'USERNAME' => (isset($_POST['username'])) ? $_POST['username'] : '',
+	'B_ERROR' => true
+	));
+$template->set_filenames(array(
+		'body' => 'login.tpl'
+		));
+$template->display('body');
 ?>

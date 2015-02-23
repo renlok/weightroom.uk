@@ -1,4 +1,6 @@
 <?php
+
+session_start();
 // define the file dirs
 define('MAINDIR', dirname(__FILE__) . '/');
 define('INCDIR', MAINDIR . 'inc/');
@@ -13,6 +15,11 @@ $DbUser = 'root';
 $DbPassword = '';
 $DbDatabase = 'workout_tracker';
 $db->connect($DbHost, $DbUser, $DbPassword, $DbDatabase);
+
+// load template handler
+require INCDIR . 'template.php';
+$template = new template();
+$template->set_template();
 
 // load user handler
 require INCDIR . 'class_user.php';

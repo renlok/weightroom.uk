@@ -1,4 +1,5 @@
 <?php
+$error = false;
 
 if (isset($_POST['action']) && isset($_POST['username']) && isset($_POST['password']) && isset($_POST['email']))
 {
@@ -37,27 +38,29 @@ if (isset($_POST['action']) && isset($_POST['username']) && isset($_POST['passwo
 		$db->query($query, $params);
 		// log that bitch in!
 		$user->user_login($_POST['username'], $_POST['password'])
-		echo "<p>You have registered</p>";
+		$template->assign_vars(array(
+				'MESSAGE' => "You have registered",
+				));
+		$template->set_filenames(array(
+				'body' => 'message.tpl'
+				));
+		$template->display('body');
 	}
 	else
 	{
-		die('registration faied');
+		$error = true;
 	}
 }
 
-echo <<<EOD
-<form action="?do=register" method="post">
-username:<br>
-<input type="text" name="username">
-<br>
-password:<br>
-<input type="password" name="password">
-<br>
-email:<br>
-<input type="text" name="email"><br>
-<input type="submit" name="action" value="Register";>
-</form>
-EOD;
+$template->assign_vars(array(
+	'USERNAME' => (isset($_POST['username'])) ? $_POST['username'] : '',
+	'EMAIL' => (isset($_POST['email'])) ? $_POST['email'] : '',
+	'B_ERROR' => true
+	));
+$template->set_filenames(array(
+		'body' => 'register.tpl'
+		));
+$template->display('body');
 
 function get_hash()
 {
