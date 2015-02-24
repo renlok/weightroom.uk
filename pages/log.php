@@ -5,9 +5,10 @@ if (!$user->is_logged_in())
 	exit;
 }
 
+$log_date = (isset($_GET['date'])) ? $_GET['date'] : date("Y-m-d");
+
 if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 {
-	$log_date = (isset($_GET['date'])) ? $_GET['date'] : date("Y-m-d H:i:s");
 	$user_id = (isset($_GET['user_id'])) ? $_GET['user_id'] : $user->user_id;
 
 	$log_data = $log->get_log_data($user_id, $log_date);
@@ -32,6 +33,9 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 					));
 		}
 	}
+	$template->assign_vars(array(
+		'DATE' => $log_date
+		));
 	$template->set_filenames(array(
 			'body' => 'log_view.tpl'
 			));
@@ -42,7 +46,6 @@ elseif ($_GET['do'] == 'edit')
 {
 	$error = false;
 	$log_text = '';
-	$date = (isset($_GET['date'])) ? $_GET['date'] : date("Y-m-d");
 	$weight = (isset($_POST['weight'])) ? floatval($_POST['weight']) : $user->user_data['user_weight'];
 	// has anything been submitted?
 	if (isset($_POST['log']))
@@ -50,9 +53,9 @@ elseif ($_GET['do'] == 'edit')
 		$log_text = $_POST['log'];
 		// parse the log
 		$log_data = $log->parse_new_log($log_text);
-		$log->store_new_log_data($log_data, $log_text, $date, $user->user_id, $weight);
+		$log->store_new_log_data($log_data, $log_text, $log_date, $user->user_id, $weight);
 	}
-	// edit log?
+	// editing a log? try to load the old data
 	if (isset($_GET['date']))
 	{
 		// check log is real
@@ -69,7 +72,7 @@ elseif ($_GET['do'] == 'edit')
 	$template->assign_vars(array(
 		'LOG' => (isset($_POST['log'])) ? $_POST['log'] : $log_text,
 		'WEIGHT' => $weight,
-		'DATE' => $date,
+		'DATE' => $log_date,
 		'B_ERROR' => $error
 		));
 	$template->set_filenames(array(

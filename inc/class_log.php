@@ -274,7 +274,7 @@ class log
 					'line' => $line,);
 	}
 
-	private function store_new_log_data($log_data, $log_text, $log_date, $user_id, $user_weight)
+	public function store_new_log_data($log_data, $log_text, $log_date, $user_id, $user_weight)
 	{
 		global $db;
 		// clear old entries
@@ -338,17 +338,146 @@ class log
 			{
 				// reset totals
 				$total_volume = $total_reps = $total_sets = 0;
+				$exercise_id = $log->get_exercise_id($user_id, $exercise);
+				$prs = $this->get_prs($user_id, $log_date, $exercise);
 				foreach ($item['sets'] as $set)
 				{
 					$total_volume += ($set['weight'] * $set['reps'] * $set['sets']);
 					$total_reps += $set['reps'];
 					$total_sets += $set['sets'];
 					// insert into log_items
-					$query = "INSERT INTO log_items () VALUES ()";
+					$query = "INSERT INTO log_items (logitem_date, log_id, user_id, exercise_id, logitem_weight, logitem_reps, logitem_sets, logitem_comment)
+								VALUES (:logitem_date, :log_id, :user_id, :exercise_id, :logitem_weight, :logitem_reps, :logitem_sets, :logitem_comment)";
+					$params = array(
+						array(':logitem_date', $log_date, 'str'),
+						array(':log_id', $log_id, 'int'),
+						array(':user_id', $user_id, 'int'),
+						array(':exercise_id', $exercise_id, 'int'),
+						array(':logitem_weight', $set['weight'], 'float'),
+						array(':logitem_reps', $set['reps'], 'int'),
+						array(':logitem_sets', $set['sets'], 'int'),
+						array(':logitem_comment', $set['comment'], 'str'),
+					);
+					$db->query($query, $params);
+					// check its a pr
+					if ($prs[$set['reps']] < $set['weight'])
+					{
+						// new pr !!
+						$this->update_prs($user_id, $log_date, $exercise_id, $set['weight'], $set['reps']);
+					}
 				}
 				// insert into log_exercises 
-				$query = "INSERT INTO log_exercises () VALUES ()";
+				$query = "INSERT INTO log_exercises (logex_date, log_id, user_id, exercise_id, logex_volume, logex_reps, logex_sets, logex_comment)
+						VALUES (:logex_date, :log_id, :user_id, :exercise_id, :logex_volume, :logex_reps, :logex_sets, :logex_comment)";
+				$params = array(
+					array(':logex_date', $log_date, 'str'),
+					array(':log_id', $log_id, 'int'),
+					array(':user_id', $user_id, 'int'),
+					array(':exercise_id', $exercise_id, 'int'),
+					array(':logex_volume', $total_volume, 'float'),
+					array(':logex_reps', $total_reps, 'int'),
+					array(':logex_sets', $total_sets, 'int'),
+					array(':logex_comment', $item['comment'], 'str'),
+				);
+				$db->query($query, $params);
 			}
+		}
+	}
+
+	private function get_exercise_id($user_id, $exercise_name)
+	{
+		global $db;
+
+		$query = "SELECT exercise_id FROM exercises WHERE user_id = :user_id AND exercise_name = :exercise_name";
+		$params = array(
+			array(':exercise_name', $exercise_name, 'str'),
+			array(':user_id', $user_id, 'int')
+		);
+		$db->query($query, $params);
+		if ($db->numrows() > 0)
+		{
+			// already exists then return old id
+			return $db->result('exercise_id');
+		}
+		else
+		{
+			// insert the exercise
+			$query = "INSERT INTO exercises (user_id, exercise_name) VALUES (:user_id, :exercise_name)";
+			$params = array(
+				array(':exercise_name', $exercise_name, 'str'),
+				array(':user_id', $user_id, 'int')
+			);
+			$db->query($query, $params);
+			// return the new id
+			return $db->lastInsertId();
+		}
+	}
+
+	// load the pr of the given exercise on a given day for each rep range
+	private function get_prs($user_id, $log_date, $exercise_name)
+	{
+		global $db;
+		// load all preceeding prs
+		$query = "SELECT MAX(pr_weight) as pr_weight, pr_reps FROM exercise_records pr
+				LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id)
+				WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name
+				AND pr_date < :log_date
+				GROUP BY pr_reps";
+		$params = array(
+			array(':exercise_name', $exercise_name, 'str'),
+			array(':log_date', $log_date, 'str'),
+			array(':user_id', $user_id, 'int')
+		);
+		$db->query($query, $params);
+		$prs = array();
+		while ($row = $db->fetch())
+		{
+			$prs[$row['pr_reps']] = $row['pr_weight'];
+		}
+		return $prs;
+	}
+
+	// the user has set a pr we need to add/update it in the database
+	private function update_prs($user_id, $log_date, $exercise_id, $set_weight, $set_reps)
+	{
+		global $db;
+		// is there an exsiting pr set on that day?
+		$query = "SELECT pr_id FROM exercise_records WHERE user_id = :user_id AND pr_date = :log_date AND exercise_id = :exercise_id AND pr_reps = :pr_reps";
+		$params = array(
+			array(':exercise_id', $exercise_id, 'int'),
+			array(':log_date', $log_date, 'str'),
+			array(':user_id', $user_id, 'int'),
+			array(':pr_reps', $set_reps, 'int')
+		);
+		$db->query($query, $params);
+		// check if it needs a new entry
+		if ($db->numrows() == 0)
+		{
+			// insert new entry
+			$query = "INSERT INTO exercise_records (exercise_id, user_id, pr_date, pr_weight, pr_reps)
+					VALUES (:exercise_id, :user_id, :pr_date, :pr_weight, :pr_reps)";
+			$params = array(
+				array(':exercise_id', $exercise_id, 'int'),
+				array(':user_id', $user_id, 'int'),
+				array(':pr_date', $log_date, 'str'),
+				array(':pr_weight', $set_weight, 'float'),
+				array(':pr_reps', $set_reps, 'int')
+			);
+			$db->query($query, $params);
+		}
+		else
+		{
+			// update old entry
+			$query = "UPDATE exercise_records SET pr_weight = :pr_weight
+					WHERE exercise_id = :exercise_id AND user_id = :user_id AND pr_date = :pr_date AND pr_reps = :pr_reps";
+			$params = array(
+				array(':exercise_id', $exercise_id, 'int'),
+				array(':user_id', $user_id, 'int'),
+				array(':pr_date', $log_date, 'str'),
+				array(':pr_weight', $set_weight, 'float'),
+				array(':pr_reps', $set_reps, 'int')
+			);
+			$db->query($query, $params);
 		}
 	}
 }
