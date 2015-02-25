@@ -47,6 +47,6 @@ switch ($_GET['page'])
 	default:
 }
 ?>
-<p><a href="?do=login">login</a></p>
-<p><a href="?do=register">register</a></p>
-<p><a href="?do=log">log</a></p>
+<p><a href="?page=login">login</a></p>
+<p><a href="?page=register">register</a></p>
+<p><a href="?page=log">log</a></p>

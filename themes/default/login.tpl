@@ -7,5 +7,6 @@ username:<br>
 <br>
 password:<br>
 <input type="password" name="password"><br>
-<input type="submit" name="action" value="Login";>
+<input type="hidden" name="csrftoken" value="{_CSRFTOKEN}">
+<input type="submit" name="action" value="Login">
 </form>

@@ -10,5 +10,6 @@ password:<br>
 <br>
 email:<br>
 <input type="text" name="email" value="{EMAIL}"><br>
-<input type="submit" name="action" value="Register";>
+<input type="hidden" name="csrftoken" value="{_CSRFTOKEN}">
+<input type="submit" name="action" value="Register">
 </form>

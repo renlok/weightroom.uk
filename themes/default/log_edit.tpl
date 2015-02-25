@@ -8,5 +8,6 @@ enter log:<br>
 </textarea>
 weight:
 <input type="text" name="weight" value="{WEIGHT}"> kg
+<input type="hidden" name="csrftoken" value="{_CSRFTOKEN}">
 <input type="submit" name="action" value="add/edit log">
 </form>
