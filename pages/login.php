@@ -7,7 +7,11 @@ if (isset($_POST['action']) && isset($_POST['username']) && isset($_POST['passwo
 	if ($user->user_login($_POST['username'], $_POST['password']))
 	{
 		// they are in :)
+<<<<<<< HEAD
 		print_message('You are logged in', '?page=log');
+=======
+		print_message('You are logged in');
+>>>>>>> origin/master
 	}
 	else
 	{

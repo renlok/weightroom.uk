@@ -11,10 +11,13 @@ function print_message($message, $forward = '')
 			));
 	$template->display('body');
 }
+<<<<<<< HEAD
 
 function foward($url)
 {
 	header("Location: $url");
 	exit;
 }
+=======
+>>>>>>> origin/master
 ?>
