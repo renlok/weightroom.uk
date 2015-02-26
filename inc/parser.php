@@ -55,7 +55,11 @@ foreach ($log_lines as $line)
 	// no exercise yet
 	if ($exercise == '')
 	{
-		$log_data['comment'] .= '<br>' . $line;
+		if (!empty($log_data['comment']))
+		{
+			$log_data['comment'] .= '<br>';
+		}
+		$log_data['comment'] .= $line;
 		continue; // end this loop
 	}
 
@@ -104,7 +108,11 @@ foreach ($log_lines as $line)
 	}
 	else
 	{
-		$log_data[$exercise]['comment'] .= '<br>' . $line;
+		if (strlen($log_data[$exercise]['comment']) > 1)
+		{
+			$log_data[$exercise]['comment'] .= '<br>';
+		}
+		$log_data[$exercise]['comment'] .= $line;
 	}
 	// /^BW(\+|-)*\s*([0-9]+)*\s*(kg|lb)*/g // matches BW+10kg
 	// /^([0-9]+)\s*(lb|kg)*/g      matches weight given
@@ -130,7 +138,7 @@ function correct_weight($weight, $unit_used, $unit_want) // $unit_used = kg/lb $
 	}
 }
 
-// :(
+// where the magic happens
 function get_reps($exercise, $weight, $line)
 {
 	// set the vaariables
