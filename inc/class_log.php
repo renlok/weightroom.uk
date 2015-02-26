@@ -48,17 +48,10 @@ class log
 	public function is_valid_log($user_id, $log_date)
 	{
         global $db;
-<<<<<<< HEAD
   
 		$query = "SELECT log_id FROM logs WHERE user_id = :user_id AND log_date = :log_date";
 		$params = array(
 			array(':user_id', $user_id, 'int'),
-=======
-
-		$query = "SELECT log_id FROM logs WHERE user_id = :user_id AND log_date = :log_date";
-		$params = array(
-			array(':log_id', $log_id, 'int'),
->>>>>>> origin/master
 			array(':log_date', $log_date, 'str')
 		);
 		$db->query($query, $params);
@@ -75,11 +68,7 @@ class log
 
 		$query = "SELECT $results FROM logs WHERE user_id = :user_id AND log_date = :log_date";
 		$params = array(
-<<<<<<< HEAD
 			array(':user_id', $user_id, 'int'),
-=======
-			array(':log_id', $log_id, 'int'),
->>>>>>> origin/master
 			array(':log_date', $log_date, 'str')
 		);
 		$db->query($query, $params);
@@ -306,11 +295,7 @@ class log
 		if ($this->is_valid_log($user_id, $log_date))
 		{
 			// update log entry
-<<<<<<< HEAD
 			$query = "UPDATE logs SET log_text = :log_text, log_comment = :log_comment, log_weight = :log_weight WHERE log_date = :log_date AND user_id = :user_id";
-=======
-			$query = "UPDATE log SET log_text = :log_text, log_comment = :log_comment, log_weight = :log_weight WHERE logitem_date = :log_date AND user_id = :user_id";
->>>>>>> origin/master
 			$params = array(
 				array(':log_text', $log_text, 'str'),
 				array(':log_comment', $log_data['comment'], 'str'),
@@ -323,11 +308,7 @@ class log
 		else
 		{
 			// add a new entry
-<<<<<<< HEAD
 			$query = "INSERT INTO logs (log_text, log_comment, log_weight, log_date, user_id) VALUES (:log_text, :log_comment, :log_weight, :log_date, :user_id)";
-=======
-			$query = "INSERT INTO log (log_text, log_comment, log_weight, logitem_date, user_id) VALUES (:log_text, :log_comment, :log_weight, :log_date, :user_id)";
->>>>>>> origin/master
 			$params = array(
 				array(':log_text', $log_text, 'str'),
 				array(':log_comment', $log_data['comment'], 'str'),
@@ -349,27 +330,16 @@ class log
 		}
 
 		$log_id = $this->load_log($user_id, $log_date, 'log_id');
-<<<<<<< HEAD
 		$log_id = $log_id['log_id'];
-=======
->>>>>>> origin/master
 		// add all of the exersice details
 		foreach ($log_data as $exercise => $item)
 		{
 			// ignore the comment
-<<<<<<< HEAD
 			if (isset($item['sets']))
 			{
 				// reset totals
 				$total_volume = $total_reps = $total_sets = 0;
 				$exercise_id = $this->get_exercise_id($user_id, $exercise);
-=======
-			if ($exercise != 'comment')
-			{
-				// reset totals
-				$total_volume = $total_reps = $total_sets = 0;
-				$exercise_id = $log->get_exercise_id($user_id, $exercise);
->>>>>>> origin/master
 				$prs = $this->get_prs($user_id, $log_date, $exercise);
 				foreach ($item['sets'] as $set)
 				{
@@ -387,11 +357,7 @@ class log
 						array(':logitem_weight', $set['weight'], 'float'),
 						array(':logitem_reps', $set['reps'], 'int'),
 						array(':logitem_sets', $set['sets'], 'int'),
-<<<<<<< HEAD
 						array(':logitem_comment', $set['line'], 'str'),
-=======
-						array(':logitem_comment', $set['comment'], 'str'),
->>>>>>> origin/master
 					);
 					$db->query($query, $params);
 					// check its a pr

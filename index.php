@@ -1,14 +1,9 @@
 <?php
-<<<<<<< HEAD
 session_start();
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-=======
-
-session_start();
->>>>>>> origin/master
 // define the file dirs
 define('MAINDIR', dirname(__FILE__) . '/');
 define('INCDIR', MAINDIR . 'inc/');
@@ -54,8 +49,4 @@ switch ($_GET['page'])
 ?>
 <p><a href="?page=login">login</a></p>
 <p><a href="?page=register">register</a></p>
-<<<<<<< HEAD
 <p><a href="?page=log">log</a></p>
-=======
-<p><a href="?page=log">log</a></p>
->>>>>>> origin/master

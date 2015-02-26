@@ -38,11 +38,7 @@ if (isset($_POST['action']) && isset($_POST['username']) && isset($_POST['passwo
 		$db->query($query, $params);
 		// log that bitch in!
 		$user->user_login($_POST['username'], $_POST['password']);
-<<<<<<< HEAD
 		print_message('You have registered', '?page=log');
-=======
-		print_message('You have registered');
->>>>>>> origin/master
 		exit;
 	}
 	else

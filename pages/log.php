@@ -5,7 +5,6 @@ if (!$user->is_logged_in())
 	exit;
 }
 
-<<<<<<< HEAD
 require INCDIR . 'class_log.php';
 $log = new log();
 
@@ -50,47 +49,6 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 // to add a log or edit a log
 elseif ($_GET['do'] == 'edit')
 {
-=======
-$log_date = (isset($_GET['date'])) ? $_GET['date'] : date("Y-m-d");
-
-if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
-{
-	$user_id = (isset($_GET['user_id'])) ? $_GET['user_id'] : $user->user_id;
-
-	$log_data = $log->get_log_data($user_id, $log_date);
-
-	// loop through the exercises
-	foreach ($log_data as $exercise => $log_items)
-	{
-		$template->assign_block_vars('items', array(
-				'EXERCISE' => $exercise,
-				'VOLUME' => $log_items['total_volume'],
-				'REPS' => $log_items['total_reps'],
-				'SETS' => $log_items['total_sets'],
-				'COMMENT' => $log_items['comment'],
-				));
-		foreach ($log_items['sets'] as $set)
-		{
-			$template->assign_block_vars('items.sets', array(
-					'WEIGHT' => $set['weight'],
-					'REPS' => $set['reps'],
-					'SETS' => $set['sets'],
-					'COMMENT' => $set['comment'],
-					));
-		}
-	}
-	$template->assign_vars(array(
-		'DATE' => $log_date
-		));
-	$template->set_filenames(array(
-			'body' => 'log_view.tpl'
-			));
-	$template->display('body');
-}
-// to add a log or edit a log
-elseif ($_GET['do'] == 'edit')
-{
->>>>>>> origin/master
 	$error = false;
 	$log_text = '';
 	$weight = (isset($_POST['weight'])) ? floatval($_POST['weight']) : $user->user_data['user_weight'];
@@ -101,10 +59,7 @@ elseif ($_GET['do'] == 'edit')
 		// parse the log
 		$log_data = $log->parse_new_log($log_text);
 		$log->store_new_log_data($log_data, $log_text, $log_date, $user->user_id, $weight);
-<<<<<<< HEAD
 		print_message('Log processed', '?page=log&do=view&date=' . $log_date);
-=======
->>>>>>> origin/master
 	}
 	// editing a log? try to load the old data
 	if (isset($_GET['date']))
@@ -112,11 +67,7 @@ elseif ($_GET['do'] == 'edit')
 		// check log is real
 		if(!$log->is_valid_log($user->user_id, $_GET['date']))
 		{
-<<<<<<< HEAD
 			print_message('Invalid log entry', '?page=log');
-=======
-			print_message('Invalid log entry', 'log');
->>>>>>> origin/master
 			exit;
 		}
 		// load log data
@@ -128,11 +79,7 @@ elseif ($_GET['do'] == 'edit')
 		'LOG' => (isset($_POST['log'])) ? $_POST['log'] : $log_text,
 		'WEIGHT' => $weight,
 		'DATE' => $log_date,
-<<<<<<< HEAD
 		'ERROR' => $error
-=======
-		'B_ERROR' => $error
->>>>>>> origin/master
 		));
 	$template->set_filenames(array(
 			'body' => 'log_edit.tpl'
