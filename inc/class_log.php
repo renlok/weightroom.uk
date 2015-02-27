@@ -414,6 +414,26 @@ class log
 		}
 	}
 
+	public function is_valid_exercise($user_id, $exercise_name)
+	{
+		global $db;
+
+		$query = "SELECT exercise_id FROM exercises WHERE user_id = :user_id AND exercise_name = :exercise_name";
+		$params = array(
+			array(':exercise_name', $exercise_name, 'str'),
+			array(':user_id', $user_id, 'int')
+		);
+		$db->query($query, $params);
+		if ($db->numrows() > 0)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+
 	// load the pr of the given exercise on a given day for each rep range
 	private function get_prs($user_id, $log_date, $exercise_name)
 	{
@@ -442,6 +462,10 @@ class log
 	private function update_prs($user_id, $log_date, $exercise_id, $set_weight, $set_reps)
 	{
 		global $db;
+
+		// dont log reps over 10
+		if ($set_reps > 10)
+			return false;
 		// is there an exsiting pr set on that day?
 		$query = "SELECT pr_id FROM exercise_records WHERE user_id = :user_id AND pr_date = :log_date AND exercise_id = :exercise_id AND pr_reps = :pr_reps";
 		$params = array(
