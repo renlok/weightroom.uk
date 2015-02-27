@@ -505,5 +505,43 @@ class log
 			$db->query($query, $params);
 		}
 	}
+
+	public function get_prs_data($user_id, $exercise_name)
+	{
+		global $db;
+		// load all preceeding prs
+		$query = "SELECT pr_weight, pr_reps, pr_date FROM exercise_records pr
+				LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id)
+				WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name";
+		$params = array(
+			array(':exercise_name', $exercise_name, 'str'),
+			array(':user_id', $user_id, 'int')
+		);
+		$db->query($query, $params);
+		$prs = array();
+		while ($row = $db->fetch())
+		{
+			if (!isset($prs[$row['pr_reps']]))
+				$prs[$row['pr_reps']] = array();
+			$prs[$row['pr_reps']][$row['pr_date']] = $row['pr_weight'];
+		}
+		return $prs;
+	}
+
+	public function build_pr_graph_data($data)
+	{
+		$graph_data = '';
+		foreach ($data as $rep => $prs)
+		{
+			$graph_data .= "var dataset = [];\n";
+			foreach ($prs as $date => $weight)
+			{
+				$date = strtotime($date . ' 00:00:00') * 1000;
+				$graph_data .= "\tdataset.push({x: new Date($date), y: $weight, shape:'circle'});\n";
+			}
+			$graph_data .= "prHistoryChartData.push({\n\tvalues: dataset,\n\tkey: '$rep rep max'\n});\n";
+		}
+		return $graph_data;
+	}
 }
 ?>

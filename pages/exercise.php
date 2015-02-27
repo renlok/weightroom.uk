@@ -24,8 +24,13 @@ for ($i = 1; $i <= 10; $i++)
 {
 	$pr_data[$i] = (isset($pr_data[$i])) ? $pr_data[$i] : '--';
 }
+
+$full_pr_data = $log->get_prs_data($user->user_id, $exercise_name);
+$graph_data = $log->build_pr_graph_data($full_pr_data);
+
 $template->assign_vars(array(
 	'PR_DATA' => $pr_data,
+	'GRAPH_DATA' => $graph_data,
 	'EXERCISE' => $exercise_name
 	));
 $template->set_filenames(array(
