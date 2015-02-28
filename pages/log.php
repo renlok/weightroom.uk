@@ -20,7 +20,7 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 	foreach ($log_data as $exercise => $log_items)
 	{
 		$template->assign_block_vars('items', array(
-				'EXERCISE' => $exercise,
+				'EXERCISE' => ucwords($exercise),
 				'VOLUME' => $log_items['total_volume'],
 				'REPS' => $log_items['total_reps'],
 				'SETS' => $log_items['total_sets'],
@@ -36,10 +36,12 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 					));
 		}
 	}
+	$timestamp = strtotime($log_date . ' 00:00:00');
 	$template->assign_vars(array(
+		'B_LOG' => !empty($log_data),
 		'DATE' => $log_date,
-		'TOMORROW' => date("Y-m-d", time() + 86400),
-		'YESTERDAY' => date("Y-m-d", time() - 86400),
+		'TOMORROW' => date("Y-m-d", $timestamp + 86400),
+		'YESTERDAY' => date("Y-m-d", $timestamp - 86400),
 		));
 	$template->set_filenames(array(
 			'body' => 'log_view.tpl'
@@ -65,15 +67,18 @@ elseif ($_GET['do'] == 'edit')
 	if (isset($_GET['date']))
 	{
 		// check log is real
-		if(!$log->is_valid_log($user->user_id, $_GET['date']))
+		if($log->is_valid_log($user->user_id, $_GET['date']))
 		{
-			print_message('Invalid log entry', '?page=log');
-			exit;
+			// load log data
+			$log_data = $log->load_log($user->user_id, $_GET['date']);
+			$log_text = $log_data['log_text'];
+			$weight = $log_data['log_weight'];
 		}
-		// load log data
-		$log_data = $log->load_log($user->user_id, $_GET['date']);
-		$log_text = $log_data['log_text'];
-		$weight = $log_data['log_weight'];
+		else
+		{
+			$log_text = '';
+			$weight = '';
+		}
 	}
 	$template->assign_vars(array(
 		'LOG' => (isset($_POST['log'])) ? $_POST['log'] : $log_text,

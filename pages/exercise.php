@@ -2,18 +2,18 @@
 // get stats, prs, 
 if (!$user->is_logged_in())
 {
-	print_message('You are not loged in', 'login');
+	print_message('You are not loged in', '?page=login');
 	exit;
 }
 
 require INCDIR . 'class_log.php';
 $log = new log();
 
-$exercise_name = (isset($_GET['exercise'])) ? $_GET['exercise'] : '';
+$exercise_name = (isset($_GET['ex'])) ? $_GET['ex'] : '';
 
 if(!$log->is_valid_exercise($user->user_id, $exercise_name))
 {
-	print_message('Invalid exercise', '?page=exercise');
+	print_message('Invalid exercise');
 	exit;
 }
 
@@ -31,7 +31,7 @@ $graph_data = $log->build_pr_graph_data($full_pr_data);
 $template->assign_vars(array(
 	'PR_DATA' => $pr_data,
 	'GRAPH_DATA' => $graph_data,
-	'EXERCISE' => $exercise_name
+	'EXERCISE' => ucwords($exercise_name)
 	));
 $template->set_filenames(array(
 		'body' => 'exercise.tpl'

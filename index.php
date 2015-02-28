@@ -15,9 +15,9 @@ require INCDIR . 'class_db_handle.php';
 $db = new db_handle();
 // join the db party
 $DbHost = 'localhost';
-$DbUser = 'root';
-$DbPassword = 'root';
-$DbDatabase = 'workout_tracker';
+$DbUser = 'welinkco_tracker';
+$DbPassword = 'oP4NBB^V_0qu';
+$DbDatabase = 'welinkco_tracker';
 $db->connect($DbHost, $DbUser, $DbPassword, $DbDatabase);
 
 // load template handler
@@ -30,7 +30,8 @@ require INCDIR . 'class_user.php';
 $user = new user();
 
 // temp crappy layout, need to add templates
-switch ($_GET['page'])
+$page = (isset($_GET['page'])) ? $_GET['page'] : '';
+switch ($page)
 {
 	case 'login':
 		include PAGEDIR . 'login.php';

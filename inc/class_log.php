@@ -4,11 +4,11 @@ class log
 	public function get_log_data($user_id, $date)
 	{
 		global $db;
-		$query = "SELECT i.*, ex.exercise_name, lx.logex_volume, lx.logex_reps, lx.logex_sets, lx.logex_comment, l.log_weight FROM logs As l
-				LEFT JOIN log_items As i ON (l.log_id = i.log_id)
+		$query = "SELECT i.*, ex.exercise_name, lx.logex_volume, lx.logex_reps, lx.logex_sets, lx.logex_comment, l.log_weight FROM log_items As i
+				LEFT JOIN logs As l ON (l.log_id = i.log_id)
 				LEFT JOIN exercises ex ON (ex.exercise_id = i.exercise_id)
-				LEFT JOIN log_exercises As lx ON (lx.exercise_id = ex.exercise_id)
-				WHERE l.log_date = :log_date AND l.user_id = :user_id";
+				LEFT JOIN log_exercises As lx ON (lx.exercise_id = ex.exercise_id AND lx.log_id = i.log_id)
+				WHERE i.logitem_date = :log_date AND i.user_id = :user_id";
 		$params = array(
 			array(':log_date', $date, 'str'),
 			array(':user_id', $user_id, 'int')
@@ -114,7 +114,7 @@ class log
 			// set details of excersice
 			if (is_numeric($line[0])) // using weight
 			{
-				if (preg_match("/^([0-9]+)\s*(lb|kg)*/", $line, $matches)) // 1 = weight, 2 = lb/kg
+				if (preg_match("/^([0-9]+\.*[0-9]*)\s*(lb|kg)*/", $line, $matches)) // 1 = weight, 2 = lb/kg
 				{
 					// clear the weight from the line
 					$line = str_replace($matches[0], '', $line);
@@ -129,7 +129,7 @@ class log
 			}
 			elseif ($line[0] == 'B' && $line[1] == 'W') // using bodyweight
 			{
-				if (preg_match("/^BW(\+|-)*\s*([0-9]+)*\s*(kg|lb)*/", $line, $matches)) // 1= +/- 2= weight, 3= lb/kg
+				if (preg_match("/^BW(\+|-)*\s*([0-9]+\.*[0-9]*)*\s*(kg|lb)*/", $line, $matches)) // 1= +/- 2= weight, 3= lb/kg
 				{
 					// clear the weight from the line
 					$line = str_replace($matches[0], '', $line);
@@ -385,13 +385,13 @@ class log
 		}
 	}
 
-	private function get_exercise_id($user_id, $exercise_name)
+	public function get_exercise_id($user_id, $exercise_name)
 	{
 		global $db;
 
 		$query = "SELECT exercise_id FROM exercises WHERE user_id = :user_id AND exercise_name = :exercise_name";
 		$params = array(
-			array(':exercise_name', $exercise_name, 'str'),
+			array(':exercise_name', trim(strtolower($exercise_name)), 'str'),
 			array(':user_id', $user_id, 'int')
 		);
 		$db->query($query, $params);
@@ -405,7 +405,7 @@ class log
 			// insert the exercise
 			$query = "INSERT INTO exercises (user_id, exercise_name) VALUES (:user_id, :exercise_name)";
 			$params = array(
-				array(':exercise_name', $exercise_name, 'str'),
+				array(':exercise_name', trim(strtolower($exercise_name)), 'str'),
 				array(':user_id', $user_id, 'int')
 			);
 			$db->query($query, $params);
@@ -420,7 +420,7 @@ class log
 
 		$query = "SELECT exercise_id FROM exercises WHERE user_id = :user_id AND exercise_name = :exercise_name";
 		$params = array(
-			array(':exercise_name', $exercise_name, 'str'),
+			array(':exercise_name', strtolower($exercise_name), 'str'),
 			array(':user_id', $user_id, 'int')
 		);
 		$db->query($query, $params);
@@ -435,7 +435,7 @@ class log
 	}
 
 	// load the pr of the given exercise on a given day for each rep range
-	private function get_prs($user_id, $log_date, $exercise_name)
+	public function get_prs($user_id, $log_date, $exercise_name)
 	{
 		global $db;
 		// load all preceeding prs
@@ -445,7 +445,7 @@ class log
 				AND pr_date < :log_date
 				GROUP BY pr_reps";
 		$params = array(
-			array(':exercise_name', $exercise_name, 'str'),
+			array(':exercise_name', strtolower($exercise_name), 'str'),
 			array(':log_date', $log_date, 'str'),
 			array(':user_id', $user_id, 'int')
 		);
@@ -514,7 +514,7 @@ class log
 				LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id)
 				WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name";
 		$params = array(
-			array(':exercise_name', $exercise_name, 'str'),
+			array(':exercise_name', strtolower($exercise_name), 'str'),
 			array(':user_id', $user_id, 'int')
 		);
 		$db->query($query, $params);
