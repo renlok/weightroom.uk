@@ -13,6 +13,7 @@ $log_date = (isset($_GET['date'])) ? $_GET['date'] : date("Y-m-d");
 if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 {
 	$user_id = (isset($_GET['user_id'])) ? $_GET['user_id'] : $user->user_id;
+	$log_list = $log->load_log_list($user_id);
 
 	$log_data = $log->get_log_data($user_id, $log_date);
 
@@ -38,6 +39,7 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 	}
 	$timestamp = strtotime($log_date . ' 00:00:00');
 	$template->assign_vars(array(
+		'LOG_DATES' => $log->build_log_list($log_list),
 		'B_LOG' => !empty($log_data),
 		'JSDATE' => ($timestamp * 1000),
 		'DATE' => $log_date,

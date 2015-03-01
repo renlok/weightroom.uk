@@ -64,7 +64,7 @@ class log
 
 	public function load_log($user_id, $log_date, $results = '*')
 	{
-		global $db, $user;
+		global $db;
 
 		$query = "SELECT $results FROM logs WHERE user_id = :user_id AND log_date = :log_date";
 		$params = array(
@@ -73,6 +73,28 @@ class log
 		);
 		$db->query($query, $params);
 		return $db->result();
+	}
+
+	public function load_log_list($user_id)
+	{
+		global $db, $user;
+
+		$query = "SELECT log_date FROM logs WHERE user_id = :user_id";
+		$params = array(
+			array(':user_id', $user_id, 'int')
+		);
+		$db->query($query, $params);
+		return $db->fetchall();
+	}
+
+	public function build_log_list($data)
+	{
+		$logs_data = '';
+		foreach ($data as $date)
+		{
+			$logs_data .= "\tnew Date(\"{$date['log_date']}\").valueOf(),\n";
+		}
+		return $logs_data;
 	}
 	
 	public function parse_new_log($log)

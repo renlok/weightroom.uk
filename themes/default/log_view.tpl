@@ -2,14 +2,31 @@
 <link href="http://nazar-pc.github.io/PickMeUp/css/pickmeup.css" rel="stylesheet">
 <script src="http://nazar-pc.github.io/PickMeUp/js/jquery.pickmeup.js"></script>
 
+<style>
+.cal_log_date{
+	background-color:#F90;
+}
+</style>
+
 <script>
 $(function () {
+	var arDates = [{LOG_DATES}];
 	$('.date').pickmeup({
 		date		: new Date({JSDATE}),
 		flat		: true,
 		format  	: 'Y-m-d',
 		change		: function(e){ window.location.href = '?do=view&page=log&date='+e;},
-		calendars	: 3
+		calendars	: 3,
+		render: function(date) {
+			render: function(date) {
+			if (arDates.indexOf(date.valueOf()) != -1)
+			{
+				return {
+					class_name: 'cal_log_date'                         
+				}
+			}
+		}
+		}
 	});
 });
 </script>
