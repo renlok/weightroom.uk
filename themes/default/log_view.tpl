@@ -18,14 +18,12 @@ $(function () {
 		change		: function(e){ window.location.href = '?do=view&page=log&date='+e;},
 		calendars	: 3,
 		render: function(date) {
-			render: function(date) {
 			if (arDates.indexOf(date.valueOf()) != -1)
 			{
 				return {
 					class_name: 'cal_log_date'                         
 				}
 			}
-		}
 		}
 	});
 });

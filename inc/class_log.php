@@ -75,13 +75,17 @@ class log
 		return $db->result();
 	}
 
-	public function load_log_list($user_id)
+	public function load_log_list($user_id, $log_date)
 	{
 		global $db, $user;
 
-		$query = "SELECT log_date FROM logs WHERE user_id = :user_id";
+		// get logs within +/- 40 days
+		$timestamp = strtotime($log_date . ' 00:00:00');
+		$query = "SELECT log_date FROM logs WHERE user_id = :user_id AND log_date > :log_date_last AND log_date < :log_date_next";
 		$params = array(
-			array(':user_id', $user_id, 'int')
+			array(':user_id', $user_id, 'int'),
+			array(':log_date_last', date("Y-m-d", $timestamp - 3456000), 'str'),
+			array(':log_date_next', date("Y-m-d", $timestamp + 3456000), 'str')
 		);
 		$db->query($query, $params);
 		return $db->fetchall();
@@ -565,6 +569,20 @@ class log
 			$graph_data .= "prHistoryChartData.push({\n\tvalues: dataset,\n\tkey: '$rep rep max'\n});\n";
 		}
 		return $graph_data;
+	}
+	
+	public function list_exercises($user_id)
+	{
+		global $db;
+		// load all exercises
+		$query = "SELECT e.exercise_name, COUNT(logex_id) as COUNT FROM exercises e
+				LEFT JOIN log_exercises l ON (l.exercise_id = e.exercise_id)
+				WHERE user_id = :user_id GROUP BY l.exercise_id";
+		$params = array(
+			array(':user_id', $user_id, 'int')
+		);
+		$db->query($query, $params);
+		return $db->fetchall();
 	}
 }
 ?>

@@ -13,7 +13,7 @@ $log_date = (isset($_GET['date'])) ? $_GET['date'] : date("Y-m-d");
 if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 {
 	$user_id = (isset($_GET['user_id'])) ? $_GET['user_id'] : $user->user_id;
-	$log_list = $log->load_log_list($user_id);
+	$log_list = $log->load_log_list($user_id, $log_date);
 
 	$log_data = $log->get_log_data($user_id, $log_date);
 
