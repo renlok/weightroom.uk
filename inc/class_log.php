@@ -512,7 +512,8 @@ class log
 		// load all preceeding prs
 		$query = "SELECT pr_weight, pr_reps, pr_date FROM exercise_records pr
 				LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id)
-				WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name";
+				WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name
+				ORDER BY pr_date ASC";
 		$params = array(
 			array(':exercise_name', strtolower($exercise_name), 'str'),
 			array(':user_id', $user_id, 'int')

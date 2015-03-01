@@ -39,6 +39,7 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 	$timestamp = strtotime($log_date . ' 00:00:00');
 	$template->assign_vars(array(
 		'B_LOG' => !empty($log_data),
+		'JSDATE' => ($timestamp * 1000),
 		'DATE' => $log_date,
 		'TOMORROW' => date("Y-m-d", $timestamp + 86400),
 		'YESTERDAY' => date("Y-m-d", $timestamp - 86400),

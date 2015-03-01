@@ -3,6 +3,12 @@
 <link href="http://nvd3.org/assets/css/nv.d3.css" rel="stylesheet">
 <script src="http://nvd3.org/assets/js/nv.d3.js"></script>
 
+
+<style>
+#prHistoryChart .nv-lineChart circle.nv-point {
+  fill-opacity: 2;
+}
+</style>
 <script>
     function prHistoryData() {
 		var prHistoryChartData = [];
