@@ -81,7 +81,7 @@ class log
 
 		// get logs within +/- 40 days
 		$timestamp = strtotime($log_date . ' 00:00:00');
-		$query = "SELECT log_date FROM logs WHERE user_id = :user_id AND log_date > :log_date_last AND log_date < :log_date_next";
+		$query = "SELECT log_date FROM logs WHERE user_id = :user_id AND log_date > :log_date_last AND log_date < :log_date_next ORDER BY log_date ASC";
 		$params = array(
 			array(':user_id', $user_id, 'int'),
 			array(':log_date_last', date("Y-m-d", $timestamp - 3456000), 'str'),

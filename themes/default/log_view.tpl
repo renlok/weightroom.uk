@@ -26,6 +26,8 @@ $(function () {
 			}
 		}
 	});
+	$('.pmu-prev').click();
+	$('.pmu-prev').click();
 });
 </script>
 

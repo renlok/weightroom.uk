@@ -45,6 +45,9 @@ switch ($page)
 	case 'exercise':
 		include PAGEDIR . 'exercise.php';
 		break;
+	case 'ajax':
+		include PAGEDIR . 'ajax.php';
+		break;
 	default:
 }
 ?>
