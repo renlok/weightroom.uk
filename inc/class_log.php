@@ -96,7 +96,7 @@ class log
 		$logs_data = '';
 		foreach ($data as $date)
 		{
-			$logs_data .= "\tnew Date(\"{$date['log_date']}\").valueOf(),\n";
+			$logs_data .= "\tmoment(\"{$date['log_date']}\").format('YYYY-MM-DD'),\n";
 		}
 		return $logs_data;
 	}

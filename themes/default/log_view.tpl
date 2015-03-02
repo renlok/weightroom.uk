@@ -1,6 +1,7 @@
 <script src="https://code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
 <link href="http://nazar-pc.github.io/PickMeUp/css/pickmeup.css" rel="stylesheet">
 <script src="http://nazar-pc.github.io/PickMeUp/js/jquery.pickmeup.js"></script>
+<script src="http://momentjs.com/downloads/moment.min.js"></script>
 
 <style>
 .cal_log_date{
@@ -18,7 +19,7 @@ $(function () {
 		change		: function(e){ window.location.href = '?do=view&page=log&date='+e;},
 		calendars	: 3,
 		render: function(date) {
-			if (arDates.indexOf(date.valueOf()) != -1)
+			if ($.inArray(moment(date).format('YYYY-MM-DD'), arDates) != -1)
 			{
 				return {
 					class_name: 'cal_log_date'                         
