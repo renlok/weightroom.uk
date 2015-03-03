@@ -102,12 +102,11 @@ class log
 		return $logs_data;
 	}
 	
-	public function parse_new_log($log)
+	public function parse_new_log($log, $bodyweight)
 	{
 		global $db, $user;
 		// woop
 		$log_data = array();
-		$bodyweight = $user->user_data['user_weight'];
 		$units = $user->user_data['user_unit']; // 1 = kg, 2 = lb
 		$log_data['comment'] = '';
 		$log_lines = explode("\n", $log);

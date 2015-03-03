@@ -63,7 +63,7 @@ elseif ($_GET['do'] == 'edit')
 	{
 		$log_text = $_POST['log'];
 		// parse the log
-		$log_data = $log->parse_new_log($log_text);
+		$log_data = $log->parse_new_log($log_text, $weight);
 		$log->store_new_log_data($log_data, $log_text, $log_date, $user->user_id, $weight);
 		print_message('Log processed', '?page=log&do=view&date=' . $log_date);
 	}
