@@ -49,7 +49,7 @@ class user
 		if ($phpass->CheckPassword($password, $user_data['user_pass']))
 		{
 			// generate a random unguessable token
-			$_SESSION['csrftoken'] = md5(uniqid(rand(), true));
+			$_SESSION['csrftoken'] = generateToken();
 
 			$_SESSION['TRACK_LOGGED_IN'] 		= $user_data['user_id'];
 			$_SESSION['TRACK_LOGGED_NUMBER'] 	= strspn($user_data['user_pass'], $user_data['user_hash']);

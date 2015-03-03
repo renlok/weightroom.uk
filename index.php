@@ -29,6 +29,29 @@ $template->set_template();
 require INCDIR . 'class_user.php';
 $user = new user();
 
+// Atuomatically login user is necessary "Remember me" option
+if (!$user->logged_in && isset($_COOKIE['TRACKER_RM_ID']))
+{
+	$query = "SELECT user_id FROM auth_tokens WHERE token = :RM_ID";
+	$params = array();
+	$params[] = array(':RM_ID', $_COOKIE['TRACKER_RM_ID'], 'str');
+	$db->query($query, $params);
+	if ($db->numrows() > 0)
+	{
+		// generate a random unguessable token
+		$_SESSION['csrftoken'] = generateToken();
+		$user_id = $db->result('user_id');
+		$query = "SELECT hash, password FROM " . $DBPrefix . "users WHERE id = :user_id";
+		$params = array();
+		$params[] = array(':user_id', $user_id, 'int');
+		$db->query($query, $params);
+		$password = $db->result('password');
+		$_SESSION['TRACK_LOGGED_IN'] 		= $user_id;
+		$_SESSION['TRACK_LOGGED_NUMBER'] 	= strspn($password, $db->result('hash'));
+		$_SESSION['TRACK_LOGGED_PASS'] 		= $password;
+	}
+}
+
 // temp crappy layout, need to add templates
 $page = (isset($_GET['page'])) ? $_GET['page'] : '';
 switch ($page)

@@ -6,6 +6,17 @@ if (isset($_POST['action']) && isset($_POST['username']) && isset($_POST['passwo
 {
 	if ($user->user_login($_POST['username'], $_POST['password']))
 	{
+		if (isset($_POST['rememberme']))
+		{
+			$auth_token = generateToken();
+			$query = "INSERT INTO auth_tokens VALUES (NULL, :auth_token, :user_id, :token_expires)";
+			$params = array();
+			$params[] = array(':auth_token', $auth_token, 'str');
+			$params[] = array(':user_id', $_SESSION['TRACK_LOGGED_IN'], 'int');
+			$params[] = array(':token_expires', date("Y-m-d", time() + (3600 * 24 * 365)), 'str');
+			$db->query($query, $params);
+			setcookie('TRACKER_RM_ID', $auth_token, time() + (3600 * 24 * 365));
+		}
 		// they are in :)
 		print_message('You are logged in', '?page=log');
 	}

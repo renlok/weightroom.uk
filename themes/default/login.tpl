@@ -7,6 +7,7 @@ username:<br>
 <br>
 password:<br>
 <input type="password" name="password"><br>
+Remember Me: <input type="checkbox" name="rememberme" value="1"><br>
 <input type="hidden" name="csrftoken" value="{_CSRFTOKEN}">
 <input type="submit" name="action" value="Login">
 </form>
