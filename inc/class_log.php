@@ -14,6 +14,7 @@ class log
 			array(':user_id', $user_id, 'int')
 		);
 		$db->query($query, $params);
+		$db->fetchall(); // dont know why i seem to need this
 
 		// setup vars
 		$data = array();
@@ -316,6 +317,17 @@ class log
 			array(':user_id', $user_id, 'int')
 		);
 		$db->query($query, $params);
+
+		// detele log and exit function if no data
+		if (strlen($log_text) == 0)
+		{
+			$query = "DELETE FROM logs WHERE log_date = :log_date AND user_id = :user_id";
+			$params = array(
+				array(':log_date', $log_date, 'str'),
+				array(':user_id', $user_id, 'int')
+			);
+			$db->query($query, $params);
+		}
 
 		//check if its new
 		if ($this->is_valid_log($user_id, $log_date))

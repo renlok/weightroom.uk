@@ -9,20 +9,31 @@ if (!$user->is_logged_in())
 require INCDIR . 'class_log.php';
 $log = new log();
 
-$exercise_name = (isset($_GET['ex'])) ? $_GET['ex'] : '';
-
-if(!$log->is_valid_exercise($user->user_id, $exercise_name))
+if ((isset($_GET['do']) && $_GET['do'] == 'list') || !isset($_GET['ex']))
 {
-	print_message('Invalid exercise', '?page=exercise&do=list');
-	exit;
-}
-
-if ($_GET['do'] == 'list')
-{
-	
+	$exercises = $log->list_exercises($user->user_id);
+	foreach ($exercises as $exercise)
+	{
+		$template->assign_block_vars('exercise', array(
+				'EXERCISE' => ucwords($exercise['exercise_name']),
+				'COUNT' => $log_items['COUNT'],
+				));
+	}
+	$template->set_filenames(array(
+			'body' => 'exercise_list.tpl'
+			));
+	$template->display('body');
 }
 else
 {
+	$exercise_name = (isset($_GET['ex'])) ? $_GET['ex'] : '';
+
+	if(!$log->is_valid_exercise($user->user_id, $exercise_name))
+	{
+		print_message('Invalid exercise', '?page=exercise&do=list');
+		exit;
+	}
+
 	// get current prs
 	$pr_data = $log->get_prs($user->user_id, date("Y-m-d"), $exercise_name);
 	//check pr data

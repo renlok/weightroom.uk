@@ -42,6 +42,7 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 		'LOG_DATES' => $log->build_log_list($log_list),
 		'B_LOG' => !empty($log_data),
 		'JSDATE' => ($timestamp * 1000),
+		'COMMENT' => $log->load_log($user_id, $log_date, 'log_date'),
 		'DATE' => $log_date,
 		'TOMORROW' => date("Y-m-d", $timestamp + 86400),
 		'YESTERDAY' => date("Y-m-d", $timestamp - 86400),
