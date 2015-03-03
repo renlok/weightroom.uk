@@ -326,6 +326,7 @@ class log
 				array(':user_id', $user_id, 'int')
 			);
 			$db->query($query, $params);
+			return false;
 		}
 
 		//check if its new
