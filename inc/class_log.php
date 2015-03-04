@@ -384,9 +384,17 @@ class log
 					$total_volume += ($set['weight'] * $set['reps'] * $set['sets']);
 					$total_reps += $set['reps'];
 					$total_sets += $set['sets'];
+					$is_pr = false;
+					// check its a pr
+					if ($prs[$set['reps']] < $set['weight'])
+					{
+						$is_pr = true;
+						// new pr !!
+						$this->update_prs($user_id, $log_date, $exercise_id, $set['weight'], $set['reps']);
+					}
 					// insert into log_items
-					$query = "INSERT INTO log_items (logitem_date, log_id, user_id, exercise_id, logitem_weight, logitem_reps, logitem_sets, logitem_comment)
-								VALUES (:logitem_date, :log_id, :user_id, :exercise_id, :logitem_weight, :logitem_reps, :logitem_sets, :logitem_comment)";
+					$query = "INSERT INTO log_items (logitem_date, log_id, user_id, exercise_id, logitem_weight, logitem_reps, logitem_sets, logitem_comment, is_pr)
+								VALUES (:logitem_date, :log_id, :user_id, :exercise_id, :logitem_weight, :logitem_reps, :logitem_sets, :logitem_comment, :is_pr)";
 					$params = array(
 						array(':logitem_date', $log_date, 'str'),
 						array(':log_id', $log_id, 'int'),
@@ -396,14 +404,9 @@ class log
 						array(':logitem_reps', $set['reps'], 'int'),
 						array(':logitem_sets', $set['sets'], 'int'),
 						array(':logitem_comment', $set['line'], 'str'),
+						array(':is_pr', $is_pr, 'bool'),
 					);
 					$db->query($query, $params);
-					// check its a pr
-					if ($prs[$set['reps']] < $set['weight'])
-					{
-						// new pr !!
-						$this->update_prs($user_id, $log_date, $exercise_id, $set['weight'], $set['reps']);
-					}
 				}
 				// insert into log_exercises 
 				$query = "INSERT INTO log_exercises (logex_date, log_id, user_id, exercise_id, logex_volume, logex_reps, logex_sets, logex_comment)
