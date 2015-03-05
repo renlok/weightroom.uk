@@ -28,6 +28,11 @@ $(function () {
 		}
 	});
 });
+/*
+$.getScript('http://we-link.co.uk/tracker/?page=ajax&do=cal&date=2014-08-20&user_id=1', function(){
+	console.log(external);
+});
+*/
 </script>
 
 <div class="date"></div>
