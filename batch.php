@@ -23,5 +23,12 @@ $db->connect($DbHost, $DbUser, $DbPassword, $DbDatabase);
 require INCDIR . 'class_cron.php';
 $cron = new cron();
 
-$cron->fix_prs_with_id($_GET['exercise_id']);
+if (isset($_GET['exercise_id']))
+{
+	$cron->fix_prs_with_id($_GET['exercise_id']);
+}
+else
+{
+	$cron->fix_prs();
+}
 ?>

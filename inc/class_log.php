@@ -81,12 +81,12 @@ class log
 		global $db, $user;
 
 		// get logs within +/- 40 days
-		$timestamp = strtotime($log_date . ' 00:00:00');
+		$first_day = strtotime($log_date . '-01 00:00:00');
 		$query = "SELECT log_date FROM logs WHERE user_id = :user_id AND log_date > :log_date_last AND log_date < :log_date_next ORDER BY log_date ASC";
 		$params = array(
 			array(':user_id', $user_id, 'int'),
-			array(':log_date_last', date("Y-m-d", $timestamp - 3456000), 'str'),
-			array(':log_date_next', date("Y-m-d", $timestamp + 3456000), 'str')
+			array(':log_date_last', date("Y-m-d", $first_day), 'str'),
+			array(':log_date_next', date("Y-m-d", strtotime($log_date . '-' . date('t', $first_day) . ' 00:00:00')), 'str')
 		);
 		$db->query($query, $params);
 		return $db->fetchall();
@@ -95,9 +95,19 @@ class log
 	public function build_log_list($data)
 	{
 		$logs_data = '';
+		$i = 0;
+		$len = count($data);
 		foreach ($data as $date)
 		{
-			$logs_data .= "\tmoment(\"{$date['log_date']}\").format('YYYY-MM-DD'),\n";
+			if ($i == $len - 1)
+			{
+				$logs_data .= "\t\"{$date['log_date']}\"\n";
+			}
+			else
+			{
+				$logs_data .= "\t\"{$date['log_date']}\",\n";
+			}
+			$i++;
 		}
 		return $logs_data;
 	}
@@ -386,7 +396,7 @@ class log
 					$total_sets += $set['sets'];
 					$is_pr = false;
 					// check its a pr
-					if ($prs[$set['reps']] < $set['weight'])
+					if (floatval($prs[$set['reps']]) < floatval($set['weight']))
 					{
 						$is_pr = true;
 						// new pr !!
@@ -432,7 +442,7 @@ class log
 
 		$query = "SELECT exercise_id FROM exercises WHERE user_id = :user_id AND exercise_name = :exercise_name";
 		$params = array(
-			array(':exercise_name', trim(strtolower($exercise_name)), 'str'),
+			array(':exercise_name', strtolower(trim($exercise_name)), 'str'),
 			array(':user_id', $user_id, 'int')
 		);
 		$db->query($query, $params);
@@ -446,7 +456,7 @@ class log
 			// insert the exercise
 			$query = "INSERT INTO exercises (user_id, exercise_name) VALUES (:user_id, :exercise_name)";
 			$params = array(
-				array(':exercise_name', trim(strtolower($exercise_name)), 'str'),
+				array(':exercise_name', strtolower(trim($exercise_name)), 'str'),
 				array(':user_id', $user_id, 'int')
 			);
 			$db->query($query, $params);
@@ -461,7 +471,7 @@ class log
 
 		$query = "SELECT exercise_id FROM exercises WHERE user_id = :user_id AND exercise_name = :exercise_name";
 		$params = array(
-			array(':exercise_name', strtolower($exercise_name), 'str'),
+			array(':exercise_name', strtolower(trim($exercise_name)), 'str'),
 			array(':user_id', $user_id, 'int')
 		);
 		$db->query($query, $params);
@@ -486,7 +496,7 @@ class log
 				AND pr_date < :log_date
 				GROUP BY pr_reps";
 		$params = array(
-			array(':exercise_name', strtolower($exercise_name), 'str'),
+			array(':exercise_name', strtolower(trim($exercise_name)), 'str'),
 			array(':log_date', $log_date, 'str'),
 			array(':user_id', $user_id, 'int')
 		);
@@ -556,7 +566,7 @@ class log
 				WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name
 				ORDER BY pr_date ASC";
 		$params = array(
-			array(':exercise_name', strtolower($exercise_name), 'str'),
+			array(':exercise_name', strtolower(trim($exercise_name)), 'str'),
 			array(':user_id', $user_id, 'int')
 		);
 		$db->query($query, $params);
@@ -592,7 +602,7 @@ class log
 		// load all exercises
 		$query = "SELECT e.exercise_name, COUNT(logex_id) as COUNT FROM exercises e
 				LEFT JOIN log_exercises l ON (l.exercise_id = e.exercise_id)
-				WHERE user_id = :user_id GROUP BY l.exercise_id";
+				WHERE e.user_id = :user_id GROUP BY l.exercise_id";
 		$params = array(
 			array(':user_id', $user_id, 'int')
 		);

@@ -16,7 +16,7 @@ if ((isset($_GET['do']) && $_GET['do'] == 'list') || !isset($_GET['ex']))
 	{
 		$template->assign_block_vars('exercise', array(
 				'EXERCISE' => ucwords($exercise['exercise_name']),
-				'COUNT' => $log_items['COUNT'],
+				'COUNT' => $exercise['COUNT'],
 				));
 	}
 	$template->set_filenames(array(
@@ -35,7 +35,7 @@ else
 	}
 
 	// get current prs
-	$pr_data = $log->get_prs($user->user_id, date("Y-m-d"), $exercise_name);
+	$pr_true = $pr_data = $log->get_prs($user->user_id, date("Y-m-d"), $exercise_name);
 	//check pr data
 	$highest = 0;
 	for ($i = 10; $i >= 1; $i--)
@@ -51,6 +51,10 @@ else
 		{
 			$pr_data[$i] = '--';
 		}
+		if ($pr_true[$i] > $highest)
+		{
+			$highest = $pr_true[$i];
+		}
 	}
 	
 	$full_pr_data = $log->get_prs_data($user->user_id, $exercise_name);
@@ -58,6 +62,7 @@ else
 	
 	$template->assign_vars(array(
 		'PR_DATA' => $pr_data,
+		'TRUE_PR_DATA' => $pr_true,
 		'GRAPH_DATA' => $graph_data,
 		'EXERCISE' => ucwords($exercise_name)
 		));

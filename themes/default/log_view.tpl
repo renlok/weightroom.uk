@@ -10,8 +10,10 @@
 </style>
 
 <script>
+var arDates = [];
+var calMonths = [];
+
 $(function () {
-	var arDates = [{LOG_DATES}];
 	$('.date').pickmeup({
 		date		: new Date({JSDATE}),
 		flat		: true,
@@ -19,7 +21,14 @@ $(function () {
 		change		: function(e){ window.location.href = '?do=view&page=log&date='+e;},
 		calendars	: 3,
 		render: function(date) {
-			if ($.inArray(moment(date).format('YYYY-MM-DD'), arDates) != -1)
+			var d = moment(date);
+			var m = d.format('YYYY-MM');
+			if ($.inArray(m, calMonths) == -1)
+			{
+				calMonths.push(m);
+				loadlogdata(m);
+			}
+			if ($.inArray(d.format('YYYY-MM-DD'), arDates) != -1)
 			{
 				return {
 					class_name: 'cal_log_date'                         
@@ -28,11 +37,59 @@ $(function () {
 		}
 	});
 });
-/*
-$.getScript('http://we-link.co.uk/tracker/?page=ajax&do=cal&date=2014-08-20&user_id=1', function(){
-	console.log(external);
-});
-*/
+
+function loadlogdata(date)
+{
+	$.ajax({
+		url: "index.php",
+		data: {
+			page: 'ajax',
+			do: 'cal',
+			date: date,
+			user_id: 1
+		},
+		type: 'GET',
+		dataType: 'json',
+		cache: false
+	}).done(function(o) {
+		console.log(DumpObject(o));
+		$.merge(calMonths, o.cals);
+		$.merge(arDates, o.dates);
+		$('.date').pickmeup('update');
+	}).fail(function() {}).always(function() {});
+}
+
+function DumpObject(obj)
+{
+  var od = new Object;
+  var result = "";
+  var len = 0;
+
+  for (var property in obj)
+  {
+    var value = obj[property];
+    if (typeof value == 'string')
+      value = "'" + value + "'";
+    else if (typeof value == 'object')
+    {
+      if (value instanceof Array)
+      {
+        value = "[ " + value + " ]";
+      }
+      else
+      {
+        var ood = DumpObject(value);
+        value = "{ " + ood.dump + " }";
+      }
+    }
+    result += "'" + property + "' : " + value + ", ";
+    len++;
+  }
+  od.dump = result.replace(/, $/, "");
+  od.len = len;
+
+  return od;
+}
 </script>
 
 <div class="date"></div>

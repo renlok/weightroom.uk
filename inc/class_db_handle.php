@@ -76,7 +76,7 @@ class db_handle
 			//$this->lastquery->debugDumpParams();
 		}
 		catch(PDOException $e) {
-			$this->lastquery->debugDumpParams();
+			//$this->lastquery->debugDumpParams();
 			$this->error_handler($e->getMessage());
 		}
 
