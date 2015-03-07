@@ -427,7 +427,7 @@ class log
 							array(':logitem_comment', $set['line'], 'str'),
 							array(':is_pr', (($is_pr == false) ? 0 : 1), 'int'),
 						);
-$db->query($query, $params);
+						$db->query($query, $params);
 					}
 				}
 				// insert into log_exercises 
@@ -614,7 +614,8 @@ $db->query($query, $params);
 		// load all exercises
 		$query = "SELECT e.exercise_name, COUNT(logex_id) as COUNT FROM exercises e
 				LEFT JOIN log_exercises l ON (l.exercise_id = e.exercise_id)
-				WHERE e.user_id = :user_id GROUP BY l.exercise_id";
+				WHERE e.user_id = :user_id GROUP BY l.exercise_id
+				ORDER BY COUNT DESC";
 		$params = array(
 			array(':user_id', $user_id, 'int')
 		);
