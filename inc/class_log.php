@@ -14,14 +14,15 @@ class log
 			array(':user_id', $user_id, 'int')
 		);
 		$db->query($query, $params);
-		$db->fetchall(); // dont know why i seem to need this
+		$log_data = $db->fetchall(); // dont know why i seem to need this
 
 		// setup vars
 		$data = array();
 		$exercise = '';
 		$weight = '';
-		while($item = $db->fetch())
+		for ($i = 0, $count = count($log_data); $i < $count; $i++)
 		{
+			$item = $log_data[$i];
 			if ($weight != $item['log_weight'])
 				$weight = $item['log_weight'];
 			if ($exercise != $item['exercise_name'])
@@ -48,7 +49,7 @@ class log
 
 	public function is_valid_log($user_id, $log_date)
 	{
-        global $db;
+        	global $db;
   
 		$query = "SELECT log_id FROM logs WHERE user_id = :user_id AND log_date = :log_date";
 		$params = array(
@@ -56,10 +57,10 @@ class log
 			array(':log_date', $log_date, 'str')
 		);
 		$db->query($query, $params);
-        if ($db->numrows() == 0)
-        {
-            return false;
-        }
+        	if ($db->numrows() == 0)
+        	{
+        	    return false;
+        	}
 		return true;
 	}
 
@@ -233,6 +234,7 @@ class log
 		$sets = '';
 		$reps_given = false;
 		$waiting_for_reps = false;
+		$comma_reps = false;
 		$sets_given = false;
 		$waiting_for_sets = false;
 		$sets_array = array();
@@ -266,7 +268,7 @@ class log
 				$reps .= $chr;
 				$chrnum = $lettercount - $spacescount;
 				$nextchar = substr($cleanline, $chrnum, 1);
-				if (!is_numeric($nextchar))
+				if (!is_numeric($nextchar) && $nextchar != ',')
 				{
 					$reps_given = true;
 				}
@@ -287,11 +289,12 @@ class log
 				if (!is_numeric($nextchar))
 				{
 					$sets_given = true;
+					$sets = 1;
 				}
 				continue;
 			}
 			// comma format
-			if ($chr == ',' && $reps_given)
+			if ($chr == ',' && !$reps_given && $waiting_for_reps)
 			{
 				// check theres a number after
 				$chrnum = $lettercount - $spacescount;
@@ -299,7 +302,6 @@ class log
 				if (is_numeric($nextchar))
 				{
 					$reps .= $chr;
-					$reps_given = false;
 				}
 			}
 		}
@@ -327,7 +329,7 @@ class log
 		);
 		$db->query($query, $params);
 
-		// detele log and exit function if no data
+		// delete log and exit function if no data
 		if (strlen($log_text) == 0)
 		{
 			$query = "DELETE FROM logs WHERE log_date = :log_date AND user_id = :user_id";
@@ -379,7 +381,7 @@ class log
 
 		$log_id = $this->load_log($user_id, $log_date, 'log_id');
 		$log_id = $log_id['log_id'];
-		// add all of the exersice details
+		// add all of the exercise details
 		foreach ($log_data as $exercise => $item)
 		{
 			// ignore the comment
@@ -391,32 +393,36 @@ class log
 				$prs = $this->get_prs($user_id, $log_date, $exercise);
 				foreach ($item['sets'] as $set)
 				{
-					$total_volume += ($set['weight'] * $set['reps'] * $set['sets']);
-					$total_reps += $set['reps'];
-					$total_sets += $set['sets'];
-					$is_pr = false;
-					// check its a pr
-					if (floatval($prs[$set['reps']]) < floatval($set['weight']))
+					$rep_arr = explode(',', $set['reps']);
+					for ($i = 0, $count = count($rep_arr); $i < $count; $i++)
 					{
-						$is_pr = true;
-						// new pr !!
-						$this->update_prs($user_id, $log_date, $exercise_id, $set['weight'], $set['reps']);
+						$total_volume += ($set['weight'] * $rep_arr[$i] * $set['sets']);
+						$total_reps += $rep_arr[$i];
+						$total_sets += $set['sets'];
+						$is_pr = false;
+						// check its a pr
+						if (floatval($prs[$rep_arr[$i]]) < floatval($set['weight']))
+						{
+							$is_pr = true;
+							// new pr !!
+							$this->update_prs($user_id, $log_date, $exercise_id, $set['weight'], $rep_arr[$i]);
+						}
+						// insert into log_items
+						$query = "INSERT INTO log_items (logitem_date, log_id, user_id, exercise_id, logitem_weight, logitem_reps, logitem_sets, logitem_comment, is_pr)
+									VALUES (:logitem_date, :log_id, :user_id, :exercise_id, :logitem_weight, :logitem_reps, :logitem_sets, :logitem_comment, :is_pr)";
+						$params = array(
+							array(':logitem_date', $log_date, 'str'),
+							array(':log_id', $log_id, 'int'),
+							array(':user_id', $user_id, 'int'),
+							array(':exercise_id', $exercise_id, 'int'),
+							array(':logitem_weight', $set['weight'], 'float'),
+							array(':logitem_reps', $rep_arr[$i], 'int'),
+							array(':logitem_sets', $set['sets'], 'int'),
+							array(':logitem_comment', $set['line'], 'str'),
+							array(':is_pr', (($is_pr == false) ? 0 : 1), 'int'),
+						);
+$db->query($query, $params);
 					}
-					// insert into log_items
-					$query = "INSERT INTO log_items (logitem_date, log_id, user_id, exercise_id, logitem_weight, logitem_reps, logitem_sets, logitem_comment, is_pr)
-								VALUES (:logitem_date, :log_id, :user_id, :exercise_id, :logitem_weight, :logitem_reps, :logitem_sets, :logitem_comment, :is_pr)";
-					$params = array(
-						array(':logitem_date', $log_date, 'str'),
-						array(':log_id', $log_id, 'int'),
-						array(':user_id', $user_id, 'int'),
-						array(':exercise_id', $exercise_id, 'int'),
-						array(':logitem_weight', $set['weight'], 'float'),
-						array(':logitem_reps', $set['reps'], 'int'),
-						array(':logitem_sets', $set['sets'], 'int'),
-						array(':logitem_comment', $set['line'], 'str'),
-						array(':is_pr', $is_pr, 'bool'),
-					);
-					$db->query($query, $params);
 				}
 				// insert into log_exercises 
 				$query = "INSERT INTO log_exercises (logex_date, log_id, user_id, exercise_id, logex_volume, logex_reps, logex_sets, logex_comment)
