@@ -24,6 +24,39 @@ if ((isset($_GET['do']) && $_GET['do'] == 'list') || !isset($_GET['ex']))
 			));
 	$template->display('body');
 }
+elseif (isset($_GET['do']) && $_GET['do'] == 'compare')
+{
+	$exercises_exp = explode(',', $_GET['ex']);
+	$exercises = array(
+		0 => (isset($exercises_exp[0])) ? $exercises_exp[0] : 0,
+		1 => (isset($exercises_exp[1])) ? $exercises_exp[1] : 0,
+		2 => (isset($exercises_exp[2])) ? $exercises_exp[2] : 0,
+		3 => (isset($exercises_exp[3])) ? $exercises_exp[3] : 0,
+		4 => (isset($exercises_exp[4])) ? $exercises_exp[4] : 0,
+		);
+	$reps = (isset($_GET['reps'])) ? intval($_GET['reps']) : 0;
+
+	for ($i = 0, $count = count($exercises); $i < $count; $i++)
+	{
+		if(!$log->is_valid_exercise($user->user_id, $exercises[$i]))
+		{
+			print_message('Invalid exercise', '?page=exercise&do=list');
+			exit;
+		}
+	}
+
+	$full_pr_data = $log->get_prs_data_compare($user->user_id, $reps, $exercises[0], $exercises[1], $exercises[2], $exercises[3], $exercises[4]);
+	$graph_data = $log->build_pr_graph_data($full_pr_data, 'ex');
+	
+	$template->assign_vars(array(
+		'GRAPH_DATA' => $graph_data,
+		'EXERCISE' => ucwords($exercise_name)
+		));
+	$template->set_filenames(array(
+			'body' => 'exercise.tpl'
+			));
+	$template->display('body');
+}
 else
 {
 	$exercise_name = (isset($_GET['ex'])) ? $_GET['ex'] : '';
@@ -56,7 +89,7 @@ else
 			$highest = $pr_true[$i];
 		}
 	}
-	
+
 	$full_pr_data = $log->get_prs_data($user->user_id, $exercise_name);
 	$graph_data = $log->build_pr_graph_data($full_pr_data);
 	

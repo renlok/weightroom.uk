@@ -527,7 +527,7 @@ class log
 		global $db;
 
 		// dont log reps over 10
-		if ($set_reps > 10)
+		if ($set_reps > 10 || $set_reps < 1)
 			return false;
 		// is there an exsiting pr set on that day?
 		$query = "SELECT pr_id FROM exercise_records WHERE user_id = :user_id AND pr_date = :log_date AND exercise_id = :exercise_id AND pr_reps = :pr_reps";
@@ -576,7 +576,7 @@ class log
 		$query = "SELECT pr_weight, pr_reps, pr_date FROM exercise_records pr
 				LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id)
 				WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name
-				ORDER BY pr_date ASC";
+				ORDER BY pr_reps ASC, pr_date ASC";
 		$params = array(
 			array(':exercise_name', strtolower(trim($exercise_name)), 'str'),
 			array(':user_id', $user_id, 'int')
@@ -592,7 +592,48 @@ class log
 		return $prs;
 	}
 
-	public function build_pr_graph_data($data)
+	public function get_prs_data_compare($user_id, $reps, $ex_name1, $ex_name2, $ex_name3 = '', $ex_name4 = '', $ex_name5 = '')
+	{
+		global $db;
+		$extra_sql = '';
+		$params = array();
+		if ($ex_name3 != '')
+		{
+			$extra_sql .= ' OR e.exercise_name = :exercise_name_three';
+			$params[] = array(':exercise_name_three', strtolower(trim($ex_name3)), 'str');
+		}
+		if ($ex_name4 != '')
+		{
+			$extra_sql .= ' OR e.exercise_name = :exercise_name_four';
+			$params[] = array(':exercise_name_four', strtolower(trim($ex_name4)), 'str');
+		}
+		if ($ex_name5 != '')
+		{
+			$extra_sql .= ' OR e.exercise_name = :exercise_name_five';
+			$params[] = array(':exercise_name_five', strtolower(trim($ex_name5)), 'str');
+		}
+		// load all preceeding prs
+		$query = "SELECT pr_weight, pr_reps, pr_date, e.exercise_name FROM exercise_records pr
+				LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id)
+				WHERE pr.user_id = :user_id AND pr.pr_reps = :reps
+				(e.exercise_name = :exercise_name_one OR e.exercise_name = :exercise_name_two $extra_sql)
+				ORDER BY pr_date ASC";
+		$params[] = array(':exercise_name_one', strtolower(trim($ex_name1)), 'str');
+		$params[] = array(':exercise_name_two', strtolower(trim($ex_name2)), 'str');
+		$params[] = array(':reps', $reps, 'int');
+		$params[] = array(':user_id', $user_id, 'int');
+		$db->query($query, $params);
+		$prs = array();
+		while ($row = $db->fetch())
+		{
+			if (!isset($prs[$row['exercise_name']]))
+				$prs[$row['exercise_name']] = array();
+			$prs[$row['exercise_name']][$row['pr_date']] = $row['pr_weight'];
+		}
+		return $prs;
+	}
+
+	public function build_pr_graph_data($data, $type = 'rep')
 	{
 		$graph_data = '';
 		foreach ($data as $rep => $prs)
@@ -603,7 +644,8 @@ class log
 				$date = strtotime($date . ' 00:00:00') * 1000;
 				$graph_data .= "\tdataset.push({x: new Date($date), y: $weight, shape:'circle'});\n";
 			}
-			$graph_data .= "prHistoryChartData.push({\n\tvalues: dataset,\n\tkey: '$rep rep max'\n});\n";
+			$type_string = ($type == 'rep') ? ' rep max' : '';
+			$graph_data .= "prHistoryChartData.push({\n\tvalues: dataset,\n\tkey: '{$rep}{$type_string}'\n});\n";
 		}
 		return $graph_data;
 	}

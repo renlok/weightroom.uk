@@ -26,4 +26,22 @@ function generateToken($length = 20)
     }
     return bin2hex($buf);
 }
+
+function load_header()
+{
+	global $template;
+	$template->set_filenames(array(
+			'body' => 'global_header.tpl'
+			));
+	$template->display('body');
+}
+
+function load_footer()
+{
+	global $template;
+	$template->set_filenames(array(
+			'body' => 'global_footer.tpl'
+			));
+	$template->display('body');
+}
 ?>

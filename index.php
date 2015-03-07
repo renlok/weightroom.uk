@@ -52,7 +52,8 @@ if (!$user->logged_in && isset($_COOKIE['TRACKER_RM_ID']))
 	}
 }
 
-// temp crappy layout, need to add templates
+load_header();
+
 $page = (isset($_GET['page'])) ? $_GET['page'] : '';
 switch ($page)
 {
@@ -73,8 +74,5 @@ switch ($page)
 		break;
 	default:
 }
+load_footer();
 ?>
-<p><a href="?page=login">login</a></p>
-<p><a href="?page=register">register</a></p>
-<p><a href="?page=log">log</a></p>
-<p><a href="?page=exercise&do=list">exercise list</a></p>

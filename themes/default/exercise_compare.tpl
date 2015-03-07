@@ -51,46 +51,7 @@
 </script>
 
 
-<h1>{EXERCISE}</h1>
-
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-  <tr>
-    <td>1RM</td>
-    <td>2RM</td>
-    <td>3RM</td>
-    <td>4RM</td>
-    <td>5RM</td>
-    <td>6RM</td>
-    <td>7RM</td>
-    <td>8RM</td>
-    <td>9RM</td>
-    <td>10RM</td>
-  </tr>
-  <tr>
-    <td>{PR_DATA(1)}</td>
-    <td>{PR_DATA(2)}</td>
-    <td>{PR_DATA(3)}</td>
-    <td>{PR_DATA(4)}</td>
-    <td>{PR_DATA(5)}</td>
-    <td>{PR_DATA(6)}</td>
-    <td>{PR_DATA(7)}</td>
-    <td>{PR_DATA(8)}</td>
-    <td>{PR_DATA(9)}</td>
-    <td>{PR_DATA(10)}</td>
-  </tr>
-  <tr>
-    <td>{TRUE_PR_DATA(1)}</td>
-    <td>{TRUE_PR_DATA(2)}</td>
-    <td>{TRUE_PR_DATA(3)}</td>
-    <td>{TRUE_PR_DATA(4)}</td>
-    <td>{TRUE_PR_DATA(5)}</td>
-    <td>{TRUE_PR_DATA(6)}</td>
-    <td>{TRUE_PR_DATA(7)}</td>
-    <td>{TRUE_PR_DATA(8)}</td>
-    <td>{TRUE_PR_DATA(9)}</td>
-    <td>{TRUE_PR_DATA(10)}</td>
-  </tr>
-</table>
+<h1>Compare: {EXERCISE}</h1>
 
 <div id="prHistoryChart">
     <svg></svg>
