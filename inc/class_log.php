@@ -254,6 +254,7 @@ class log
 			// end of sets just add the comment
 			if (!is_numeric($chr) && !($chr == 'x' || $chr == 'X' || $chr == ','))
 			{
+				$lettercount--;
 				break;
 			}
 			// x detected and no reps have been set yet, set it to wait for reps input
@@ -289,7 +290,7 @@ class log
 				if (!is_numeric($nextchar))
 				{
 					$sets_given = true;
-					$sets = 1;
+					//$sets = 1;
 				}
 				continue;
 			}
@@ -302,10 +303,15 @@ class log
 				if (is_numeric($nextchar))
 				{
 					$reps .= $chr;
+					$comma_reps = true;
 				}
 			}
 		}
-		$line = substr($line, ($lettercount - 1));
+		if ($comma_reps)
+		{
+			$sets = 1;
+		}
+		$line = substr($line, ($lettercount));
 		return array('weight' => $weight,
 					'reps' => ($reps == '') ? 1 : $reps,
 					'sets' => ($sets == '') ? 1 : $sets,
