@@ -10,7 +10,7 @@ class cron
 		$query = "UPDATE log_items SET is_pr = 0";
 		$db->direct_query($query);
 		// load the exercises
-		$query = "SELECT exercise_id, user_id FROM exercises";
+		$query = "SELECT exercise_id, user_id FROM exercises ORDER BY exercise_id ASC";
 		$db->direct_query($query);
 		$data = $db->fetchall();
 		foreach($data as $row)
@@ -23,7 +23,7 @@ class cron
 			$pr = array(1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0, 7 => 0, 8 => 0, 9 => 0, 10 => 0);
 			while($ex_data = $db->fetch())
 			{
-				if ($ex_data['logitem_reps'] <= 10 && $pr[$ex_data['logitem_reps']] < $ex_data['logitem_weight'])
+				if ($ex_data['logitem_reps'] <= 10 && $ex_data['logitem_reps'] > 0 && $pr[$ex_data['logitem_reps']] < $ex_data['logitem_weight'])
 				{
 					$pr[$ex_data['logitem_reps']] = $ex_data['logitem_weight'];
 					$query = "UPDATE log_items SET is_pr = 1 WHERE logitem_id = :logitem_id";
@@ -50,7 +50,7 @@ class cron
 	{
 		global $db;
 		//prepare everything
-		$query = "TRUNCATE exercise_records WHERE exercise_id = :exercise_id";
+		$query = "DELETE FROM exercise_records WHERE exercise_id = :exercise_id";
 		$params = array(
 			array(':exercise_id', $exercise_id, 'int')
 		);
@@ -69,7 +69,7 @@ class cron
 		$pr = array(1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0, 7 => 0, 8 => 0, 9 => 0, 10 => 0);
 		while($ex_data = $db->fetch())
 		{
-			if ($ex_data['logitem_reps'] <= 10 && $pr[$ex_data['logitem_reps']] < $ex_data['logitem_weight'])
+			if ($ex_data['logitem_reps'] <= 10 && $ex_data['logitem_reps'] > 0 && $pr[$ex_data['logitem_reps']] < $ex_data['logitem_weight'])
 			{
 				$pr[$ex_data['logitem_reps']] = $ex_data['logitem_weight'];
 				$query = "UPDATE log_items SET is_pr = 1 WHERE logitem_id = :logitem_id";

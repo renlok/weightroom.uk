@@ -116,6 +116,7 @@ class log
 		// woop
 		$log_data = array();
 		$units = $user->user_data['user_unit']; // 1 = kg, 2 = lb
+		$units = 1; // stored units should always be in kg
 		$log_data['comment'] = '';
 		$log_lines = explode("\n", $log);
 
@@ -308,7 +309,7 @@ class log
 		{
 			$sets = 1;
 		}
-		$line = substr($line, ($lettercount));
+		$line = substr($line, $lettercount);
 		return array('weight' => $weight,
 					'reps' => ($reps == '') ? 1 : $reps,
 					'sets' => ($sets == '') ? 1 : $sets,
@@ -564,6 +565,7 @@ class log
 			);
 			$db->query($query, $params);
 		}
+		// clear out 
 	}
 
 	public function get_prs_data($user_id, $exercise_name)
