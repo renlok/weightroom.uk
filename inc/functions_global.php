@@ -27,21 +27,12 @@ function generateToken($length = 20)
     return bin2hex($buf);
 }
 
-function load_header()
+function load_global_tempalte()
 {
 	global $template;
 	$template->set_filenames(array(
-			'body' => 'global_header.tpl'
+			'header' => 'global_header.tpl',
+			'footer' => 'global_footer.tpl'
 			));
-	$template->display('body');
-}
-
-function load_footer()
-{
-	global $template;
-	$template->set_filenames(array(
-			'body' => 'global_footer.tpl'
-			));
-	$template->display('body');
 }
 ?>

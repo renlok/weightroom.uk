@@ -4,8 +4,7 @@ class log
 	public function get_log_data($user_id, $date)
 	{
 		global $db;
-		$query = "SELECT i.*, ex.exercise_name, lx.logex_volume, lx.logex_reps, lx.logex_sets, lx.logex_comment, l.log_weight FROM log_items As i
-				LEFT JOIN logs As l ON (l.log_id = i.log_id)
+		$query = "SELECT i.*, ex.exercise_name, lx.logex_volume, lx.logex_reps, lx.logex_sets, lx.logex_comment FROM log_items As i
 				LEFT JOIN exercises ex ON (ex.exercise_id = i.exercise_id)
 				LEFT JOIN log_exercises As lx ON (lx.exercise_id = ex.exercise_id AND lx.log_id = i.log_id)
 				WHERE i.logitem_date = :log_date AND i.user_id = :user_id";
@@ -19,12 +18,9 @@ class log
 		// setup vars
 		$data = array();
 		$exercise = '';
-		$weight = '';
 		for ($i = 0, $count = count($log_data); $i < $count; $i++)
 		{
 			$item = $log_data[$i];
-			if ($weight != $item['log_weight'])
-				$weight = $item['log_weight'];
 			if ($exercise != $item['exercise_name'])
 			{
 				$exercise = $item['exercise_name'];
@@ -41,6 +37,7 @@ class log
 				'reps' => $item['logitem_reps'],
 				'sets' => $item['logitem_sets'],
 				'comment' => $item['logitem_comment'],
+				'is_pr' => $item['is_pr'],
 			);
 		}
 
@@ -315,7 +312,7 @@ class log
 		return array('weight' => $weight,
 					'reps' => ($reps == '') ? 1 : $reps,
 					'sets' => ($sets == '') ? 1 : $sets,
-					'line' => $line,);
+					'line' => trim($line));
 	}
 
 	public function store_new_log_data($log_data, $log_text, $log_date, $user_id, $user_weight)
@@ -615,7 +612,7 @@ class log
 		// load all preceeding prs
 		$query = "SELECT pr_weight, pr_reps, pr_date, e.exercise_name FROM exercise_records pr
 				LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id)
-				WHERE pr.user_id = :user_id AND pr.pr_reps = :reps
+				WHERE pr.user_id = :user_id AND pr.pr_reps = :reps AND
 				(e.exercise_name = :exercise_name_one OR e.exercise_name = :exercise_name_two $extra_sql)
 				ORDER BY pr_date ASC";
 		$params[] = array(':exercise_name_one', strtolower(trim($ex_name1)), 'str');

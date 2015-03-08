@@ -3,7 +3,6 @@
 <link href="http://nvd3.org/assets/css/nv.d3.css" rel="stylesheet">
 <script src="http://nvd3.org/assets/js/nv.d3.js"></script>
 
-
 <style>
 #prHistoryChart .nv-lineChart circle.nv-point {
   fill-opacity: 2;
@@ -51,21 +50,25 @@
 </script>
 
 
-<h1>{EXERCISE}</h1>
+<h2>{EXERCISE}</h2>
+<small><a href="?page=exercise&do=list">&larr; Back to list</a></small>
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table width="100%" class="table">
+<thead>
   <tr>
-    <td>1RM</td>
-    <td>2RM</td>
-    <td>3RM</td>
-    <td>4RM</td>
-    <td>5RM</td>
-    <td>6RM</td>
-    <td>7RM</td>
-    <td>8RM</td>
-    <td>9RM</td>
-    <td>10RM</td>
+    <th>1RM</th>
+    <th>2RM</th>
+    <th>3RM</th>
+    <th>4RM</th>
+    <th>5RM</th>
+    <th>6RM</th>
+    <th>7RM</th>
+    <th>8RM</th>
+    <th>9RM</th>
+    <th>10RM</th>
   </tr>
+</thead>
+<tbody>
   <tr>
     <td>{PR_DATA(1)}</td>
     <td>{PR_DATA(2)}</td>
@@ -90,6 +93,7 @@
     <td>{TRUE_PR_DATA(9)}</td>
     <td>{TRUE_PR_DATA(10)}</td>
   </tr>
+</tbody>
 </table>
 
 <div id="prHistoryChart">

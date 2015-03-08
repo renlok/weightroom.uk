@@ -22,28 +22,33 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 	{
 		$template->assign_block_vars('items', array(
 				'EXERCISE' => ucwords($exercise),
-				'VOLUME' => $log_items['total_volume'],
+				'VOLUME' => round($log_items['total_volume'], 2),
 				'REPS' => $log_items['total_reps'],
 				'SETS' => $log_items['total_sets'],
-				'COMMENT' => $log_items['comment'],
+				'COMMENT' => trim($log_items['comment']),
 				));
 		foreach ($log_items['sets'] as $set)
 		{
 			$template->assign_block_vars('items.sets', array(
-					'WEIGHT' => $set['weight'],
+					'WEIGHT' => round($set['weight'], 2),
 					'REPS' => $set['reps'],
 					'SETS' => $set['sets'],
-					'COMMENT' => $set['comment'],
+					'IS_PR' => $set['is_pr'],
+					'COMMENT' => trim($set['comment']),
 					));
 		}
 	}
-	$comment = $log->load_log($user_id, $log_date, 'log_comment');
+	$log_ic = $log->load_log($user_id, $log_date, 'log_comment, log_id, log_weight');
+	/*require INCDIR . 'class_comments.php';
+	$log_comments = new comments();
+	$log_comments->load_log_comments($log_ic['log_id']);
+	$log_comments->print_comments();*/
 	$timestamp = strtotime($log_date . ' 00:00:00');
 	$template->assign_vars(array(
 		'LOG_DATES' => $log->build_log_list($log_list),
-		'B_LOG' => !empty($log_data),
+		'B_LOG' => (!(empty($log_data) && empty($comment['log_comment']))),
 		'JSDATE' => ($timestamp * 1000),
-		'COMMENT' => $comment['log_comment'],
+		'COMMENT' => $log_ic['log_comment'],
 		'DATE' => $log_date,
 		'TOMORROW' => date("Y-m-d", $timestamp + 86400),
 		'YESTERDAY' => date("Y-m-d", $timestamp - 86400),
@@ -51,7 +56,9 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 	$template->set_filenames(array(
 			'body' => 'log_view.tpl'
 			));
+	$template->display('header');
 	$template->display('body');
+	$template->display('footer');
 }
 // to add a log or edit a log
 elseif ($_GET['do'] == 'edit')
@@ -72,7 +79,8 @@ elseif ($_GET['do'] == 'edit')
 	if (isset($_GET['date']))
 	{
 		// check log is real
-		if($log->is_valid_log($user->user_id, $_GET['date']))
+		$valid_log = $log->is_valid_log($user->user_id, $_GET['date']);
+		if($valid_log)
 		{
 			// load log data
 			$log_data = $log->load_log($user->user_id, $_GET['date']);
@@ -89,11 +97,14 @@ elseif ($_GET['do'] == 'edit')
 		'LOG' => (isset($_POST['log'])) ? $_POST['log'] : $log_text,
 		'WEIGHT' => $weight,
 		'DATE' => $log_date,
-		'ERROR' => $error
+		'ERROR' => $error,
+		'VALID_LOG' => $valid_log
 		));
 	$template->set_filenames(array(
 			'body' => 'log_edit.tpl'
 			));
+	$template->display('header');
 	$template->display('body');
+	$template->display('footer');
 }
 ?>

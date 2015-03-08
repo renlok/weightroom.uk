@@ -1,3 +1,8 @@
+<ul class="list-group">
 <!-- BEGIN exercise -->
-	<p><a href="?page=exercise&ex={exercise.EXERCISE}">{exercise.EXERCISE}</a> - {exercise.COUNT}</p>
+	<li class="list-group-item">
+		<span class="badge">{exercise.COUNT}</span>
+		<a href="?page=exercise&ex={exercise.EXERCISE}">{exercise.EXERCISE}</a>
+	</li>
 <!-- END exercise -->
+</ul>

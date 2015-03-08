@@ -52,9 +52,15 @@ if (!$user->logged_in && isset($_COOKIE['TRACKER_RM_ID']))
 	}
 }
 
-load_header();
-
 $page = (isset($_GET['page'])) ? $_GET['page'] : '';
+$do = (isset($_GET['do'])) ? $_GET['do'] : '';
+$template->assign_vars(array(
+	'NOT_LOGGED_IN' => !$user->logged_in,
+	'CURRENT_PAGE' => $page,
+	'CURRENT_DO' => $do
+	));
+load_global_tempalte();
+
 switch ($page)
 {
 	case 'login':
@@ -74,5 +80,4 @@ switch ($page)
 		break;
 	default:
 }
-load_footer();
 ?>

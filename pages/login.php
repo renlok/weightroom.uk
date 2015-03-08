@@ -33,5 +33,7 @@ $template->assign_vars(array(
 $template->set_filenames(array(
 		'body' => 'login.tpl'
 		));
+$template->display('header');
 $template->display('body');
+$template->display('footer');
 ?>

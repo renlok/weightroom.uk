@@ -92,19 +92,43 @@ function DumpObject(obj)
 }
 </script>
 
+<p><- <a href="?do=view&page=log&date={YESTERDAY}">{YESTERDAY}</a> | <strong>{DATE}</strong> | <a href="?do=view&page=log&date={TOMORROW}">{TOMORROW}</a> -></p>
 <div class="date"></div>
 
-<p><- <a href="?do=view&page=log&date={YESTERDAY}">{YESTERDAY}</a> | <strong>{DATE}</strong> | <a href="?do=view&page=log&date={TOMORROW}">{TOMORROW}</a> -></p>
 <!-- IF B_LOG -->
-<p><a href="?do=edit&page=log&date={DATE}">Edit Log</a></p>
+<p class="margintb"><a href="?do=edit&page=log&date={DATE}" class="btn btn-default">Edit Log</a></p>
 <!-- ELSE -->
-<p><a href="?do=edit&page=log&date={DATE}">Add Log</a></p>
+<p class="margintb"><a href="?do=edit&page=log&date={DATE}" class="btn btn-default">Add Log</a></p>
 <!-- ENDIF -->
-<p>{COMMENT}</p>
+<!-- IF COMMENT ne '' -->
+<div class="panel panel-default">
+	<div class="panel-body">
+		{COMMENT}
+	</div>
+</div>
+<!-- ENDIF -->
 <!-- BEGIN items -->
-	<h1><a href="?page=exercise&ex={items.EXERCISE}">{items.EXERCISE}</a></h1><p>Volume: {items.VOLUME} - Reps: {items.REPS} - Sets: {items.SETS}</p>
+	<h3><a href="?page=exercise&ex={items.EXERCISE}">{items.EXERCISE}</a></h3>
+	<p class="logrow">Volume: <span class="heavy">{items.VOLUME}</span>kg - Reps: <span class="heavy">{items.REPS}</span> - Sets: <span class="heavy">{items.SETS}</span></p>
+	<table class="table">
+	<tbody>
 	<!-- BEGIN sets -->
-		<p>{items.sets.WEIGHT} x {items.sets.REPS} x {items.sets.SETS}<!-- IF items.sets.COMMENT ne '' --> - {items.sets.COMMENT}<!-- ENDIF --></p>
+		<tr<!-- IF items.sets.IS_PR --> class="alert alert-success"<!-- ENDIF --><!-- IF items.sets.REPS eq 0 --> class="alert alert-danger"<!-- ENDIF -->>
+			<td class="tdpr">
+				<!-- IF items.sets.IS_PR --><span class="glyphicon glyphicon-star" aria-hidden="true"></span><!-- ELSE -->&nbsp;<!-- ENDIF -->
+			</td>
+			<td class="logrow">
+				<!-- IF items.sets.REPS eq 0 --><del><!-- ENDIF --><span class="heavy">{items.sets.WEIGHT}</span>kg x <span class="heavy">{items.sets.REPS}</span> x <span class="heavy">{items.sets.SETS}</span><!-- IF items.sets.REPS eq 0 --></del><!-- ENDIF -->
+				<!-- IF items.sets.COMMENT ne '' --><div class="well well-sm">{items.sets.COMMENT}</div><!-- ENDIF -->
+			</td>
+			<td class="tdpr2">
+				<!-- IF items.sets.IS_PR --><span class="heavy">{items.sets.REPS} RM</span><!-- ELSE -->&nbsp;<!-- ENDIF -->
+			</td>
+		</tr>
 	<!-- END sets -->
-	<p>{items.COMMENT}</p>
+		<tr>
+			<td colspan="3">{items.COMMENT}</td>
+		</tr>
+	</tbody>
+	</table>
 <!-- END items -->
