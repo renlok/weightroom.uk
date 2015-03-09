@@ -1,15 +1,36 @@
 <script src="https://code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
 <link href="http://nazar-pc.github.io/PickMeUp/css/pickmeup.css" rel="stylesheet">
 <script src="http://nazar-pc.github.io/PickMeUp/js/jquery.pickmeup.js"></script>
-<script src="http://momentjs.com/downloads/moment.min.js"></script>
+<script src="http://momentjs.com/downloads/moment.js"></script>
+<script src="js/jCollapsible.js"></script>
 
 <style>
 .cal_log_date{
 	background-color:#F90;
 }
+#log_comments, .comment_child {
+	list-style: none;
+}
+.comment_child {
+	padding-left:10px;
+}
+.comment_child li div {
+	border-left: solid 1px #ddd;
+	padding-left: 10px;
+}
+.comment h6 {
+	margin-bottom: 0px;
+}
+.jcollapsible:hover, .jcollapsible:visited, .jcollapsible {
+	text-decoration: none;
+}
 </style>
 
 <script>
+$(document).ready(function(){
+	$('#log_comments').collapsible({xoffset:'-30', symbolhide:'[-]', symbolshow:'[+]'});
+});
+
 var arDates = [];
 var calMonths = [];
 
@@ -132,3 +153,9 @@ function DumpObject(obj)
 	</tbody>
 	</table>
 <!-- END items -->
+{LOG_COMMENTS}
+<form>
+<input type="hidden" name="log_id" value="{LOG_ID}">
+<input type="hidden" name="csrftoken" value="{_CSRFTOKEN}">
+<textarea class="form-control" rows="3" placeholder="Comment"></textarea>
+</form>

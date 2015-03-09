@@ -39,10 +39,12 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 		}
 	}
 	$log_ic = $log->load_log($user_id, $log_date, 'log_comment, log_id, log_weight');
-	/*require INCDIR . 'class_comments.php';
+	require INCDIR . 'class_comments.php';
 	$log_comments = new comments();
 	$log_comments->load_log_comments($log_ic['log_id']);
-	$log_comments->print_comments();*/
+	$log_comments->print_comments();
+	//print_r($log_comments);
+	
 	$timestamp = strtotime($log_date . ' 00:00:00');
 	$template->assign_vars(array(
 		'LOG_DATES' => $log->build_log_list($log_list),
@@ -52,6 +54,8 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 		'DATE' => $log_date,
 		'TOMORROW' => date("Y-m-d", $timestamp + 86400),
 		'YESTERDAY' => date("Y-m-d", $timestamp - 86400),
+		'LOG_ID' => $log_ic['log_id'],
+		'LOG_COMMENTS' => $log_comments->comments
 		));
 	$template->set_filenames(array(
 			'body' => 'log_view.tpl'
