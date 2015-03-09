@@ -2,7 +2,7 @@
 $error = false;
 
 // login
-if (isset($_POST['action']) && isset($_POST['username']) && isset($_POST['password']))
+if (isset($_POST['username']) && isset($_POST['password']))
 {
 	if ($user->user_login($_POST['username'], $_POST['password']))
 	{
