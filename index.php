@@ -79,5 +79,13 @@ switch ($page)
 		include PAGEDIR . 'ajax.php';
 		break;
 	default:
+		if ($user->logged_in)
+		{
+			include PAGEDIR . 'log.php';
+		}
+		else
+		{
+			include PAGEDIR . 'login.php';
+		}
 }
 ?>
