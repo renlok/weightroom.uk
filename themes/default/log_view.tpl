@@ -157,5 +157,10 @@ function DumpObject(obj)
 <form>
 <input type="hidden" name="log_id" value="{LOG_ID}">
 <input type="hidden" name="csrftoken" value="{_CSRFTOKEN}">
-<textarea class="form-control" rows="3" placeholder="Comment"></textarea>
+<div class="form-group">
+	<textarea class="form-control" rows="3" placeholder="Comment"></textarea>
+</div>
+<div class="form-group">
+	<button type="submit" class="btn btn-default">Post</button>
+</div>
 </form>
