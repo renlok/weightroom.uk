@@ -332,6 +332,13 @@ class log
 			array(':user_id', $user_id, 'int')
 		);
 		$db->query($query, $params);
+		// clear out old pr data
+		$query = "DELETE FROM exercise_records WHERE pr_date = :log_date AND user_id = :user_id";
+		$params = array(
+			array(':log_date', $log_date, 'str'),
+			array(':user_id', $user_id, 'int')
+		);
+		$db->query($query, $params);
 
 		// delete log and exit function if no data
 		if (strlen($log_text) == 0)
@@ -527,45 +534,41 @@ class log
 		// dont log reps over 10
 		if ($set_reps > 10 || $set_reps < 1)
 			return false;
-		// is there an exsiting pr set on that day?
-		$query = "SELECT pr_id FROM exercise_records WHERE user_id = :user_id AND pr_date = :log_date AND exercise_id = :exercise_id AND pr_reps = :pr_reps";
+
+		// insert new entry
+		$query = "INSERT INTO exercise_records (exercise_id, user_id, pr_date, pr_weight, pr_reps)
+				VALUES (:exercise_id, :user_id, :pr_date, :pr_weight, :pr_reps)";
+		$params = array(
+			array(':exercise_id', $exercise_id, 'int'),
+			array(':user_id', $user_id, 'int'),
+			array(':pr_date', $log_date, 'str'),
+			array(':pr_weight', $set_weight, 'float'),
+			array(':pr_reps', $set_reps, 'int')
+		);
+		$db->query($query, $params);
+
+		// delete future logs that have lower prs
+		$query = "DELETE FROM exercise_records WHERE user_id = :user_id AND pr_date > :log_date AND exercise_id = :exercise_id AND pr_reps = :pr_reps AND pr_weight < :pr_weight";
 		$params = array(
 			array(':exercise_id', $exercise_id, 'int'),
 			array(':log_date', $log_date, 'str'),
 			array(':user_id', $user_id, 'int'),
-			array(':pr_reps', $set_reps, 'int')
+			array(':pr_reps', $set_reps, 'int'),
+			array(':pr_weight', $set_weight, 'float')
 		);
 		$db->query($query, $params);
-		// check if it needs a new entry
-		if ($db->numrows() == 0)
-		{
-			// insert new entry
-			$query = "INSERT INTO exercise_records (exercise_id, user_id, pr_date, pr_weight, pr_reps)
-					VALUES (:exercise_id, :user_id, :pr_date, :pr_weight, :pr_reps)";
-			$params = array(
-				array(':exercise_id', $exercise_id, 'int'),
-				array(':user_id', $user_id, 'int'),
-				array(':pr_date', $log_date, 'str'),
-				array(':pr_weight', $set_weight, 'float'),
-				array(':pr_reps', $set_reps, 'int')
-			);
-			$db->query($query, $params);
-		}
-		else
-		{
-			// update old entry
-			$query = "UPDATE exercise_records SET pr_weight = :pr_weight
-					WHERE exercise_id = :exercise_id AND user_id = :user_id AND pr_date = :pr_date AND pr_reps = :pr_reps";
-			$params = array(
-				array(':exercise_id', $exercise_id, 'int'),
-				array(':user_id', $user_id, 'int'),
-				array(':pr_date', $log_date, 'str'),
-				array(':pr_weight', $set_weight, 'float'),
-				array(':pr_reps', $set_reps, 'int')
-			);
-			$db->query($query, $params);
-		}
-		// clear out 
+		$query = "UPDATE log_items SET is_pr = 0 WHERE user_id = :user_id AND logitem_date > :log_date AND exercise_id = :exercise_id AND logitem_reps = :pr_reps AND logitem_weight < :pr_weight";
+		$params = array(
+			array(':exercise_id', $exercise_id, 'int'),
+			array(':log_date', $log_date, 'str'),
+			array(':user_id', $user_id, 'int'),
+			array(':pr_reps', $set_reps, 'int'),
+			array(':pr_weight', $set_weight, 'float')
+		);
+		$db->query($query, $params);
+
+		// add past prs if needed
+		// ... TO DO
 	}
 
 	public function get_prs_data($user_id, $exercise_name)
