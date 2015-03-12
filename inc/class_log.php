@@ -568,7 +568,35 @@ class log
 		$db->query($query, $params);
 
 		// add past prs if needed
-		// ... TO DO
+		$query = "SELECT log_id, logitem_weight FROM log_items WHERE user_id = :user_id AND logitem_date < :log_date AND exercise_id = :exercise_id AND logitem_reps = :pr_reps AND logitem_weight > :pr_weight AND is_pr = 0";
+		$params = array(
+			array(':exercise_id', $exercise_id, 'int'),
+			array(':log_date', $log_date, 'str'),
+			array(':user_id', $user_id, 'int'),
+			array(':pr_reps', $set_reps, 'int'),
+			array(':pr_weight', $set_weight, 'float')
+		);
+		$db->query($query, $params);
+		while ($row = $db->fetch())
+		{
+			// update is_pr flag
+			$query = "UPDATE log_items SET is_pr = 1 WHERE log_id = :log_id";
+			$params = array(
+				array(':log_id', $row['log_id'], 'int')
+			);
+			$db->query($query, $params);
+			// insert pr data
+			$query = "INSERT INTO exercise_records (exercise_id, user_id, pr_date, pr_weight, pr_reps)
+					VALUES (:exercise_id, :user_id, :pr_date, :pr_weight, :pr_reps)";
+			$params = array(
+				array(':exercise_id', $exercise_id, 'int'),
+				array(':user_id', $user_id, 'int'),
+				array(':pr_date', $log_date, 'str'),
+				array(':pr_weight', $row['logitem_weight'], 'float'),
+				array(':pr_reps', $set_reps, 'int')
+			);
+			$db->query($query, $params);
+		}
 	}
 
 	public function get_prs_data($user_id, $exercise_name)
