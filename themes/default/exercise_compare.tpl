@@ -109,8 +109,9 @@
 	</form>
 </div>
 
+<!-- IF B_SELECTED -->
 <h1>Compare: {EXERCISE}</h1>
-
+<!-- ENDIF -->
 <div id="prHistoryChart">
     <svg></svg>
 </div>

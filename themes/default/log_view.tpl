@@ -153,6 +153,7 @@ function DumpObject(obj)
 	</tbody>
 	</table>
 <!-- END items -->
+<!-- IF B_LOG -->
 {LOG_COMMENTS}
 <form>
 <input type="hidden" name="log_id" value="{LOG_ID}">
@@ -164,3 +165,4 @@ function DumpObject(obj)
 	<button type="submit" class="btn btn-default">Post</button>
 </div>
 </form>
+<!-- ENDIF -->

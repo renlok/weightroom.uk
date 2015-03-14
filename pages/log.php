@@ -97,12 +97,21 @@ elseif ($_GET['do'] == 'edit')
 			$weight = '';
 		}
 	}
+
+	// build exercise list for editor hints
+	$exercises = $log->list_exercises($user->user_id);
+	$elist = '';
+	foreach ($exercises as $exercise)
+	{
+		$elist .= "[\"{$exercise['exercise_name']}\", {$exercise['COUNT']}],";
+	}
 	$template->assign_vars(array(
 		'LOG' => (isset($_POST['log'])) ? $_POST['log'] : $log_text,
 		'WEIGHT' => $weight,
 		'DATE' => $log_date,
 		'ERROR' => $error,
-		'VALID_LOG' => $valid_log
+		'VALID_LOG' => $valid_log,
+		'EXERCISE_LIST' => substr($elist, 0, -1)
 		));
 	$template->set_filenames(array(
 			'body' => 'log_edit.tpl'

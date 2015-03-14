@@ -46,7 +46,8 @@ if (isset($_GET['do']) && $_GET['do'] == 'compare')
 	}
 	
 	$template->assign_vars(array(
-		'GRAPH_DATA' => $graph_data
+		'GRAPH_DATA' => $graph_data,
+		'B_SELECTED' => (count($exercises_exp) > 0)
 		));
 	$template->set_filenames(array(
 			'body' => 'exercise_compare.tpl'

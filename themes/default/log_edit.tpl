@@ -2,110 +2,120 @@
 <script src="http://codemirror.net/lib/codemirror.js"></script>
 <link rel="stylesheet" href="http://codemirror.net/lib/codemirror.css">
 <script src="http://codemirror.net/addon/mode/overlay.js"></script>
+<script src="http://codemirror.net/addon/hint/show-hint.js"></script>
 <script>
-CodeMirror.defineMode("logger", function(config, parserConfig) {
-    var loggerOverlay = {
-        token: function(stream, o) {
-            var ch = stream.peek(),
-                s = stream.string;
-            if (o.error) {
-                stream.skipToEnd();
-                return "error";
-            }
-            if (ch == "#" && (stream.pos == 0 || /\s/.test(stream.string.charAt(stream.pos - 1)))) {
-                stream.skipToEnd();
-                $FORMAT.entry()
-                o.erow = true;
-                o.hayErow = false;
-                return "ENAME";
-            }
-            if (stream.match(/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'>\[\]<\s]+)/, true)) {
-                return "YT";
-            }
-            if (o.erow) {
-                var cls;
-                for (var i = 0; i < $FORMAT.next.length; i++) {
-                    if (cls = $FORMAT.next[i].call($FORMAT, stream, o)) {
-                        if (o.erow) {
-                            return cls;
-                        } else {
-                            break;
-                        }
-                    }
-                }
-                if (!o.erow) {} else {
-                    o.error = true;
-                    stream.skipToEnd();
-                    return 'error';
-                }
-            }
-            stream.next();
-            return null;
-        },
-        startState: function() {
-            return {
-                erow: 0,
-                error: false,
-                hayErow: false
-            };
-        }
-    }
-	return CodeMirror.overlayMode(CodeMirror.getMode(config, parserConfig.backdrop || "text/html"), loggerOverlay);
-});
-var WxRxS = {
-    next: null,
-    W: function(s, o) {
-        if (s.sol()) {
-            if (s.match(/^\s*\d+(?:\.\d+)?(\s*,\s*\d+(?:\.\d+)?)+/i, true)) {
-                o.hayErow = true;
-                this.next = [this.W, this.WWR, this.C];
-                return "W";
-            } else if (s.match(/^\s*\d+(\.\d{1,2})?(\s*kg|\s*lbs?)?/i, true) || s.match(/^\s*BW(\s*[\+\-]\s*\d+(\.\d{1,2})?(\s*(kg|lbs?))?)?/i, true)) {
-                o.hayErow = true;
-                this.next = [this.W, this.RR, this.R, this.C];
-                return "W";
-            }
-            if (o.hayErow) {
-                o.erow = null;
-            }
-        }
-    },
-    WWR: function(s, o) {
-        if (s.match(/^\s*[x×]\s*\d+/, true)) {
-            this.next = [this.W, this.C];
-            return "R";
-        }
-    },
-    RR: function(s, o) {
-        if (s.match(/^\s*[x×]\s*\d+(\s*,\s*\d+)+/, true)) {
-            this.next = [this.W, this.C];
-            return "RR";
-        }
-    },
-    R: function(s, o) {
-        if (s.match(/^\s*[x×]\s*\d+/, true)) {
-            this.next = [this.W, this.S, this.C];
-            return "R";
-        }
-    },
-    S: function(s, o) {
-        if (s.match(/^\s*[x×]\s*[1-9]\d*/, true)) {
-            this.next = [this.W, this.C];
-            return "S";
-        }
-    },
-    C: function(s, o) {
-        if (s.match(/^\s+.*/, true)) {
-            this.next = [this.W];
-            return "C";
-        }
-    },
-    entry: function(s) {
-        this.next = [this.W];
-    }
-};
-var $FORMAT = WxRxS;
 $(document).ready(function(){
+	CodeMirror.registerHelper("hint", "logger", CodeMirror.registerHelper("hint","myScript",function(cm,options){
+    var cur=cm.getCursor(),token=cm.getTokenAt(cur);
+    return {
+      list:["test","testing"],
+      from: CodeMirror.Pos(cur.line, token.start),
+            to: CodeMirror.Pos(cur.line, token.end)
+    }
+  }););
+	CodeMirror.defineMode("logger", function(config, parserConfig) {
+		var loggerOverlay = {
+			token: function(stream, o) {
+				var ch = stream.peek(),
+					s = stream.string;
+				if (o.error) {
+					stream.skipToEnd();
+					return "error";
+				}
+				if (ch == "#" && (stream.pos == 0 || /\s/.test(stream.string.charAt(stream.pos - 1)))) {
+					stream.skipToEnd();
+					$FORMAT.entry()
+					o.erow = true;
+					o.hayErow = false;
+					return "ENAME";
+				}
+				if (stream.match(/^(?:http(?:s)?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:(?:watch)?\?(?:.*&)?v(?:i)?=|(?:embed|v|vi|user)\/))([^\?&\"'>\[\]<\s]+)/, true)) {
+					return "YT";
+				}
+				if (o.erow) {
+					var cls;
+					for (var i = 0; i < $FORMAT.next.length; i++) {
+						if (cls = $FORMAT.next[i].call($FORMAT, stream, o)) {
+							if (o.erow) {
+								return cls;
+							} else {
+								break;
+							}
+						}
+					}
+					if (!o.erow) {} else {
+						o.error = true;
+						stream.skipToEnd();
+						return 'error';
+					}
+				}
+				stream.next();
+				return null;
+			},
+			startState: function() {
+				return {
+					erow: 0,
+					error: false,
+					hayErow: false
+				};
+			}
+		}
+		return CodeMirror.overlayMode(CodeMirror.getMode(config, parserConfig.backdrop || "text/html"), loggerOverlay);
+	});
+	var WxRxS = {
+		next: null,
+		W: function(s, o) {
+			if (s.sol()) {
+				if (s.match(/^\s*\d+(?:\.\d+)?(\s*,\s*\d+(?:\.\d+)?)+/i, true)) {
+					o.hayErow = true;
+					this.next = [this.W, this.WWR, this.C];
+					return "W";
+				} else if (s.match(/^\s*\d+(\.\d{1,2})?(\s*kg|\s*lbs?)?/i, true) || s.match(/^\s*BW(\s*[\+\-]\s*\d+(\.\d{1,2})?(\s*(kg|lbs?))?)?/i, true)) {
+					o.hayErow = true;
+					this.next = [this.W, this.RR, this.R, this.C];
+					return "W";
+				}
+				if (o.hayErow) {
+					o.erow = null;
+				}
+			}
+		},
+		WWR: function(s, o) {
+			if (s.match(/^\s*[x×]\s*\d+/, true)) {
+				this.next = [this.W, this.C];
+				return "R";
+			}
+		},
+		RR: function(s, o) {
+			if (s.match(/^\s*[x×]\s*\d+(\s*,\s*\d+)+/, true)) {
+				this.next = [this.W, this.C];
+				return "RR";
+			}
+		},
+		R: function(s, o) {
+			if (s.match(/^\s*[x×]\s*\d+/, true)) {
+				this.next = [this.W, this.S, this.C];
+				return "R";
+			}
+		},
+		S: function(s, o) {
+			if (s.match(/^\s*[x×]\s*[1-9]\d*/, true)) {
+				this.next = [this.W, this.C];
+				return "S";
+			}
+		},
+		C: function(s, o) {
+			if (s.match(/^\s+.*/, true)) {
+				this.next = [this.W];
+				return "C";
+			}
+		},
+		entry: function(s) {
+			this.next = [this.W];
+		}
+	};
+	var $ELIST = [{EXERCISE_LIST}];
+	var $FORMAT = WxRxS;
 	var editor = CodeMirror.fromTextArea($("#log").get(0), {mode: "logger"});
 });
 </script>
