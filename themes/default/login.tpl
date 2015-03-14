@@ -1,5 +1,5 @@
 <!-- IF B_ERROR -->
-<p class="bg-danger">Username or password incorrect.</p>
+<p class="bg-danger header">Username or password incorrect.</p>
 <!-- ENDIF -->
 <form class="form-horizontal" action="?page=login" method="post">
   <div class="form-group">

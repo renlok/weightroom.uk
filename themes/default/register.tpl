@@ -1,5 +1,5 @@
 <!-- IF B_ERROR -->
-<p class="bg-danger">{ERROR}</p>
+<p class="bg-danger header">{ERROR}</p>
 <!-- ENDIF -->
 <form class="form-horizontal" action="?page=register" method="post">
   <div class="form-group">

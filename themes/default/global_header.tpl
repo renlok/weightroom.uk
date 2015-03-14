@@ -4,7 +4,10 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Tracker</title>
+    <title>Weight Room - Track dem gains</title>
+	<link rel="icon" type="image/x-icon" href="http://weightroom.uk//favicon.ico">
+	<meta http-equiv="Content-Language" content="en"> 
+	<meta name="keywords" content="training journal weight powerlifting strength power tracking weightlifting">
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">

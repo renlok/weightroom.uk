@@ -48,6 +48,7 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 	$timestamp = strtotime($log_date . ' 00:00:00');
 	$template->assign_vars(array(
 		'LOG_DATES' => $log->build_log_list($log_list),
+		'USER_ID' => $user_id,
 		'B_LOG' => (!(empty($log_data) && empty($comment['log_comment']))),
 		'JSDATE' => ($timestamp * 1000),
 		'COMMENT' => $log_ic['log_comment'],

@@ -21,7 +21,7 @@ if (isset($_POST['action']) && isset($_POST['username']) && isset($_POST['passwo
 			$params = array();
 			$params[] = array(':code', $_POST['invcode'], 'str');
 			$db->query($query, $params);
-			if ($db->numrows() > 0)
+			if ($db->numrows() == 0)
 			{
 				$error_msg = "Invalid invite code";
 				$error = true;
@@ -52,7 +52,7 @@ if (isset($_POST['action']) && isset($_POST['username']) && isset($_POST['passwo
 		else
 		{
 			// The $hash variable will contain the hash of the password
-			require INCDIR . 'PasswordHash.php';
+			include_once INCDIR . 'PasswordHash.php';
 			$hasher = new PasswordHash(8, false);
 			$hash = $hasher->HashPassword($password);
 

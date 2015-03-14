@@ -39,7 +39,7 @@ class user
 	{
 		global $db, $_SESSION;
 
-		include INCDIR . 'PasswordHash.php';
+		include_once INCDIR . 'PasswordHash.php';
 		$phpass = new PasswordHash(8, false);
 		$query = "SELECT user_id, user_hash, user_pass FROM users WHERE user_name = :user_name";
 		$params = array();

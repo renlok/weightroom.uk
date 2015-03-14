@@ -67,49 +67,16 @@ function loadlogdata(date)
 			page: 'ajax',
 			do: 'cal',
 			date: date,
-			user_id: 1
+			user_id: {USER_ID}
 		},
 		type: 'GET',
 		dataType: 'json',
 		cache: false
 	}).done(function(o) {
-		console.log(DumpObject(o));
 		$.merge(calMonths, o.cals);
 		$.merge(arDates, o.dates);
 		$('.date').pickmeup('update');
 	}).fail(function() {}).always(function() {});
-}
-
-function DumpObject(obj)
-{
-  var od = new Object;
-  var result = "";
-  var len = 0;
-
-  for (var property in obj)
-  {
-    var value = obj[property];
-    if (typeof value == 'string')
-      value = "'" + value + "'";
-    else if (typeof value == 'object')
-    {
-      if (value instanceof Array)
-      {
-        value = "[ " + value + " ]";
-      }
-      else
-      {
-        var ood = DumpObject(value);
-        value = "{ " + ood.dump + " }";
-      }
-    }
-    result += "'" + property + "' : " + value + ", ";
-    len++;
-  }
-  od.dump = result.replace(/, $/, "");
-  od.len = len;
-
-  return od;
 }
 </script>
 
