@@ -9,7 +9,7 @@ if (isset($_POST['action']) && isset($_POST['username']) && isset($_POST['passwo
 	$password = $_POST["password"];
 	if ($needinv)
 	{
-		if (!isset($_POST['invcode']) || strlen($_POST['invcode']) != 32)
+		if (!isset($_POST['invcode']) || strlen($_POST['invcode']) != 6)
 		{
 			$error_msg = "You need a valid invite code";
 			$error = true;
