@@ -7,6 +7,9 @@
 #prHistoryChart .nv-lineChart circle.nv-point {
   fill-opacity: 2;
 }
+#prHistoryChart {
+  height: 700px;
+}
 </style>
 <script>
     function prHistoryData() {
