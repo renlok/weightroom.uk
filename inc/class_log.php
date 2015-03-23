@@ -389,6 +389,11 @@ class log
 			);
 			$db->query($query, $params);
 		}
+		else
+		{
+			// update future logs
+			$this->update_user_weights ($user_id, $log_date, $user_weight);
+		}
 
 		$log_id = $this->load_log($user_id, $log_date, 'log_id');
 		$log_id = $log_id['log_id'];
@@ -459,6 +464,30 @@ class log
 				$db->query($query, $params);
 			}
 		}
+	}
+
+	private function update_user_weights ($user_id, $log_date, $user_weight)
+	{
+		global $db;
+
+		// get old weight
+		$query = "SELECT log_weight FROM logs WHERE log_date < :log_date AND user_id = :user_id LIMIT 1";
+		$params = array(
+			array(':log_date', $log_date, 'str'),
+			array(':user_id', $user_id, 'int')
+		);
+		$db->query($query, $params);
+		$old_weight = $db->result('log_weight');
+
+		// update log entries with new weight
+		$query = "UPDATE logs SET log_weight = :log_weight WHERE log_date > :log_date AND user_id = :user_id AND log_weight = :old_weight";
+		$params = array(
+			array(':log_weight', $user_weight, 'float'),
+			array(':old_weight', $old_weight, 'float'),
+			array(':log_date', $log_date, 'str'),
+			array(':user_id', $user_id, 'int')
+		);
+		$db->query($query, $params);
 	}
 
 	public function get_exercise_id($user_id, $exercise_name)
