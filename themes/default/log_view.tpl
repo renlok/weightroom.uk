@@ -24,6 +24,13 @@
 .jcollapsible:hover, .jcollapsible:visited, .jcollapsible {
 	text-decoration: none;
 }
+.calender-cont {
+	width: 640px;
+	text-align: center;
+}
+.user-info {
+	width: 150px;
+}
 </style>
 
 <script>
@@ -80,13 +87,36 @@ function loadlogdata(date)
 }
 </script>
 
-<p><- <a href="?do=view&page=log&date={YESTERDAY}">{YESTERDAY}</a> | <strong>{DATE}</strong> | <a href="?do=view&page=log&date={TOMORROW}">{TOMORROW}</a> -></p>
-<div class="date"></div>
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-md-3 col-md-push-9">
+		<div class="user-info">
+			<h4>{USERNAME} {BADGES}</h4>
+			<p><small>Member since: {JOINED}</small></p>
+<!-- IF B_NOSELF -->
+	<!-- IF B_FOLLOWING -->
+			<p class="btn btn-default"><a href="?do=view&page=log&date={DATE}&user_id={USER_ID}&follow=false">Unfollow <img src="img/user_delete.png"></a></p>
+	<!-- ELSE -->
+			<p class="btn btn-default"><a href="?do=view&page=log&date={DATE}&user_id={USER_ID}&follow=true">Follow <img src="img/user_add.png"></a></p>
+	<!-- ENDIF -->
+<!-- ENDIF -->
+		</div>
+		</div>
+		<div class="col-md-9 col-md-pull-3">
+		<div class="calender-cont">
+			<p><- <a href="?do=view&page=log&date={YESTERDAY}&user_id={USER_ID}">{YESTERDAY}</a> | <strong>{DATE}</strong> | <a href="?do=view&page=log&date={TOMORROW}&user_id={USER_ID}">{TOMORROW}</a> -></p>
+			<div class="date"></div>
+		</div>
+		</div>
+	</div>
+</div>
 
-<!-- IF B_LOG -->
+<!-- IF ! B_NOSELF -->
+	<!-- IF B_LOG -->
 <p class="margintb"><a href="?do=edit&page=log&date={DATE}" class="btn btn-default">Edit Log</a></p>
-<!-- ELSE -->
+	<!-- ELSE -->
 <p class="margintb"><a href="?do=edit&page=log&date={DATE}" class="btn btn-default">Add Log</a></p>
+	<!-- ENDIF -->
 <!-- ENDIF -->
 <!-- IF COMMENT ne '' -->
 <div class="panel panel-default">

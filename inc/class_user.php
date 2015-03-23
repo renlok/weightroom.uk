@@ -58,7 +58,7 @@ class user
 			// Update "last login" fields in users table
 			$query = "UPDATE users SET user_lastlogin = :date WHERE user_id = :user_id";
 			$params = array();
-			$params[] = array(':date', gmdate("Y-m-d H:i:s"), 'str');
+			$params[] = array(':date', gmdate("Y-m-d"), 'str');
 			$params[] = array(':user_id', $user_data['user_id'], 'int');
 			$db->query($query, $params);
 			return true;
@@ -102,6 +102,61 @@ class user
             return false;
         }
 		return true;
+    }
+
+	public function is_following($user_id) 
+    { 
+        global $db;
+
+        $query = "SELECT follow_id FROM user_follows WHERE user_id = :user_id AND follow_user_id = :follow_user_id";
+		$params = array(
+			array(':user_id', $this->user_id, 'int'),
+			array(':follow_user_id', $user_id, 'int'),
+		);
+		$db->query($query, $params);
+        if ($db->numrows() == 0)
+        {
+            return false;
+        }
+		return true;
+    }
+
+	public function get_user_data($user_id) 
+    { 
+        global $db;
+
+        $query = "SELECT * FROM users WHERE user_id = :user_id";
+		$params = array(
+			array(':user_id', $user_id, 'int')
+		);
+		$db->query($query, $params);
+
+		return $db->result();
+    }
+
+	public function deletefollower($user_id) 
+    { 
+        global $db;
+
+        $query = "DELETE FROM user_follows WHERE user_id = :user_id AND follow_user_id = :follow_user_id";
+		$params = array(
+			array(':user_id', $this->user_id, 'int'),
+			array(':follow_user_id', $user_id, 'int'),
+		);
+		$db->query($query, $params);
+    }
+
+	public function addfollower($user_id) 
+    { 
+        global $db;
+
+        $query = "INSERT INTO user_follows VALUES (NULL, :user_id, :follow_user_id, :date)";
+		$params = array(
+			array(':user_id', $this->user_id, 'int'),
+			array(':follow_user_id', $user_id, 'int'),
+			array(':date', date("Y-m-d"), 'str'),
+		);
+		$db->query($query, $params);
     }
 }
 ?>

@@ -13,6 +13,26 @@ $log_date = (isset($_GET['date'])) ? $_GET['date'] : date("Y-m-d");
 if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 {
 	$user_id = (isset($_GET['user_id'])) ? $_GET['user_id'] : $user->user_id;
+
+	if (!$user->is_valid_user($user_id))
+	{
+		print_message('No user exists', '?page=log');
+		exit;
+	}
+
+	// deal with the follows
+	if (isset($_GET['follow']))
+	{
+		if ($_GET['follow'] == 'false')
+		{
+			$user->deletefollower($user_id);
+		}
+		elseif ($_GET['follow'] == 'true')
+		{
+			$user->addfollower($user_id);
+		}
+	}
+
 	$log_list = $log->load_log_list($user_id, $log_date);
 
 	$log_data = $log->get_log_data($user_id, $log_date);
@@ -44,11 +64,26 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 	$log_comments->load_log_comments($log_ic['log_id']);
 	$log_comments->print_comments();
 	//print_r($log_comments);
+	// get user info
+	$user_data = $user->get_user_data($user_id);
+	//create badges
+	$badges = '';
+	if ($user_data['user_beta'] == 1)
+		$badges .= '<img src="img/bug.png" alt="Beta tester">';
+	if ($user_data['user_admin'] == 1)
+		$badges .= '<img src="img/star.png" alt="Adminnosaurus Rex">';
 	
 	$timestamp = strtotime($log_date . ' 00:00:00');
 	$template->assign_vars(array(
 		'LOG_DATES' => $log->build_log_list($log_list),
 		'USER_ID' => $user_id,
+		'USERNAME' => $user_data['user_name'],
+		
+		'B_NOSELF' => ($user_id != $user->user_id),
+		'B_FOLLOWING' => $user->is_following($user_id),
+		'BADGES' => $badges,
+		'JOINED' => $user_data['user_joined'],
+		
 		'B_LOG' => (!(empty($log_data) && empty($comment['log_comment']))),
 		'JSDATE' => ($timestamp * 1000),
 		'COMMENT' => $log_ic['log_comment'],

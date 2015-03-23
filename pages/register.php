@@ -59,12 +59,12 @@ if (isset($_POST['action']) && isset($_POST['username']) && isset($_POST['passwo
 			if (strlen($hash) >= 20)
 			{
 				// register that bitch!
-				$query = "INSERT INTO users (user_name, user_pass, user_email, user_hash) VALUES (:user_name, :user_pass, :user_email, :user_hash)";
+				$query = "INSERT INTO users (user_name, user_pass, user_email, user_hash, user_joined) VALUES (:user_name, :user_pass, :user_email, :user_hash, :user_joined)";
 				$params = array(
 					array(':user_name', $_POST['username'], 'str'),
 					array(':user_pass', $hash, 'str'),
 					array(':user_email', $_POST['email'], 'str'),
-					array(':user_hash', get_hash(), 'str'),
+					array(':user_joined', date("Y-m-d"), 'str'),
 				);
 				$db->query($query, $params);
 				// invite code was used
