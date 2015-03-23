@@ -405,11 +405,18 @@ class log
 				foreach ($item['sets'] as $set)
 				{
 					$rep_arr = explode(',', $set['reps']);
+					$temp_sets = $set['sets'];
 					for ($i = 0, $count = count($rep_arr); $i < $count; $i++)
 					{
+						// for comma format add the sets together
+						if ($rep_arr[$i] == $rep_arr[$i+1])
+						{
+							$temp_sets++;
+							continue;
+						}
 						$total_volume += ($set['weight'] * $rep_arr[$i] * $set['sets']);
 						$total_reps += $rep_arr[$i];
-						$total_sets += $set['sets'];
+						$total_sets += $temp_sets;
 						$is_pr = false;
 						// check its a pr
 						if (floatval($prs[$rep_arr[$i]]) < floatval($set['weight']))
@@ -428,11 +435,12 @@ class log
 							array(':exercise_id', $exercise_id, 'int'),
 							array(':logitem_weight', $set['weight'], 'float'),
 							array(':logitem_reps', $rep_arr[$i], 'int'),
-							array(':logitem_sets', $set['sets'], 'int'),
+							array(':logitem_sets', $temp_sets, 'int'),
 							array(':logitem_comment', $set['line'], 'str'),
 							array(':is_pr', (($is_pr == false) ? 0 : 1), 'int'),
 						);
 						$db->query($query, $params);
+						$temp_sets = $set['sets'];
 					}
 				}
 				// insert into log_exercises 

@@ -70,11 +70,33 @@ elseif ($_GET['do'] == 'edit')
 {
 	$error = false;
 	$log_text = '';
-	$weight = (isset($_POST['weight'])) ? floatval($_POST['weight']) : $user->user_data['user_weight'];
 	// has anything been submitted?
 	if (isset($_POST['log']))
 	{
-		$log_text = $_POST['log'];
+		// get user weight
+		if (!isset($_POST['weight']))
+		{
+			$query = "SELECT log_weight FROM logs WHERE user_id = :user_id AND log_date < :log_date LIMIT 1";
+			$params = array(
+				array(':user_id', $user_id, 'int'),
+				array(':log_date', $_GET['date'], 'str')
+			);
+			$db->query($query, $params);
+			if ($db->numrows() == 1)
+			{
+				$weight = $db->result('log_weight');
+			}
+			else
+			{
+				$weight = $user->user_data['user_weight'];
+			}
+		}
+		else
+		{
+			$weight = floatval($_POST['weight']);
+		}
+		// set log text
+		$log_text = trim($_POST['log']);
 		// parse the log
 		$log_data = $log->parse_new_log($log_text, $weight);
 		$log->store_new_log_data($log_data, $log_text, $log_date, $user->user_id, $weight);
