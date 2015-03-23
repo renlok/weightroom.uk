@@ -471,7 +471,7 @@ class log
 		global $db;
 
 		// get old weight
-		$query = "SELECT log_weight FROM logs WHERE log_date < :log_date AND user_id = :user_id LIMIT 1";
+		$query = "SELECT log_weight FROM logs WHERE log_date < :log_date AND user_id = :user_id ORDER BY log_date DESC LIMIT 1";
 		$params = array(
 			array(':log_date', $log_date, 'str'),
 			array(':user_id', $user_id, 'int')
