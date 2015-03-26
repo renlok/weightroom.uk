@@ -1,18 +1,60 @@
 <script src="https://code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
 <script src="http://codemirror.net/lib/codemirror.js"></script>
 <link rel="stylesheet" href="http://codemirror.net/lib/codemirror.css">
+<link rel="stylesheet" href="http://codemirror.net/addon/hint/show-hint.css">
 <script src="http://codemirror.net/addon/mode/overlay.js"></script>
 <script src="http://codemirror.net/addon/hint/show-hint.js"></script>
 <script>
-$(document).ready(function(){
-	CodeMirror.registerHelper("hint", "logger", CodeMirror.registerHelper("hint","myScript",function(cm,options){
-    var cur=cm.getCursor(),token=cm.getTokenAt(cur);
-    return {
-      list:["test","testing"],
-      from: CodeMirror.Pos(cur.line, token.start),
-            to: CodeMirror.Pos(cur.line, token.end)
+var $ELIST = [{EXERCISE_LIST}];
+function getHints(cm) {
+    
+    var cur = cm.getCursor(),
+        token = cm.getTokenAt(cur),
+        str = token.string,
+        ustr = $.trim(token.string.substr(1)),
+        arr = [],
+        list = [];
+    if (str.indexOf("#") !== 0) {
+        return null;
     }
-  }););
+    for (var i = 0; i < $ELIST.length; i++) {
+        if ((ustr == "") || $ELIST[i][0].toLowerCase().indexOf(ustr.toLowerCase()) > -1) {
+            arr.push($ELIST[i]);
+        }
+    }
+    arr.sort();
+    for (i = 0; i < arr.length; i++) {
+        list.push("#" + arr[i][0] + " ");
+    }
+    var t = "#" + ustr + " ";
+    if (arr.length && (ustr != "")) {
+        if (arr.length < 2 || list[0].toLowerCase() != t.toLowerCase()) {
+            list.unshift({
+                displayText: "Create: " + ustr,
+                text: t
+            });
+        }
+    } else {
+        if (list.length == 1) {
+            list.unshift({
+                displayText: "Create: " + ustr,
+                text: t
+            });
+        }
+    }
+    var o = {
+        list: list,
+        from: CodeMirror.Pos(cur.line, token.start),
+        to: CodeMirror.Pos(cur.line, token.end)
+    };
+    return o;
+}
+
+function sortEList(a, b) {
+    return b[1] - a[1];
+}
+$(document).ready(function(){
+	CodeMirror.registerHelper("hint", "logger", getHints);
 	CodeMirror.defineMode("logger", function(config, parserConfig) {
 		var loggerOverlay = {
 			token: function(stream, o) {
@@ -114,9 +156,16 @@ $(document).ready(function(){
 			this.next = [this.W];
 		}
 	};
-	var $ELIST = [{EXERCISE_LIST}];
 	var $FORMAT = WxRxS;
-	var editor = CodeMirror.fromTextArea($("#log").get(0), {mode: "logger"});
+	CodeMirror.commands.autocomplete = function(cm) {
+		cm.showHint({hint: CodeMirror.hint.logger});
+	}
+	var editor = CodeMirror.fromTextArea(
+        $("#log").get(0),
+        {
+            mode: "logger",
+            extraKeys: {"Ctrl": "autocomplete"}
+        });
 });
 </script>
  <style>
