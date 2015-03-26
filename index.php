@@ -81,7 +81,7 @@ switch ($page)
 	default:
 		if ($user->logged_in)
 		{
-			include PAGEDIR . 'log.php';
+			include PAGEDIR . 'dash.php';
 		}
 		else
 		{
