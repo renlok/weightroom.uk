@@ -109,11 +109,11 @@ elseif ($_GET['do'] == 'edit')
 	if (isset($_POST['log']))
 	{
 		// get user weight
-		if (!isset($_POST['weight']))
+		if (!isset($_POST['weight']) || empty($_POST['weight']) || intval($_POST['weight']) == 0)
 		{
 			$query = "SELECT log_weight FROM logs WHERE user_id = :user_id AND log_date < :log_date LIMIT 1";
 			$params = array(
-				array(':user_id', $user_id, 'int'),
+				array(':user_id', $user->user_id, 'int'),
 				array(':log_date', $_GET['date'], 'str')
 			);
 			$db->query($query, $params);

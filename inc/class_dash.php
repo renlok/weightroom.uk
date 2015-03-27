@@ -2,12 +2,14 @@
 class dash {
 	public function get_dash_data ($user_id, $page = 1)
 	{
+		global $db;
 		$limit = 50;
 		$offset = ($page - 1) * $limit;
 		$query = "SELECT l.log_date, u.user_name, u.user_id FROM logs l
-					LEFT JOIN user_follows f ON (l.user_id = f.user_id)
-					LEFT JOIN users u ON (u.user_id = l.user_id)
-					WHERE f.user_follows = :user_id
+					LEFT JOIN user_follows f ON (l.user_id = f.follow_user_id)
+					LEFT JOIN users u ON (u.user_id = f.follow_user_id)
+					WHERE f.user_id = :user_id
+					ORDER BY l.log_date DESC
 					LIMIT :offset, :limit";
 		$params = array();
 		$params[] = array(':user_id', $user_id, 'int');
@@ -26,7 +28,7 @@ class dash {
 			}
 			else
 			{
-				$date2 = new DateTime($datearr[0]);
+				$date2 = new DateTime($row['log_date']);
 				$interval = $date1->diff($date2);
 				if ($interval->y) { $row['posted'] = $interval->format("%y years ago"); }
 				elseif ($interval->m) { $row['posted'] = $interval->format("%m months ago"); }

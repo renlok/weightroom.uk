@@ -23,7 +23,7 @@
   <body>
 	<div class="container-fluid" id="header">
 	  <ul class="nav nav-pills">
-		  <li role="presentation"><a href="#">Home</a></li>
+		  <li role="presentation"><a href="?">Home</a></li>
 	  <!-- IF NOT_LOGGED_IN -->
 		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'login' --> class="active"<!-- ENDIF -->><a href="?page=login">Login</a></li>
 		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'register' --> class="active"<!-- ENDIF -->><a href="?page=register">Register</a></li>

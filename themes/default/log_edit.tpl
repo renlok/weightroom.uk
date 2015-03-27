@@ -166,6 +166,15 @@ $(document).ready(function(){
             mode: "logger",
             extraKeys: {"Ctrl": "autocomplete"}
         });
+	editor.on("keyup", function(cm, event) {
+		//only show hits for alpha characters
+		if(!editor.state.completionActive && (event.keyCode > 65 && event.keyCode < 92)) {
+			if(timeout) clearTimeout(timeout);
+			var timeout = setTimeout(function() {
+				CodeMirror.showHint(cm, CodeMirror.hint.logger, {completeSingle: false});
+			}, 150);
+		}
+	});
 });
 </script>
  <style>
