@@ -78,6 +78,9 @@ switch ($page)
 	case 'ajax':
 		include PAGEDIR . 'ajax.php';
 		break;
+	case 'demo':
+		include PAGEDIR . 'demo.php';
+		break;
 	default:
 		if ($user->logged_in)
 		{
