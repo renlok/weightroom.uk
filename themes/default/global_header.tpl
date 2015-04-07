@@ -27,6 +27,7 @@
 	  <!-- IF NOT_LOGGED_IN -->
 		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'login' --> class="active"<!-- ENDIF -->><a href="?page=login">Login</a></li>
 		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'register' --> class="active"<!-- ENDIF -->><a href="?page=register">Register</a></li>
+		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'demo' --> class="active"<!-- ENDIF -->><a href="?page=demo">What is this?</a></li>
 	  <!-- ELSE -->
 		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'log' --> class="active"<!-- ENDIF -->><a href="?page=log">View Log</a></li>
 		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'exercise' && (CURRENT_DO eq 'list' || CURRENT_DO eq '') --> class="active"<!-- ENDIF -->><a href="?page=exercise&do=list">Exercise List</a></li>

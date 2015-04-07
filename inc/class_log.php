@@ -490,6 +490,21 @@ class log
 		$db->query($query, $params);
 	}
 
+	public function get_user_weight ($user_id, $log_date)
+	{
+		global $db;
+
+		// get old weight
+		$query = "SELECT log_weight FROM logs WHERE log_date < :log_date AND user_id = :user_id ORDER BY log_date DESC LIMIT 1";
+		$params = array(
+			array(':log_date', $log_date, 'str'),
+			array(':user_id', $user_id, 'int')
+		);
+		$db->query($query, $params);
+		$old_weight = $db->result('log_weight');
+		return $old_weight;
+	}
+
 	public function get_exercise_id($user_id, $exercise_name)
 	{
 		global $db;
