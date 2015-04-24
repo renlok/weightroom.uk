@@ -414,7 +414,7 @@ class log
 					for ($i = 0, $count = count($rep_arr); $i < $count; $i++)
 					{
 						// for comma format add the sets together
-						if ($rep_arr[$i] == $rep_arr[$i+1])
+						if (isset($rep_arr[$i+1]) && $rep_arr[$i] == $rep_arr[$i+1])
 						{
 							$temp_sets++;
 							continue;
