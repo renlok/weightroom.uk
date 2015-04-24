@@ -424,7 +424,7 @@ class log
 						$total_sets += $temp_sets;
 						$is_pr = false;
 						// check its a pr
-						if (floatval($prs[$rep_arr[$i]]) < floatval($set['weight']))
+						if (!isset($prs[$rep_arr[$i]]) || floatval($prs[$rep_arr[$i]]) < floatval($set['weight']))
 						{
 							$is_pr = true;
 							// new pr !!

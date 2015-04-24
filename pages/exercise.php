@@ -91,6 +91,10 @@ else
 	{
 		if (isset($pr_data[$i]))
 		{
+			if ($pr_true[$i] > $highest)
+			{
+				$highest = $pr_true[$i];
+			}
 			if ($pr_data[$i] < $highest)
 			{
 				$pr_data[$i] = $highest . '*';
@@ -99,10 +103,6 @@ else
 		else
 		{
 			$pr_data[$i] = '--';
-		}
-		if ($pr_true[$i] > $highest)
-		{
-			$highest = $pr_true[$i];
 		}
 	}
 
