@@ -53,7 +53,7 @@
 </script>
 
 
-<h2>{EXERCISE}</h2>
+<h2>{EXERCISE} <small><!-- IF TYPE eq 'weekly' -->Weekly maxes<!-- ELSE -->PRs<!-- ENDIF --></small></h2>
 <small><a href="?page=exercise&do=list">&larr; Back to list</a></small>
 
 <table width="100%" class="table">
@@ -102,3 +102,9 @@
 <div id="prHistoryChart">
     <svg></svg>
 </div>
+
+<!-- IF TYPE eq 'weekly' -->
+<a href="?page=exercise&ex={EXERCISE}">View Prs</a>
+<!-- ELSE -->
+<a href="?page=exercise&ex={EXERCISE}&do=weekly">View weekly maxes</a>
+<!-- ENDIF -->

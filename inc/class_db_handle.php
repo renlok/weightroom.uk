@@ -28,7 +28,7 @@ class db_handle
         $this->CHARSET = $CHARSET;
 		try {
 			// MySQL with PDO_MYSQL
-			$this->pdo = new PDO("mysql:host=$DbHost;dbname=$DbDatabase;charset=$CHARSET", $DbUser, $DbPassword);
+			$this->pdo = new PDO("mysql:host=$DbHost;dbname=$DbDatabase;charset =$CHARSET", $DbUser, $DbPassword);
 			// set error reporting up
 			$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 			// actually use prepared statements
@@ -70,7 +70,7 @@ class db_handle
 			//$this->lastquery->bindParam(':table', $this->DBPrefix . $table, PDO::PARAM_STR); // must always be set
 			foreach ($params as $val)
 			{
-				$this->lastquery->bindParam($val[0], $val[1], @$val[2], @$val[3], @$val[4]);
+				$this->lastquery->bindParam($val[0], $val[1], $val[2]);
 			}
 			$this->lastquery->execute();
 			//$this->lastquery->debugDumpParams();
@@ -112,15 +112,9 @@ class db_handle
 	{
 		try {
 			// set fetchquery
-			if ($this->fetchquery == NULL)
-			{
-				$this->fetchquery = $this->lastquery;
-			}
-			if ($method == 'FETCH_ASSOC') $result = $this->fetchquery->fetchAll(PDO::FETCH_ASSOC);
-			if ($method == 'FETCH_BOTH') $result = $this->fetchquery->fetchAll(PDO::FETCH_BOTH);
-			if ($method == 'FETCH_NUM') $result = $this->fetchquery->fetchAll(PDO::FETCH_NUM);
-			// clear fetch query
-			$this->fetchquery = NULL;
+			if ($method == 'FETCH_ASSOC') $result = $this->lastquery->fetchAll(PDO::FETCH_ASSOC);
+			if ($method == 'FETCH_BOTH') $result = $this->lastquery->fetchAll(PDO::FETCH_BOTH);
+			if ($method == 'FETCH_NUM') $result = $this->lastquery->fetchAll(PDO::FETCH_NUM);
 			return $result;
 		}
 		catch(PDOException $e) {
@@ -189,25 +183,6 @@ class db_handle
 		}
 	}
 
-	// for when an unknown number of params are needed to be set i.e in a foreach loop
-	public function get_param_number($i)
-	{
-		$abc = 'abcdefghijklmnopqrstuvwxyz'; // because params dont like numbers
-		$abc = str_split($abc);
-		if ($i < 25)
-		{
-			$string = $abc[$i];
-		}
-		else
-		{
-			$first = floor($i/26) - 1;
-			$string = $abc[$first];
-			$second = $i - (($first + 1)*26);
-			$string .= $abc[$second];
-		}
-		return $string;
-	}
-
 	private function build_params($params)
 	{
 		$PDO_constants = array(
@@ -234,7 +209,7 @@ class db_handle
 		// DO SOMETHING
 		//$this->error = $error;
 		$this->error = debug_backtrace();
-		print_r($this->error);
+		//print_r($this->error);
 	}
 
 	// close everything down

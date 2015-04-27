@@ -654,7 +654,7 @@ class log
 	public function get_prs_data($user_id, $exercise_name)
 	{
 		global $db;
-		// load all preceeding prs
+		// load all preceding prs
 		$query = "SELECT pr_weight, pr_reps, pr_date FROM exercise_records pr
 				LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id)
 				WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name
@@ -670,6 +670,30 @@ class log
 			if (!isset($prs[$row['pr_reps']]))
 				$prs[$row['pr_reps']] = array();
 			$prs[$row['pr_reps']][$row['pr_date']] = $row['pr_weight'];
+		}
+		return $prs;
+	}
+
+	public function get_prs_data_weekly($user_id, $exercise_name)
+	{
+		global $db;
+		// load all preceding prs
+		$query = "SELECT MAX(logitem_weight) as logitem_weight, logitem_reps, logitem_date FROM log_items pr
+				LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id) 
+				WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name AND pr.logitem_reps != 0
+				GROUP BY logitem_reps, WEEK
+				ORDER BY logitem_reps ASC , logitem_date ASC";
+		$params = array(
+			array(':exercise_name', strtolower(trim($exercise_name)), 'str'),
+			array(':user_id', $user_id, 'int')
+		);
+		$db->query($query, $params);
+		$prs = array();
+		while ($row = $db->fetch())
+		{
+			if (!isset($prs[$row['logitem_reps']]))
+				$prs[$row['logitem_reps']] = array();
+			$prs[$row['logitem_reps']][$row['logitem_date']] = $row['logitem_weight'];
 		}
 		return $prs;
 	}

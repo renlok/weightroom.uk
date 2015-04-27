@@ -44,7 +44,7 @@ if (isset($_GET['do']) && $_GET['do'] == 'compare')
 				'COUNT' => $exercise['COUNT'],
 				));
 	}
-	
+
 	$template->assign_vars(array(
 		'GRAPH_DATA' => $graph_data,
 		'B_SELECTED' => (count($exercises_exp) > 0)
@@ -68,6 +68,57 @@ elseif ((isset($_GET['do']) && $_GET['do'] == 'list') || !isset($_GET['ex']))
 	}
 	$template->set_filenames(array(
 			'body' => 'exercise_list.tpl'
+			));
+	$template->display('header');
+	$template->display('body');
+	$template->display('footer');
+}
+// weekly maxes
+elseif ((isset($_GET['do']) && $_GET['do'] == 'weekly'))
+{
+	$exercise_name = (isset($_GET['ex'])) ? $_GET['ex'] : '';
+
+	if(!$log->is_valid_exercise($user->user_id, $exercise_name))
+	{
+		print_message('Invalid exercise', '?page=exercise&do=list');
+		exit;
+	}
+
+	// get current prs
+	$pr_true = $pr_data = $log->get_prs($user->user_id, date("Y-m-d"), $exercise_name);
+	//check pr data
+	$highest = 0;
+	for ($i = 10; $i >= 1; $i--)
+	{
+		if (isset($pr_data[$i]))
+		{
+			if ($pr_true[$i] > $highest)
+			{
+				$highest = $pr_true[$i];
+			}
+			if ($pr_data[$i] < $highest)
+			{
+				$pr_data[$i] = $highest . '*';
+			}
+		}
+		else
+		{
+			$pr_data[$i] = '--';
+		}
+	}
+
+	$full_pr_data = $log->get_prs_data_weekly($user->user_id, $exercise_name);
+	$graph_data = $log->build_pr_graph_data($full_pr_data);
+
+	$template->assign_vars(array(
+		'PR_DATA' => $pr_data,
+		'TRUE_PR_DATA' => $pr_true,
+		'GRAPH_DATA' => $graph_data,
+		'EXERCISE' => ucwords($exercise_name),
+		'TYPE' => 'weekly'
+		));
+	$template->set_filenames(array(
+			'body' => 'exercise.tpl'
 			));
 	$template->display('header');
 	$template->display('body');
@@ -113,7 +164,8 @@ else
 		'PR_DATA' => $pr_data,
 		'TRUE_PR_DATA' => $pr_true,
 		'GRAPH_DATA' => $graph_data,
-		'EXERCISE' => ucwords($exercise_name)
+		'EXERCISE' => ucwords($exercise_name),
+		'TYPE' => 'prs'
 		));
 	$template->set_filenames(array(
 			'body' => 'exercise.tpl'
