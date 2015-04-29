@@ -40,6 +40,7 @@ class comments
      */
     private function format_comment($comment, $depth)
     {
+		global $_SESSION;
 		$this->comments .= $this->get_tabs($depth);
 		$datearr = explode(' ', $comment['comment_date']);
 		$today = date('Y-m-d');
@@ -57,7 +58,8 @@ class comments
 			elseif ($interval->m) { $posted_on = $interval->format("%m months ago"); }
 			elseif ($interval->d) { $posted_on = $interval->format("%d days ago"); }
 		}
-		$this->comments .= "<li><div class=\"comment\"><h6>{$comment['user_name']} <small>{$posted_on}</small></h6>{$comment['comment']}</div></li>\n";
+		$message_box = "<div class=\"comment-reply-box\" style=\"display:none;\"><form action=\"?do=view&page=log&date={$comment['log_date']}&user_id={$comment['user_id']}#comments\" method=\"post\"><input type=\"hidden\" name=\"log_id\" value=\"{$comment['log_id']}\"><input type=\"hidden\" name=\"parent_id\" value=\"{$comment['comment_id']}\"><input type=\"hidden\" name=\"csrftoken\" value=\"{$_SESSION['csrftoken']}\"><div class=\"form-group\"><textarea class=\"form-control\" rows=\"3\" placeholder=\"Comment\" name=\"comment\" maxlength=\"500\"></textarea><p><small>Max. 500 characters</small></p></div><div class=\"form-group\"><button type=\"submit\" class=\"btn btn-default\">Post</button></div></form></div>";
+		$this->comments .= "<li><div class=\"comment\"><h6>{$comment['user_name']} <small>{$posted_on}</small></h6>{$comment['comment']}<p class=\"small\"><a href=\"#\" class=\"reply\">reply</a></p>$message_box</div></li>\n";
     }
     
     /**
@@ -68,7 +70,7 @@ class comments
     {
 		$tabs = $this->get_tabs($depth);
 		if ($depth == 0)
-			$this->comments .= $tabs . "<ul id=\"log_comments\">\n";
+			$this->comments .= $tabs . "<ul class=\"log_comments\">\n";
 		else
 			$this->comments .= $tabs . "<ul class=\"comment_child\">\n";
         foreach ($comment as $c)
@@ -106,6 +108,20 @@ class comments
 		//print_r($db->fetchall());
 		//print_r($data);
 		$this->construct_comments($data);
+	}
+
+	public function make_comment($parent_id, $comment, $log_id, $log_date, $user_id)
+	{
+		global $db;
+		$query = "INSERT INTO log_comments (parent_id, comment, log_id, log_date, user_id) VALUES (:parent_id, :comment, :log_id, :log_date, :user_id)";
+		$params = array(
+			array(':parent_id', $parent_id, 'int'),
+			array(':comment', $comment, 'str'),
+			array(':log_date', $log_date, 'str'),
+			array(':log_id', $log_id, 'int'),
+			array(':user_id', $user_id, 'int'),
+		);
+		$db->query($query, $params);
 	}
 }
 ?>

@@ -49,8 +49,23 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 				));
 		foreach ($log_items['sets'] as $set)
 		{
+			if ($set['is_bw'] == 0)
+			{
+				$weight = round($set['weight'], 2);
+			}
+			else
+			{
+				if ($set['weight'] != 0)
+				{
+					$weight = 'BW' . round($set['weight'], 2);
+				}
+				else
+				{
+					$weight = 'BW';
+				}
+			}
 			$template->assign_block_vars('items.sets', array(
-					'WEIGHT' => round($set['weight'], 2),
+					'WEIGHT' => $weight,
 					'REPS' => $set['reps'],
 					'SETS' => $set['sets'],
 					'IS_PR' => $set['is_pr'],
@@ -59,11 +74,21 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 		}
 	}
 	$log_ic = $log->load_log($user_id, $log_date, 'log_comment, log_id, log_weight');
+
 	require INCDIR . 'class_comments.php';
 	$log_comments = new comments();
+	// deal with the comments
+	$commenting = false;
+	if (isset($_POST['log_id']))
+	{
+		$parent_id = (intval($_POST['parent_id']) == 0) ? NULL : $_POST['parent_id'];
+		$log_comments->make_comment($parent_id, $_POST['comment'], $_POST['log_id'], $log_date, $user_id);
+		$commenting = true;
+	}
+
 	$log_comments->load_log_comments($log_ic['log_id']);
 	$log_comments->print_comments();
-	//print_r($log_comments);
+
 	// get user info
 	$user_data = $user->get_user_data($user_id);
 	//create badges
@@ -78,20 +103,21 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 		'LOG_DATES' => $log->build_log_list($log_list),
 		'USER_ID' => $user_id,
 		'USERNAME' => $user_data['user_name'],
-		
+
 		'B_NOSELF' => ($user_id != $user->user_id),
 		'B_FOLLOWING' => $user->is_following($user_id),
 		'BADGES' => $badges,
 		'JOINED' => $user_data['user_joined'],
-		
-		'B_LOG' => (!(empty($log_data) && empty($comment['log_comment']))),
+
+		'B_LOG' => (!(empty($log_data) && empty($log_ic['log_comment']))),
 		'JSDATE' => ($timestamp * 1000),
 		'COMMENT' => $log_ic['log_comment'],
 		'DATE' => $log_date,
 		'TOMORROW' => date("Y-m-d", $timestamp + 86400),
 		'YESTERDAY' => date("Y-m-d", $timestamp - 86400),
 		'LOG_ID' => $log_ic['log_id'],
-		'LOG_COMMENTS' => $log_comments->comments
+		'LOG_COMMENTS' => $log_comments->comments,
+		'COMMENTING' => $commenting
 		));
 	$template->set_filenames(array(
 			'body' => 'log_view.tpl'
@@ -134,7 +160,23 @@ elseif ($_GET['do'] == 'edit')
 		$log_text = trim($_POST['log']);
 		// parse the log
 		$log_data = $log->parse_new_log($log_text, $weight);
-		$log->store_new_log_data($log_data, $log_text, $log_date, $user->user_id, $weight);
+		$new_prs = $log->store_new_log_data($log_data, $log_text, $log_date, $user->user_id, $weight);
+		// check if there are prs
+		if (count($new_prs) > 0)
+		{
+			$pr_string = '';
+			foreach ($new_prs as $exercise => $reps)
+			{
+				foreach ($reps as $rep => $weights)
+				{
+					foreach ($weights as $weight)
+					{
+						$pr_string .= "<p>You have set a new <strong>$exercise {$rep}RM</strong> of <strong>$weight</strong> kg</p>";
+					}
+				}
+			}
+			print_message($pr_string);
+		}
 		print_message('Log processed', '?page=log&do=view&date=' . $log_date);
 	}
 	// editing a log? try to load the old data

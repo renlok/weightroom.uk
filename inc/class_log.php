@@ -38,6 +38,7 @@ class log
 				'sets' => $item['logitem_sets'],
 				'comment' => $item['logitem_comment'],
 				'is_pr' => $item['is_pr'],
+				'is_bw' => $item['is_bw'],
 			);
 		}
 
@@ -46,7 +47,7 @@ class log
 
 	public function is_valid_log($user_id, $log_date)
 	{
-        	global $db;
+        global $db;
   
 		$query = "SELECT log_id FROM logs WHERE user_id = :user_id AND log_date = :log_date";
 		$params = array(
@@ -54,10 +55,10 @@ class log
 			array(':log_date', $log_date, 'str')
 		);
 		$db->query($query, $params);
-        	if ($db->numrows() == 0)
-        	{
-        	    return false;
-        	}
+		if ($db->numrows() == 0)
+		{
+			return false;
+		}
 		return true;
 	}
 
@@ -84,7 +85,7 @@ class log
 		$params = array(
 			array(':user_id', $user_id, 'int'),
 			array(':log_date_last', date("Y-m-d", $first_day), 'str'),
-			array(':log_date_next', date("Y-m-d", strtotime($log_date . '-' . date('t', $first_day) . ' 00:00:00')), 'str')
+			array(':log_date_next', date("Y-m-d", strtotime("+1 month", $first_day)), 'str')
 		);
 		$db->query($query, $params);
 		return $db->fetchall();
@@ -171,7 +172,7 @@ class log
 					// check if units were used
 					if ($matches[0] == 'BW')
 					{
-						$weight = $bodyweight;
+						$weight = 0;
 					}
 					else
 					{
@@ -181,12 +182,12 @@ class log
 							$correct_weight = $matches[2];
 						// was it + or - BW
 						if ($matches[1] == '+')
-							$weight = $bodyweight + $correct_weight;
+							$weight = $correct_weight;
 						else
-							$weight = $bodyweight - $correct_weight;
+							$weight = -1 * $correct_weight;
 					}
 					// add the data to the array
-					$log_data[$exercise]['sets'][] = $this->get_reps($exercise, $weight, $line);
+					$log_data[$exercise]['sets'][] = $this->get_reps($exercise, $weight, $line, true);
 				}
 			}
 			else
@@ -225,7 +226,7 @@ class log
 	}
 
 	// where the magic happens
-	private function get_reps($exercise, $weight, $line)
+	private function get_reps($exercise, $weight, $line, $bw = false)
 	{
 		// set the variables
 		$reps = '';
@@ -311,6 +312,7 @@ class log
 		}
 		$line = substr($line, $lettercount);
 		return array('weight' => $weight,
+					'is_bw' => $bw,
 					'reps' => ($reps == '') ? 1 : $reps,
 					'sets' => ($sets == '') ? 1 : $sets,
 					'line' => trim($line));
@@ -397,11 +399,12 @@ class log
 
 		$log_id = $this->load_log($user_id, $log_date, 'log_id');
 		$log_id = $log_id['log_id'];
+		$new_prs = array();
 		// add all of the exercise details
 		foreach ($log_data as $exercise => $item)
 		{
 			// ignore the comment
-			if (isset($item['sets']))
+			if (!($exercise == 'comment' && $item == $log_data['comment']))
 			{
 				// reset totals
 				$total_volume = $total_reps = $total_sets = 0;
@@ -429,10 +432,15 @@ class log
 							$is_pr = true;
 							// new pr !!
 							$this->update_prs($user_id, $log_date, $exercise_id, $set['weight'], $rep_arr[$i]);
+							if (!isset($new_prs[$exercise]))
+								$new_prs[$exercise] = array();
+							$new_prs[$exercise][$rep_arr[$i]][] = $set['weight'];
+							// update pr array
+							$prs[$rep_arr[$i]] = $set['weight'];
 						}
 						// insert into log_items
-						$query = "INSERT INTO log_items (logitem_date, log_id, user_id, exercise_id, logitem_weight, logitem_reps, logitem_sets, logitem_comment, is_pr)
-									VALUES (:logitem_date, :log_id, :user_id, :exercise_id, :logitem_weight, :logitem_reps, :logitem_sets, :logitem_comment, :is_pr)";
+						$query = "INSERT INTO log_items (logitem_date, log_id, user_id, exercise_id, logitem_weight, logitem_reps, logitem_sets, logitem_comment, is_pr, is_bw)
+									VALUES (:logitem_date, :log_id, :user_id, :exercise_id, :logitem_weight, :logitem_reps, :logitem_sets, :logitem_comment, :is_pr, :is_bw)";
 						$params = array(
 							array(':logitem_date', $log_date, 'str'),
 							array(':log_id', $log_id, 'int'),
@@ -443,6 +451,7 @@ class log
 							array(':logitem_sets', $temp_sets, 'int'),
 							array(':logitem_comment', $set['line'], 'str'),
 							array(':is_pr', (($is_pr == false) ? 0 : 1), 'int'),
+							array(':is_bw', (($set['is_bw'] == false) ? 0 : 1), 'int'),
 						);
 						$db->query($query, $params);
 						$temp_sets = $set['sets'];
@@ -464,6 +473,9 @@ class log
 				$db->query($query, $params);
 			}
 		}
+
+		//return your new records :)
+		return $new_prs;
 	}
 
 	private function update_user_weights ($user_id, $log_date, $user_weight)
@@ -651,18 +663,34 @@ class log
 		}
 	}
 
-	public function get_prs_data($user_id, $exercise_name)
+	public function get_prs_data($user_id, $exercise_name, $range = 0)
 	{
 		global $db;
-		// load all preceding prs
-		$query = "SELECT pr_weight, pr_reps, pr_date FROM exercise_records pr
-				LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id)
-				WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name
-				ORDER BY pr_reps ASC, pr_date ASC";
-		$params = array(
-			array(':exercise_name', strtolower(trim($exercise_name)), 'str'),
-			array(':user_id', $user_id, 'int')
-		);
+		if ($range > 0)
+		{
+			// load prs after x months ago
+			$query = "SELECT pr_weight, pr_reps, pr_date FROM exercise_records pr
+					LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id)
+					WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name AND pr_date >= :pr_date
+					ORDER BY pr_reps ASC, pr_date ASC";
+			$params = array(
+				array(':exercise_name', strtolower(trim($exercise_name)), 'str'),
+				array(':pr_date', date("Y-m-d", strtotime("-$range months")), 'str'),
+				array(':user_id', $user_id, 'int')
+			);
+		}
+		else
+		{
+			// load all prs
+			$query = "SELECT pr_weight, pr_reps, pr_date FROM exercise_records pr
+					LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id)
+					WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name
+					ORDER BY pr_reps ASC, pr_date ASC";
+			$params = array(
+				array(':exercise_name', strtolower(trim($exercise_name)), 'str'),
+				array(':user_id', $user_id, 'int')
+			);
+		}
 		$db->query($query, $params);
 		$prs = array();
 		while ($row = $db->fetch())
@@ -674,19 +702,36 @@ class log
 		return $prs;
 	}
 
-	public function get_prs_data_weekly($user_id, $exercise_name)
+	public function get_prs_data_weekly($user_id, $exercise_name, $range = 0)
 	{
 		global $db;
-		// load all preceding prs
-		$query = "SELECT MAX(logitem_weight) as logitem_weight, logitem_reps, logitem_date FROM log_items pr
-				LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id) 
-				WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name AND pr.logitem_reps != 0
-				GROUP BY logitem_reps, WEEK
-				ORDER BY logitem_reps ASC , logitem_date ASC";
-		$params = array(
-			array(':exercise_name', strtolower(trim($exercise_name)), 'str'),
-			array(':user_id', $user_id, 'int')
-		);
+		if ($range > 0)
+		{
+			// load prs after x months ago
+			$query = "SELECT MAX(logitem_weight) as logitem_weight, logitem_reps, logitem_date FROM log_items pr
+					LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id) 
+					WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name AND pr.logitem_reps != 0  AND logitem_date >= :logitem_date
+					GROUP BY logitem_reps, WEEK(logitem_date)
+					ORDER BY logitem_reps ASC , logitem_date ASC";
+			$params = array(
+				array(':exercise_name', strtolower(trim($exercise_name)), 'str'),
+				array(':logitem_date', date("Y-m-d", strtotime("-$range months")), 'str'),
+				array(':user_id', $user_id, 'int')
+			);
+		}
+		else
+		{
+			// load all prs
+			$query = "SELECT MAX(logitem_weight) as logitem_weight, logitem_reps, logitem_date FROM log_items pr
+					LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id) 
+					WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name AND pr.logitem_reps != 0
+					GROUP BY logitem_reps, WEEK(logitem_date)
+					ORDER BY logitem_reps ASC , logitem_date ASC";
+			$params = array(
+				array(':exercise_name', strtolower(trim($exercise_name)), 'str'),
+				array(':user_id', $user_id, 'int')
+			);
+		}
 		$db->query($query, $params);
 		$prs = array();
 		while ($row = $db->fetch())

@@ -77,6 +77,7 @@ elseif ((isset($_GET['do']) && $_GET['do'] == 'list') || !isset($_GET['ex']))
 elseif ((isset($_GET['do']) && $_GET['do'] == 'weekly'))
 {
 	$exercise_name = (isset($_GET['ex'])) ? $_GET['ex'] : '';
+	$range = (!isset($_GET['range']) || !in_array($_GET['range'], array(1,3,6,12))) ? 0 : $_GET['range'];
 
 	if(!$log->is_valid_exercise($user->user_id, $exercise_name))
 	{
@@ -107,7 +108,7 @@ elseif ((isset($_GET['do']) && $_GET['do'] == 'weekly'))
 		}
 	}
 
-	$full_pr_data = $log->get_prs_data_weekly($user->user_id, $exercise_name);
+	$full_pr_data = $log->get_prs_data_weekly($user->user_id, $exercise_name, $range);
 	$graph_data = $log->build_pr_graph_data($full_pr_data);
 
 	$template->assign_vars(array(
@@ -115,6 +116,7 @@ elseif ((isset($_GET['do']) && $_GET['do'] == 'weekly'))
 		'TRUE_PR_DATA' => $pr_true,
 		'GRAPH_DATA' => $graph_data,
 		'EXERCISE' => ucwords($exercise_name),
+		'RANGE' => $range,
 		'TYPE' => 'weekly'
 		));
 	$template->set_filenames(array(
@@ -124,9 +126,11 @@ elseif ((isset($_GET['do']) && $_GET['do'] == 'weekly'))
 	$template->display('body');
 	$template->display('footer');
 }
+// view prs
 else
 {
 	$exercise_name = (isset($_GET['ex'])) ? $_GET['ex'] : '';
+	$range = (!isset($_GET['range']) || !in_array($_GET['range'], array(1,3,6,12))) ? 0 : $_GET['range'];
 
 	if(!$log->is_valid_exercise($user->user_id, $exercise_name))
 	{
@@ -157,7 +161,7 @@ else
 		}
 	}
 
-	$full_pr_data = $log->get_prs_data($user->user_id, $exercise_name);
+	$full_pr_data = $log->get_prs_data($user->user_id, $exercise_name, $range);
 	$graph_data = $log->build_pr_graph_data($full_pr_data);
 	
 	$template->assign_vars(array(
@@ -165,6 +169,7 @@ else
 		'TRUE_PR_DATA' => $pr_true,
 		'GRAPH_DATA' => $graph_data,
 		'EXERCISE' => ucwords($exercise_name),
+		'RANGE' => $range,
 		'TYPE' => 'prs'
 		));
 	$template->set_filenames(array(

@@ -8,7 +8,7 @@
 .cal_log_date{
 	background-color:#F90;
 }
-#log_comments, .comment_child {
+.log_comments, .comment_child {
 	list-style: none;
 }
 .comment_child {
@@ -31,11 +31,24 @@
 .user-info {
 	width: 150px;
 }
+.form-group, .comment-reply-box {
+	border-left: none !important;
+}
 </style>
 
 <script>
 $(document).ready(function(){
-	$('#log_comments').collapsible({xoffset:'-30', symbolhide:'[-]', symbolshow:'[+]'});
+	$('.log_comments').collapsible({xoffset:'-30', symbolhide:'[-]', symbolshow:'[+]'<!-- IF COMMENTING -->, defaulthide:false<!-- ENDIF -->});
+	$('.reply').click(function() {
+		var parent_id = $(this).attr('id');
+		var element = $(this).parent().parent().find(".comment-reply-box").first();
+		if ( element.is( ":hidden" ) ) {
+			element.slideDown("slow");
+		} else {
+			element.slideUp("slow");
+		}
+		return false;
+	});
 });
 
 var arDates = [];
@@ -151,12 +164,15 @@ function loadlogdata(date)
 	</table>
 <!-- END items -->
 <!-- IF B_LOG -->
+<a name="comments"></a>
 {LOG_COMMENTS}
-<form>
+<form action="?do=view&page=log&date={DATE}&user_id={USER_ID}#comments" method="post">
 <input type="hidden" name="log_id" value="{LOG_ID}">
+<input type="hidden" name="parent_id" value="0">
 <input type="hidden" name="csrftoken" value="{_CSRFTOKEN}">
 <div class="form-group">
-	<textarea class="form-control" rows="3" placeholder="Comment"></textarea>
+	<textarea class="form-control" rows="3" placeholder="Comment" name="comment" maxlength="500"></textarea>
+	<p><small>Max. 500 characters</small></p>
 </div>
 <div class="form-group">
 	<button type="submit" class="btn btn-default">Post</button>

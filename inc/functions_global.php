@@ -1,10 +1,11 @@
 <?php
-function print_message($message, $forward = '')
+function print_message($message, $forward = '', $delay = 4)
 {
 	global $template;
 	$template->assign_vars(array(
 			'MESSAGE' => $message,
-			'FORWARD' => $forward
+			'FORWARD' => $forward,
+			'DELAY' => $delay
 			));
 	$template->set_filenames(array(
 			'body' => 'message.tpl'
