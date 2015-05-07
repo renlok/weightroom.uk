@@ -361,7 +361,7 @@ class log
 			$query = "UPDATE logs SET log_text = :log_text, log_comment = :log_comment, log_weight = :log_weight WHERE log_date = :log_date AND user_id = :user_id";
 			$params = array(
 				array(':log_text', $log_text, 'str'),
-				array(':log_comment', $log_data['comment'], 'str'),
+				array(':log_comment', $this->replace_video_urls($log_data['comment']), 'str'),
 				array(':log_weight', $user_weight, 'float'),
 				array(':log_date', $log_date, 'str'),
 				array(':user_id', $user_id, 'int')
@@ -374,7 +374,7 @@ class log
 			$query = "INSERT INTO logs (log_text, log_comment, log_weight, log_date, user_id) VALUES (:log_text, :log_comment, :log_weight, :log_date, :user_id)";
 			$params = array(
 				array(':log_text', $log_text, 'str'),
-				array(':log_comment', $log_data['comment'], 'str'),
+				array(':log_comment', $this->replace_video_urls($log_data['comment']), 'str'),
 				array(':log_weight', $user_weight, 'float'),
 				array(':log_date', $log_date, 'str'),
 				array(':user_id', $user_id, 'int')
@@ -427,7 +427,7 @@ class log
 						$total_sets += $temp_sets;
 						$is_pr = false;
 						// check its a pr
-						if (!isset($prs[$rep_arr[$i]]) || floatval($prs[$rep_arr[$i]]) < floatval($set['weight']))
+						if ((!isset($prs[$rep_arr[$i]]) || floatval($prs[$rep_arr[$i]]) < floatval($set['weight'])) && $rep_arr[$i] != 0)
 						{
 							$is_pr = true;
 							// new pr !!
@@ -468,7 +468,7 @@ class log
 					array(':logex_volume', $total_volume, 'float'),
 					array(':logex_reps', $total_reps, 'int'),
 					array(':logex_sets', $total_sets, 'int'),
-					array(':logex_comment', $item['comment'], 'str'),
+					array(':logex_comment', $this->replace_video_urls($item['comment']), 'str'),
 				);
 				$db->query($query, $params);
 			}
@@ -476,6 +476,17 @@ class log
 
 		//return your new records :)
 		return $new_prs;
+	}
+
+	private function replace_video_urls($comment)
+	{
+		return preg_replace(
+			"/\s*[a-zA-Z\/\/:\.]*youtu(be.com\/watch\?v=|.be\/)([a-zA-Z0-9\-_]+)([a-zA-Z0-9\/\*\-\_\?\&\;\%\=\.]*)/im",
+			"<iframe width=\"420\" height=\"315\" src=\"//www.youtube.com/embed/$2\" frameborder=\"0\" allowfullscreen></iframe>",
+			$comment
+		);
+		//$width = '640';
+		//$height = '385';
 	}
 
 	private function update_user_weights ($user_id, $log_date, $user_weight)
