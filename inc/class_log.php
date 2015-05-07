@@ -489,7 +489,7 @@ class log
 		//$height = '385';
 	}
 
-	private function update_user_weights ($user_id, $log_date, $user_weight)
+	private function update_user_weights($user_id, $log_date, $user_weight)
 	{
 		global $db;
 
@@ -513,7 +513,7 @@ class log
 		$db->query($query, $params);
 	}
 
-	public function get_user_weight ($user_id, $log_date)
+	public function get_user_weight($user_id, $log_date)
 	{
 		global $db;
 
