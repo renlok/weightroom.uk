@@ -33,6 +33,12 @@ $user = new user();
 // Atuomatically login user is necessary "Remember me" option
 if (!$user->logged_in && isset($_COOKIE['TRACKER_RM_ID']))
 {
+	// remove junk
+	$query = "DELETE FROM auth_tokens WHERE token_expires < :token_expires";
+	$params = array();
+	$params[] = array(':token_expires', date("Y-m-d"), 'str');
+	$db->query($query, $params);
+	// check you have a remember me token
 	$query = "SELECT user_id FROM auth_tokens WHERE token = :RM_ID";
 	$params = array();
 	$params[] = array(':RM_ID', $_COOKIE['TRACKER_RM_ID'], 'str');
@@ -42,7 +48,7 @@ if (!$user->logged_in && isset($_COOKIE['TRACKER_RM_ID']))
 		// generate a random unguessable token
 		$_SESSION['csrftoken'] = generateToken();
 		$user_id = $db->result('user_id');
-		$query = "SELECT hash, password FROM " . $DBPrefix . "users WHERE id = :user_id";
+		$query = "SELECT hash, password FROM users WHERE id = :user_id";
 		$params = array();
 		$params[] = array(':user_id', $user_id, 'int');
 		$db->query($query, $params);
