@@ -13,7 +13,7 @@ if (isset($_POST['username']) && isset($_POST['password']))
 			$params = array();
 			$params[] = array(':auth_token', $auth_token, 'str');
 			$params[] = array(':user_id', $_SESSION['TRACK_LOGGED_IN'], 'int');
-			$params[] = array(':token_expires', date("Y-m-d", time() + (3600 * 24 * 365)), 'str');
+			$params[] = array(':token_expires', date("Y-m-d", (time() + (3600 * 24 * 365))), 'str');
 			$db->query($query, $params);
 			setcookie('TRACKER_RM_ID', $auth_token, time() + (3600 * 24 * 365));
 		}

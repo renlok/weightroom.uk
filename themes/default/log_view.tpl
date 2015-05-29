@@ -59,7 +59,7 @@ $(function () {
 		date		: new Date({JSDATE}),
 		flat		: true,
 		format  	: 'Y-m-d',
-		change		: function(e){ window.location.href = '?do=view&page=log&date='+e;},
+		change		: function(e){ window.location.href = '?do=view&page=log<!-- IF B_NOSELF -->&user_id={USER_ID}<!-- ENDIF -->&date='+e;},
 		calendars	: 3,
 		render: function(date) {
 			var d = moment(date);
@@ -117,7 +117,7 @@ function loadlogdata(date)
 		</div>
 		<div class="col-md-9 col-md-pull-3">
 		<div class="calender-cont">
-			<p><- <a href="?do=view&page=log&date={YESTERDAY}&user_id={USER_ID}">{YESTERDAY}</a> | <strong>{DATE}</strong> | <a href="?do=view&page=log&date={TOMORROW}&user_id={USER_ID}">{TOMORROW}</a> -></p>
+			<p><- <a href="?do=view&page=log&date={YESTERDAY}<!-- IF B_NOSELF -->&user_id={USER_ID}<!-- ENDIF -->">{YESTERDAY}</a> | <strong>{DATE}</strong> | <a href="?do=view&page=log&date={TOMORROW}<!-- IF B_NOSELF -->&user_id={USER_ID}<!-- ENDIF -->">{TOMORROW}</a> -></p>
 			<div class="date"></div>
 		</div>
 		</div>

@@ -585,7 +585,7 @@ class log
 		$query = "SELECT MAX(pr_weight) as pr_weight, pr_reps FROM exercise_records pr
 				LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id)
 				WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name
-				AND pr_date < :log_date
+				AND pr_date <= :log_date
 				GROUP BY pr_reps";
 		$params = array(
 			array(':exercise_name', strtolower(trim($exercise_name)), 'str'),

@@ -14,7 +14,8 @@ foreach ($dash_data as $dash_items)
 	$template->assign_block_vars('logs', array(
 			'USER_NAME' => $dash_items['user_name'],
 			'USER_ID' => $dash_items['user_id'],
-			'POSTED' => $dash_items['posted']
+			'POSTED' => $dash_items['posted'],
+			'LOG_DATE' => $dash_items['log_date']
 			));
 }
 $template->set_filenames(array(
