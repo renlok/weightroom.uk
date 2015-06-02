@@ -721,7 +721,7 @@ class log
 			// load prs after x months ago
 			$query = "SELECT MAX(logitem_weight) as logitem_weight, logitem_reps, logitem_date FROM log_items pr
 					LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id) 
-					WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name AND pr.logitem_reps != 0  AND logitem_date >= :logitem_date
+					WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name AND pr.logitem_reps != 0 AND pr.logitem_reps <= 10 AND logitem_date >= :logitem_date
 					GROUP BY logitem_reps, WEEK(logitem_date)
 					ORDER BY logitem_reps ASC , logitem_date ASC";
 			$params = array(
@@ -735,7 +735,7 @@ class log
 			// load all prs
 			$query = "SELECT MAX(logitem_weight) as logitem_weight, logitem_reps, logitem_date FROM log_items pr
 					LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id) 
-					WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name AND pr.logitem_reps != 0
+					WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name AND pr.logitem_reps != 0 AND pr.logitem_reps <= 10
 					GROUP BY logitem_reps, WEEK(logitem_date)
 					ORDER BY logitem_reps ASC , logitem_date ASC";
 			$params = array(
