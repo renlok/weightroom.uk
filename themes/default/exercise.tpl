@@ -86,16 +86,16 @@
     <td>{PR_DATA(10)}</td>
   </tr>
   <tr>
-    <td>{TRUE_PR_DATA(1)}</td>
-    <td>{TRUE_PR_DATA(2)}</td>
-    <td>{TRUE_PR_DATA(3)}</td>
-    <td>{TRUE_PR_DATA(4)}</td>
-    <td>{TRUE_PR_DATA(5)}</td>
-    <td>{TRUE_PR_DATA(6)}</td>
-    <td>{TRUE_PR_DATA(7)}</td>
-    <td>{TRUE_PR_DATA(8)}</td>
-    <td>{TRUE_PR_DATA(9)}</td>
-    <td>{TRUE_PR_DATA(10)}</td>
+    <td><!-- IF PR_DATES_TEMP ne 0 --><a href="?do=view&page=log&date={PR_DATES(1)}">{TRUE_PR_DATA(1)}</a><!-- ELSE -->{TRUE_PR_DATA(1)}<!-- ENDIF --></td>
+    <td><!-- IF PR_DATES_TEMP ne 0 --><a href="?do=view&page=log&date={PR_DATES(2)}">{TRUE_PR_DATA(2)}</a><!-- ELSE -->{TRUE_PR_DATA(2)}<!-- ENDIF --></td>
+    <td><!-- IF PR_DATES_TEMP ne 0 --><a href="?do=view&page=log&date={PR_DATES(3)}">{TRUE_PR_DATA(3)}</a><!-- ELSE -->{TRUE_PR_DATA(3)}<!-- ENDIF --></td>
+    <td><!-- IF PR_DATES_TEMP ne 0 --><a href="?do=view&page=log&date={PR_DATES(4)}">{TRUE_PR_DATA(4)}</a><!-- ELSE -->{TRUE_PR_DATA(4)}<!-- ENDIF --></td>
+    <td><!-- IF PR_DATES_TEMP ne 0 --><a href="?do=view&page=log&date={PR_DATES(5)}">{TRUE_PR_DATA(5)}</a><!-- ELSE -->{TRUE_PR_DATA(5)}<!-- ENDIF --></td>
+    <td><!-- IF PR_DATES_TEMP ne 0 --><a href="?do=view&page=log&date={PR_DATES(6)}">{TRUE_PR_DATA(6)}</a><!-- ELSE -->{TRUE_PR_DATA(6)}<!-- ENDIF --></td>
+    <td><!-- IF PR_DATES_TEMP ne 0 --><a href="?do=view&page=log&date={PR_DATES(7)}">{TRUE_PR_DATA(7)}</a><!-- ELSE -->{TRUE_PR_DATA(7)}<!-- ENDIF --></td>
+    <td><!-- IF PR_DATES_TEMP ne 0 --><a href="?do=view&page=log&date={PR_DATES(8)}">{TRUE_PR_DATA(8)}</a><!-- ELSE -->{TRUE_PR_DATA(8)}<!-- ENDIF --></td>
+    <td><!-- IF PR_DATES_TEMP ne 0 --><a href="?do=view&page=log&date={PR_DATES(9)}">{TRUE_PR_DATA(9)}</a><!-- ELSE -->{TRUE_PR_DATA(9)}<!-- ENDIF --></td>
+    <td><!-- IF PR_DATES_TEMP ne 0 --><a href="?do=view&page=log&date={PR_DATES(10)}">{TRUE_PR_DATA(10)}</a><!-- ELSE -->{TRUE_PR_DATA(10)}<!-- ENDIF --></td>
   </tr>
 </tbody>
 </table>

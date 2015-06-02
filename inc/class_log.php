@@ -578,11 +578,12 @@ class log
 	}
 
 	// load the pr of the given exercise on a given day for each rep range
-	public function get_prs($user_id, $log_date, $exercise_name)
+	public function get_prs($user_id, $log_date, $exercise_name, $return_date = false)
 	{
 		global $db;
 		// load all preceeding prs
-		$query = "SELECT MAX(pr_weight) as pr_weight, pr_reps FROM exercise_records pr
+		$pr_date = ($return_date) ? ', MAX(pr_date) as pr_date' : '';
+		$query = "SELECT MAX(pr_weight) as pr_weight, pr_reps " . $pr_date . " FROM exercise_records pr
 				LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id)
 				WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name
 				AND pr_date <= :log_date
@@ -594,11 +595,23 @@ class log
 		);
 		$db->query($query, $params);
 		$prs = array();
+		$date = array();
 		while ($row = $db->fetch())
 		{
+			if ($return_date)
+			{
+				$date[$row['pr_reps']] = $row['pr_date'];
+			}
 			$prs[$row['pr_reps']] = $row['pr_weight'];
 		}
-		return $prs;
+		if ($return_date)
+		{
+			return array($prs, $date);
+		}
+		else
+		{
+			return $prs;
+		}
 	}
 
 	// the user has set a pr we need to add/update it in the database

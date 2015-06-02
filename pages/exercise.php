@@ -86,25 +86,29 @@ elseif ((isset($_GET['do']) && $_GET['do'] == 'weekly'))
 	}
 
 	// get current prs
-	$pr_true = $pr_data = $log->get_prs($user->user_id, date("Y-m-d"), $exercise_name);
+	$pr_data = $log->get_prs($user->user_id, date("Y-m-d"), $exercise_name, true);
+	$pr_true = $pr_data[0];
+	$pr_dates = $pr_data[1];
+	$pr_data_max = $pr_data[0];
 	//check pr data
 	$highest = 0;
 	for ($i = 10; $i >= 1; $i--)
 	{
-		if (isset($pr_data[$i]))
+		if (isset($pr_data_max[$i]))
 		{
 			if ($pr_true[$i] > $highest)
 			{
 				$highest = $pr_true[$i];
 			}
-			if ($pr_data[$i] < $highest)
+			if ($pr_data_max[$i] < $highest)
 			{
-				$pr_data[$i] = $highest . '*';
+				$pr_data_max[$i] = $highest . '*';
 			}
 		}
 		else
 		{
-			$pr_data[$i] = '--';
+			$pr_data_max[$i] = '--';
+			$pr_dates[$i] = 0;
 		}
 	}
 
@@ -112,7 +116,9 @@ elseif ((isset($_GET['do']) && $_GET['do'] == 'weekly'))
 	$graph_data = $log->build_pr_graph_data($full_pr_data);
 
 	$template->assign_vars(array(
-		'PR_DATA' => $pr_data,
+		'PR_DATA' => $pr_data_max,
+		'PR_DATES' => $pr_dates,
+		'PR_DATES_TEMP' => true,
 		'TRUE_PR_DATA' => $pr_true,
 		'GRAPH_DATA' => $graph_data,
 		'EXERCISE' => ucwords($exercise_name),
@@ -139,33 +145,39 @@ else
 	}
 
 	// get current prs
-	$pr_true = $pr_data = $log->get_prs($user->user_id, date("Y-m-d"), $exercise_name);
+	$pr_data = $log->get_prs($user->user_id, date("Y-m-d"), $exercise_name, true);
+	$pr_true = $pr_data[0];
+	$pr_dates = $pr_data[1];
+	$pr_data_max = $pr_data[0];
 	//check pr data
 	$highest = 0;
 	for ($i = 10; $i >= 1; $i--)
 	{
-		if (isset($pr_data[$i]))
+		if (isset($pr_data_max[$i]))
 		{
 			if ($pr_true[$i] > $highest)
 			{
 				$highest = $pr_true[$i];
 			}
-			if ($pr_data[$i] < $highest)
+			if ($pr_data_max[$i] < $highest)
 			{
-				$pr_data[$i] = $highest . '*';
+				$pr_data_max[$i] = $highest . '*';
 			}
 		}
 		else
 		{
-			$pr_data[$i] = '--';
+			$pr_data_max[$i] = '--';
+			$pr_dates[$i] = 0;
 		}
 	}
 
 	$full_pr_data = $log->get_prs_data($user->user_id, $exercise_name, $range);
 	$graph_data = $log->build_pr_graph_data($full_pr_data);
-	
+
 	$template->assign_vars(array(
-		'PR_DATA' => $pr_data,
+		'PR_DATA' => $pr_data_max,
+		'PR_DATES' => $pr_dates,
+		'PR_DATES_TEMP' => true,
 		'TRUE_PR_DATA' => $pr_true,
 		'GRAPH_DATA' => $graph_data,
 		'EXERCISE' => ucwords($exercise_name),
