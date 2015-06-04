@@ -46,7 +46,10 @@ for ($i = 10; $i >= 1; $i--)
 }*/
 
 $logs = $log->list_exercise_logs($user->user_id, $exercise_name);
-
+$volume_data = "var dataset = [];\n";
+$reps_data = "var dataset = [];\n";
+$sets_data = "var dataset = [];\n";
+// ADD DAILY MAX - see weightxreps
 foreach ($logs as $log)
 {
 	$template->assign_block_vars('items', array(
@@ -56,6 +59,10 @@ foreach ($logs as $log)
 			'SETS' => $log['logex_sets'],
 			'COMMENT' => $log['logex_comment']
 			));
+	$date = strtotime($log['logitem_date'] . ' 00:00:00') * 1000;
+	$volume_data .= "\tdataset.push({x: new Date($date), y: {$log['logex_volume']}, shape:'circle'});\n";
+	$reps_data .= "\tdataset.push({x: new Date($date), y: {$log['logex_reps']}, shape:'circle'});\n";
+	$sets_data .= "\tdataset.push({x: new Date($date), y: {$log['logex_sets']}, shape:'circle'});\n";
 	foreach ($log['sets'] as $set)
 	{
 		if ($set['is_bw'] == 0)
@@ -83,9 +90,13 @@ foreach ($logs as $log)
 				));
 	}
 }
+$volume_data .= "HistoryChartData.push({\n\tvalues: dataset,\n\tkey: 'Volume'\n});\n";
+$reps_data .= "HistoryChartData.push({\n\tvalues: dataset,\n\tkey: 'Total reps'\n});\n";
+$sets_data .= "HistoryChartData.push({\n\tvalues: dataset,\n\tkey: 'Total sets'\n});\n";
 
 $template->assign_vars(array(
 	'EXERCISE' => ucwords($exercise_name),
+	'GRAPH_DATA' => $volume_data . $reps_data . $sets_data,
 	));
 $template->set_filenames(array(
 		'body' => 'history.tpl'

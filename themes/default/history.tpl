@@ -1,6 +1,10 @@
 <h2>{EXERCISE}</h2>
 <small><a href="?page=exercise&do=list">&larr; Back to list</a></small> | <small><a href="?page=exercise&ex={EXERCISE}">&larr; Back to exercise</a></small>
 
+<div id="HistoryChart">
+    <svg></svg>
+</div>
+
 <div class="panel-group margintb" id="workouthistory" role="tablist" aria-multiselectable="true">
 <!-- BEGIN items -->
   <div class="panel panel-default">
@@ -43,3 +47,61 @@
 
 <script src="https://code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
 <script src="http://getbootstrap.com/dist/js/bootstrap.min.js" charset="utf-8"></script>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<link href="http://nvd3.org/assets/css/nv.d3.css" rel="stylesheet">
+<script src="http://nvd3.org/assets/js/nv.d3.js"></script>
+<style>
+#HistoryChart .nv-lineChart circle.nv-point {
+  fill-opacity: 2;
+}
+#HistoryChart, svg {
+  height: 400px;
+}
+</style>
+<script>
+    function HistoryData() {
+		var HistoryChartData = [];
+		{GRAPH_DATA}
+		return HistoryChartData;
+    }
+
+    nv.addGraph(function() {
+        //var chart = nv.models.lineWithFocusChart();
+							//.margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
+							//.useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
+							//.transitionDuration(350)  //how fast do you want the lines to transition?
+							//.showLegend(true)       //Show the legend, allowing users to turn on/off line series.
+							//.showYAxis(true)        //Show the y-axis
+							//.showXAxis(true)        //Show the x-axis
+		var chart = nv.models.lineWithFocusChart();
+
+        chart.xAxis
+            .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); });
+
+        chart.x2Axis
+            .axisLabel('Date')
+            .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); });
+
+        chart.yAxis
+            .axisLabel('Weight')
+            .tickFormat(d3.format('.02f'));
+
+        chart.y2Axis
+            .tickFormat(d3.format('.02f'));
+
+        var data = HistoryData();
+        d3.select('#HistoryChart svg')
+            .datum(data)
+            .transition().duration(500)
+            .call(chart);
+
+        nv.utils.windowResize(chart.update);
+
+        return chart;
+    });
+
+    $(function()
+    {
+        $('#HistoryChart .nv-lineChart circle.nv-point').attr("r", "3.5");
+    });
+</script>
