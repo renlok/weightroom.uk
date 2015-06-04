@@ -1,17 +1,17 @@
 <h2>{EXERCISE}</h2>
 <small><a href="?page=exercise&do=list">&larr; Back to list</a></small> | <small><a href="?page=exercise&ex={EXERCISE}">&larr; Back to exercise</a></small>
 
-<div class="panel-group" id="workouthistory" role="tablist" aria-multiselectable="true">
-<!-- BEGIN log -->
+<div class="panel-group margintb" id="workouthistory" role="tablist" aria-multiselectable="true">
+<!-- BEGIN items -->
   <div class="panel panel-default">
-    <div class="panel-heading" role="tab" id="heading{log.LOG_DATE}">
+    <div class="panel-heading" role="tab" id="heading{items.LOG_DATE}">
       <h4 class="panel-title">
-        <a class="collapsed" data-toggle="collapse" data-parent="#workouthistory" href="#collapse{log.LOG_DATE}" aria-expanded="false" aria-controls="collapse{log.LOG_DATE}">
-          {log.LOG_DATE}
+        <a class="collapsed" data-toggle="collapse" data-parent="#workouthistory" href="#collapse{items.LOG_DATE}" aria-expanded="false" aria-controls="collapse{items.LOG_DATE}">
+          {items.LOG_DATE}
         </a>
       </h4>
     </div>
-    <div id="collapse{log.LOG_DATE}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{log.LOG_DATE}">
+    <div id="collapse{items.LOG_DATE}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{items.LOG_DATE}">
       <div class="panel-body">
         <p class="logrow">Volume: <span class="heavy">{items.VOLUME}</span>kg - Reps: <span class="heavy">{items.REPS}</span> - Sets: <span class="heavy">{items.SETS}</span></p>
 		<table class="table">
@@ -38,7 +38,8 @@
       </div>
     </div>
   </div>
-<!-- END log -->
+<!-- END items -->
 </div>
 
+<script src="https://code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
 <script src="http://getbootstrap.com/dist/js/bootstrap.min.js" charset="utf-8"></script>

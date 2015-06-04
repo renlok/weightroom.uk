@@ -46,14 +46,15 @@ for ($i = 10; $i >= 1; $i--)
 }*/
 
 $logs = $log->list_exercise_logs($user->user_id, $exercise_name);
+
 foreach ($logs as $log)
 {
 	$template->assign_block_vars('items', array(
 			'LOG_DATE' => $log['logitem_date'],
-			'VOLUME' => $row['logex_volume'],
-			'REPS' => $row['logex_reps'],
-			'SETS' => $row['logex_sets'],
-			'COMMENT' => $row['logex_comment']
+			'VOLUME' => $log['logex_volume'],
+			'REPS' => $log['logex_reps'],
+			'SETS' => $log['logex_sets'],
+			'COMMENT' => $log['logex_comment']
 			));
 	foreach ($log['sets'] as $set)
 	{
@@ -87,7 +88,7 @@ $template->assign_vars(array(
 	'EXERCISE' => ucwords($exercise_name),
 	));
 $template->set_filenames(array(
-		'body' => 'exercise.tpl'
+		'body' => 'history.tpl'
 		));
 $template->display('header');
 $template->display('body');
