@@ -48,14 +48,15 @@ if (!$user->logged_in && isset($_COOKIE['TRACKER_RM_ID']))
 		// generate a random unguessable token
 		$_SESSION['csrftoken'] = generateToken();
 		$user_id = $db->result('user_id');
-		$query = "SELECT hash, password FROM users WHERE id = :user_id";
+		$query = "SELECT user_hash, user_pass FROM users WHERE user_id = :user_id";
 		$params = array();
 		$params[] = array(':user_id', $user_id, 'int');
 		$db->query($query, $params);
-		$password = $db->result('password');
+		$password = $db->result('user_pass');
 		$_SESSION['TRACK_LOGGED_IN'] 		= $user_id;
-		$_SESSION['TRACK_LOGGED_NUMBER'] 	= strspn($password, $db->result('hash'));
+		$_SESSION['TRACK_LOGGED_NUMBER'] 	= strspn($password, $db->result('user_hash'));
 		$_SESSION['TRACK_LOGGED_PASS'] 		= $password;
+		header('location: ?page=log');
 	}
 }
 
