@@ -85,6 +85,9 @@ switch ($page)
 	case 'edit_exercise':
 		include PAGEDIR . 'edit_exercise.php';
 		break;
+	case 'history':
+		include PAGEDIR . 'history.php';
+		break;
 	case 'ajax':
 		include PAGEDIR . 'ajax.php';
 		break;

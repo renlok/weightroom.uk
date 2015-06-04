@@ -1,3 +1,56 @@
+ <style>
+	.cm-ENAME { color:#9900FF ;} 
+	.cm-W { color:#1900FF;} 
+	.cm-R,.cm-RR { color:#00E5FF;} 
+	.cm-S { color:#FF9900;}
+	
+	.cm-ENAME { color:#3338B7;} 
+	.cm-W { color:#337AB7;} 
+	.cm-R,.cm-RR { color:#B7337A;} 
+	.cm-S { color:#7AB733;}
+	.cm-C { color:#191919; font-style: italic; }
+	.cm-error{ text-decoration: underline; background:#f00; color:#fff !important; }
+	.cm-YT { background: #4C8EFA; color:#fff !important;}
+	.CodeMirror {
+		height: 500px;
+		padding: 6px 12px;
+		font-size: 14px;
+		line-height: 1.42857143;
+		color: #555;
+		background-color: #fff;
+		background-image: none;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+		box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+		-webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+		-o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+		transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+	}
+</style>
+
+<!-- IF ERROR ne '' -->
+<p class="bg-danger">{ERROR}</p>
+<!-- ENDIF -->
+<h2>Log for {DATE}</h2>
+<small><a href="?do=view&page=log&date={DATE}">&larr; Back to log</a></small>
+
+<form action="?page=log&do=edit<!-- IF DATE ne '' -->&date={DATE}<!-- ENDIF -->" method="post">
+<div class="form-group">
+    <label for="log">Log Data:</label>
+	<textarea rows="30" cols="50" name="log" id="log" class="form-control">{LOG}</textarea>
+</div>
+<label for="weight">Bodyweight:</label>
+<div class="input-group">
+	<input type="text" class="form-control" placeholder="User's Weight" aria-describedby="basic-addon2" name="weight" value="{WEIGHT}">
+	<span class="input-group-addon" id="basic-addon2">kg</span>
+</div>
+<div class="input-group margintb">
+	<input type="hidden" name="csrftoken" value="{_CSRFTOKEN}">
+	<input type="submit" name="action" class="btn btn-default" value="<!-- IF VALID_LOG -->Edit<!-- ELSE -->Add<!-- ENDIF --> log">
+</div>
+</form>
+
 <script src="https://code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
 <script src="http://codemirror.net/lib/codemirror.js"></script>
 <link rel="stylesheet" href="http://codemirror.net/lib/codemirror.css">
@@ -177,55 +230,3 @@ $(document).ready(function(){
 	});
 });
 </script>
- <style>
-	.cm-ENAME { color:#9900FF ;} 
-	.cm-W { color:#1900FF;} 
-	.cm-R,.cm-RR { color:#00E5FF;} 
-	.cm-S { color:#FF9900;}
-	
-	.cm-ENAME { color:#3338B7;} 
-	.cm-W { color:#337AB7;} 
-	.cm-R,.cm-RR { color:#B7337A;} 
-	.cm-S { color:#7AB733;}
-	.cm-C { color:#191919; font-style: italic; }
-	.cm-error{ text-decoration: underline; background:#f00; color:#fff !important; }
-	.cm-YT { background: #4C8EFA; color:#fff !important;}
-	.CodeMirror {
-		height: 500px;
-		padding: 6px 12px;
-		font-size: 14px;
-		line-height: 1.42857143;
-		color: #555;
-		background-color: #fff;
-		background-image: none;
-		border: 1px solid #ccc;
-		border-radius: 4px;
-		-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-		box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-		-webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
-		-o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-		transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-	}
-</style>
-
-<!-- IF ERROR ne '' -->
-<p class="bg-danger">{ERROR}</p>
-<!-- ENDIF -->
-<h2>Log for {DATE}</h2>
-<small><a href="?do=view&page=log&date={DATE}">&larr; Back to log</a></small>
-
-<form action="?page=log&do=edit<!-- IF DATE ne '' -->&date={DATE}<!-- ENDIF -->" method="post">
-<div class="form-group">
-    <label for="log">Log Data:</label>
-	<textarea rows="30" cols="50" name="log" id="log" class="form-control">{LOG}</textarea>
-</div>
-<label for="weight">Bodyweight:</label>
-<div class="input-group">
-	<input type="text" class="form-control" placeholder="User's Weight" aria-describedby="basic-addon2" name="weight" value="{WEIGHT}">
-	<span class="input-group-addon" id="basic-addon2">kg</span>
-</div>
-<div class="input-group margintb">
-	<input type="hidden" name="csrftoken" value="{_CSRFTOKEN}">
-	<input type="submit" name="action" class="btn btn-default" value="<!-- IF VALID_LOG -->Edit<!-- ELSE -->Add<!-- ENDIF --> log">
-</div>
-</form>

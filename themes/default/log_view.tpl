@@ -1,9 +1,3 @@
-<script src="https://code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
-<link href="http://nazar-pc.github.io/PickMeUp/css/pickmeup.css" rel="stylesheet">
-<script src="http://nazar-pc.github.io/PickMeUp/js/jquery.pickmeup.js"></script>
-<script src="http://momentjs.com/downloads/moment.js"></script>
-<script src="js/jCollapsible.js"></script>
-
 <style>
 .cal_log_date{
 	background-color:#F90;
@@ -35,70 +29,6 @@
 	border-left: none !important;
 }
 </style>
-
-<script>
-$(document).ready(function(){
-	$('.log_comments').collapsible({xoffset:'-30', symbolhide:'[-]', symbolshow:'[+]'<!-- IF COMMENTING -->, defaulthide:false<!-- ENDIF -->});
-	$('.reply').click(function() {
-		var parent_id = $(this).attr('id');
-		var element = $(this).parent().parent().find(".comment-reply-box").first();
-		if ( element.is( ":hidden" ) ) {
-			element.slideDown("slow");
-		} else {
-			element.slideUp("slow");
-		}
-		return false;
-	});
-});
-
-var arDates = [];
-var calMonths = [];
-
-$(function () {
-	$('.date').pickmeup({
-		date		: new Date({JSDATE}),
-		flat		: true,
-		format  	: 'Y-m-d',
-		change		: function(e){ window.location.href = '?do=view&page=log<!-- IF B_NOSELF -->&user_id={USER_ID}<!-- ENDIF -->&date='+e;},
-		calendars	: 3,
-		render: function(date) {
-			var d = moment(date);
-			var m = d.format('YYYY-MM');
-			if ($.inArray(m, calMonths) == -1)
-			{
-				calMonths.push(m);
-				loadlogdata(m);
-			}
-			if ($.inArray(d.format('YYYY-MM-DD'), arDates) != -1)
-			{
-				return {
-					class_name: 'cal_log_date'                         
-				}
-			}
-		}
-	});
-});
-
-function loadlogdata(date)
-{
-	$.ajax({
-		url: "index.php",
-		data: {
-			page: 'ajax',
-			do: 'cal',
-			date: date,
-			user_id: {USER_ID}
-		},
-		type: 'GET',
-		dataType: 'json',
-		cache: false
-	}).done(function(o) {
-		$.merge(calMonths, o.cals);
-		$.merge(arDates, o.dates);
-		$('.date').pickmeup('update');
-	}).fail(function() {}).always(function() {});
-}
-</script>
 
 <div class="container-fluid">
 	<div class="row">
@@ -179,3 +109,74 @@ function loadlogdata(date)
 </div>
 </form>
 <!-- ENDIF -->
+
+
+<script src="https://code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
+<link href="http://nazar-pc.github.io/PickMeUp/css/pickmeup.css" rel="stylesheet">
+<script src="http://nazar-pc.github.io/PickMeUp/js/jquery.pickmeup.js"></script>
+<script src="http://momentjs.com/downloads/moment.js"></script>
+<script src="js/jCollapsible.js"></script>
+
+<script>
+$(document).ready(function(){
+	$('.log_comments').collapsible({xoffset:'-30', symbolhide:'[-]', symbolshow:'[+]'<!-- IF COMMENTING -->, defaulthide:false<!-- ENDIF -->});
+	$('.reply').click(function() {
+		var parent_id = $(this).attr('id');
+		var element = $(this).parent().parent().find(".comment-reply-box").first();
+		if ( element.is( ":hidden" ) ) {
+			element.slideDown("slow");
+		} else {
+			element.slideUp("slow");
+		}
+		return false;
+	});
+});
+
+var arDates = [];
+var calMonths = [];
+
+$(function () {
+	$('.date').pickmeup({
+		date		: new Date({JSDATE}),
+		flat		: true,
+		format  	: 'Y-m-d',
+		change		: function(e){ window.location.href = '?do=view&page=log<!-- IF B_NOSELF -->&user_id={USER_ID}<!-- ENDIF -->&date='+e;},
+		calendars	: 3,
+		render: function(date) {
+			var d = moment(date);
+			var m = d.format('YYYY-MM');
+			if ($.inArray(m, calMonths) == -1)
+			{
+				calMonths.push(m);
+				loadlogdata(m);
+			}
+			if ($.inArray(d.format('YYYY-MM-DD'), arDates) != -1)
+			{
+				return {
+					class_name: 'cal_log_date'                         
+				}
+			}
+		}
+	});
+});
+
+function loadlogdata(date)
+{
+	$.ajax({
+		url: "index.php",
+		data: {
+			page: 'ajax',
+			do: 'cal',
+			date: date,
+			user_id: {USER_ID}
+		},
+		type: 'GET',
+		dataType: 'json',
+		cache: false
+	}).done(function(o) {
+		$.merge(calMonths, o.cals);
+		$.merge(arDates, o.dates);
+		$('.date').pickmeup('update');
+	}).fail(function() {}).always(function() {});
+}
+</script>

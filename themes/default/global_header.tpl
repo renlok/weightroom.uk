@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Weight Room - Track dem gains</title>
-	<link rel="icon" type="image/x-icon" href="http://weightroom.uk//favicon.ico">
+	<link rel="icon" type="image/x-icon" href="http://weightroom.uk/favicon.ico">
 	<meta http-equiv="Content-Language" content="en"> 
 	<meta name="keywords" content="training journal weight powerlifting strength power tracking weightlifting">
 

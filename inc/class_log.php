@@ -840,5 +840,49 @@ class log
 		$db->query($query, $params);
 		return $db->fetchall();
 	}
+	
+	public function list_exercise_logs($user_id, $exercise_name)
+	{
+		global $db;
+		// load all exercises
+		$query = "SELECT i.*, lx.logex_volume, lx.logex_reps, lx.logex_sets, lx.logex_comment FROM log_items As i
+				LEFT JOIN exercises ex ON (ex.exercise_id = i.exercise_id)
+				LEFT JOIN log_exercises As lx ON (lx.exercise_id = ex.exercise_id AND lx.log_id = i.log_id)
+				WHERE ex.user_id = :user_id AND ex.exercise_name = :exercise_name
+				ORDER BY logitem_date DESC, logitem_id ASC";
+		$params = array(
+			array(':user_id', $user_id, 'int'),
+			array(':exercise_name', $exercise_name, 'str')
+		);
+		$db->query($query, $params);
+
+		// organise the data
+		$current_log = 0;
+		$data = array();
+		while ($row = $db->fetch())
+		{
+			// set log globals
+			if (!isset($data[$row['log_id']]))
+			{
+				$data[$row['log_id']] = array(
+					'logitem_date' => $row['logitem_date'],
+					'logex_volume' => $row['logex_volume'],
+					'logex_reps' => $row['logex_reps'],
+					'logex_sets' => $row['logex_sets'],
+					'logex_comment' => $row['logex_comment'],
+					'sets' => array() // ready for the rest of the data
+					);
+			}
+			$data[$row['log_id']]['sets'][] = array(
+				'logitem_weight' => $row['logitem_weight'],
+				'is_bw' => $row['is_bw'],
+				'logitem_reps' => $row['logitem_reps'],
+				'logitem_sets' => $row['logitem_sets'],
+				'logitem_comment' => $row['logitem_comment'],
+				'is_pr' => $row['is_pr'],
+				);
+		}
+		return $data;
+	}
 }
 ?>
