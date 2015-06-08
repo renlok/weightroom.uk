@@ -820,7 +820,7 @@ class log
 				$graph_data .= "\tdataset.push({x: new Date($date), y: $weight, shape:'circle'});\n";
 			}
 			$type_string = ($type == 'rep') ? ' rep max' : '';
-			$disabled = (in_array($rep, array(1,2,3,5,8,10))) ? '' : "disabled: true,\n\t";
+			$disabled = ($type != 'rep' || in_array($rep, array(1,2,3,5,8,10))) ? '' : "disabled: true,\n\t";
 			$graph_data .= "prHistoryChartData.push({\n\tvalues: dataset,\n\t{$disabled}key: '{$rep}{$type_string}'\n});\n";
 		}
 		return $graph_data;
