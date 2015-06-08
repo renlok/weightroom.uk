@@ -1,6 +1,6 @@
 <h2>{EXERCISE} <small><!-- IF TYPE eq 'weekly' -->Weekly maxes<!-- ELSE -->PRs<!-- ENDIF --></small></h2>
 <h3>Viewing: <!-- IF RANGE eq 0 -->All<!-- ELSE -->Last {RANGE} months<!-- ENDIF --></h3>
-<small><a href="?page=exercise&do=list">&larr; Back to list</a></small> | <small><a href="?page=edit_exercise&exercise_name={EXERCISE}">Edit exercise</a></small>
+<small><a href="?page=exercise&do=list">&larr; Back to list</a></small> | <small><a href="?page=edit_exercise&exercise_name={EXERCISE}">Edit exercise</a></small> | <small><a href="?page=history&ex={EXERCISE}">View history</a></small>
 
 <table width="100%" class="table">
 <thead>
@@ -66,8 +66,6 @@
 <!-- IF RANGE ne 1 --><a href="?page=exercise&ex={EXERCISE}&range=1">1 month</a><!-- ELSE -->1 month<!-- ENDIF --></p>
 <p><a href="?page=exercise&ex={EXERCISE}&do=weekly">View weekly maxes</a></p>
 <!-- ENDIF -->
-
-<p><a href="?page=history&ex={EXERCISE}">View exercise history</a></p>
 
 
 
