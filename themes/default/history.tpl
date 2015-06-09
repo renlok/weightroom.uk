@@ -45,11 +45,11 @@
 <!-- END items -->
 </div>
 
-<script src="https://code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
+<script src="http://code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
 <script src="http://getbootstrap.com/dist/js/bootstrap.min.js" charset="utf-8"></script>
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <link href="http://nvd3.org/assets/css/nv.d3.css" rel="stylesheet">
-<script src="http://nvd3.org/assets/js/nv.d3.js"></script>
+<script src="js/nv.d3.js"></script>
 <style>
 #HistoryChart .nv-lineChart circle.nv-point {
   fill-opacity: 2;
@@ -66,14 +66,19 @@
     }
 
     nv.addGraph(function() {
-        //var chart = nv.models.lineWithFocusChart();
+        var chart = nv.models.lineWithFocusChart();
+		chart.tooltipContent(function(key, y, e, graph)
+			{
+				console.log(key);
+				return '<pre>' + key.point.y + '</pre>';
+			})
 							//.margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
 							//.useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
 							//.transitionDuration(350)  //how fast do you want the lines to transition?
 							//.showLegend(true)       //Show the legend, allowing users to turn on/off line series.
 							//.showYAxis(true)        //Show the y-axis
 							//.showXAxis(true)        //Show the x-axis
-		var chart = nv.models.lineWithFocusChart();
+		//var chart = nv.models.lineWithFocusChart();
 
         chart.xAxis
             .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); });
