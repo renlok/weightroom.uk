@@ -411,6 +411,7 @@ class log
 				$total_volume = $total_reps = $total_sets = 0;
 				$exercise_id = $this->get_exercise_id($user_id, $exercise);
 				$prs = $this->get_prs($user_id, $log_date, $exercise);
+				$max_estimate_rm = 0;
 				foreach ($item['sets'] as $set)
 				{
 					$rep_arr = explode(',', $set['reps']);
@@ -439,6 +440,12 @@ class log
 							// update pr array
 							$prs[$rep_arr[$i]] = $set['weight'];
 						}
+						$estimate_rm = $this->generate_rm($set['weight'], $rep_arr[$i]);
+						// get estimate 1rm
+						if ($max_estimate_rm < $estimate_rm)
+						{
+							$max_estimate_rm = $estimate_rm;
+						}
 						// insert into log_items
 						$query = "INSERT INTO log_items (logitem_date, log_id, user_id, exercise_id, logitem_weight, logitem_reps, logitem_sets, logitem_comment, logitem_1rm, is_pr, is_bw)
 									VALUES (:logitem_date, :log_id, :user_id, :exercise_id, :logitem_weight, :logitem_reps, :logitem_sets, :logitem_comment, :logitem_rm, :is_pr, :is_bw)";
@@ -451,7 +458,7 @@ class log
 							array(':logitem_reps', $rep_arr[$i], 'int'),
 							array(':logitem_sets', $temp_sets, 'int'),
 							array(':logitem_comment', $set['line'], 'str'),
-							array(':logitem_rm', $this->generate_rm($set['weight'], $rep_arr[$i]), 'float'),
+							array(':logitem_rm', $estimate_rm, 'float'),
 							array(':is_pr', (($is_pr == false) ? 0 : 1), 'int'),
 							array(':is_bw', (($set['is_bw'] == false) ? 0 : 1), 'int'),
 						);
@@ -460,8 +467,8 @@ class log
 					}
 				}
 				// insert into log_exercises 
-				$query = "INSERT INTO log_exercises (logex_date, log_id, user_id, exercise_id, logex_volume, logex_reps, logex_sets, logex_comment)
-						VALUES (:logex_date, :log_id, :user_id, :exercise_id, :logex_volume, :logex_reps, :logex_sets, :logex_comment)";
+				$query = "INSERT INTO log_exercises (logex_date, log_id, user_id, exercise_id, logex_volume, logex_reps, logex_sets, logex_maxrm, logex_comment)
+						VALUES (:logex_date, :log_id, :user_id, :exercise_id, :logex_volume, :logex_reps, :logex_sets, :logex_maxrm, :logex_comment)";
 				$params = array(
 					array(':logex_date', $log_date, 'str'),
 					array(':log_id', $log_id, 'int'),
@@ -470,6 +477,7 @@ class log
 					array(':logex_volume', $total_volume, 'float'),
 					array(':logex_reps', $total_reps, 'int'),
 					array(':logex_sets', $total_sets, 'int'),
+					array(':logex_maxrm', $max_estimate_rm, 'float'),
 					array(':logex_comment', $this->replace_video_urls($item['comment']), 'str'),
 				);
 				$db->query($query, $params);
