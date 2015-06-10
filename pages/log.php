@@ -70,6 +70,7 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 					'SETS' => $set['sets'],
 					'IS_PR' => $set['is_pr'],
 					'COMMENT' => trim($set['comment']),
+					'EST1RM' => round($set['est1rm'], 2),
 					));
 		}
 	}

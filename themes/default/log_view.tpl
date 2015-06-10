@@ -28,6 +28,9 @@
 .form-group, .comment-reply-box {
 	border-left: none !important;
 }
+.leftspace {
+	margin-left: 10px;
+}
 </style>
 
 <div class="container-fluid">
@@ -79,7 +82,7 @@
 				<!-- IF items.sets.IS_PR --><span class="glyphicon glyphicon-star" aria-hidden="true"></span><!-- ELSE -->&nbsp;<!-- ENDIF -->
 			</td>
 			<td class="logrow">
-				<!-- IF items.sets.REPS eq 0 --><del><!-- ENDIF --><span class="heavy">{items.sets.WEIGHT}</span>kg x <span class="heavy">{items.sets.REPS}</span> x <span class="heavy">{items.sets.SETS}</span><!-- IF items.sets.REPS eq 0 --></del><!-- ENDIF -->
+				<!-- IF items.sets.REPS eq 0 --><del><!-- ENDIF --><span class="heavy">{items.sets.WEIGHT}</span>kg x <span class="heavy">{items.sets.REPS}</span> x <span class="heavy">{items.sets.SETS}</span><!-- IF items.sets.REPS eq 0 --></del><!-- ELSEIF items.sets.REPS gt 1 --> <small class="leftspace"><i>&#8776; {items.sets.EST1RM} kg</i></small><!-- ENDIF -->
 				<!-- IF items.sets.COMMENT ne '' --><div class="well well-sm">{items.sets.COMMENT}</div><!-- ENDIF -->
 			</td>
 			<td class="tdpr2">

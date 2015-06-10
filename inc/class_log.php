@@ -37,6 +37,7 @@ class log
 				'reps' => $item['logitem_reps'],
 				'sets' => $item['logitem_sets'],
 				'comment' => $item['logitem_comment'],
+				'est1rm' => $item['logitem_1rm'],
 				'is_pr' => $item['is_pr'],
 				'is_bw' => $item['is_bw'],
 			);
@@ -439,8 +440,8 @@ class log
 							$prs[$rep_arr[$i]] = $set['weight'];
 						}
 						// insert into log_items
-						$query = "INSERT INTO log_items (logitem_date, log_id, user_id, exercise_id, logitem_weight, logitem_reps, logitem_sets, logitem_comment, is_pr, is_bw)
-									VALUES (:logitem_date, :log_id, :user_id, :exercise_id, :logitem_weight, :logitem_reps, :logitem_sets, :logitem_comment, :is_pr, :is_bw)";
+						$query = "INSERT INTO log_items (logitem_date, log_id, user_id, exercise_id, logitem_weight, logitem_reps, logitem_sets, logitem_comment, logitem_1rm, is_pr, is_bw)
+									VALUES (:logitem_date, :log_id, :user_id, :exercise_id, :logitem_weight, :logitem_reps, :logitem_sets, :logitem_comment, :logitem_rm, :is_pr, :is_bw)";
 						$params = array(
 							array(':logitem_date', $log_date, 'str'),
 							array(':log_id', $log_id, 'int'),
@@ -450,6 +451,7 @@ class log
 							array(':logitem_reps', $rep_arr[$i], 'int'),
 							array(':logitem_sets', $temp_sets, 'int'),
 							array(':logitem_comment', $set['line'], 'str'),
+							array(':logitem_rm', $this->generate_rm($set['weight'], $rep_arr[$i]), 'float'),
 							array(':is_pr', (($is_pr == false) ? 0 : 1), 'int'),
 							array(':is_bw', (($set['is_bw'] == false) ? 0 : 1), 'int'),
 						);
@@ -575,6 +577,40 @@ class log
 		{
 			return false;
 		}
+	}
+
+	private function generate_rm($weight, $reps, $rm = 1)
+	{
+		if ($reps == $rm)
+		{
+			return $weight;
+		}
+
+		//for all reps > 1 calculate the 1RMs    
+		$lomonerm = $weight * pow($reps, 1 / 10);
+		$brzonerm = $weight * (36 / (37 - $reps));
+		$eplonerm = $weight * (1 + ($reps / 30));
+		$mayonerm = ($weight * 100) / (52.2 + (41.9 * exp(-1 * ($reps * 0.055))));
+		$ocoonerm = $weight * (1 + $reps * 0.025);
+		$watonerm = ($weight * 100) / (48.8 + (53.8 * exp(-1 * ($reps * 0.075))));
+		$lanonerm = $weight * 100 / (101.3 - 2.67123 * $reps);
+
+		if ($rm == 1)
+		{
+			// get the average
+			return ($lomonerm + $brzonerm + $eplonerm + $mayonerm + $ocoonerm + $watonerm + $lanonerm) / 7;
+		}
+
+		$lomrm = floor($lomonerm / (pow($rm, 1 / 10)));
+		$brzrm = floor(($brzonerm * (37 - $rm)) / 36);
+		$eplrm = floor($eplonerm / ((1 + ($rm / 30))));
+		$mayrm = floor(($mayonerm * (52.2 + (41.9 * exp(-1 * ($rm * 0.055))))) / 100);
+		$ocorm = floor(($ocoonerm / (1 + $rm * 0.025)));
+		$watrm = floor(($watonerm * (48.8 + (53.8 * exp(-1 * ($rm * 0.075))))) / 100);
+		$lanrm = floor((($lanonerm * (101.3 - 2.67123 * $rm)) / 100));
+
+		// return the average value
+		return floor(($lomrm + $brzrm + $eplrm + $mayrm + $ocorm + $watrm + $lanrm) / 7);
 	}
 
 	// load the pr of the given exercise on a given day for each rep range
@@ -825,7 +861,7 @@ class log
 		}
 		return $graph_data;
 	}
-	
+
 	public function list_exercises($user_id)
 	{
 		global $db;
@@ -840,7 +876,7 @@ class log
 		$db->query($query, $params);
 		return $db->fetchall();
 	}
-	
+
 	public function list_exercise_logs($user_id, $exercise_name)
 	{
 		global $db;
