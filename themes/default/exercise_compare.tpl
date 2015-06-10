@@ -24,16 +24,17 @@
 	<div class="form-group">
 		<label for="reps">Reps</label>
 		<select name="reps" required class="form-control">
-			<option value="1">1</option>
-			<option value="2">2</option>
-			<option value="3">3</option>
-			<option value="4">4</option>
-			<option value="5">5</option>
-			<option value="6">6</option>
-			<option value="7">7</option>
-			<option value="8">8</option>
-			<option value="9">9</option>
-			<option value="10">10</option>
+			<option value="0"<!-- IF REP_SELECT eq 0 --> selected<!-- ENDIF -->>Estimated 1RM</option>
+			<option value="1"<!-- IF REP_SELECT eq 1 --> selected<!-- ENDIF -->>1</option>
+			<option value="2"<!-- IF REP_SELECT eq 2 --> selected<!-- ENDIF -->>2</option>
+			<option value="3"<!-- IF REP_SELECT eq 3 --> selected<!-- ENDIF -->>3</option>
+			<option value="4"<!-- IF REP_SELECT eq 4 --> selected<!-- ENDIF -->>4</option>
+			<option value="5"<!-- IF REP_SELECT eq 5 --> selected<!-- ENDIF -->>5</option>
+			<option value="6"<!-- IF REP_SELECT eq 6 --> selected<!-- ENDIF -->>6</option>
+			<option value="7"<!-- IF REP_SELECT eq 7 --> selected<!-- ENDIF -->>7</option>
+			<option value="8"<!-- IF REP_SELECT eq 8 --> selected<!-- ENDIF -->>8</option>
+			<option value="9"<!-- IF REP_SELECT eq 9 --> selected<!-- ENDIF -->>9</option>
+			<option value="10"<!-- IF REP_SELECT eq 10 --> selected<!-- ENDIF -->>10</option>
 		</select>
 	</div>
 	<input type="hidden" name="csrftoken" value="{_CSRFTOKEN}">

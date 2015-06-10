@@ -20,7 +20,7 @@ if (isset($_GET['do']) && $_GET['do'] == 'compare')
 		3 => (isset($exercises_exp[3])) ? $exercises_exp[3] : '',
 		4 => (isset($exercises_exp[4])) ? $exercises_exp[4] : '',
 		);
-	$reps = (isset($_GET['reps'])) ? intval($_GET['reps']) : 0;
+	$reps = (isset($_GET['reps']) && intval($_GET['reps']) <= 10) ? intval($_GET['reps']) : 0;
 
 	for ($i = 0, $count = count($exercises); $i < $count; $i++)
 	{
@@ -46,6 +46,7 @@ if (isset($_GET['do']) && $_GET['do'] == 'compare')
 	}
 
 	$template->assign_vars(array(
+		'REP_SELECT' => $reps,
 		'GRAPH_DATA' => $graph_data,
 		'B_SELECTED' => (count($exercises_exp) > 0)
 		));

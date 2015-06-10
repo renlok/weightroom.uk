@@ -467,8 +467,8 @@ class log
 					}
 				}
 				// insert into log_exercises 
-				$query = "INSERT INTO log_exercises (logex_date, log_id, user_id, exercise_id, logex_volume, logex_reps, logex_sets, logex_maxrm, logex_comment)
-						VALUES (:logex_date, :log_id, :user_id, :exercise_id, :logex_volume, :logex_reps, :logex_sets, :logex_maxrm, :logex_comment)";
+				$query = "INSERT INTO log_exercises (logex_date, log_id, user_id, exercise_id, logex_volume, logex_reps, logex_sets, logex_1rm, logex_comment)
+						VALUES (:logex_date, :log_id, :user_id, :exercise_id, :logex_volume, :logex_reps, :logex_sets, :logex_rm, :logex_comment)";
 				$params = array(
 					array(':logex_date', $log_date, 'str'),
 					array(':log_id', $log_id, 'int'),
@@ -477,7 +477,7 @@ class log
 					array(':logex_volume', $total_volume, 'float'),
 					array(':logex_reps', $total_reps, 'int'),
 					array(':logex_sets', $total_sets, 'int'),
-					array(':logex_maxrm', $max_estimate_rm, 'float'),
+					array(':logex_rm', $max_estimate_rm, 'float'),
 					array(':logex_comment', $this->replace_video_urls($item['comment']), 'str'),
 				);
 				$db->query($query, $params);
@@ -668,14 +668,15 @@ class log
 			return false;
 
 		// insert new entry
-		$query = "INSERT INTO exercise_records (exercise_id, user_id, pr_date, pr_weight, pr_reps)
-				VALUES (:exercise_id, :user_id, :pr_date, :pr_weight, :pr_reps)";
+		$query = "INSERT INTO exercise_records (exercise_id, user_id, pr_date, pr_weight, pr_reps, pr_1rm)
+				VALUES (:exercise_id, :user_id, :pr_date, :pr_weight, :pr_reps, :pr_rm)";
 		$params = array(
 			array(':exercise_id', $exercise_id, 'int'),
 			array(':user_id', $user_id, 'int'),
 			array(':pr_date', $log_date, 'str'),
 			array(':pr_weight', $set_weight, 'float'),
-			array(':pr_reps', $set_reps, 'int')
+			array(':pr_reps', $set_reps, 'int'),
+			array(':pr_rm', $this->generate_rm($set_weight, $set_reps), 'float'),
 		);
 		$db->query($query, $params);
 
@@ -718,14 +719,15 @@ class log
 			);
 			$db->query($query, $params);
 			// insert pr data
-			$query = "INSERT INTO exercise_records (exercise_id, user_id, pr_date, pr_weight, pr_reps)
-					VALUES (:exercise_id, :user_id, :pr_date, :pr_weight, :pr_reps)";
+			$query = "INSERT INTO exercise_records (exercise_id, user_id, pr_date, pr_weight, pr_reps, pr_1rm)
+					VALUES (:exercise_id, :user_id, :pr_date, :pr_weight, :pr_reps, :pr_rm)";
 			$params = array(
 				array(':exercise_id', $exercise_id, 'int'),
 				array(':user_id', $user_id, 'int'),
 				array(':pr_date', $log_date, 'str'),
 				array(':pr_weight', $row['logitem_weight'], 'float'),
-				array(':pr_reps', $set_reps, 'int')
+				array(':pr_reps', $set_reps, 'int'),
+				array(':pr_rm', $this->generate_rm($row['logitem_weight'], $set_reps), 'float'),
 			);
 			$db->query($query, $params);
 		}
@@ -737,10 +739,10 @@ class log
 		if ($range > 0)
 		{
 			// load prs after x months ago
-			$query = "SELECT pr_weight, pr_reps, pr_date FROM exercise_records pr
+			$query = "SELECT pr_weight, pr_reps, pr_date, pr_1rm FROM exercise_records pr
 					LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id)
 					WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name AND pr_date >= :pr_date
-					ORDER BY pr_reps ASC, pr_date ASC";
+					ORDER BY pr_date ASC";
 			$params = array(
 				array(':exercise_name', strtolower(trim($exercise_name)), 'str'),
 				array(':pr_date', date("Y-m-d", strtotime("-$range months")), 'str'),
@@ -750,23 +752,59 @@ class log
 		else
 		{
 			// load all prs
-			$query = "SELECT pr_weight, pr_reps, pr_date FROM exercise_records pr
+			$query = "SELECT pr_weight, pr_reps, pr_date, pr_1rm FROM exercise_records pr
 					LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id)
 					WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name
-					ORDER BY pr_reps ASC, pr_date ASC";
+					ORDER BY pr_date ASC";
 			$params = array(
 				array(':exercise_name', strtolower(trim($exercise_name)), 'str'),
 				array(':user_id', $user_id, 'int')
 			);
 		}
 		$db->query($query, $params);
-		$prs = array();
+		// set the order
+		$prs = array(
+			'Approx. 1' => array(),
+			1 => array(),
+			2 => array(),
+			3 => array(),
+			4 => array(),
+			5 => array(),
+			6 => array(),
+			7 => array(),
+			8 => array(),
+			9 => array(),
+			10 => array());
+		$highest = 0; // for est 1rm so you only show the actual PRs
 		while ($row = $db->fetch())
 		{
-			if (!isset($prs[$row['pr_reps']]))
-				$prs[$row['pr_reps']] = array();
 			$prs[$row['pr_reps']][$row['pr_date']] = $row['pr_weight'];
+			if ($highest < $row['pr_1rm'])
+			{
+				$highest = $prs['Approx. 1'][$row['pr_date']] = $row['pr_1rm'];
+			}
 		}
+		// unset empty arrays
+		if (count($prs[1]) == 0)
+			unset($prs[1]);
+		if (count($prs[2]) == 0)
+			unset($prs[2]);
+		if (count($prs[3]) == 0)
+			unset($prs[3]);
+		if (count($prs[4]) == 0)
+			unset($prs[4]);
+		if (count($prs[5]) == 0)
+			unset($prs[5]);
+		if (count($prs[6]) == 0)
+			unset($prs[6]);
+		if (count($prs[7]) == 0)
+			unset($prs[7]);
+		if (count($prs[8]) == 0)
+			unset($prs[8]);
+		if (count($prs[9]) == 0)
+			unset($prs[9]);
+		if (count($prs[10]) == 0)
+			unset($prs[10]);
 		return $prs;
 	}
 
@@ -831,10 +869,11 @@ class log
 			$extra_sql .= ' OR e.exercise_name = :exercise_name_five';
 			$params[] = array(':exercise_name_five', strtolower(trim($ex_name5)), 'str');
 		}
+		$repsql = ($reps != 0) ? ' AND pr.pr_reps = :reps' : '';
 		// load all preceeding prs
-		$query = "SELECT pr_weight, pr_reps, pr_date, e.exercise_name FROM exercise_records pr
+		$query = "SELECT pr_weight, pr_reps, pr_date, e.exercise_name, pr_1rm FROM exercise_records pr
 				LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id)
-				WHERE pr.user_id = :user_id AND pr.pr_reps = :reps AND
+				WHERE pr.user_id = :user_id" . $repsql . " AND
 				(e.exercise_name = :exercise_name_one OR e.exercise_name = :exercise_name_two $extra_sql)
 				ORDER BY pr_date ASC";
 		$params[] = array(':exercise_name_one', strtolower(trim($ex_name1)), 'str');
@@ -843,11 +882,24 @@ class log
 		$params[] = array(':user_id', $user_id, 'int');
 		$db->query($query, $params);
 		$prs = array();
+		$highest = array(); // for est 1rm so you only show the actual PRs
 		while ($row = $db->fetch())
 		{
 			if (!isset($prs[$row['exercise_name']]))
 				$prs[$row['exercise_name']] = array();
-			$prs[$row['exercise_name']][$row['pr_date']] = $row['pr_weight'];
+			if ($reps == 0)
+			{
+				if (!isset($highest[$row['exercise_name']]))
+					$highest[$row['exercise_name']] = 0;
+				if ($highest[$row['exercise_name']] < $row['pr_1rm'])
+				{
+					$highest[$row['exercise_name']] = $prs[$row['exercise_name']][$row['pr_date']] = $row['pr_1rm'];
+				}
+			}
+			else
+			{
+				$prs[$row['exercise_name']][$row['pr_date']] = $row['pr_weight'];
+			}
 		}
 		return $prs;
 	}
@@ -924,6 +976,7 @@ class log
 				'logitem_sets' => $row['logitem_sets'],
 				'logitem_comment' => $row['logitem_comment'],
 				'is_pr' => $row['is_pr'],
+				'est1rm' => $item['logitem_1rm'],
 				);
 		}
 		return $data;

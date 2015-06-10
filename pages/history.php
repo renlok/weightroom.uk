@@ -57,7 +57,7 @@ foreach ($logs as $log)
 			'VOLUME' => $log['logex_volume'],
 			'REPS' => $log['logex_reps'],
 			'SETS' => $log['logex_sets'],
-			'COMMENT' => $log['logex_comment']
+			'COMMENT' => $log['logex_comment'],
 			));
 	$date = strtotime($log['logitem_date'] . ' 00:00:00') * 1000;
 	$volume_data .= "\tdataset.push({x: new Date($date), y: {$log['logex_volume']}, shape:'circle'});\n";
@@ -87,6 +87,7 @@ foreach ($logs as $log)
 				'COMMENT' => $set['logitem_comment'],
 				'IS_BW' => $set['is_bw'],
 				'IS_PR' => $set['is_pr'],
+				'EST1RM' => round($set['est1rm'], 2),
 				));
 	}
 }
