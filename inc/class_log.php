@@ -922,14 +922,23 @@ class log
 		return $graph_data;
 	}
 
-	public function list_exercises($user_id)
+	public function list_exercises($user_id, $count = true)
 	{
 		global $db;
 		// load all exercises
-		$query = "SELECT e.exercise_name, COUNT(logex_id) as COUNT FROM exercises e
-				LEFT JOIN log_exercises l ON (l.exercise_id = e.exercise_id)
-				WHERE e.user_id = :user_id GROUP BY l.exercise_id
-				ORDER BY COUNT DESC";
+		if ($count)
+		{
+			$query = "SELECT e.exercise_name, COUNT(logex_id) as COUNT FROM exercises e
+					LEFT JOIN log_exercises l ON (l.exercise_id = e.exercise_id)
+					WHERE e.user_id = :user_id GROUP BY l.exercise_id
+					ORDER BY COUNT DESC";
+		}
+		else
+		{
+			$query = "SELECT exercise_id, exercise_name FROM exercises
+					WHERE user_id = :user_id
+					ORDER BY exercise_name ASC";
+		}
 		$params = array(
 			array(':user_id', $user_id, 'int')
 		);

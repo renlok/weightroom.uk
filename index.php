@@ -92,6 +92,9 @@ switch ($page)
 	case 'ajax':
 		include PAGEDIR . 'ajax.php';
 		break;
+	case 'settings':
+		include PAGEDIR . 'settings.php';
+		break;
 	case 'demo':
 		include PAGEDIR . 'demo.php';
 		break;
