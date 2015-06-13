@@ -985,7 +985,7 @@ class log
 				'logitem_sets' => $row['logitem_sets'],
 				'logitem_comment' => $row['logitem_comment'],
 				'is_pr' => $row['is_pr'],
-				'est1rm' => $item['logitem_1rm'],
+				'est1rm' => $row['logitem_1rm'],
 				);
 		}
 		return $data;
