@@ -3,7 +3,7 @@ class log
 {
 	public function get_log_data($user_id, $date)
 	{
-		global $db;
+		global $db, $user;
 		$query = "SELECT i.*, ex.exercise_name, lx.logex_volume, lx.logex_reps, lx.logex_sets, lx.logex_comment FROM log_items As i
 				LEFT JOIN exercises ex ON (ex.exercise_id = i.exercise_id)
 				LEFT JOIN log_exercises As lx ON (lx.exercise_id = ex.exercise_id AND lx.log_id = i.log_id)
@@ -13,7 +13,7 @@ class log
 			array(':user_id', $user_id, 'int')
 		);
 		$db->query($query, $params);
-		$log_data = $db->fetchall(); // dont know why i seem to need this
+		$log_data = $db->fetchall();
 
 		// setup vars
 		$data = array();
@@ -25,7 +25,7 @@ class log
 			{
 				$exercise = $item['exercise_name'];
 				$data[$exercise] = array(
-					'total_volume' => $item['logex_volume'],
+					'total_volume' => correct_weight($item['logex_volume'], 'kg', $user->user_data['user_unit']),
 					'total_reps' => $item['logex_reps'],
 					'total_sets' => $item['logex_sets'],
 					'comment' => $item['logex_comment'],
@@ -33,11 +33,11 @@ class log
 				);
 			}
 			$data[$exercise]['sets'][] = array(
-				'weight' => $item['logitem_weight'],
+				'weight' => correct_weight($item['logitem_weight'], 'kg', $user->user_data['user_unit']),
 				'reps' => $item['logitem_reps'],
 				'sets' => $item['logitem_sets'],
 				'comment' => $item['logitem_comment'],
-				'est1rm' => $item['logitem_1rm'],
+				'est1rm' => correct_weight($item['logitem_1rm'], 'kg', $user->user_data['user_unit']),
 				'is_pr' => $item['is_pr'],
 				'is_bw' => $item['is_bw'],
 			);
@@ -117,7 +117,7 @@ class log
 		global $db, $user;
 		// woop
 		$log_data = array();
-		$units = $user->user_data['user_unit']; // 1 = kg, 2 = lb
+		// $user->user_data['user_unit'] : 1 = kg, 2 = lb
 		$units = 1; // stored units should always be in kg
 		$log_data['comment'] = '';
 		$log_lines = explode("\n", $log);
@@ -157,7 +157,9 @@ class log
 					$line = str_replace($matches[0], '', $line);
 					// check if units were used
 					if (isset($matches[2]))
-						$weight = $this->correct_weight($matches[1], $matches[2], $units);
+						$weight = correct_weight($matches[1], $matches[2], $units);
+					elseif ($user->user_data['user_unit'] == 2)
+						$weight = correct_weight($matches[1], 'lb', $units);
 					else
 						$weight = $matches[1];
 					// add the data to the array
@@ -178,7 +180,9 @@ class log
 					else
 					{
 						if (isset($matches[3]))
-							$correct_weight = $this->correct_weight($matches[2], $matches[3], $units);
+							$correct_weight = correct_weight($matches[2], $matches[3], $units);
+						elseif ($user->user_data['user_unit'] == 2)
+							$correct_weight = correct_weight($matches[2], 'lb', $units);
 						else
 							$correct_weight = $matches[2];
 						// was it + or - BW
@@ -204,26 +208,6 @@ class log
 		}
 
 		return $log_data;
-	}
-	
-	private function correct_weight($weight, $unit_used, $unit_want) // $unit_used = kg/lb $unit_want = 1/2
-	{
-		if (($unit_used == 'kg' && $unit_want == 1) || ($unit_used == 'lb' && $unit_want == 2))
-		{
-			return $weight;
-		}
-		elseif ($unit_used == 'kg' && $unit_want == 2)
-		{
-			return ($weight * 2.20462); // convert to lb
-		}
-		elseif ($unit_used == 'lb' && $unit_want == 1)
-		{
-			return ($weight * 0.453592); // convert to kg
-		}
-		else
-		{
-			return $weight;
-		}
 	}
 
 	// where the magic happens
@@ -906,18 +890,25 @@ class log
 
 	public function build_pr_graph_data($data, $type = 'rep')
 	{
+		global $user;
+
 		$graph_data = '';
+		$showreps = array_flip(explode('|', $user->user_data['user_showreps']));
+		$showreps['Approx. 1'] = 0;
 		foreach ($data as $rep => $prs)
 		{
-			$graph_data .= "var dataset = [];\n";
-			foreach ($prs as $date => $weight)
+			if ($type != 'rep' || isset($showreps[$rep]))
 			{
-				$date = strtotime($date . ' 00:00:00') * 1000;
-				$graph_data .= "\tdataset.push({x: new Date($date), y: $weight, shape:'circle'});\n";
+				$graph_data .= "var dataset = [];\n";
+				foreach ($prs as $date => $weight)
+				{
+					$date = strtotime($date . ' 00:00:00') * 1000;
+					$weight = correct_weight($weight, 'kg', $user->user_data['user_unit']);
+					$graph_data .= "\tdataset.push({x: new Date($date), y: $weight, shape:'circle'});\n";
+				}
+				$type_string = ($type == 'rep') ? ' rep max' : '';
+				$graph_data .= "prHistoryChartData.push({\n\tvalues: dataset,\n\tkey: '{$rep}{$type_string}'\n});\n";
 			}
-			$type_string = ($type == 'rep') ? ' rep max' : '';
-			$disabled = ($type != 'rep' || in_array($rep, array(1,2,3,5,8,10))) ? '' : "disabled: true,\n\t";
-			$graph_data .= "prHistoryChartData.push({\n\tvalues: dataset,\n\t{$disabled}key: '{$rep}{$type_string}'\n});\n";
 		}
 		return $graph_data;
 	}
@@ -948,9 +939,10 @@ class log
 
 	public function list_exercise_logs($user_id, $exercise_name)
 	{
-		global $db;
+		global $db, $user;
+
 		// load all exercises
-		$query = "SELECT i.*, lx.logex_volume, lx.logex_reps, lx.logex_sets, lx.logex_comment FROM log_items As i
+		$query = "SELECT i.*, lx.logex_volume, lx.logex_reps, lx.logex_sets, lx.logex_comment, lx.logex_1rm FROM log_items As i
 				LEFT JOIN exercises ex ON (ex.exercise_id = i.exercise_id)
 				LEFT JOIN log_exercises As lx ON (lx.exercise_id = ex.exercise_id AND lx.log_id = i.log_id)
 				WHERE ex.user_id = :user_id AND ex.exercise_name = :exercise_name
@@ -962,32 +954,50 @@ class log
 		$db->query($query, $params);
 
 		// organise the data
-		$current_log = 0;
+		$max_reps = $max_sets = $max_vol = $max_rm = 0;
 		$data = array();
 		while ($row = $db->fetch())
 		{
 			// set log globals
 			if (!isset($data[$row['log_id']]))
 			{
+				$row['logex_volume'] = correct_weight($row['logex_volume'], 'kg', $user->user_data['user_unit']);
+				$row['logex_1rm'] = correct_weight($row['logex_1rm'], 'kg', $user->user_data['user_unit']);
 				$data[$row['log_id']] = array(
 					'logitem_date' => $row['logitem_date'],
 					'logex_volume' => $row['logex_volume'],
+					'logex_1rm' => $row['logex_1rm'],
 					'logex_reps' => $row['logex_reps'],
 					'logex_sets' => $row['logex_sets'],
 					'logex_comment' => $row['logex_comment'],
 					'sets' => array() // ready for the rest of the data
 					);
+				// set max values
+				if ($max_sets < $row['logex_sets'])
+					$max_sets = $row['logex_sets'];
+				if ($max_reps < $row['logex_reps'])
+					$max_reps = $row['logex_reps'];
+				if ($max_rm < $row['logex_1rm'])
+					$max_rm = $row['logex_1rm'];
+				if ($max_vol < $row['logex_volume'])
+					$max_vol = $row['logex_volume'];
 			}
 			$data[$row['log_id']]['sets'][] = array(
-				'logitem_weight' => $row['logitem_weight'],
+				'logitem_weight' => correct_weight($row['logitem_weight'], 'kg', $user->user_data['user_unit']),
 				'is_bw' => $row['is_bw'],
 				'logitem_reps' => $row['logitem_reps'],
 				'logitem_sets' => $row['logitem_sets'],
 				'logitem_comment' => $row['logitem_comment'],
 				'is_pr' => $row['is_pr'],
-				'est1rm' => $row['logitem_1rm'],
+				'est1rm' => correct_weight($row['logitem_1rm'], 'kg', $user->user_data['user_unit']),
 				);
 		}
+		$data[0] = array(
+			'max_reps' => $max_reps,
+			'max_sets' => $max_sets,
+			'max_vol' => $max_vol,
+			'max_rm' => $max_rm
+		);
 		return $data;
 	}
 }

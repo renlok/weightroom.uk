@@ -154,8 +154,11 @@ else
 	$highest = 0;
 	for ($i = 10; $i >= 1; $i--)
 	{
+		// convert to used units
 		if (isset($pr_data_max[$i]))
 		{
+			$pr_true[$i] = correct_weight($pr_true[$i], 'kg', $user->user_data['user_unit']);
+			$pr_data_max[$i] = correct_weight($pr_data_max[$i], 'kg', $user->user_data['user_unit']);
 			if ($pr_true[$i] > $highest)
 			{
 				$highest = $pr_true[$i];

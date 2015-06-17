@@ -36,4 +36,24 @@ function load_global_tempalte()
 			'footer' => 'global_footer.tpl'
 			));
 }
+
+function correct_weight($weight, $unit_used, $unit_want) // $unit_used = kg/lb $unit_want = 1/2
+{
+	if (($unit_used == 'kg' && $unit_want == 1) || ($unit_used == 'lb' && $unit_want == 2))
+	{
+		return $weight;
+	}
+	elseif ($unit_used == 'kg' && $unit_want == 2)
+	{
+		return round(($weight * 2.20462), 2); // convert to lb
+	}
+	elseif ($unit_used == 'lb' && $unit_want == 1)
+	{
+		return round(($weight * 0.453592), 2); // convert to kg
+	}
+	else
+	{
+		return $weight;
+	}
+}
 ?>

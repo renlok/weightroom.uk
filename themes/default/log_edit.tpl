@@ -43,7 +43,7 @@
 <label for="weight">Bodyweight:</label>
 <div class="input-group">
 	<input type="text" class="form-control" placeholder="User's Weight" aria-describedby="basic-addon2" name="weight" value="{WEIGHT}">
-	<span class="input-group-addon" id="basic-addon2">kg</span>
+	<span class="input-group-addon" id="basic-addon2">{WEIGHT_UNIT}</span>
 </div>
 <div class="input-group margintb">
 	<input type="hidden" name="csrftoken" value="{_CSRFTOKEN}">

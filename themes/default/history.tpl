@@ -23,7 +23,7 @@
     </div>
     <div id="collapse{items.LOG_DATE}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{items.LOG_DATE}">
       <div class="panel-body">
-        <p class="logrow">Volume: <span class="heavy">{items.VOLUME}</span>kg - Reps: <span class="heavy">{items.REPS}</span> - Sets: <span class="heavy">{items.SETS}</span></p>
+        <p class="logrow">Volume: <span class="heavy">{items.VOLUME}</span>{WEIGHT_UNIT} - Reps: <span class="heavy">{items.REPS}</span> - Sets: <span class="heavy">{items.SETS}</span></p>
 		<table class="table">
 		<tbody>
 		<!-- BEGIN sets -->
@@ -32,7 +32,7 @@
 					<!-- IF items.sets.IS_PR --><span class="glyphicon glyphicon-star" aria-hidden="true"></span><!-- ELSE -->&nbsp;<!-- ENDIF -->
 				</td>
 				<td class="logrow">
-					<!-- IF items.sets.REPS eq 0 --><del><!-- ENDIF --><span class="heavy">{items.sets.WEIGHT}</span>kg x <span class="heavy">{items.sets.REPS}</span> x <span class="heavy">{items.sets.SETS}</span><!-- IF items.sets.REPS eq 0 --></del><!-- ELSEIF items.sets.REPS gt 1 --> <small class="leftspace"><i>&#8776; {items.sets.EST1RM} kg</i></small><!-- ENDIF -->
+					<!-- IF items.sets.REPS eq 0 --><del><!-- ENDIF --><span class="heavy">{items.sets.WEIGHT}</span>{WEIGHT_UNIT} x <span class="heavy">{items.sets.REPS}</span> x <span class="heavy">{items.sets.SETS}</span><!-- IF items.sets.REPS eq 0 --></del><!-- ELSEIF items.sets.REPS gt 1 --> <small class="leftspace"><i>&#8776; {items.sets.EST1RM} {WEIGHT_UNIT}</i></small><!-- ENDIF -->
 					<!-- IF items.sets.COMMENT ne '' --><div class="well well-sm">{items.sets.COMMENT}</div><!-- ENDIF -->
 				</td>
 				<td class="tdpr2">
@@ -63,6 +63,7 @@
 #HistoryChart, svg {
   height: 400px;
 }
+.nv-axisMaxMin, .nv-y text { display: none; }
 </style>
 <script>
     function HistoryData() {
@@ -74,10 +75,31 @@
     nv.addGraph(function() {
         var chart = nv.models.lineWithFocusChart();
 		chart.tooltipContent(function(key, y, e, graph)
+		{
+			//console.log(key);
+			var units = '{WEIGHT_UNIT}';
+			var point_value = key.point.y;
+			if (key.point.color == '#b84a68')
+				var tool_type = 'Volume';
+			if (key.point.color == '#a6bf50')
 			{
-				console.log(key);
-				return '<pre>' + key.point.y + '</pre>';
-			})
+				var tool_type = 'Total reps';
+				point_value = Math.round(point_value / {REP_SCALE});
+				units = '';
+			}
+			if (key.point.color == '#56c5a6')
+			{
+				var tool_type = 'Total sets';
+				point_value = Math.round(point_value / {SET_SCALE});
+				units = '';
+			}
+			if (key.point.color == '#765dcb')
+			{
+				var tool_type = '1RM';
+				point_value = (point_value / {RM_SCALE}).toFixed(2);
+			}
+			return '<pre>' + tool_type + ': ' + point_value + units + '</pre>';
+		})
 							//.margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
 							//.useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
 							//.transitionDuration(350)  //how fast do you want the lines to transition?
@@ -94,7 +116,6 @@
             .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); });
 
         chart.yAxis
-            .axisLabel('Weight')
             .tickFormat(d3.format('.02f'));
 
         chart.y2Axis

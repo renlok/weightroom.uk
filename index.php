@@ -64,6 +64,7 @@ $page = (isset($_GET['page'])) ? $_GET['page'] : '';
 $do = (isset($_GET['do'])) ? $_GET['do'] : '';
 $template->assign_vars(array(
 	'NOT_LOGGED_IN' => !$user->logged_in,
+	'WEIGHT_UNIT' => ($user->user_data['user_unit'] == 1) ? 'kg' : 'lb',
 	'CURRENT_PAGE' => $page,
 	'CURRENT_DO' => $do
 	));

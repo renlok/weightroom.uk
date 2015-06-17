@@ -38,11 +38,15 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 	$log_data = $log->get_log_data($user_id, $log_date);
 
 	// loop through the exercises
+	$total_volume = $total_reps = $total_sets = 0;
 	foreach ($log_data as $exercise => $log_items)
 	{
+		$total_volume += $log_items['total_volume'];
+		$total_reps += $log_items['total_reps'];
+		$total_sets += $log_items['total_sets'];
 		$template->assign_block_vars('items', array(
 				'EXERCISE' => ucwords($exercise),
-				'VOLUME' => round($log_items['total_volume'], 2),
+				'VOLUME' => $log_items['total_volume'],
 				'REPS' => $log_items['total_reps'],
 				'SETS' => $log_items['total_sets'],
 				'COMMENT' => trim($log_items['comment']),
@@ -51,13 +55,13 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 		{
 			if ($set['is_bw'] == 0)
 			{
-				$weight = round($set['weight'], 2);
+				$weight = $set['weight'];
 			}
 			else
 			{
 				if ($set['weight'] != 0)
 				{
-					$weight = 'BW' . round($set['weight'], 2);
+					$weight = 'BW' . $set['weight'];
 				}
 				else
 				{
@@ -70,7 +74,7 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 					'SETS' => $set['sets'],
 					'IS_PR' => $set['is_pr'],
 					'COMMENT' => trim($set['comment']),
-					'EST1RM' => round($set['est1rm'], 2),
+					'EST1RM' => $set['est1rm'],
 					));
 		}
 	}
@@ -109,6 +113,10 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 		'B_FOLLOWING' => $user->is_following($user_id),
 		'BADGES' => $badges,
 		'JOINED' => $user_data['user_joined'],
+
+		'TOTAL_VOLUME' => $total_volume,
+		'TOTAL_REPS' => $total_reps,
+		'TOTAL_SETS' => $total_sets,
 
 		'B_LOG' => (!(empty($log_data) && empty($log_ic['log_comment']))),
 		'JSDATE' => ($timestamp * 1000),
@@ -208,7 +216,7 @@ elseif ($_GET['do'] == 'edit')
 	}
 	$template->assign_vars(array(
 		'LOG' => (isset($_POST['log'])) ? $_POST['log'] : $log_text,
-		'WEIGHT' => $weight,
+		'WEIGHT' => correct_weight($weight, 'kg', $user->user_data['user_unit']),
 		'DATE' => $log_date,
 		'ERROR' => $error,
 		'VALID_LOG' => $valid_log,
