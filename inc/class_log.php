@@ -798,10 +798,15 @@ class log
 		if ($range > 0)
 		{
 			// load prs after x months ago
-			$query = "SELECT MAX(logitem_weight) as logitem_weight, logitem_reps, logitem_date FROM log_items pr
-					LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id) 
-					WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name AND pr.logitem_reps != 0 AND pr.logitem_reps <= 10 AND logitem_date >= :logitem_date
-					GROUP BY logitem_reps, WEEK(logitem_date)
+			$query = "SELECT logitem_weight, logitem_reps, logitem_date FROM log_items
+					WHERE (logitem_weight, logitem_reps, WEEK(logitem_date)) IN 
+					(
+						SELECT MAX(logitem_weight) as logitem_weight, logitem_reps, WEEK(logitem_date)
+						FROM log_items pr
+						LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id)
+						WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name AND pr.logitem_reps != 0 AND pr.logitem_reps <= 10 AND logitem_date >= :logitem_date
+						GROUP BY logitem_reps, WEEK(logitem_date)
+					)
 					ORDER BY logitem_reps ASC , logitem_date ASC";
 			$params = array(
 				array(':exercise_name', strtolower(trim($exercise_name)), 'str'),
@@ -812,10 +817,66 @@ class log
 		else
 		{
 			// load all prs
-			$query = "SELECT MAX(logitem_weight) as logitem_weight, logitem_reps, logitem_date FROM log_items pr
-					LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id) 
-					WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name AND pr.logitem_reps != 0 AND pr.logitem_reps <= 10
-					GROUP BY logitem_reps, WEEK(logitem_date)
+			$query = "SELECT logitem_weight, logitem_reps, logitem_date FROM log_items
+					WHERE (logitem_weight, logitem_reps, WEEK(logitem_date)) IN 
+					(
+						SELECT MAX(logitem_weight) as logitem_weight, logitem_reps, WEEK(logitem_date)
+						FROM log_items pr
+						LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id)
+						WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name AND pr.logitem_reps != 0 AND pr.logitem_reps <= 10
+						GROUP BY logitem_reps, WEEK(logitem_date)
+					)
+					ORDER BY logitem_reps ASC , logitem_date ASC";
+			$params = array(
+				array(':exercise_name', strtolower(trim($exercise_name)), 'str'),
+				array(':user_id', $user_id, 'int')
+			);
+		}
+		$db->query($query, $params);
+		$prs = array();
+		while ($row = $db->fetch())
+		{
+			if (!isset($prs[$row['logitem_reps']]))
+				$prs[$row['logitem_reps']] = array();
+			$prs[$row['logitem_reps']][$row['logitem_date']] = $row['logitem_weight'];
+		}
+		return $prs;
+	}
+
+	public function get_prs_data_monthly($user_id, $exercise_name, $range = 0)
+	{
+		global $db;
+		if ($range > 0)
+		{
+			// load prs after x months ago
+			$query = "SELECT logitem_weight, logitem_reps, logitem_date FROM log_items
+					WHERE (logitem_weight, logitem_reps, MONTH(logitem_date)) IN 
+					(
+						SELECT MAX(logitem_weight) as logitem_weight, logitem_reps, MONTH(logitem_date)
+						FROM log_items pr
+						LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id)
+						WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name AND pr.logitem_reps != 0 AND pr.logitem_reps <= 10 AND logitem_date >= :logitem_date
+						GROUP BY logitem_reps, MONTH(logitem_date)
+					)
+					ORDER BY logitem_reps ASC , logitem_date ASC";
+			$params = array(
+				array(':exercise_name', strtolower(trim($exercise_name)), 'str'),
+				array(':logitem_date', date("Y-m-d", strtotime("-$range months")), 'str'),
+				array(':user_id', $user_id, 'int')
+			);
+		}
+		else
+		{
+			// load all prs
+			$query = "SELECT logitem_weight, logitem_reps, logitem_date FROM log_items
+					WHERE (logitem_weight, logitem_reps, MONTH(logitem_date)) IN 
+					(
+						SELECT MAX(logitem_weight) as logitem_weight, logitem_reps, MONTH(logitem_date)
+						FROM log_items pr
+						LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id)
+						WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name AND pr.logitem_reps != 0 AND pr.logitem_reps <= 10
+						GROUP BY logitem_reps, MONTH(logitem_date)
+					)
 					ORDER BY logitem_reps ASC , logitem_date ASC";
 			$params = array(
 				array(':exercise_name', strtolower(trim($exercise_name)), 'str'),

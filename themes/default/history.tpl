@@ -74,6 +74,7 @@
 
     nv.addGraph(function() {
         var chart = nv.models.lineWithFocusChart();
+		chart.margin({left: -50});
 		chart.tooltipContent(function(key, y, e, graph)
 		{
 			//console.log(key);

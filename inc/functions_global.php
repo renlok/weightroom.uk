@@ -41,7 +41,7 @@ function correct_weight($weight, $unit_used, $unit_want) // $unit_used = kg/lb $
 {
 	if (($unit_used == 'kg' && $unit_want == 1) || ($unit_used == 'lb' && $unit_want == 2))
 	{
-		return $weight;
+		return round($weight, 2);
 	}
 	elseif ($unit_used == 'kg' && $unit_want == 2)
 	{
@@ -53,7 +53,7 @@ function correct_weight($weight, $unit_used, $unit_want) // $unit_used = kg/lb $
 	}
 	else
 	{
-		return $weight;
+		return round($weight, 2);
 	}
 }
 ?>

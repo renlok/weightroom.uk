@@ -75,7 +75,7 @@ elseif ((isset($_GET['do']) && $_GET['do'] == 'list') || !isset($_GET['ex']))
 	$template->display('footer');
 }
 // weekly maxes
-elseif ((isset($_GET['do']) && $_GET['do'] == 'weekly'))
+elseif ((isset($_GET['do']) && ($_GET['do'] == 'weekly' || $_GET['do'] == 'monthly')))
 {
 	$exercise_name = (isset($_GET['ex'])) ? $_GET['ex'] : '';
 	$range = (!isset($_GET['range']) || !in_array($_GET['range'], array(1,3,6,12))) ? 0 : $_GET['range'];
@@ -113,7 +113,10 @@ elseif ((isset($_GET['do']) && $_GET['do'] == 'weekly'))
 		}
 	}
 
-	$full_pr_data = $log->get_prs_data_weekly($user->user_id, $exercise_name, $range);
+	if ($_GET['do'] == 'weekly')
+		$full_pr_data = $log->get_prs_data_weekly($user->user_id, $exercise_name, $range);
+	else
+		$full_pr_data = $log->get_prs_data_monthly($user->user_id, $exercise_name, $range);
 	$graph_data = $log->build_pr_graph_data($full_pr_data);
 
 	$template->assign_vars(array(
@@ -124,7 +127,7 @@ elseif ((isset($_GET['do']) && $_GET['do'] == 'weekly'))
 		'GRAPH_DATA' => $graph_data,
 		'EXERCISE' => ucwords($exercise_name),
 		'RANGE' => $range,
-		'TYPE' => 'weekly'
+		'TYPE' => $_GET['do']
 		));
 	$template->set_filenames(array(
 			'body' => 'exercise.tpl'
