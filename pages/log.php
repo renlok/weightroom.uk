@@ -87,12 +87,12 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 	if (isset($_POST['log_id']))
 	{
 		$parent_id = (intval($_POST['parent_id']) == 0) ? NULL : $_POST['parent_id'];
-		$log_comments->make_comment($parent_id, $_POST['comment'], $_POST['log_id'], $log_date, $user->user_id);
+		$log_comments->make_comment($parent_id, $_POST['comment'], $_POST['log_id'], $log_date, $user_id);
 		$commenting = true;
 	}
 
 	$log_comments->load_log_comments($log_ic['log_id']);
-	$log_comments->print_comments($user_id);
+	$log_comments->print_comments();
 
 	// get user info
 	$user_data = $user->get_user_data($user_id);

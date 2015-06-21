@@ -15,7 +15,10 @@ foreach ($dash_data as $dash_items)
 			'USER_NAME' => $dash_items['user_name'],
 			'USER_ID' => $dash_items['user_id'],
 			'POSTED' => $dash_items['posted'],
-			'LOG_DATE' => $dash_items['log_date']
+			'LOG_DATE' => $dash_items['true_log_date'],
+			'LOG_USER_ID' => $dash_items['receiver_user_id'],
+			'TYPE' => $dash_items['type'],
+			'COMMENT_POSTED' => $dash_items['log_date'],
 			));
 }
 $template->set_filenames(array(

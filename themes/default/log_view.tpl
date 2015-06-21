@@ -118,7 +118,6 @@
 <!-- ENDIF -->
 
 
-<script src="https://code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
 <link href="http://nazar-pc.github.io/PickMeUp/css/pickmeup.css" rel="stylesheet">
 <script src="http://nazar-pc.github.io/PickMeUp/js/jquery.pickmeup.js"></script>
 <script src="http://momentjs.com/downloads/moment.js"></script>

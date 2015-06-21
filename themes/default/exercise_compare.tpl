@@ -49,7 +49,6 @@
     <svg></svg>
 </div>
 
-<script src="https://code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <link href="http://nvd3.org/assets/css/nv.d3.css" rel="stylesheet">
 <script src="http://nvd3.org/assets/js/nv.d3.js"></script>

@@ -12,6 +12,8 @@
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="http://we-link.co.uk/tracker/css/tracker.css">
+	<script src="http://code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
+	<script src="http://getbootstrap.com/dist/js/bootstrap.min.js" charset="utf-8"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -23,7 +25,7 @@
   <body>
 	<div class="container-fluid" id="header">
 	  <ul class="nav nav-pills">
-		  <li role="presentation"><a href="?">Home</a></li>
+		  <li role="presentation"<!-- IF CURRENT_PAGE eq '' --> class="active"<!-- ENDIF -->><a href="?">Home</a></li>
 	  <!-- IF NOT_LOGGED_IN -->
 		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'login' --> class="active"<!-- ENDIF -->><a href="?page=login">Login</a></li>
 		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'register' --> class="active"<!-- ENDIF -->><a href="?page=register">Register</a></li>
@@ -32,6 +34,7 @@
 		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'log' --> class="active"<!-- ENDIF -->><a href="?page=log">View Log</a></li>
 		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'exercise' && (CURRENT_DO eq 'list' || CURRENT_DO eq '') --> class="active"<!-- ENDIF -->><a href="?page=exercise&do=list">Exercise List</a></li>
 		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'exercise' && CURRENT_DO eq 'compare' --> class="active"<!-- ENDIF -->><a href="?page=exercise&do=compare">Compare Exercises</a></li>
+		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'search' --> class="active"<!-- ENDIF -->><a href="#" data-toggle="modal" data-target="#searchUsers"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></a></li>
 		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'settings' --> class="active"<!-- ENDIF -->><a href="?page=settings"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a></li>
 	  <!-- ENDIF -->
 		</ul>

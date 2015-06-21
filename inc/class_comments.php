@@ -5,7 +5,6 @@ class comments
     public $parents  = array();
     public $children = array();
     public $comments = '';
-	private $user_id;
 
     /**
      * @param array $comments 
@@ -48,7 +47,7 @@ class comments
 		// posted same day
 		if ($today == $datearr[0])
 		{
-			$posted_on = 'at' . $datearr[1];
+			$posted_on = 'at ' . $datearr[1];
 		}
 		else
 		{
@@ -59,8 +58,8 @@ class comments
 			elseif ($interval->m) { $posted_on = $interval->format("%m months ago"); }
 			elseif ($interval->d) { $posted_on = $interval->format("%d days ago"); }
 		}
-		$message_box = "<div class=\"comment-reply-box\" style=\"display:none;\"><form action=\"?do=view&page=log&date={$comment['log_date']}&user_id={$this->user_id}#comments\" method=\"post\"><input type=\"hidden\" name=\"log_id\" value=\"{$comment['log_id']}\"><input type=\"hidden\" name=\"parent_id\" value=\"{$comment['comment_id']}\"><input type=\"hidden\" name=\"csrftoken\" value=\"{$_SESSION['csrftoken']}\"><div class=\"form-group\"><textarea class=\"form-control\" rows=\"3\" placeholder=\"Comment\" name=\"comment\" maxlength=\"500\"></textarea><p><small>Max. 500 characters</small></p></div><div class=\"form-group\"><button type=\"submit\" class=\"btn btn-default\">Post</button></div></form></div>";
-		$this->comments .= "<li><div class=\"comment\"><h6>{$comment['user_name']} <small>{$posted_on}</small></h6>{$comment['comment']}<p class=\"small\"><a href=\"#\" class=\"reply\">reply</a></p>$message_box</div></li>\n";
+		$message_box = "<div class=\"comment-reply-box\" style=\"display:none;\"><form action=\"?do=view&page=log&date={$comment['log_date']}&user_id={$comment['receiver_user_id']}#comments\" method=\"post\"><input type=\"hidden\" name=\"log_id\" value=\"{$comment['log_id']}\"><input type=\"hidden\" name=\"parent_id\" value=\"{$comment['comment_id']}\"><input type=\"hidden\" name=\"csrftoken\" value=\"{$_SESSION['csrftoken']}\"><div class=\"form-group\"><textarea class=\"form-control\" rows=\"3\" placeholder=\"Comment\" name=\"comment\" maxlength=\"500\"></textarea><p><small>Max. 500 characters</small></p></div><div class=\"form-group\"><button type=\"submit\" class=\"btn btn-default\">Post</button></div></form></div>";
+		$this->comments .= "<li><div class=\"comment\"><h6><a href=\"http://weightroom.uk/?page=log&user_id={$comment['sender_user_id']}\">{$comment['user_name']}</a> <small>{$posted_on}</small></h6>{$comment['comment']}<p class=\"small\"><a href=\"#\" class=\"reply\">reply</a></p>$message_box</div></li>\n";
     }
     
     /**
@@ -86,10 +85,8 @@ class comments
 		$this->comments .= $tabs . "</ul>\n";
     }
 
-    public function print_comments($user_id)
+    public function print_comments()
     {
-		// set user id
-		$this->user_id = $user_id;
         foreach ($this->parents as $c)
         {
             $this->print_parent($c);
@@ -100,7 +97,7 @@ class comments
 	{
 		global $db;
 		$query = "SELECT c.*, u.user_name FROM log_comments c
-				LEFT JOIN users u ON (c.user_id = u.user_id)
+				LEFT JOIN users u ON (c.sender_user_id = u.user_id)
 				WHERE c.log_id = :log_id ORDER BY c.comment_date DESC";
 		$params = array(
 			array(':log_id', $log_id, 'int')
@@ -115,14 +112,15 @@ class comments
 
 	public function make_comment($parent_id, $comment, $log_id, $log_date, $user_id)
 	{
-		global $db;
-		$query = "INSERT INTO log_comments (parent_id, comment, log_id, log_date, user_id) VALUES (:parent_id, :comment, :log_id, :log_date, :user_id)";
+		global $db, $user;
+		$query = "INSERT INTO log_comments (parent_id, comment, log_id, log_date, sender_user_id, receiver_user_id) VALUES (:parent_id, :comment, :log_id, :log_date, :sender_user_id, :receiver_user_id)";
 		$params = array(
 			array(':parent_id', $parent_id, 'int'),
 			array(':comment', $comment, 'str'),
 			array(':log_date', $log_date, 'str'),
 			array(':log_id', $log_id, 'int'),
-			array(':user_id', $user_id, 'int'),
+			array(':sender_user_id', $user->user_id, 'int'),
+			array(':receiver_user_id', $user_id, 'int'),
 		);
 		$db->query($query, $params);
 	}

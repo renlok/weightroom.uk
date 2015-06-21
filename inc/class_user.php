@@ -134,6 +134,20 @@ class user
 		return $db->result();
     }
 
+	public function search_users($user_name) 
+    { 
+        global $db;
+
+        $query = "SELECT user_id, user_name FROM users WHERE user_id = :user_id OR user_name LIKE :user_name";
+		$params = array(
+			array(':user_id', $user_name, 'int'),
+			array(':user_name', '%' . $user_name . '%', 'str')
+		);
+		$db->query($query, $params);
+
+		return $db->fetchall();
+    }
+
 	public function deletefollower($user_id) 
     { 
         global $db;

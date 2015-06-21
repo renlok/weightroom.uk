@@ -64,7 +64,7 @@ $page = (isset($_GET['page'])) ? $_GET['page'] : '';
 $do = (isset($_GET['do'])) ? $_GET['do'] : '';
 $template->assign_vars(array(
 	'NOT_LOGGED_IN' => !$user->logged_in,
-	'WEIGHT_UNIT' => (!$user->logged_in || $user->user_data['user_unit'] == 1) ? 'kg' : 'lb',
+	'WEIGHT_UNIT' => ($user->logged_in && $user->user_data['user_unit'] == 2) ? 'lb' : 'kg',
 	'CURRENT_PAGE' => $page,
 	'CURRENT_DO' => $do
 	));
@@ -92,6 +92,9 @@ switch ($page)
 		break;
 	case 'ajax':
 		include PAGEDIR . 'ajax.php';
+		break;
+	case 'search':
+		include PAGEDIR . 'search.php';
 		break;
 	case 'settings':
 		include PAGEDIR . 'settings.php';
