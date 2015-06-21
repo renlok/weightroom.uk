@@ -5,6 +5,7 @@ class comments
     public $parents  = array();
     public $children = array();
     public $comments = '';
+	private $user_id;
 
     /**
      * @param array $comments 
@@ -58,7 +59,7 @@ class comments
 			elseif ($interval->m) { $posted_on = $interval->format("%m months ago"); }
 			elseif ($interval->d) { $posted_on = $interval->format("%d days ago"); }
 		}
-		$message_box = "<div class=\"comment-reply-box\" style=\"display:none;\"><form action=\"?do=view&page=log&date={$comment['log_date']}&user_id={$comment['user_id']}#comments\" method=\"post\"><input type=\"hidden\" name=\"log_id\" value=\"{$comment['log_id']}\"><input type=\"hidden\" name=\"parent_id\" value=\"{$comment['comment_id']}\"><input type=\"hidden\" name=\"csrftoken\" value=\"{$_SESSION['csrftoken']}\"><div class=\"form-group\"><textarea class=\"form-control\" rows=\"3\" placeholder=\"Comment\" name=\"comment\" maxlength=\"500\"></textarea><p><small>Max. 500 characters</small></p></div><div class=\"form-group\"><button type=\"submit\" class=\"btn btn-default\">Post</button></div></form></div>";
+		$message_box = "<div class=\"comment-reply-box\" style=\"display:none;\"><form action=\"?do=view&page=log&date={$comment['log_date']}&user_id={$this->user_id}#comments\" method=\"post\"><input type=\"hidden\" name=\"log_id\" value=\"{$comment['log_id']}\"><input type=\"hidden\" name=\"parent_id\" value=\"{$comment['comment_id']}\"><input type=\"hidden\" name=\"csrftoken\" value=\"{$_SESSION['csrftoken']}\"><div class=\"form-group\"><textarea class=\"form-control\" rows=\"3\" placeholder=\"Comment\" name=\"comment\" maxlength=\"500\"></textarea><p><small>Max. 500 characters</small></p></div><div class=\"form-group\"><button type=\"submit\" class=\"btn btn-default\">Post</button></div></form></div>";
 		$this->comments .= "<li><div class=\"comment\"><h6>{$comment['user_name']} <small>{$posted_on}</small></h6>{$comment['comment']}<p class=\"small\"><a href=\"#\" class=\"reply\">reply</a></p>$message_box</div></li>\n";
     }
     
@@ -85,8 +86,10 @@ class comments
 		$this->comments .= $tabs . "</ul>\n";
     }
 
-    public function print_comments()
+    public function print_comments($user_id)
     {
+		// set user id
+		$this->user_id = $user_id;
         foreach ($this->parents as $c)
         {
             $this->print_parent($c);
