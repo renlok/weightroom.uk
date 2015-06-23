@@ -18,7 +18,7 @@ if (isset($_POST['username']) && isset($_POST['password']))
 			setcookie('TRACKER_RM_ID', $auth_token, time() + (3600 * 24 * 365));
 		}
 		// they are in :)
-		print_message('You are logged in', '?page=log');
+		print_message('You are logged in', '?page=log', 1);
 	}
 	else
 	{
