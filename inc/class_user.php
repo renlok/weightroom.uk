@@ -121,11 +121,11 @@ class user
 		return true;
     }
 
-	public function get_user_data($user_id) 
+	public function get_user_data($user_id, $searchfor = '*') 
     { 
         global $db;
 
-        $query = "SELECT * FROM users WHERE user_id = :user_id";
+        $query = "SELECT " . $searchfor . " FROM users WHERE user_id = :user_id";
 		$params = array(
 			array(':user_id', $user_id, 'int')
 		);

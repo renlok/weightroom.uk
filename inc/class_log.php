@@ -4,10 +4,12 @@ class log
 	public function get_log_data($user_id, $date)
 	{
 		global $db, $user;
-		$query = "SELECT i.*, ex.exercise_name, lx.logex_volume, lx.logex_reps, lx.logex_sets, lx.logex_comment FROM log_items As i
+		$query = "SELECT i.*, ex.exercise_name, lx.logex_volume, lx.logex_reps, lx.logex_sets, lx.logex_comment, lx.logex_order
+				FROM log_items As i
 				LEFT JOIN exercises ex ON (ex.exercise_id = i.exercise_id)
 				LEFT JOIN log_exercises As lx ON (lx.exercise_id = ex.exercise_id AND lx.log_id = i.log_id)
-				WHERE i.logitem_date = :log_date AND i.user_id = :user_id";
+				WHERE i.logitem_date = :log_date AND i.user_id = :user_id
+				ORDER BY logex_order ASC, logitem_order ASC";
 		$params = array(
 			array(':log_date', $date, 'str'),
 			array(':user_id', $user_id, 'int')
@@ -17,14 +19,18 @@ class log
 
 		// setup vars
 		$data = array();
-		$exercise = '';
+		$logex_number = 0;
+		$exercisepointer = 0;
 		for ($i = 0, $count = count($log_data); $i < $count; $i++)
 		{
 			$item = $log_data[$i];
-			if ($exercise != $item['exercise_name'])
+			if ($logex_number != $item['logex_order'])
 			{
-				$exercise = $item['exercise_name'];
-				$data[$exercise] = array(
+				$logex_number = $item['logex_order'];
+				if ($exercisepointer != 0) // next point if not first exercise
+					$exercisepointer++;
+				$data[$exercisepointer] = array(
+					'exercise' => $item['exercise_name'],
 					'total_volume' => correct_weight($item['logex_volume'], 'kg', $user->user_data['user_unit']),
 					'total_reps' => $item['logex_reps'],
 					'total_sets' => $item['logex_sets'],
@@ -32,7 +38,7 @@ class log
 					'sets' => array(),
 				);
 			}
-			$data[$exercise]['sets'][] = array(
+			$data[$exercisepointer]['sets'][] = array(
 				'weight' => correct_weight($item['logitem_weight'], 'kg', $user->user_data['user_unit']),
 				'reps' => $item['logitem_reps'],
 				'sets' => $item['logitem_sets'],
@@ -123,17 +129,26 @@ class log
 		$log_lines = explode("\n", $log);
 
 		$exercise = '';
+		$position = 0; // a pointer for when each set was done (to keep the order)
+		$exersiceposition = 0; // a second position pointer
+		$exersicepointers = array(); // for if there is multiple groups of exercise sets
 		foreach ($log_lines as $line)
 		{
 			// check if new exercise
 			if ($line[0] == '#')
 			{
 				$exercise = substr($line, 1); // set exercise marker
-				if (!isset($log_data[$exercise]))
-					$log_data[$exercise] = array('name' => $exercise,
-												'comment' => '',
-												'sets' => array()); // create entry to array
-				
+				if (isset($exersicepointers[$exercise]))
+					$exersicepointers[$exercise]++;
+				else
+					$exersicepointers[$exercise] = 0;
+				// add new exercise group to array
+				$log_data[$exercise][$exersicepointers[$exercise]] = array(
+						'name' => $exercise,
+						'comment' => '',
+						'position' => $exersiceposition,
+						'sets' => array());
+				$exersiceposition++;
 				continue; // end this loop
 			}
 			
@@ -163,7 +178,7 @@ class log
 					else
 						$weight = $matches[1];
 					// add the data to the array
-					$log_data[$exercise]['sets'][] = $this->get_reps($exercise, $weight, $line);
+					$log_data[$exercise][$exersicepointers[$exercise]]['sets'][] = $this->get_reps($exercise, $weight, $line);
 				}
 			}
 			elseif ($line[0] == 'B' && $line[1] == 'W') // using bodyweight
@@ -192,16 +207,16 @@ class log
 							$weight = -1 * $correct_weight;
 					}
 					// add the data to the array
-					$log_data[$exercise]['sets'][] = $this->get_reps($exercise, $weight, $line, true);
+					$log_data[$exercise][$exersicepointers[$exercise]]['sets'][] = $this->get_reps($exercise, $weight, $line, true);
 				}
 			}
 			else
 			{
-				if (strlen($log_data[$exercise]['comment']) > 1)
+				if (strlen($log_data[$exercise][$exersicepointers[$exercise]]['comment']) > 1)
 				{
-					$log_data[$exercise]['comment'] .= '<br>';
+					$log_data[$exercise][$exersicepointers[$exercise]]['comment'] .= '<br>';
 				}
-				$log_data[$exercise]['comment'] .= $line;
+				$log_data[$exercise][$exersicepointers[$exercise]]['comment'] .= $line;
 			}
 			// /^BW(\+|-)*\s*([0-9]+)*\s*(kg|lb)*/g // matches BW+10kg
 			// /^([0-9]+)\s*(lb|kg)*/g      matches weight given
@@ -213,6 +228,7 @@ class log
 	// where the magic happens
 	private function get_reps($exercise, $weight, $line, $bw = false)
 	{
+		global $position;
 		// set the variables
 		$reps = '';
 		$sets = '';
@@ -296,11 +312,14 @@ class log
 			$sets = 1;
 		}
 		$line = substr($line, $lettercount);
-		return array('weight' => $weight,
+		$setrep_data = array('weight' => $weight,
 					'is_bw' => $bw,
 					'reps' => ($reps == '') ? 1 : $reps,
 					'sets' => ($sets == '') ? 1 : $sets,
-					'line' => trim($line));
+					'line' => trim($line),
+					'position' => $position);
+		$position++; // next position
+		return $setrep_data;
 	}
 
 	public function store_new_log_data($log_data, $log_text, $log_date, $user_id, $user_weight)
@@ -386,85 +405,93 @@ class log
 		$log_id = $log_id['log_id'];
 		$new_prs = array();
 		// add all of the exercise details
-		foreach ($log_data as $exercise => $item)
+		foreach ($log_data as $exercise => $items)
 		{
 			// ignore the comment
-			if (!($exercise == 'comment' && $item == $log_data['comment']))
+			if (!($exercise == 'comment' && $items == $log_data['comment']))
 			{
-				// reset totals
-				$total_volume = $total_reps = $total_sets = 0;
-				$exercise_id = $this->get_exercise_id($user_id, $exercise);
-				$prs = $this->get_prs($user_id, $log_date, $exercise);
-				$max_estimate_rm = 0;
-				foreach ($item['sets'] as $set)
+				// add a loop incase their are multiples of the same exercise
+				for ($j = 0, $item_count = count($items); $j < $item_count; $j++)
 				{
-					$rep_arr = explode(',', $set['reps']);
-					$temp_sets = $set['sets'];
-					for ($i = 0, $count = count($rep_arr); $i < $count; $i++)
+					// set $item for ease
+					$item = $items[$j];
+					// reset totals
+					$total_volume = $total_reps = $total_sets = 0;
+					$exercise_id = $this->get_exercise_id($user_id, $exercise);
+					$prs = $this->get_prs($user_id, $log_date, $exercise);
+					$max_estimate_rm = 0;
+					foreach ($item['sets'] as $set)
 					{
-						// for comma format add the sets together
-						if (isset($rep_arr[$i+1]) && $rep_arr[$i] == $rep_arr[$i+1])
-						{
-							$temp_sets++;
-							continue;
-						}
-						$total_volume += ($set['weight'] * $rep_arr[$i] * $set['sets']);
-						$total_reps += $rep_arr[$i];
-						$total_sets += $temp_sets;
-						$is_pr = false;
-						// check its a pr
-						if ((!isset($prs[$rep_arr[$i]]) || floatval($prs[$rep_arr[$i]]) < floatval($set['weight'])) && $rep_arr[$i] != 0)
-						{
-							$is_pr = true;
-							// new pr !!
-							$this->update_prs($user_id, $log_date, $exercise_id, $set['weight'], $rep_arr[$i]);
-							if (!isset($new_prs[$exercise]))
-								$new_prs[$exercise] = array();
-							$new_prs[$exercise][$rep_arr[$i]][] = $set['weight'];
-							// update pr array
-							$prs[$rep_arr[$i]] = $set['weight'];
-						}
-						$estimate_rm = $this->generate_rm($set['weight'], $rep_arr[$i]);
-						// get estimate 1rm
-						if ($max_estimate_rm < $estimate_rm)
-						{
-							$max_estimate_rm = $estimate_rm;
-						}
-						// insert into log_items
-						$query = "INSERT INTO log_items (logitem_date, log_id, user_id, exercise_id, logitem_weight, logitem_reps, logitem_sets, logitem_comment, logitem_1rm, is_pr, is_bw)
-									VALUES (:logitem_date, :log_id, :user_id, :exercise_id, :logitem_weight, :logitem_reps, :logitem_sets, :logitem_comment, :logitem_rm, :is_pr, :is_bw)";
-						$params = array(
-							array(':logitem_date', $log_date, 'str'),
-							array(':log_id', $log_id, 'int'),
-							array(':user_id', $user_id, 'int'),
-							array(':exercise_id', $exercise_id, 'int'),
-							array(':logitem_weight', $set['weight'], 'float'),
-							array(':logitem_reps', $rep_arr[$i], 'int'),
-							array(':logitem_sets', $temp_sets, 'int'),
-							array(':logitem_comment', $set['line'], 'str'),
-							array(':logitem_rm', $estimate_rm, 'float'),
-							array(':is_pr', (($is_pr == false) ? 0 : 1), 'int'),
-							array(':is_bw', (($set['is_bw'] == false) ? 0 : 1), 'int'),
-						);
-						$db->query($query, $params);
+						$rep_arr = explode(',', $set['reps']);
 						$temp_sets = $set['sets'];
+						for ($i = 0, $set_count = count($rep_arr); $i < $set_count; $i++)
+						{
+							// for comma format add the sets together
+							if (isset($rep_arr[$i+1]) && $rep_arr[$i] == $rep_arr[$i+1])
+							{
+								$temp_sets++;
+								continue;
+							}
+							$total_volume += ($set['weight'] * $rep_arr[$i] * $set['sets']);
+							$total_reps += $rep_arr[$i];
+							$total_sets += $temp_sets;
+							$is_pr = false;
+							// check its a pr
+							if ((!isset($prs[$rep_arr[$i]]) || floatval($prs[$rep_arr[$i]]) < floatval($set['weight'])) && $rep_arr[$i] != 0)
+							{
+								$is_pr = true;
+								// new pr !!
+								$this->update_prs($user_id, $log_date, $exercise_id, $set['weight'], $rep_arr[$i]);
+								if (!isset($new_prs[$exercise]))
+									$new_prs[$exercise] = array();
+								$new_prs[$exercise][$rep_arr[$i]][] = $set['weight'];
+								// update pr array
+								$prs[$rep_arr[$i]] = $set['weight'];
+							}
+							$estimate_rm = $this->generate_rm($set['weight'], $rep_arr[$i]);
+							// get estimate 1rm
+							if ($max_estimate_rm < $estimate_rm)
+							{
+								$max_estimate_rm = $estimate_rm;
+							}
+							// insert into log_items
+							$query = "INSERT INTO log_items (logitem_date, log_id, user_id, exercise_id, logitem_weight, logitem_reps, logitem_sets, logitem_comment, logitem_1rm, is_pr, is_bw, logitem_order)
+										VALUES (:logitem_date, :log_id, :user_id, :exercise_id, :logitem_weight, :logitem_reps, :logitem_sets, :logitem_comment, :logitem_rm, :is_pr, :is_bw, :logitem_order)";
+							$params = array(
+								array(':logitem_date', $log_date, 'str'),
+								array(':log_id', $log_id, 'int'),
+								array(':user_id', $user_id, 'int'),
+								array(':exercise_id', $exercise_id, 'int'),
+								array(':logitem_weight', $set['weight'], 'float'),
+								array(':logitem_reps', $rep_arr[$i], 'int'),
+								array(':logitem_sets', $temp_sets, 'int'),
+								array(':logitem_comment', $set['line'], 'str'),
+								array(':logitem_rm', $estimate_rm, 'float'),
+								array(':is_pr', (($is_pr == false) ? 0 : 1), 'int'),
+								array(':is_bw', (($set['is_bw'] == false) ? 0 : 1), 'int'),
+								array(':logitem_order', $set['position'], 'int'),
+							);
+							$db->query($query, $params);
+							$temp_sets = $set['sets'];
+						}
 					}
+					// insert into log_exercises 
+					$query = "INSERT INTO log_exercises (logex_date, log_id, user_id, exercise_id, logex_volume, logex_reps, logex_sets, logex_1rm, logex_comment, logex_order)
+							VALUES (:logex_date, :log_id, :user_id, :exercise_id, :logex_volume, :logex_reps, :logex_sets, :logex_rm, :logex_comment, :logex_order)";
+					$params = array(
+						array(':logex_date', $log_date, 'str'),
+						array(':log_id', $log_id, 'int'),
+						array(':user_id', $user_id, 'int'),
+						array(':exercise_id', $exercise_id, 'int'),
+						array(':logex_volume', $total_volume, 'float'),
+						array(':logex_reps', $total_reps, 'int'),
+						array(':logex_sets', $total_sets, 'int'),
+						array(':logex_rm', $max_estimate_rm, 'float'),
+						array(':logex_comment', $this->replace_video_urls($item['comment']), 'str'),
+						array(':logex_order', $item['position'], 'int'),
+					);
+					$db->query($query, $params);
 				}
-				// insert into log_exercises 
-				$query = "INSERT INTO log_exercises (logex_date, log_id, user_id, exercise_id, logex_volume, logex_reps, logex_sets, logex_1rm, logex_comment)
-						VALUES (:logex_date, :log_id, :user_id, :exercise_id, :logex_volume, :logex_reps, :logex_sets, :logex_rm, :logex_comment)";
-				$params = array(
-					array(':logex_date', $log_date, 'str'),
-					array(':log_id', $log_id, 'int'),
-					array(':user_id', $user_id, 'int'),
-					array(':exercise_id', $exercise_id, 'int'),
-					array(':logex_volume', $total_volume, 'float'),
-					array(':logex_reps', $total_reps, 'int'),
-					array(':logex_sets', $total_sets, 'int'),
-					array(':logex_rm', $max_estimate_rm, 'float'),
-					array(':logex_comment', $this->replace_video_urls($item['comment']), 'str'),
-				);
-				$db->query($query, $params);
 			}
 		}
 
@@ -472,6 +499,43 @@ class log
 		return $new_prs;
 	}
 
+	public function rebuild_log_text($user_id, $log_date)
+	{
+		global $user;
+		// get the log data
+		$log_data = $this->get_log_data($user_id, $log_date);
+		$log_text = ''; // set that variable !!
+		foreach ($log_data as $log_items)
+		{
+			$log_text .= "#" . ucwords($log_items['exercise']) . "\n"; // set exersice name
+			foreach ($log_items['sets'] as $set)
+			{
+				// get user units
+				$units = $users->get_user_data($user_id, 'user_unit');
+				$unit_string = ($units['user_unit'] == 1) 'kg' : 'lb';
+				if ($set['is_bw'] == 0)
+				{
+					$weight = $set['weight'] . ' ' . $unit_string;
+				}
+				else
+				{
+					if ($set['weight'] != 0)
+					{
+						$weight = 'BW' . $set['weight'] . ' ' . $unit_string;
+					}
+					else
+					{
+						$weight = 'BW';
+					}
+				}
+				$log_text .= "$weight x {$set['reps']} x {$set['sets']} " . trim($set['comment']) . "\n"; // add sets
+			}
+			if (!empty($log_items['comment']))
+				$log_text .= "\n" . trim($log_items['comment']) . "\n"; // set comment
+			$log_text .= "\n";
+		}
+	}
+	
 	private function replace_video_urls($comment)
 	{
 		return preg_replace(

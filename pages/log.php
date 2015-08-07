@@ -39,13 +39,13 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 
 	// loop through the exercises
 	$total_volume = $total_reps = $total_sets = 0;
-	foreach ($log_data as $exercise => $log_items)
+	foreach ($log_data as $log_items)
 	{
 		$total_volume += $log_items['total_volume'];
 		$total_reps += $log_items['total_reps'];
 		$total_sets += $log_items['total_sets'];
 		$template->assign_block_vars('items', array(
-				'EXERCISE' => ucwords($exercise),
+				'EXERCISE' => ucwords($log_items['exercise']),
 				'VOLUME' => $log_items['total_volume'],
 				'REPS' => $log_items['total_reps'],
 				'SETS' => $log_items['total_sets'],
