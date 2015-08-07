@@ -18,13 +18,12 @@ $error = '';
 // rename
 if (isset($_POST['exercisenew']) && isset($_GET['exercise_name']))
 {
-echo "$user->user_id, {$_POST['exercisenew']}";
 	// is existing exercise
 	if($log->is_valid_exercise($user->user_id, $_POST['exercisenew']))
 	{
 		// merge exercises
-		echo $exercise_id_old = $log->get_exercise_id($user->user_id, $_GET['exercise_name']);
-		echo $exercise_id_new = $log->get_exercise_id($user->user_id, $_POST['exercisenew']);
+		$exercise_id_old = $log->get_exercise_id($user->user_id, $_GET['exercise_name']);
+		$exercise_id_new = $log->get_exercise_id($user->user_id, $_POST['exercisenew']);
 		// update the exercise id
 		$query = "UPDATE log_exercises SET exercise_id = :exercise_id_new WHERE exercise_id = :exercise_id_old";
 		$params = array(
@@ -51,18 +50,18 @@ echo "$user->user_id, {$_POST['exercisenew']}";
 	}
 	else
 	{
-		echo $exercise_id_old = $log->get_exercise_id($user->user_id, $_GET['exercise_name']);
+		$exercise_id_old = $log->get_exercise_id($user->user_id, $_GET['exercise_name']);
 		// just rename it
 		$query = "UPDATE exercises SET exercise_name = :exercise_name_new WHERE exercise_id = :exercise_id";
 		$params = array(
-			array(':exercise_name_new', $_POST['exercisenew'], 'int'),
+			array(':exercise_name_new', strtolower($_POST['exercisenew']), 'int'),
 			array(':exercise_id', $exercise_id_old, 'int')
 		);
 		$db->query($query, $params);
 	}
 
 	// update the log texts
-	echo $query = "SELECT l.log_text, l.log_id FROM logs l
+	$query = "SELECT l.log_date FROM logs l
 			LEFT JOIN log_exercises le ON (le.log_id = l.log_id)
 			WHERE l.user_id = :user_id AND le.exercise_id = :exercise_id";
 	$params = array(
@@ -73,6 +72,8 @@ echo "$user->user_id, {$_POST['exercisenew']}";
 	$db->query($query, $params);
 	while ($row = $db->fetch())
 	{
+		$log->rebuild_log_text($row['log_date'], $user->user_id);
+		/*
 		$new_log = preg_replace("/#\s*({$_GET['exercise_name']})/m", "#" . $_POST['exercisenew'], $row['log_text']);
 		echo " preg_replace(\"/#\s*({$_GET['exercise_name']})/m\", \"#\" . {$_POST['exercisenew']}, {$row['log_text']})";
 		$query = "UPDATE logs SET log_text = :log_text WHERE log_id = :log_id";
@@ -81,7 +82,9 @@ echo "$user->user_id, {$_POST['exercisenew']}";
 			array(':log_id', $row['log_id'], 'int')
 		);
 		$db->query($query, $params);
+		*/
 	}
+	header('location: ?page=exercise&ex=' . urlencode($_POST['exercisenew']));
 }
 
 

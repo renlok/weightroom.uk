@@ -316,7 +316,7 @@ class log
 					'reps' => ($reps == '') ? 1 : $reps,
 					'sets' => ($sets == '') ? 1 : $sets,
 					'line' => trim($line),
-					'position' => $position);
+					'position' => intval($position));
 		$position++; // next position
 		return $setrep_data;
 	}
@@ -500,7 +500,7 @@ class log
 
 	public function rebuild_log_text($user_id, $log_date)
 	{
-		global $user;
+		global $user, $db;
 		// get the log data
 		$log_data = $this->get_log_data($user_id, $log_date);
 		$log_text = ''; // set that variable !!
@@ -510,7 +510,7 @@ class log
 			foreach ($log_items['sets'] as $set)
 			{
 				// get user units
-				$units = $users->get_user_data($user_id, 'user_unit');
+				$units = $user->get_user_data($user_id, 'user_unit');
 				$unit_string = ($units['user_unit'] == 1) ? 'kg' : 'lb';
 				if ($set['is_bw'] == 0)
 				{
@@ -529,10 +529,17 @@ class log
 				}
 				$log_text .= "$weight x {$set['reps']} x {$set['sets']} " . trim($set['comment']) . "\n"; // add sets
 			}
-			if (!empty($log_items['comment']))
+			if (strlen(trim($log_items['comment'])) > 0)
 				$log_text .= "\n" . trim($log_items['comment']) . "\n"; // set comment
 			$log_text .= "\n";
 		}
+		$query = "UPDATE logs SET log_text = :log_text WHERE log_date = :log_date AND user_id = :user_id";
+		$params = array(
+			array(':log_text', rtrim($log_text), 'str'),
+			array(':log_date', $log_date, 'str'),
+			array(':user_id', $user_id, 'int')
+		);
+		$db->query($query, $params);
 	}
 	
 	private function replace_video_urls($comment)
