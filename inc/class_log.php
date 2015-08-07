@@ -133,6 +133,12 @@ class log
 		$exersicepointers = array(); // for if there is multiple groups of exercise sets
 		foreach ($log_lines as $line)
 		{
+			// check if blank line
+			if (strlen($line) == 0)
+			{
+				continue;
+			}
+
 			// check if new exercise
 			if ($line[0] == '#')
 			{

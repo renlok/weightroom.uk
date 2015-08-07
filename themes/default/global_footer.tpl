@@ -27,5 +27,11 @@
     </div>
   </div>
 </div>
+
+<footer class="footer">
+  <div class="container">
+	<p class="text-muted">2015 &#169; weightroom.uk. Use of this site constitutes acceptance of the site's Privacy Policy and Terms of Use.</p>
+  </div>
+</footer>
 </body>
 </html>

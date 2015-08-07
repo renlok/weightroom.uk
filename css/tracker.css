@@ -1,8 +1,31 @@
+html {
+	position: relative;
+	min-height: 100%;
+}
+body {
+	/* Margin bottom by footer height */
+	margin-bottom: 60px;
+}
 #header {
 	padding: 15px;
 }
 #body-div {
 	padding-left: 25px;
+}
+.footer {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	/* Set the fixed height of the footer here */
+	height: 60px;
+	background-color: #f5f5f5;
+}
+.footer .container {
+	margin: 0;
+	padding: 0 15px;
+}
+.footer .container .text-muted {
+	margin: 20px 0;
 }
 .list-group {
 	max-width: 400px;
