@@ -19,7 +19,7 @@ class log
 
 		// setup vars
 		$data = array();
-		$logex_number = 0;
+		$logex_number = '';
 		$exercisepointer = 0;
 		for ($i = 0, $count = count($log_data); $i < $count; $i++)
 		{
@@ -27,8 +27,7 @@ class log
 			if ($logex_number != $item['logex_order'])
 			{
 				$logex_number = $item['logex_order'];
-				if ($exercisepointer != 0) // next point if not first exercise
-					$exercisepointer++;
+				$exercisepointer++;
 				$data[$exercisepointer] = array(
 					'exercise' => $item['exercise_name'],
 					'total_volume' => correct_weight($item['logex_volume'], 'kg', $user->user_data['user_unit']),
@@ -512,7 +511,7 @@ class log
 			{
 				// get user units
 				$units = $users->get_user_data($user_id, 'user_unit');
-				$unit_string = ($units['user_unit'] == 1) 'kg' : 'lb';
+				$unit_string = ($units['user_unit'] == 1) ? 'kg' : 'lb';
 				if ($set['is_bw'] == 0)
 				{
 					$weight = $set['weight'] . ' ' . $unit_string;
