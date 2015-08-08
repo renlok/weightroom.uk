@@ -27,6 +27,9 @@
 		-o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
 		transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
 	}
+	.hidebox {
+		display: none;
+	}
 </style>
 
 <!-- IF ERROR ne '' -->
@@ -39,6 +42,33 @@
 <div class="form-group">
     <label for="log">Log Data:</label>
 	<textarea rows="30" cols="50" name="log" id="log" class="form-control">{LOG}</textarea>
+	<a data-toggle="collapse" href="#formattinghelp" aria-expanded="false" aria-controls="formattinghelp">Formatting help</a>
+	<div class="collapse" id="formattinghelp">
+		<textarea rows="30" cols="50" name="help" id="help" class="form-control">
+this is a comment about the entire workout
+
+#squat
+20 kg x 2 x 3 this is a comment, this set was 20kg for 2 reps for 3 sets
+35 lb x 1 x 5 you can also use lb
+45 x 2 x 5 or have no units in this case the units will be set by your accounts default setting
+55 x 1 also works, meaning you did 1 set of 1 rep of 50
+50 x 2,4,5 you can also use this format where you did 2 reps then 4 then 5
+
+this is a comment about the squats in general
+
+#deadlift
+100kg x 1 x 5
+50x2x3
+
+you can have as many excersies as you want
+
+#squat
+40 x 5
+50 x 4 x 2
+
+you can also have the same exercise multiple times
+		</textarea>
+	</div>
 </div>
 <label for="weight">Bodyweight:</label>
 <div class="input-group">
@@ -228,5 +258,12 @@ $(document).ready(function(){
 			}, 150);
 		}
 	});
+	var help = CodeMirror.fromTextArea(
+        $("#help").get(0),
+        {
+            mode: "logger",
+            lineWrapping: true,
+            extraKeys: {"Ctrl": "autocomplete"}
+        });
 });
 </script>
