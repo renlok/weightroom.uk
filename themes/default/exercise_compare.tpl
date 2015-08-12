@@ -15,6 +15,7 @@
 	<br>
 	<div class="form-group">
 		<label for="ex">Exercises to compare <small>max 5</small></label>
+		<p><small class="text-muted"><i>(To select multiple exercises hold Ctrl or Cmd)</i></small></p>
 		<select name="ex[]" size="10" multiple required id="exlist" class="form-control">
 		<!-- BEGIN exercise -->
 			<option value="{exercise.EXERCISE}"<!-- IF exercise.SELECTED --> selected<!-- ENDIF -->>{exercise.EXERCISE}</option>

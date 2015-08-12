@@ -47,6 +47,9 @@ body {
 	padding-top: 10px;
 	padding-bottom: 10px;
 }
+.marginl {
+	padding-left: 10px;
+}
 .heavy {
 	font-size: 125%;
 	font-weight: 700;

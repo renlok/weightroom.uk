@@ -32,7 +32,8 @@
 		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'register' --> class="active"<!-- ENDIF -->><a href="?page=register">Register</a></li>
 		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'demo' --> class="active"<!-- ENDIF -->><a href="?page=demo">What is this?</a></li>
 	  <!-- ELSE -->
-		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'log' --> class="active"<!-- ENDIF -->><a href="?page=log">View Log</a></li>
+		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'log' && CURRENT_DO eq 'edit' --> class="active"<!-- ENDIF -->><a href="?do=edit&page=log">Track</a></li>
+		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'log' && (CURRENT_DO eq 'view' || CURRENT_DO eq '') --> class="active"<!-- ENDIF -->><a href="?page=log">View Log</a></li>
 		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'exercise' && (CURRENT_DO eq 'list' || CURRENT_DO eq '') --> class="active"<!-- ENDIF -->><a href="?page=exercise&do=list">Exercise List</a></li>
 		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'exercise' && CURRENT_DO eq 'compare' --> class="active"<!-- ENDIF -->><a href="?page=exercise&do=compare">Compare Exercises</a></li>
 		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'search' --> class="active"<!-- ENDIF -->><a href="#" data-toggle="modal" data-target="#searchUsers"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></a></li>

@@ -70,19 +70,28 @@ foreach ($logs as $log)
 	$rm_data .= "\tdataset.push({x: new Date($date), y: " . ($log['logex_1rm'] * $rm_scale) . ", shape:'circle'});\n";
 	foreach ($log['sets'] as $set)
 	{
+		$showunit = true;
 		if ($set['is_bw'] == 0)
 		{
 			$weight = $set['logitem_weight'];
 		}
 		else
 		{
-			if ($set['weight'] != 0)
+			if ($set['logitem_weight'] != 0)
 			{
-				$weight = 'BW' . $set['logitem_weight'];
+				if ($set['logitem_weight'] < 0)
+				{
+					$weight = 'BW - ' . abs($set['logitem_weight']);
+				}
+				else
+				{
+					$weight = 'BW + ' . $set['logitem_weight'];
+				}
 			}
 			else
 			{
 				$weight = 'BW';
+				$showunit = false;
 			}
 		}
 		$template->assign_block_vars('items.sets', array(
@@ -90,8 +99,8 @@ foreach ($logs as $log)
 				'REPS' => $set['logitem_reps'],
 				'SETS' => $set['logitem_sets'],
 				'COMMENT' => $set['logitem_comment'],
-				'IS_BW' => $set['is_bw'],
 				'IS_PR' => $set['is_pr'],
+				'SHOW_UNIT' => $showunit,
 				'EST1RM' => $set['est1rm'],
 				));
 	}

@@ -53,6 +53,7 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 				));
 		foreach ($log_items['sets'] as $set)
 		{
+			$showunit = true;
 			if ($set['is_bw'] == 0)
 			{
 				$weight = $set['weight'];
@@ -61,11 +62,19 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 			{
 				if ($set['weight'] != 0)
 				{
-					$weight = 'BW' . $set['weight'];
+					if ($set['weight'] < 0)
+					{
+						$weight = 'BW - ' . abs($set['weight']);
+					}
+					else
+					{
+						$weight = 'BW + ' . $set['weight'];
+					}
 				}
 				else
 				{
 					$weight = 'BW';
+					$showunit = false;
 				}
 			}
 			$template->assign_block_vars('items.sets', array(
@@ -73,6 +82,7 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 					'REPS' => $set['reps'],
 					'SETS' => $set['sets'],
 					'IS_PR' => $set['is_pr'],
+					'SHOW_UNIT' => $showunit,
 					'COMMENT' => trim($set['comment']),
 					'EST1RM' => $set['est1rm'],
 					));
@@ -108,6 +118,7 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 		'LOG_DATES' => $log->build_log_list($log_list),
 		'USER_ID' => $user_id,
 		'USERNAME' => $user_data['user_name'],
+		'USER_BW' => $log_ic['log_weight'],
 
 		'B_NOSELF' => ($user_id != $user->user_id),
 		'B_FOLLOWING' => $user->is_following($user_id),
@@ -149,7 +160,7 @@ elseif ($_GET['do'] == 'edit')
 			$query = "SELECT log_weight FROM logs WHERE log_date < :log_date AND user_id = :user_id ORDER BY log_date DESC LIMIT 1";
 			$params = array(
 				array(':user_id', $user->user_id, 'int'),
-				array(':log_date', $_GET['date'], 'str')
+				array(':log_date', $log_date, 'str')
 			);
 			$db->query($query, $params);
 			if ($db->numrows() == 1)
@@ -189,22 +200,19 @@ elseif ($_GET['do'] == 'edit')
 		print_message('Log processed', '?page=log&do=view&date=' . $log_date);
 	}
 	// editing a log? try to load the old data
-	if (isset($_GET['date']))
+	// check log is real
+	$valid_log = $log->is_valid_log($user->user_id, $log_date);
+	if($valid_log)
 	{
-		// check log is real
-		$valid_log = $log->is_valid_log($user->user_id, $_GET['date']);
-		if($valid_log)
-		{
-			// load log data
-			$log_data = $log->load_log($user->user_id, $_GET['date']);
-			$log_text = $log_data['log_text'];
-			$weight = $log_data['log_weight'];
-		}
-		else
-		{
-			$log_text = '';
-			$weight = $log->get_user_weight ($user->user_id, $_GET['date']);
-		}
+		// load log data
+		$log_data = $log->load_log($user->user_id, $log_date);
+		$log_text = $log_data['log_text'];
+		$weight = $log_data['log_weight'];
+	}
+	else
+	{
+		$log_text = '';
+		$weight = $log->get_user_weight ($user->user_id, $log_date);
 	}
 
 	// build exercise list for editor hints

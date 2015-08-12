@@ -27,7 +27,7 @@
 		-o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
 		transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
 	}
-	.hidebox {
+	#formattinghelp {
 		display: none;
 	}
 </style>
@@ -35,16 +35,16 @@
 <!-- IF ERROR ne '' -->
 <p class="bg-danger">{ERROR}</p>
 <!-- ENDIF -->
-<h2>Log for {DATE}</h2>
+<h2>Log workout for {DATE}</h2>
 <small><a href="?do=view&page=log&date={DATE}">&larr; Back to log</a></small>
 
 <form action="?page=log&do=edit<!-- IF DATE ne '' -->&date={DATE}<!-- ENDIF -->" method="post">
 <div class="form-group">
     <label for="log">Log Data:</label>
 	<textarea rows="30" cols="50" name="log" id="log" class="form-control">{LOG}</textarea>
-	<a data-toggle="collapse" href="#formattinghelp" aria-expanded="false" aria-controls="formattinghelp">Formatting help</a>
-	<div class="collapse" id="formattinghelp">
-		<textarea rows="30" cols="50" name="help" id="help" class="form-control">
+	<a href="#formattinghelp" id="openhelp">Formatting help</a>
+	<pre id="formattinghelp" class="cm-s-default"></pre>
+	<textarea id='formattinghelptext' style="display:none;">
 this is a comment about the entire workout
 
 #squat
@@ -56,9 +56,10 @@ this is a comment about the entire workout
 
 this is a comment about the squats in general
 
-#deadlift
-100kg x 1 x 5
-50x2x3
+#pull up
+BW x 1 x 5 some exersices dont use weight so you can use BW for bodyweight
+BW+10x2x3 if you are doing a weighted bodyweight exercise you can add the weight you used
+BW-10x2x3 same if you are doing a supported bodyweight exercise
 
 you can have as many excersies as you want
 
@@ -67,8 +68,7 @@ you can have as many excersies as you want
 50 x 4 x 2
 
 you can also have the same exercise multiple times
-		</textarea>
-	</div>
+	</textarea>
 </div>
 <label for="weight">Bodyweight:</label>
 <div class="input-group">
@@ -86,7 +86,21 @@ you can also have the same exercise multiple times
 <link rel="stylesheet" href="http://codemirror.net/addon/hint/show-hint.css">
 <script src="http://codemirror.net/addon/mode/overlay.js"></script>
 <script src="http://codemirror.net/addon/hint/show-hint.js"></script>
+<script src="http://codemirror.net/addon/runmode/runmode.js"></script>
 <script>
+$('#openhelp').click(function() {
+	if ($("#formattinghelp").val() == '')
+	{
+		// load text
+		CodeMirror.runMode(
+			$('#formattinghelptext').val(),
+			"logger",
+			$("#formattinghelp").get(0)
+		);
+	}
+	$('#formattinghelp').slideToggle('fast');
+	return false;
+});
 var $ELIST = [{EXERCISE_LIST}];
 function getHints(cm) {
     
@@ -258,12 +272,5 @@ $(document).ready(function(){
 			}, 150);
 		}
 	});
-	var help = CodeMirror.fromTextArea(
-        $("#help").get(0),
-        {
-            mode: "logger",
-            lineWrapping: true,
-            extraKeys: {"Ctrl": "autocomplete"}
-        });
 });
 </script>
