@@ -12,7 +12,7 @@
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="http://we-link.co.uk/tracker/css/tracker.css">
+    <link rel="stylesheet" href="http://weightroom.uk/css/tracker.css">
 	<script src="http://code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
 	<script src="http://getbootstrap.com/dist/js/bootstrap.min.js" charset="utf-8"></script>
 
@@ -37,7 +37,12 @@
 		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'exercise' && (CURRENT_DO eq 'list' || CURRENT_DO eq '') --> class="active"<!-- ENDIF -->><a href="?page=exercise&do=list">Exercise List</a></li>
 		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'exercise' && CURRENT_DO eq 'compare' --> class="active"<!-- ENDIF -->><a href="?page=exercise&do=compare">Compare Exercises</a></li>
 		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'search' --> class="active"<!-- ENDIF -->><a href="#" data-toggle="modal" data-target="#searchUsers"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></a></li>
-		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'settings' --> class="active"<!-- ENDIF -->><a href="?page=settings"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span></a></li>
+		  <li class="dropdown<!-- IF CURRENT_PAGE eq 'settings' --> active<!-- ENDIF -->">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> <span class="caret"></span></a>
+				<ul class="dropdown-menu">
+					<li role="presentation"><a href="?page=settings">Settings</a></li>
+					<li role="presentation"><a href="?page=logout">Logout</a></li>
+				</ul>
 	  <!-- ENDIF -->
 		</ul>
 	</div>

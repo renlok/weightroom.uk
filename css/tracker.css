@@ -67,3 +67,6 @@ body {
 	vertical-align: middle !important;
 	white-space: nowrap;
 }
+.padding {
+	padding: 15px;
+}

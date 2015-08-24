@@ -1,4 +1,7 @@
 <style>
+.pmu-not-in-month.cal_log_date{
+	background-color:#7F4C00;
+}
 .cal_log_date{
 	background-color:#F90;
 }
@@ -119,7 +122,7 @@
 <!-- ENDIF -->
 
 
-<link href="http://nazar-pc.github.io/PickMeUp/css/pickmeup.css" rel="stylesheet">
+<link href="http://weightroom.uk/css/pickmeup.css" rel="stylesheet">
 <script src="http://nazar-pc.github.io/PickMeUp/js/jquery.pickmeup.js"></script>
 <script src="http://momentjs.com/downloads/moment.js"></script>
 <script src="js/jCollapsible.js"></script>

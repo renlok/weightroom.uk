@@ -33,7 +33,7 @@
 </style>
 
 <!-- IF ERROR ne '' -->
-<p class="bg-danger">{ERROR}</p>
+<div class="bg-danger padding">{ERROR}</div>
 <!-- ENDIF -->
 <h2>Log workout for {DATE}</h2>
 <small><a href="?do=view&page=log&date={DATE}">&larr; Back to log</a></small>

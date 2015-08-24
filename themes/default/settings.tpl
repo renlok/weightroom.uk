@@ -1,8 +1,37 @@
 <div class="container-fluid">
 <h2>Edit user settings</h2>
 <form class="form-horizontal" action="?page=settings" method="post">
+<!-- IF ERROR ne '' -->
+  <div class="form-group bg-danger padding">
+	{ERROR}
+  </div>
+<!-- ENDIF -->
+<!-- IF SETTINGS_UPDATED -->
+  <div class="form-group bg-success padding">
+	Settings updated
+  </div>
+<!-- ENDIF -->
   <div class="form-group">
-    <div><label for="weightunit">Default Unit <small>What the site is displayed in also the default weight unit to use to use when no explicit weight unit is specified.</small></label></div>
+    <div>
+	<label for="gender">Gender</label>
+	</div>
+	<select class="form-control" id="gender" name="gender">
+	  <option value="1"<!-- IF GENDER eq 1 --> selected<!-- ENDIF -->>Male</option>
+	  <option value="0"<!-- IF GENDER eq 0 --> selected<!-- ENDIF -->>Female</option>
+	</select>
+  </div>
+  <div class="form-group">
+    <div>
+	<label for="bodyweight">Current Bodyweight</label>
+	</div>
+	<input type="text" class="form-control" id="bodyweight" value="{BODYWEIGHT}" name="bodyweight">
+  </div>
+  <div class="form-group">
+    <div>
+	<label for="weightunit">Default Unit
+	<p><small>What the site is displayed in also the default weight unit to use to use when no explicit weight unit is specified.</small></p>
+	</label>
+	</div>
 	<label class="radio-inline">
 	  <input type="radio" id="weightunit" name="weightunit" value="1"<!-- IF WEIGHTUNIT eq 1 --> checked<!-- ENDIF -->> kg
 	</label>
@@ -11,7 +40,7 @@
 	</label>
   </div>
   <div class="form-group">
-    <div><label for="showreps">Rep max. to show <small>These is the rep ranges which will show on the graphs in the exercise PR page</small></label></div>
+    <div><label for="showreps">Rep max. to show<p><small>These is the rep ranges which will show on the graphs in the exercise PR page</small></p></label></div>
     {SHOWREPHTML}
   </div>
   <div class="form-group">

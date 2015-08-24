@@ -108,6 +108,10 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 	$user_data = $user->get_user_data($user_id);
 	//create badges
 	$badges = '';
+	if ($user_data['user_gender'] == 0)
+		$badges .= '<img src="img/female.png" alt="Woman">';
+	if ($user_data['user_gender'] == 1)
+		$badges .= '<img src="img/male.png" alt="Man">';
 	if ($user_data['user_beta'] == 1)
 		$badges .= '<img src="img/bug.png" alt="Beta tester">';
 	if ($user_data['user_admin'] == 1)

@@ -5,6 +5,9 @@ if (!$user->is_logged_in())
 	exit;
 }
 
+function isfloat($f) { return ($f == (string)(float)$f); }
+
+$settings_updated = false;
 // save the new settings
 if (isset($_POST['action']))
 {
@@ -20,6 +23,7 @@ if (isset($_POST['action']))
 		$db->query($query, $params);
 		if ($db->numrows() == 0)
 		{
+			$error_msg = 'The Squat exercise you selected does not exist';
 			$error = true;
 		}
 	}
@@ -33,6 +37,7 @@ if (isset($_POST['action']))
 		$db->query($query, $params);
 		if ($db->numrows() == 0)
 		{
+			$error_msg = 'The Deadlift exercise you selected does not exist';
 			$error = true;
 		}
 	}
@@ -46,6 +51,7 @@ if (isset($_POST['action']))
 		$db->query($query, $params);
 		if ($db->numrows() == 0)
 		{
+			$error_msg = 'The Bench exercise you selected does not exist';
 			$error = true;
 		}
 	}
@@ -59,6 +65,7 @@ if (isset($_POST['action']))
 		$db->query($query, $params);
 		if ($db->numrows() == 0)
 		{
+			$error_msg = 'The Snatch exercise you selected does not exist';
 			$error = true;
 		}
 	}
@@ -72,8 +79,19 @@ if (isset($_POST['action']))
 		$db->query($query, $params);
 		if ($db->numrows() == 0)
 		{
+			$error_msg = 'The Clean and Jerk exercise you selected does not exist';
 			$error = true;
 		}
+	}
+	if (intval($_POST['gender']) != 1 && intval($_POST['gender']) != 0)
+	{
+		$error_msg = 'Invalid gender selected';
+		$error = true;
+	}
+	if (!isfloat($_POST['bodyweight']))
+	{
+		$error_msg = 'Bodyweight must be numeric';
+		$error = true;
 	}
 	
 	if (!$error)
@@ -86,7 +104,9 @@ if (isset($_POST['action']))
 				user_deadliftid = :user_deadliftid,
 				user_benchid = :user_benchid,
 				user_snatchid = :user_snatchid,
-				user_cleanjerkid = :user_cleanjerkid
+				user_cleanjerkid = :user_cleanjerkid,
+				user_weight = :user_weight,
+				user_gender = :user_gender
 				WHERE user_id = :user_id";
 		$user_showreps = implode('|', array_map('intval', $_POST['showreps']));
 		$params = array(
@@ -97,6 +117,8 @@ if (isset($_POST['action']))
 			array(':user_benchid', $_POST['bench'], 'int'),
 			array(':user_snatchid', $_POST['snatch'], 'int'),
 			array(':user_cleanjerkid', $_POST['cnj'], 'int'),
+			array(':user_weight', $_POST['bodyweight'], 'float'),
+			array(':user_gender', $_POST['gender'], 'int'),
 			array(':user_id', $user->user_id, 'int'),
 		);
 		$db->query($query, $params);
@@ -107,6 +129,9 @@ if (isset($_POST['action']))
 		$user->user_data['user_benchid'] = $_POST['bench'];
 		$user->user_data['user_snatchid'] = $_POST['snatch'];
 		$user->user_data['user_cleanjerkid'] = $_POST['cnj'];
+		$user->user_data['user_weight'] = $_POST['bodyweight'];
+		$user->user_data['user_gender'] = $_POST['gender'];
+		$settings_updated = true;
 	}
 }
 
@@ -133,7 +158,11 @@ for ($i = 1; $i <= 10; $i++)
 }
 
 $template->assign_vars(array(
-	'SHOWREPHTML' => $rep_html ,
+	'SETTINGS_UPDATED' => $settings_updated,
+	'ERROR' => (isset($error_msg)) ? $error_msg : '',
+	'GENDER' => $user->user_data['user_gender'],
+	'BODYWEIGHT' => $user->user_data['user_weight'],
+	'SHOWREPHTML' => $rep_html,
 	'SNATCHID' => $user->user_data['user_snatchid'],
 	'CLEANJERKID' => $user->user_data['user_cleanjerkid'],
 	'DEADLIFTID' => $user->user_data['user_deadliftid'],
