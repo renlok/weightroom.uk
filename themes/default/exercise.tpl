@@ -71,8 +71,6 @@
 <p><a href="?page=exercise&ex={EXERCISE}&do=weekly">View weekly maxes</a> | <a href="?page=exercise&ex={EXERCISE}&do=monthly">View monthly maxes</a></p>
 <!-- ENDIF -->
 
-
-
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <link href="http://nvd3.org/assets/css/nv.d3.css" rel="stylesheet">
 <script src="http://nvd3.org/assets/js/nv.d3.js"></script>
@@ -80,9 +78,6 @@
 <style>
 #prHistoryChart .nv-lineChart circle.nv-point {
   fill-opacity: 2;
-}
-#prHistoryChart {
-  height: 700px;
 }
 </style>
 <script>
@@ -93,13 +88,15 @@
     }
 
     nv.addGraph(function() {
+		var width = $(document).width() - 50;
+		var height = Math.round(width/2);
         var chart = nv.models.lineChart()
-							.margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
-							.useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
-							.transitionDuration(350)  //how fast do you want the lines to transition?
-							.showLegend(true)       //Show the legend, allowing users to turn on/off line series.
-							.showYAxis(true)        //Show the y-axis
-							.showXAxis(true)        //Show the x-axis
+						.margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
+						.useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
+						.transitionDuration(350)  //how fast do you want the lines to transition?
+						.showLegend(true)       //Show the legend, allowing users to turn on/off line series.
+						.showYAxis(true)        //Show the y-axis
+						.showXAxis(true)        //Show the x-axis
 
         chart.xAxis
             .axisLabel('Date')
@@ -109,13 +106,24 @@
             .axisLabel('Weight')
             .tickFormat(d3.format('.02f'));
 
+		d3.select('#prHistoryChart')
+			.attr('style', "width: " + width + "px; height: " + height + "px;" );
+
         var data = prHistoryData();
         d3.select('#prHistoryChart svg')
             .datum(data)
             .transition().duration(500)
+			.attr('perserveAspectRatio', 'xMinYMin meet')
             .call(chart);
 
-        nv.utils.windowResize(chart.update);
+        nv.utils.windowResize(resizeChart);
+        function resizeChart() {
+			var width = $(document).width() - 50;
+			var height = Math.round(width/2);
+			d3.select('#prHistoryChart')
+				.attr('style', "width: " + width + "px; height: " + height + "px;" );
+			chart.update();
+        }
 
         return chart;
     });
