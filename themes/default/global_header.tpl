@@ -35,7 +35,7 @@
 		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'log' && CURRENT_DO eq 'edit' --> class="active"<!-- ENDIF -->><a href="?do=edit&page=log">Track</a></li>
 		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'log' && (CURRENT_DO eq 'view' || CURRENT_DO eq '') --> class="active"<!-- ENDIF -->><a href="?page=log">View Log</a></li>
 		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'exercise' && (CURRENT_DO eq 'list' || CURRENT_DO eq '') --> class="active"<!-- ENDIF -->><a href="?page=exercise&do=list">Exercise List</a></li>
-		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'exercise' && CURRENT_DO eq 'compare' --> class="active"<!-- ENDIF -->><a href="?page=exercise&do=compare">Compare Exercises</a></li>
+		  <li role="presentation"<!-- IF B_IN_TOOLS --> class="active"<!-- ENDIF -->><a href="?page=tools">Tools</a></li>
 		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'search' --> class="active"<!-- ENDIF -->><a href="#" data-toggle="modal" data-target="#searchUsers"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></a></li>
 		  <li class="dropdown<!-- IF CURRENT_PAGE eq 'settings' --> active<!-- ENDIF -->">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> <span class="caret"></span></a>

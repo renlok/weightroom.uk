@@ -65,6 +65,7 @@ $do = (isset($_GET['do'])) ? $_GET['do'] : '';
 $template->assign_vars(array(
 	'NOT_LOGGED_IN' => !$user->logged_in,
 	'WEIGHT_UNIT' => ($user->logged_in && $user->user_data['user_unit'] == 2) ? 'lb' : 'kg',
+	'B_IN_TOOLS' => in_tools($page, $do),
 	'CURRENT_PAGE' => $page,
 	'CURRENT_DO' => $do
 	));
@@ -98,6 +99,12 @@ switch ($page)
 		break;
 	case 'search':
 		include PAGEDIR . 'search.php';
+		break;
+	case 'tools':
+		include PAGEDIR . 'tools.php';
+		break;
+	case 'volume':
+		include PAGEDIR . 'volume.php';
 		break;
 	case 'settings':
 		include PAGEDIR . 'settings.php';

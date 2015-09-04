@@ -56,4 +56,15 @@ function correct_weight($weight, $unit_used, $unit_want) // $unit_used = kg/lb $
 		return round($weight, 2);
 	}
 }
+
+function in_tools($page, $do)
+{
+	if ($page == 'volume')
+		return true;
+	if ($page == 'tools')
+		return true;
+	if ($page == 'exercise' && $do == 'compare')
+		return true;
+	return false;
+}
 ?>

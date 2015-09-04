@@ -1074,20 +1074,45 @@ class log
 		return $db->fetchall();
 	}
 
-	public function list_exercise_logs($user_id, $exercise_name)
+	public function list_exercise_logs($user_id, $from_date, $to_date, $exercise_name = '')
 	{
 		global $db, $user;
+		
+		$params = array();
+		$extra_sql = '';
+		// use data limits
+		if (!empty($from_date))
+		{
+			$extra_sql .= " AND logitem_date >= :from_date";
+			$params[] = array(':from_date', $from_date, 'str');
+		}
+		if (!empty($to_date))
+		{
+			$extra_sql .= " AND logitem_date <= :to_date";
+			$params[] = array(':to_date', $to_date, 'str');
+		}
 
 		// load all exercises
-		$query = "SELECT i.*, lx.logex_volume, lx.logex_reps, lx.logex_sets, lx.logex_comment, lx.logex_1rm FROM log_items As i
-				LEFT JOIN exercises ex ON (ex.exercise_id = i.exercise_id)
-				LEFT JOIN log_exercises As lx ON (lx.exercise_id = ex.exercise_id AND lx.log_id = i.log_id)
-				WHERE ex.user_id = :user_id AND ex.exercise_name = :exercise_name
-				ORDER BY logitem_date DESC, logitem_id ASC";
-		$params = array(
-			array(':user_id', $user_id, 'int'),
-			array(':exercise_name', $exercise_name, 'str')
-		);
+		if (!empty($exercise_name))
+		{
+			$query = "SELECT i.*, lx.logex_volume, lx.logex_reps, lx.logex_sets, lx.logex_comment, lx.logex_1rm FROM log_items As i
+					LEFT JOIN exercises ex ON (ex.exercise_id = i.exercise_id)
+					LEFT JOIN log_exercises As lx ON (lx.exercise_id = ex.exercise_id AND lx.log_id = i.log_id)
+					WHERE ex.user_id = :user_id AND ex.exercise_name = :exercise_name
+					$extra_sql
+					ORDER BY logitem_date DESC, logitem_id ASC";
+			$params[] = array(':user_id', $user_id, 'int');
+			$params[] = array(':exercise_name', $exercise_name, 'str');
+		}
+		else
+		{
+			$query = "SELECT i.*, lx.logex_volume, lx.logex_reps, lx.logex_sets, lx.logex_comment, lx.logex_1rm FROM log_items As i
+					LEFT JOIN log_exercises As lx ON (lx.log_id = i.log_id)
+					WHERE i.user_id = :user_id
+					$extra_sql
+					ORDER BY logitem_date DESC, logitem_id ASC";
+			$params[] = array(':user_id', $user_id, 'int');
+		}
 		$db->query($query, $params);
 
 		// organise the data

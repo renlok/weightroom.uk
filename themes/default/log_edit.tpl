@@ -1,3 +1,4 @@
+ <link rel="stylesheet" type="text/css" href="css/flatpickr.css"><style>
  <style>
 	.cm-ENAME { color:#9900FF ;} 
 	.cm-W { color:#1900FF;} 
@@ -35,7 +36,7 @@
 <!-- IF ERROR ne '' -->
 <div class="bg-danger padding">{ERROR}</div>
 <!-- ENDIF -->
-<h2>Log workout for {DATE}</h2>
+<h2>Log workout for {DATE} <small><span class="glyphicon glyphicon-calendar" aria-hidden="true" id="track_date"></span></small></h2>
 <small><a href="?do=view&page=log&date={DATE}">&larr; Back to log</a></small>
 
 <form action="?page=log&do=edit<!-- IF DATE ne '' -->&date={DATE}<!-- ENDIF -->" method="post">
@@ -81,6 +82,7 @@ you can also have the same exercise multiple times
 </div>
 </form>
 
+<script src="js/flatpickr.js"></script>
 <script src="http://codemirror.net/lib/codemirror.js"></script>
 <link rel="stylesheet" href="http://codemirror.net/lib/codemirror.css">
 <link rel="stylesheet" href="http://codemirror.net/addon/hint/show-hint.css">
@@ -88,6 +90,8 @@ you can also have the same exercise multiple times
 <script src="http://codemirror.net/addon/hint/show-hint.js"></script>
 <script src="http://codemirror.net/addon/runmode/runmode.js"></script>
 <script>
+flatpickr("#track_date", { dateFormat: 'Y-m-d', onClickEvent: function(e){ window.location = "?do=edit&page=log&date=" + e; }});
+
 $('#openhelp').click(function() {
 	if ($("#formattinghelp").val() == '')
 	{

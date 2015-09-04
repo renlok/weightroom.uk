@@ -17,35 +17,10 @@ if(!$log->is_valid_exercise($user->user_id, $exercise_name))
 	exit;
 }
 
-/*
-// get current prs
-$pr_data = $log->get_prs($user->user_id, date("Y-m-d"), $exercise_name, true);
-$pr_true = $pr_data[0];
-$pr_dates = $pr_data[1];
-$pr_data_max = $pr_data[0];
-//check pr data
-$highest = 0;
-for ($i = 10; $i >= 1; $i--)
-{
-	if (isset($pr_data_max[$i]))
-	{
-		if ($pr_true[$i] > $highest)
-		{
-			$highest = $pr_true[$i];
-		}
-		if ($pr_data_max[$i] < $highest)
-		{
-			$pr_data_max[$i] = $highest . '*';
-		}
-	}
-	else
-	{
-		$pr_data_max[$i] = '--';
-		$pr_dates[$i] = 0;
-	}
-}*/
+$from_date = (isset($_GET['from'])) ? $_GET['from'] : '';
+$to_date = (isset($_GET['to'])) ? $_GET['to'] : '';
 
-$logs = $log->list_exercise_logs($user->user_id, $exercise_name);
+$logs = $log->list_exercise_logs($user->user_id, $from_date, $to_date, $exercise_name);
 $volume_data = $reps_data = $sets_data = $rm_data = "var dataset = [];\n";
 
 // workout how much reps, sets&RM need to be scaled to match volume
