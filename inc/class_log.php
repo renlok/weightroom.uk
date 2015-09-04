@@ -41,6 +41,7 @@ class log
 				'weight' => correct_weight($item['logitem_weight'], 'kg', $user->user_data['user_unit']),
 				'reps' => $item['logitem_reps'],
 				'sets' => $item['logitem_sets'],
+				'rpes' => $item['logitem_rpes'],
 				'comment' => $item['logitem_comment'],
 				'est1rm' => correct_weight($item['logitem_1rm'], 'kg', $user->user_data['user_unit']),
 				'is_pr' => $item['is_pr'],
@@ -237,11 +238,15 @@ class log
 		// set the variables
 		$reps = '';
 		$sets = '';
+		$rpes = '';
 		$reps_given = false;
 		$waiting_for_reps = false;
 		$comma_reps = false;
 		$sets_given = false;
 		$waiting_for_sets = false;
+		$rpe_given = false;
+		$waiting_for_rpes = false;
+		$comma_rpes = false;
 		$sets_array = array();
 		$cleanline = str_replace(' ', '', $line);
 		$spacescount = 0;
@@ -257,11 +262,13 @@ class log
 				continue;
 			}
 			// end of sets just add the comment
-			if (!is_numeric($chr) && !($chr == 'x' || $chr == 'X' || $chr == ','))
+			if ((!is_numeric($chr) && !($chr == 'x' || $chr == 'X' || $chr == ',' || $chr == '@' || $chr == '.'))
+				|| ($reps_given && $sets_given && $rpe_given))
 			{
 				$lettercount--;
 				break;
 			}
+			// BEGIN REPS
 			// x detected and no reps have been set yet, set it to wait for reps input
 			if (($chr == 'x' || $chr == 'X') && !$reps_given && !$waiting_for_reps)
 			{
@@ -280,6 +287,19 @@ class log
 				}
 				continue;
 			}
+			// comma format reps
+			if ($chr == ',' && !$reps_given && $waiting_for_reps)
+			{
+				// check theres a number after
+				$chrnum = $lettercount - $spacescount;
+				$nextchar = substr($cleanline, $chrnum, 1);
+				if (is_numeric($nextchar))
+				{
+					$reps .= $chr;
+					$comma_reps = true;
+				}
+			}
+			// BEGIN SETS
 			// x detected, reps have been set but no sets have been, set it to wait for reps input
 			if (($chr == 'x' || $chr == 'X') && $reps_given && !$sets_given && !$waiting_for_sets)
 			{
@@ -299,16 +319,39 @@ class log
 				}
 				continue;
 			}
-			// comma format
-			if ($chr == ',' && !$reps_given && $waiting_for_reps)
+			// BEGIN RPES
+			// @ detected, set it to wait for rpe input
+			if (($chr == '@') && !$waiting_for_rpes)
+			{
+				$waiting_for_rpes = true;
+				continue;
+			}
+			// add rpe
+			if ((is_numeric($chr) || $chr == '.') && !$rpe_given && $waiting_for_rpes)
+			{
+				$rpes .= $chr;
+				$chrnum = $lettercount - $spacescount;
+				$nextchar = substr($cleanline, $chrnum, 1);
+				if (!(is_numeric($nextchar) || $nextchar == ',' || $nextchar == '.') && !$comma_rpes)
+				{
+					$rpe_given = true;
+				}
+				else if (floatval($rpes . $nextchar) > 10 && !$comma_rpes)
+				{
+					$rpe_given = true;
+				}
+				continue;
+			}
+			// comma format rpes
+			if ($chr == ',' && !$rpe_given && $waiting_for_rpes)
 			{
 				// check theres a number after
 				$chrnum = $lettercount - $spacescount;
 				$nextchar = substr($cleanline, $chrnum, 1);
 				if (is_numeric($nextchar))
 				{
-					$reps .= $chr;
-					$comma_reps = true;
+					$rpes .= $chr;
+					$comma_rpes = true;
 				}
 			}
 		}
@@ -321,6 +364,7 @@ class log
 					'is_bw' => $bw,
 					'reps' => ($reps == '') ? 1 : $reps,
 					'sets' => ($sets == '') ? 1 : $sets,
+					'rpes' => ($rpes == '') ? NULL : $rpes,
 					'line' => trim($line),
 					'position' => intval($position));
 		$position++; // next position
@@ -428,6 +472,7 @@ class log
 					foreach ($item['sets'] as $set)
 					{
 						$rep_arr = explode(',', $set['reps']);
+						$rpe_arr = explode(',', $set['rpes']);
 						$temp_sets = $set['sets'];
 						for ($i = 0, $set_count = count($rep_arr); $i < $set_count; $i++)
 						{
@@ -460,8 +505,8 @@ class log
 								$max_estimate_rm = $estimate_rm;
 							}
 							// insert into log_items
-							$query = "INSERT INTO log_items (logitem_date, log_id, user_id, exercise_id, logitem_weight, logitem_reps, logitem_sets, logitem_comment, logitem_1rm, is_pr, is_bw, logitem_order)
-										VALUES (:logitem_date, :log_id, :user_id, :exercise_id, :logitem_weight, :logitem_reps, :logitem_sets, :logitem_comment, :logitem_rm, :is_pr, :is_bw, :logitem_order)";
+							$query = "INSERT INTO log_items (logitem_date, log_id, user_id, exercise_id, logitem_weight, logitem_reps, logitem_sets, logitem_rpes, logitem_comment, logitem_1rm, is_pr, is_bw, logitem_order)
+										VALUES (:logitem_date, :log_id, :user_id, :exercise_id, :logitem_weight, :logitem_reps, :logitem_sets, :logitem_rpes, :logitem_comment, :logitem_rm, :is_pr, :is_bw, :logitem_order)";
 							$params = array(
 								array(':logitem_date', $log_date, 'str'),
 								array(':log_id', $log_id, 'int'),
@@ -476,6 +521,10 @@ class log
 								array(':is_bw', (($set['is_bw'] == false) ? 0 : 1), 'int'),
 								array(':logitem_order', $set['position'], 'int'),
 							);
+							if ($rpe_arr[$i] == NULL)
+								$params[] = array(':logitem_rpes', NULL, 'int');
+							else
+								$params[] = array(':logitem_rpes', $rpe_arr[$i], 'float');
 							$db->query($query, $params);
 							$temp_sets = $set['sets'];
 						}

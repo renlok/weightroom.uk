@@ -73,6 +73,7 @@ foreach ($logs as $log)
 				'WEIGHT' => $weight,
 				'REPS' => $set['logitem_reps'],
 				'SETS' => $set['logitem_sets'],
+				'RPES' => $set['logitem_rpes'],
 				'COMMENT' => $set['logitem_comment'],
 				'IS_PR' => $set['is_pr'],
 				'SHOW_UNIT' => $showunit,

@@ -3,6 +3,7 @@
 .cm-W { color:#1900FF;} 
 .cm-R,.cm-RR { color:#00E5FF;} 
 .cm-S { color:#FF9900;}
+.cm-RPE { color: #D70;}
 
 .cm-ENAME { color:#3338B7;} 
 .cm-W { color:#337AB7;} 
@@ -70,8 +71,8 @@ BW-10x2x3 same if you are doing a supported bodyweight exercise
 you can have as many excersies as you want
 
 #squat
-40 x 5
-50 x 4 x 2
+40 x 5 @ 5 you can also note the RPE (Rating of Perceived Exertion) of the set
+50 x 4 x 2 @9.5 the RPE is a scale of how hard the set was on a scale of 0-10
 
 you can also have the same exercise multiple times
 	</textarea>
@@ -259,11 +260,11 @@ $(document).ready(function(){
 			if (s.sol()) {
 				if (s.match(/^\s*\d+(?:\.\d+)?(\s*,\s*\d+(?:\.\d+)?)+/i, true)) {
 					o.hayErow = true;
-					this.next = [this.W, this.WWR, this.C];
+					this.next = [this.W, this.WWR, this.RPE, this.C];
 					return "W";
 				} else if (s.match(/^\s*\d+(\.\d{1,2})?(\s*kg|\s*lbs?)?/i, true) || s.match(/^\s*BW(\s*[\+\-]\s*\d+(\.\d{1,2})?(\s*(kg|lbs?))?)?/i, true)) {
 					o.hayErow = true;
-					this.next = [this.W, this.RR, this.R, this.C];
+					this.next = [this.W, this.RR, this.R, this.RPE, this.C];
 					return "W";
 				}
 				if (o.hayErow) {
@@ -273,26 +274,32 @@ $(document).ready(function(){
 		},
 		WWR: function(s, o) {
 			if (s.match(/^\s*[x×]\s*\d+/, true)) {
-				this.next = [this.W, this.C];
+				this.next = [this.W, this.RPE, this.C];
 				return "R";
 			}
 		},
 		RR: function(s, o) {
 			if (s.match(/^\s*[x×]\s*\d+(\s*,\s*\d+)+/, true)) {
-				this.next = [this.W, this.C];
+				this.next = [this.W, this.RPE, this.C];
 				return "RR";
 			}
 		},
 		R: function(s, o) {
 			if (s.match(/^\s*[x×]\s*\d+/, true)) {
-				this.next = [this.W, this.S, this.C];
+				this.next = [this.W, this.S, this.RPE, this.C];
 				return "R";
 			}
 		},
 		S: function(s, o) {
 			if (s.match(/^\s*[x×]\s*[1-9]\d*/, true)) {
-				this.next = [this.W, this.C];
+				this.next = [this.W, this.RPE, this.C];
 				return "S";
+			}
+		},
+		RPE: function(s, o) {
+			if (s.match(/^\s*[@]\s*(10|[0-9](\.\d)?)/, true)) {
+				this.next = [this.W, this.C];
+				return "RPE";
 			}
 		},
 		C: function(s, o) {

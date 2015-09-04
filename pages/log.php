@@ -81,6 +81,7 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 					'WEIGHT' => $weight,
 					'REPS' => $set['reps'],
 					'SETS' => $set['sets'],
+					'RPES' => $set['rpes'],
 					'IS_PR' => $set['is_pr'],
 					'SHOW_UNIT' => $showunit,
 					'COMMENT' => trim($set['comment']),

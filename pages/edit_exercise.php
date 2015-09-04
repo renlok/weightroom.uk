@@ -4,7 +4,7 @@ if (!$user->is_logged_in())
 	print_message('You are not loged in', '?page=login');
 	exit;
 }
-exit;
+die('broken functionality/10');
 require INCDIR . 'class_log.php';
 $log = new log();
 

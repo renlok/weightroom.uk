@@ -90,7 +90,7 @@
 				<!-- IF items.sets.IS_PR --><span class="glyphicon glyphicon-star" aria-hidden="true"></span><!-- ELSE -->&nbsp;<!-- ENDIF -->
 			</td>
 			<td class="logrow">
-				<!-- IF items.sets.REPS eq 0 --><del><!-- ENDIF --><span class="heavy">{items.sets.WEIGHT}</span><!-- IF items.sets.SHOW_UNIT -->{WEIGHT_UNIT}<!-- ENDIF --> x <span class="heavy">{items.sets.REPS}</span> x <span class="heavy">{items.sets.SETS}</span><!-- IF items.sets.REPS eq 0 --></del><!-- ELSEIF items.sets.REPS gt 1 && items.sets.SHOW_UNIT --> <small class="leftspace"><i>&#8776; {items.sets.EST1RM} {WEIGHT_UNIT}</i></small><!-- ENDIF -->
+				<!-- IF items.sets.REPS eq 0 --><del><!-- ENDIF --><span class="heavy">{items.sets.WEIGHT}</span><!-- IF items.sets.SHOW_UNIT -->{WEIGHT_UNIT}<!-- ENDIF --> x <span class="heavy">{items.sets.REPS}</span> x <span class="heavy">{items.sets.SETS}</span><!-- IF items.sets.REPS eq 0 --></del><!-- ELSEIF items.sets.REPS gt 1 && items.sets.SHOW_UNIT --> <small class="leftspace"><i>&#8776; {items.sets.EST1RM} {WEIGHT_UNIT}</i></small><!-- ENDIF --><!-- IF items.sets.RPES ne NULL --> @ {items.sets.RPES}<!-- ENDIF -->
 				<!-- IF items.sets.COMMENT ne '' --><div class="well well-sm">{items.sets.COMMENT}</div><!-- ENDIF -->
 			</td>
 			<td class="tdpr2">
