@@ -1,42 +1,47 @@
- <link rel="stylesheet" type="text/css" href="css/flatpickr.css"><style>
- <style>
-	.cm-ENAME { color:#9900FF ;} 
-	.cm-W { color:#1900FF;} 
-	.cm-R,.cm-RR { color:#00E5FF;} 
-	.cm-S { color:#FF9900;}
-	
-	.cm-ENAME { color:#3338B7;} 
-	.cm-W { color:#337AB7;} 
-	.cm-R,.cm-RR { color:#B7337A;} 
-	.cm-S { color:#7AB733;}
-	.cm-C { color:#191919; font-style: italic; }
-	.cm-error{ text-decoration: underline; background:#f00; color:#fff !important; }
-	.cm-YT { background: #4C8EFA; color:#fff !important;}
-	.CodeMirror {
-		height: 500px;
-		padding: 6px 12px;
-		font-size: 14px;
-		line-height: 1.42857143;
-		color: #555;
-		background-color: #fff;
-		background-image: none;
-		border: 1px solid #ccc;
-		border-radius: 4px;
-		-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-		box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-		-webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
-		-o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-		transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-	}
-	#formattinghelp {
-		display: none;
-	}
+<style>
+.cm-ENAME { color:#9900FF ;} 
+.cm-W { color:#1900FF;} 
+.cm-R,.cm-RR { color:#00E5FF;} 
+.cm-S { color:#FF9900;}
+
+.cm-ENAME { color:#3338B7;} 
+.cm-W { color:#337AB7;} 
+.cm-R,.cm-RR { color:#B7337A;} 
+.cm-S { color:#7AB733;}
+.cm-C { color:#191919; font-style: italic; }
+.cm-error{ text-decoration: underline; background:#f00; color:#fff !important; }
+.cm-YT { background: #4C8EFA; color:#fff !important;}
+.CodeMirror {
+	height: 500px;
+	padding: 6px 12px;
+	font-size: 14px;
+	line-height: 1.42857143;
+	color: #555;
+	background-color: #fff;
+	background-image: none;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+	box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+	-webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+	-o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+	transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+#formattinghelp {
+	display: none;
+}
+.pmu-not-in-month.cal_log_date{
+	background-color:#7F4C00;
+}
+.cal_log_date{
+	background-color:#F90;
+}
 </style>
 
 <!-- IF ERROR ne '' -->
 <div class="bg-danger padding">{ERROR}</div>
 <!-- ENDIF -->
-<h2>Log workout for {DATE} <small><span class="glyphicon glyphicon-calendar" aria-hidden="true" id="track_date"></span></small></h2>
+<h2>Log workout for {DATE} <button class="btn btn-default glyphicon glyphicon-calendar" aria-hidden="true" id="track_date"></button></h2>
 <small><a href="?do=view&page=log&date={DATE}">&larr; Back to log</a></small>
 
 <form action="?page=log&do=edit<!-- IF DATE ne '' -->&date={DATE}<!-- ENDIF -->" method="post">
@@ -82,7 +87,9 @@ you can also have the same exercise multiple times
 </div>
 </form>
 
-<script src="js/flatpickr.js"></script>
+<link href="http://weightroom.uk/css/pickmeup.css" rel="stylesheet">
+<script src="http://nazar-pc.github.io/PickMeUp/js/jquery.pickmeup.js"></script>
+<script src="http://momentjs.com/downloads/moment.js"></script>
 <script src="http://codemirror.net/lib/codemirror.js"></script>
 <link rel="stylesheet" href="http://codemirror.net/lib/codemirror.css">
 <link rel="stylesheet" href="http://codemirror.net/addon/hint/show-hint.css">
@@ -90,7 +97,49 @@ you can also have the same exercise multiple times
 <script src="http://codemirror.net/addon/hint/show-hint.js"></script>
 <script src="http://codemirror.net/addon/runmode/runmode.js"></script>
 <script>
-flatpickr("#track_date", { dateFormat: 'Y-m-d', onClickEvent: function(e){ window.location = "?do=edit&page=log&date=" + e; }});
+var arDates = [];
+var calMonths = [];
+$('#track_date').pickmeup({
+	date		: new Date({JSDATE}),
+	format  	: 'Y-m-d',
+	change		: function(e){ window.location.href = '?do=edit&page=log&date='+e;},
+	calendars	: 1,
+	render: function(date) {
+		var d = moment(date);
+		var m = d.format('YYYY-MM');
+		if ($.inArray(m, calMonths) == -1)
+		{
+			calMonths.push(m);
+			loadlogdata(m);
+		}
+		if ($.inArray(d.format('YYYY-MM-DD'), arDates) != -1)
+		{
+			return {
+				class_name: 'cal_log_date'                         
+			}
+		}
+	}
+});
+
+function loadlogdata(date)
+{
+	$.ajax({
+		url: "index.php",
+		data: {
+			page: 'ajax',
+			do: 'cal',
+			date: date,
+			user_id: {USER_ID}
+		},
+		type: 'GET',
+		dataType: 'json',
+		cache: false
+	}).done(function(o) {
+		$.merge(calMonths, o.cals);
+		$.merge(arDates, o.dates);
+		$('.date').pickmeup('update');
+	}).fail(function() {}).always(function() {});
+}
 
 $('#openhelp').click(function() {
 	if ($("#formattinghelp").val() == '')

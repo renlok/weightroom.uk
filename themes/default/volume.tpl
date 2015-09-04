@@ -1,4 +1,4 @@
-<link rel="stylesheet" type="text/css" href="css/flatpickr.css"><style>
+<style>
 .leftspace {
 	margin-left: 10px;
 }
@@ -24,7 +24,9 @@
     <svg></svg>
 </div>
 
-<script src="js/flatpickr.js"></script>
+<link href="http://weightroom.uk/css/pickmeup.css" rel="stylesheet">
+<script src="http://nazar-pc.github.io/PickMeUp/js/jquery.pickmeup.js"></script>
+<script src="http://momentjs.com/downloads/moment.js"></script>
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <link href="http://nvd3.org/assets/css/nv.d3.css" rel="stylesheet">
 <script src="js/nv.d3.js"></script>
@@ -36,19 +38,25 @@
   height: 400px;
 }
 .nv-axisMaxMin, .nv-y text { display: none; }
+.pmu-not-in-month.cal_log_date{
+	background-color:#7F4C00;
+}
+.cal_log_date{
+	background-color:#F90;
+}
 </style>
 <script>
-var date = new Date();
-date.setDate(date.getDate() + 1);
-var check_in = flatpickr("#from_date", { maxDate: date, dateFormat: 'Y-m-d'});
-var check_out = flatpickr("#to_date", { maxDate: date, dateFormat: 'Y-m-d'});
-
-check_in.element.addEventListener("change", function(){
-    check_out.set( "minDate" , check_in.element.value );
+$('#from_date').pickmeup({
+	date		: new Date({JS_FROM_DATE}),
+	format  	: 'Y-m-d',
+	calendars	: 1,
+	hide_on_select	: true
 });
-
-check_out.element.addEventListener("change", function(){
-    check_in.set( "maxDate" , check_out.element.value );
+$('#to_date').pickmeup({
+	date		: new Date({JS_TO_DATE}),
+	format  	: 'Y-m-d',
+	calendars	: 1,
+	hide_on_select	: true
 });
 
 

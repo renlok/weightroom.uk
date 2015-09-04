@@ -35,12 +35,16 @@ $volume_data .= "HistoryChartData.push({\n\tvalues: dataset,\n\tkey: 'Volume',\n
 $reps_data .= "HistoryChartData.push({\n\tvalues: dataset,\n\tkey: 'Total reps',\n\tcolor:'#a6bf50'\n});\n";
 $sets_data .= "HistoryChartData.push({\n\tvalues: dataset,\n\tkey: 'Total sets',\n\tcolor:'#56c5a6'\n});\n";
 
+$from_date = (!empty($from_date)) ? $from_date : $last_date;
+$to_date = (!empty($to_date)) ? $to_date : $first_date;
 $template->assign_vars(array(
 	'GRAPH_DATA' => $volume_data . $reps_data . $sets_data,
 	'REP_SCALE' => $reps_scale,
 	'SET_SCALE' => $sets_scale,
-	'FROM_DATE' => (!empty($from_date)) ? $from_date : $last_date,
-	'TO_DATE' => (!empty($to_date)) ? $to_date : $first_date
+	'FROM_DATE' => $from_date,
+	'TO_DATE' => $to_date,
+	'JS_FROM_DATE' => strtotime($from_date . ' 00:00:00') * 1000,
+	'JS_TO_DATE' => strtotime($to_date . ' 00:00:00') * 1000
 	));
 $template->set_filenames(array(
 		'body' => 'volume.tpl'

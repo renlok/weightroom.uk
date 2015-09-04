@@ -226,10 +226,13 @@ elseif ($_GET['do'] == 'edit')
 	{
 		$elist .= "[\"{$exercise['exercise_name']}\", {$exercise['COUNT']}],";
 	}
+	$timestamp = strtotime($log_date . ' 00:00:00');
 	$template->assign_vars(array(
 		'LOG' => (isset($_POST['log'])) ? $_POST['log'] : $log_text,
 		'WEIGHT' => correct_weight($weight, 'kg', $user->user_data['user_unit']),
 		'DATE' => $log_date,
+		'USER_ID' => $user->user_id,
+		'JSDATE' => ($timestamp * 1000),
 		'ERROR' => $error,
 		'VALID_LOG' => $valid_log,
 		'EXERCISE_LIST' => substr($elist, 0, -1)
