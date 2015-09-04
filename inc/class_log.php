@@ -1198,6 +1198,7 @@ class log
 				'is_bw' => $row['is_bw'],
 				'logitem_reps' => $row['logitem_reps'],
 				'logitem_sets' => $row['logitem_sets'],
+				'logitem_rpes' => $row['logitem_rpes'],
 				'logitem_comment' => $row['logitem_comment'],
 				'is_pr' => $row['is_pr'],
 				'est1rm' => correct_weight($row['logitem_1rm'], 'kg', $user->user_data['user_unit']),

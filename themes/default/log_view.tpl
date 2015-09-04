@@ -22,7 +22,6 @@
 	text-decoration: none;
 }
 .calender-cont {
-	width: 640px;
 	text-align: center;
 }
 .user-info {
@@ -52,7 +51,7 @@
 		</div>
 		</div>
 		<div class="col-md-9 col-md-pull-3">
-		<div class="calender-cont">
+		<div class="calender-cont" style="width: 640px;">
 			<p><- <a href="?do=view&page=log&date={YESTERDAY}<!-- IF B_NOSELF -->&user_id={USER_ID}<!-- ENDIF -->">{YESTERDAY}</a> | <strong>{DATE}</strong> | <a href="?do=view&page=log&date={TOMORROW}<!-- IF B_NOSELF -->&user_id={USER_ID}<!-- ENDIF -->">{TOMORROW}</a> -></p>
 			<div class="date"></div>
 		</div>
@@ -128,6 +127,7 @@
 <script src="js/jCollapsible.js"></script>
 
 <script>
+var calendar_count = 3;
 $(document).ready(function(){
 	$('.log_comments').collapsible({xoffset:'-30', symbolhide:'[-]', symbolshow:'[+]'<!-- IF COMMENTING -->, defaulthide:false<!-- ENDIF -->});
 	$('.reply').click(function() {
@@ -140,53 +140,58 @@ $(document).ready(function(){
 		}
 		return false;
 	});
-});
+	if ($( window ).width() < 500)
+	{
+		// that window is small
+		$(".calender-cont").removeAttr('style');
+		calendar_count = 1;
+	}
+	var arDates = [];
+	var calMonths = [];
 
-var arDates = [];
-var calMonths = [];
-
-$(function () {
-	$('.date').pickmeup({
-		date		: new Date({JSDATE}),
-		flat		: true,
-		format  	: 'Y-m-d',
-		change		: function(e){ window.location.href = '?do=view&page=log<!-- IF B_NOSELF -->&user_id={USER_ID}<!-- ENDIF -->&date='+e;},
-		calendars	: 3,
-		render: function(date) {
-			var d = moment(date);
-			var m = d.format('YYYY-MM');
-			if ($.inArray(m, calMonths) == -1)
-			{
-				calMonths.push(m);
-				loadlogdata(m);
-			}
-			if ($.inArray(d.format('YYYY-MM-DD'), arDates) != -1)
-			{
-				return {
-					class_name: 'cal_log_date'                         
+	$(function () {
+		$('.date').pickmeup({
+			date		: new Date({JSDATE}),
+			flat		: true,
+			format  	: 'Y-m-d',
+			change		: function(e){ window.location.href = '?do=view&page=log<!-- IF B_NOSELF -->&user_id={USER_ID}<!-- ENDIF -->&date='+e;},
+			calendars	: calendar_count,
+			render: function(date) {
+				var d = moment(date);
+				var m = d.format('YYYY-MM');
+				if ($.inArray(m, calMonths) == -1)
+				{
+					calMonths.push(m);
+					loadlogdata(m);
+				}
+				if ($.inArray(d.format('YYYY-MM-DD'), arDates) != -1)
+				{
+					return {
+						class_name: 'cal_log_date'                         
+					}
 				}
 			}
-		}
+		});
 	});
-});
 
-function loadlogdata(date)
-{
-	$.ajax({
-		url: "index.php",
-		data: {
-			page: 'ajax',
-			do: 'cal',
-			date: date,
-			user_id: {USER_ID}
-		},
-		type: 'GET',
-		dataType: 'json',
-		cache: false
-	}).done(function(o) {
-		$.merge(calMonths, o.cals);
-		$.merge(arDates, o.dates);
-		$('.date').pickmeup('update');
-	}).fail(function() {}).always(function() {});
-}
+	function loadlogdata(date)
+	{
+		$.ajax({
+			url: "index.php",
+			data: {
+				page: 'ajax',
+				do: 'cal',
+				date: date,
+				user_id: {USER_ID}
+			},
+			type: 'GET',
+			dataType: 'json',
+			cache: false
+		}).done(function(o) {
+			$.merge(calMonths, o.cals);
+			$.merge(arDates, o.dates);
+			$('.date').pickmeup('update');
+		}).fail(function() {}).always(function() {});
+	}
+});
 </script>

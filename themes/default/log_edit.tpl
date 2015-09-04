@@ -31,6 +31,9 @@
 #formattinghelp {
 	display: none;
 }
+.pickmeup {
+	z-index:99999;
+}
 .pmu-not-in-month.cal_log_date{
 	background-color:#7F4C00;
 }
