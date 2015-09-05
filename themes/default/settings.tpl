@@ -28,9 +28,8 @@
   </div>
   <div class="form-group">
     <div>
-	<label for="weightunit">Default Unit
-	<p><small>What the site is displayed in also the default weight unit to use to use when no explicit weight unit is specified.</small></p>
-	</label>
+		<label for="weightunit">Default Unit</label>
+		<p><small><i>What the site is displayed in also the default weight unit to use to use when no explicit weight unit is specified.</i></small></p>
 	</div>
 	<label class="radio-inline">
 	  <input type="radio" id="weightunit" name="weightunit" value="1"<!-- IF WEIGHTUNIT eq 1 --> checked<!-- ENDIF -->> kg
@@ -40,7 +39,10 @@
 	</label>
   </div>
   <div class="form-group">
-    <div><label for="showreps">Rep max. to show<p><small>These is the rep ranges which will show on the graphs in the exercise PR page</small></p></label></div>
+    <div>
+		<label for="showreps">Rep max. to show</label>
+		<p><small><i>These is the rep ranges which will show on the graphs in the exercise PR page</i></small></p>
+	</div>
     {SHOWREPHTML}
   </div>
   <div class="form-group">
@@ -94,6 +96,22 @@
 			<option value="{exercise.EXERCISE_ID}"<!-- IF exercise.EXERCISE_ID eq CLEANJERKID --> selected<!-- ENDIF -->>{exercise.EXERCISE}</option>
 		<!-- END -->
 	  </select>
+  </div>
+  <div class="form-group">
+    <label for="inputEmail3" class="control-label">&nbsp;</label>
+    <h3>Advanced Settings</h3>
+  </div>
+  <div class="form-group">
+    <div>
+		<label for="volumeincfails">Include failed lifts in total tonnage (volume)</label>
+		<p><small><i>If enabled when the total tonnage is calculatedfailed lifts will be included as a completed lift.</i></small></p>
+	</div>
+	<label class="radio-inline">
+	  <input type="radio" id="volumeincfails" name="volumeincfails" value="1"<!-- IF VOLUMEINCFAILS eq 1 --> checked<!-- ENDIF -->> enable
+	</label>
+	<label class="radio-inline">
+	  <input type="radio" id="volumeincfails" name="volumeincfails" value="0"<!-- IF VOLUMEINCFAILS eq 0 --> checked<!-- ENDIF -->> disable
+	</label>
   </div>
   <div class="form-group">
 	  <input type="hidden" name="csrftoken" value="{_CSRFTOKEN}">

@@ -37,8 +37,15 @@ class log
 					'sets' => array(),
 				);
 			}
+			$weight = correct_weight($item['logitem_weight'], 'kg', $user->user_data['user_unit']);
+			// include your failed reps in the total volume
+			if ($user->user_data['user_volumeincfails'] == 1 && $item['logitem_reps'] == 0)
+			{
+				// we are assuming the failed rep now counts as 1 as you still attempted it
+				$data[$exercisepointer]['total_volume'] += $weight * $item['logitem_sets'];
+			}
 			$data[$exercisepointer]['sets'][] = array(
-				'weight' => correct_weight($item['logitem_weight'], 'kg', $user->user_data['user_unit']),
+				'weight' => $weight,
 				'reps' => $item['logitem_reps'],
 				'sets' => $item['logitem_sets'],
 				'rpes' => $item['logitem_rpes'],
@@ -1190,11 +1197,19 @@ class log
 					$max_reps = $row['logex_reps'];
 				if ($max_rm < $row['logex_1rm'])
 					$max_rm = $row['logex_1rm'];
-				if ($max_vol < $row['logex_volume'])
-					$max_vol = $row['logex_volume'];
 			}
+			$weight = correct_weight($row['logitem_weight'], 'kg', $user->user_data['user_unit']);
+			// include your failed reps in the total volume
+			if ($user->user_data['user_volumeincfails'] == 1 && $row['logitem_reps'] == 0)
+			{
+				// we are assuming the failed rep now counts as 1 as you still attempted it
+				$data[$row['log_id']]['logex_volume'] += $weight * $row['logitem_sets'];
+			}
+			// check the vol again + new set max
+			if ($max_vol < $data[$row['log_id']]['logex_volume'])
+				$max_vol = $data[$row['log_id']]['logex_volume'];
 			$data[$row['log_id']]['sets'][] = array(
-				'logitem_weight' => correct_weight($row['logitem_weight'], 'kg', $user->user_data['user_unit']),
+				'logitem_weight' => $weight,
 				'is_bw' => $row['is_bw'],
 				'logitem_reps' => $row['logitem_reps'],
 				'logitem_sets' => $row['logitem_sets'],

@@ -93,6 +93,11 @@ if (isset($_POST['action']))
 		$error_msg = 'Bodyweight must be numeric';
 		$error = true;
 	}
+	if (intval($_POST['volumeincfails']) != 1 && intval($_POST['volumeincfails']) != 0)
+	{
+		$error_msg = 'Invalid option selected';
+		$error = true;
+	}
 	
 	if (!$error)
 	{
@@ -106,7 +111,8 @@ if (isset($_POST['action']))
 				user_snatchid = :user_snatchid,
 				user_cleanjerkid = :user_cleanjerkid,
 				user_weight = :user_weight,
-				user_gender = :user_gender
+				user_gender = :user_gender,
+				user_volumeincfails = :user_volumeincfails
 				WHERE user_id = :user_id";
 		$user_showreps = implode('|', array_map('intval', $_POST['showreps']));
 		$params = array(
@@ -119,6 +125,7 @@ if (isset($_POST['action']))
 			array(':user_cleanjerkid', $_POST['cnj'], 'int'),
 			array(':user_weight', $_POST['bodyweight'], 'float'),
 			array(':user_gender', $_POST['gender'], 'int'),
+			array(':user_volumeincfails', $_POST['volumeincfails'], 'int'),
 			array(':user_id', $user->user_id, 'int'),
 		);
 		$db->query($query, $params);
@@ -131,6 +138,7 @@ if (isset($_POST['action']))
 		$user->user_data['user_cleanjerkid'] = $_POST['cnj'];
 		$user->user_data['user_weight'] = $_POST['bodyweight'];
 		$user->user_data['user_gender'] = $_POST['gender'];
+		$user->user_data['user_volumeincfails'] = $_POST['volumeincfails'];
 		$settings_updated = true;
 	}
 }
@@ -168,7 +176,8 @@ $template->assign_vars(array(
 	'DEADLIFTID' => $user->user_data['user_deadliftid'],
 	'SQUATID' => $user->user_data['user_squatid'],
 	'BENCHID' => $user->user_data['user_benchid'],
-	'WEIGHTUNIT' => $user->user_data['user_unit']
+	'WEIGHTUNIT' => $user->user_data['user_unit'],
+	'VOLUMEINCFAILS' => $user->user_data['user_volumeincfails']
 	));
 $template->set_filenames(array(
 		'body' => 'settings.tpl'
