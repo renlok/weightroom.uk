@@ -172,7 +172,7 @@ class log
 			// set details of excersice
 			if (is_numeric($line[0])) // using weight
 			{
-				if (preg_match("/^([0-9]+\.*[0-9]*)\s*(lb|kg)*/", $line, $matches)) // 1 = weight, 2 = lb/kg
+				if (preg_match("/^([0-9]+\.*[0-9]*)\s*(lbs?|kgs?)*/", $line, $matches)) // 1 = weight, 2 = lb/kg
 				{
 					// clear the weight from the line
 					$line = str_replace($matches[0], '', $line);
@@ -189,7 +189,7 @@ class log
 			}
 			elseif ($line[0] == 'B' && $line[1] == 'W') // using bodyweight
 			{
-				if (preg_match("/^BW(\+|-)*\s*([0-9]+\.*[0-9]*)*\s*(kg|lb)*/", $line, $matches)) // 1= +/- 2= weight, 3= lb/kg
+				if (preg_match("/^BW(\+|-)*\s*([0-9]+\.*[0-9]*)*\s*(kgs?|lbs?)*/", $line, $matches)) // 1= +/- 2= weight, 3= lb/kg
 				{
 					// clear the weight from the line
 					$line = str_replace($matches[0], '', $line);

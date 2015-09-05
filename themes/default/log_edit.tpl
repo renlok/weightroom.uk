@@ -265,7 +265,7 @@ $(document).ready(function(){
 					o.hayErow = true;
 					this.next = [this.W, this.WWR, this.RPE, this.C];
 					return "W";
-				} else if (s.match(/^\s*\d+(\.\d{1,2})?(\s*kg|\s*lbs?)?/i, true) || s.match(/^\s*BW(\s*[\+\-]\s*\d+(\.\d{1,2})?(\s*(kg|lbs?))?)?/i, true)) {
+				} else if (s.match(/^\s*\d+(\.\d{1,2})?(\s*kgs?|\s*lbs?)?/i, true) || s.match(/^\s*BW(\s*[\+\-]\s*\d+(\.\d{1,2})?(\s*(kgs?|lbs?))?)?/i, true)) {
 					o.hayErow = true;
 					this.next = [this.W, this.RR, this.R, this.RPE, this.C];
 					return "W";
