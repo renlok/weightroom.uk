@@ -23,7 +23,7 @@
     </div>
     <div id="collapse{items.LOG_DATE}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{items.LOG_DATE}">
       <div class="panel-body">
-        <p class="logrow">Volume: <span class="heavy">{items.VOLUME}</span>{WEIGHT_UNIT} - Reps: <span class="heavy">{items.REPS}</span> - Sets: <span class="heavy">{items.SETS}</span></p>
+        <p class="logrow">Volume: <span class="heavy">{items.VOLUME}</span>{WEIGHT_UNIT} - Reps: <span class="heavy">{items.REPS}</span> - Sets: <span class="heavy">{items.SETS}</span> - Avg. Intensity: <span class="heavy">{items.AVG_INT} %</span></p>
 		<table class="table">
 		<tbody>
 		<!-- BEGIN sets -->
@@ -96,6 +96,12 @@
 			{
 				var tool_type = '1RM';
 				point_value = (point_value / {RM_SCALE}).toFixed(2);
+			}
+			if (key.point.color == '#907fcc')
+			{
+				var tool_type = 'Average Intensity';
+				point_value = Math.round(point_value / {AI_SCALE});
+				units = '%';
 			}
 			return '<pre>' + tool_type + ': ' + point_value + units + '</pre>';
 		})

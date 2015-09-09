@@ -75,12 +75,12 @@
 <!-- ENDIF -->
 <!-- IF B_LOG -->
 <h3>Workout summary</h3>
-<p class="logrow">Volume: <span class="heavy">{TOTAL_VOLUME}</span>{WEIGHT_UNIT} - Reps: <span class="heavy">{TOTAL_REPS}</span> - Sets: <span class="heavy">{TOTAL_SETS}</span></p>
+<p class="logrow">Volume: <span class="heavy">{TOTAL_VOLUME}</span>{WEIGHT_UNIT} - Reps: <span class="heavy">{TOTAL_REPS}</span> - Sets: <span class="heavy">{TOTAL_SETS}</span> - Avg. Intensity: <span class="heavy">{TOTAL_INT} %</span></p>
 <p class="logrow marginl"><small>Bodyweight: <span class="heavy">{USER_BW}</span>{WEIGHT_UNIT}</small></p>
 <!-- ENDIF -->
 <!-- BEGIN items -->
 	<h3><a href="?page=exercise&ex={items.EXERCISE}">{items.EXERCISE}</a></h3>
-	<p class="logrow">Volume: <span class="heavy">{items.VOLUME}</span>{WEIGHT_UNIT} - Reps: <span class="heavy">{items.REPS}</span> - Sets: <span class="heavy">{items.SETS}</span></p>
+	<p class="logrow">Volume: <span class="heavy">{items.VOLUME}</span>{WEIGHT_UNIT} - Reps: <span class="heavy">{items.REPS}</span> - Sets: <span class="heavy">{items.SETS}</span> - Avg. Intensity: <span class="heavy">{items.AVG_INT} %</span></p>
 	<table class="table">
 	<tbody>
 	<!-- BEGIN sets -->

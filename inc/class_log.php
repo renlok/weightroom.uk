@@ -490,7 +490,7 @@ class log
 								continue;
 							}
 							$total_volume += ($set['weight'] * $rep_arr[$i] * $set['sets']);
-							$total_reps += $rep_arr[$i];
+							$total_reps += ($rep_arr[$i] * $set['sets']);
 							$total_sets += $temp_sets;
 							$is_pr = false;
 							// check its a pr
@@ -703,7 +703,7 @@ class log
 		}
 	}
 
-	private function generate_rm($weight, $reps, $rm = 1)
+	public function generate_rm($weight, $reps, $rm = 1)
 	{
 		if ($reps == $rm)
 		{

@@ -38,17 +38,27 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 	$log_data = $log->get_log_data($user_id, $log_date);
 
 	// loop through the exercises
-	$total_volume = $total_reps = $total_sets = 0;
+	$total_volume = $total_reps = $total_sets = $total_intensity = 0;
+	$exercise_count = count($log_data);
 	foreach ($log_data as $log_items)
 	{
 		$total_volume += $log_items['total_volume'];
 		$total_reps += $log_items['total_reps'];
 		$total_sets += $log_items['total_sets'];
+		// get current pr
+		$pr_data = $log->get_prs($user_id, $log_date, $log_items['exercise']);
+		// build a reference for current 1rm
+		$pr_weight = max($pr_data);
+		$reps = array_search($pr_weight, $pr_data);
+		$current_1rm = $log->generate_rm($pr_weight, $reps);
+		$average_intensity = (($log_items['total_volume']/$log_items['total_reps'])/$current_1rm) * 100;
+		$total_intensity += $average_intensity;
 		$template->assign_block_vars('items', array(
 				'EXERCISE' => ucwords($log_items['exercise']),
 				'VOLUME' => $log_items['total_volume'],
 				'REPS' => $log_items['total_reps'],
 				'SETS' => $log_items['total_sets'],
+				'AVG_INT' => round($average_intensity, 1),
 				'COMMENT' => trim($log_items['comment']),
 				));
 		foreach ($log_items['sets'] as $set)
@@ -117,7 +127,7 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 		$badges .= '<img src="img/bug.png" alt="Beta tester">';
 	if ($user_data['user_admin'] == 1)
 		$badges .= '<img src="img/star.png" alt="Adminnosaurus Rex">';
-	
+
 	$timestamp = strtotime($log_date . ' 00:00:00');
 	$template->assign_vars(array(
 		'LOG_DATES' => $log->build_log_list($log_list),
@@ -133,6 +143,7 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 		'TOTAL_VOLUME' => $total_volume,
 		'TOTAL_REPS' => $total_reps,
 		'TOTAL_SETS' => $total_sets,
+		'TOTAL_INT' => round($total_intensity/$exercise_count, 1),
 
 		'B_LOG' => (!(empty($log_data) && empty($log_ic['log_comment']))),
 		'JSDATE' => ($timestamp * 1000),
