@@ -104,7 +104,7 @@ you can also have the same exercise multiple times
 var arDates = [];
 var calMonths = [];
 $('#track_date').pickmeup({
-	date		: new Date({JSDATE}),
+	date		: moment('{DATE}','YYYY-MM-DD').format(),
 	format  	: 'Y-m-d',
 	change		: function(e){ window.location.href = '?do=edit&page=log&date='+e;},
 	calendars	: 1,
@@ -265,7 +265,7 @@ $(document).ready(function(){
 					o.hayErow = true;
 					this.next = [this.W, this.WWR, this.RPE, this.C];
 					return "W";
-				} else if (s.match(/^\s*\d+(\.\d{1,2})?(\s*kgs?|\s*lbs?)?/i, true) || s.match(/^\s*BW(\s*[\+\-]\s*\d+(\.\d{1,2})?(\s*(kgs?|lbs?))?)?/i, true)) {
+				} else if (s.match(/^\s*\d+(\.\d{1,2})?(\s*kgs?|\s*lbs?)?/i, true) || s.match(/^\s*BW(\s*[\+\-]\s*\d+(\.\d{1,2})?(\s*(kgs?|lbs?))?)?/i, true) || s.match(/^\s*(\d{1,2}\s*:\s*){1,2}\s*(\d{1,2})?/i, true)) {
 					o.hayErow = true;
 					this.next = [this.W, this.RR, this.R, this.RPE, this.C];
 					return "W";

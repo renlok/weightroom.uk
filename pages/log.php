@@ -143,10 +143,9 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 		'TOTAL_VOLUME' => $total_volume,
 		'TOTAL_REPS' => $total_reps,
 		'TOTAL_SETS' => $total_sets,
-		'TOTAL_INT' => round($total_intensity/$exercise_count, 1),
+		'TOTAL_INT' => ($exercise_count > 0) ? round($total_intensity/$exercise_count, 1) : 0,
 
 		'B_LOG' => (!(empty($log_data) && empty($log_ic['log_comment']))),
-		'JSDATE' => ($timestamp * 1000),
 		'COMMENT' => $log_ic['log_comment'],
 		'DATE' => $log_date,
 		'TOMORROW' => date("Y-m-d", $timestamp + 86400),
@@ -238,13 +237,11 @@ elseif ($_GET['do'] == 'edit')
 	{
 		$elist .= "[\"{$exercise['exercise_name']}\", {$exercise['COUNT']}],";
 	}
-	$timestamp = strtotime($log_date . ' 00:00:00');
 	$template->assign_vars(array(
 		'LOG' => (isset($_POST['log'])) ? $_POST['log'] : $log_text,
 		'WEIGHT' => correct_weight($weight, 'kg', $user->user_data['user_unit']),
 		'DATE' => $log_date,
 		'USER_ID' => $user->user_id,
-		'JSDATE' => ($timestamp * 1000),
 		'ERROR' => $error,
 		'VALID_LOG' => $valid_log,
 		'EXERCISE_LIST' => substr($elist, 0, -1)

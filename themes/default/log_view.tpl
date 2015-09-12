@@ -151,7 +151,7 @@ $(document).ready(function(){
 
 	$(function () {
 		$('.date').pickmeup({
-			date		: new Date({JSDATE}),
+			date		: moment('{DATE}','YYYY-MM-DD').format(),
 			flat		: true,
 			format  	: 'Y-m-d',
 			change		: function(e){ window.location.href = '?do=view&page=log<!-- IF B_NOSELF -->&user_id={USER_ID}<!-- ENDIF -->&date='+e;},
