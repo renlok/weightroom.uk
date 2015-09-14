@@ -9,6 +9,7 @@
 	<p>See how your PRs of different exercises have changed over time</p>
   </div>
   <div class="col-md-4">
-	&nbsp;
+	<a href="?page=search_log">Search logs</a>
+	<p>Search your log records and find the last time you did something</p>
   </div>
 </div>

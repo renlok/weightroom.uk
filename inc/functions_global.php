@@ -63,6 +63,8 @@ function in_tools($page, $do)
 		return true;
 	if ($page == 'tools')
 		return true;
+	if ($page == 'search_log')
+		return true;
 	if ($page == 'exercise' && $do == 'compare')
 		return true;
 	return false;

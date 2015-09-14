@@ -100,6 +100,9 @@ switch ($page)
 	case 'search':
 		include PAGEDIR . 'search.php';
 		break;
+	case 'search_log':
+		include PAGEDIR . 'search_log.php';
+		break;
 	case 'tools':
 		include PAGEDIR . 'tools.php';
 		break;
