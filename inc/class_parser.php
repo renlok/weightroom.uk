@@ -1,4 +1,10 @@
 <?php
+/*
+loop
+{
+
+}
+*/
 class parser
 {
   var $logText;
@@ -6,6 +12,7 @@ class parser
   var $logTextPointer;
   var $logTextCompressedPointer;
   var $dump;
+  var $next;
 
   function something()
   {
@@ -59,11 +66,34 @@ class parser
 
       // we now loop through each character in the line
       $string_array = str_split($line);
-      $next = array('W', 'T'); //could be generated automatically
-      $dump = '';
+      $this->next = array('W', 'T'); //could be generated automatically
+      $this->dump = '';
       foreach ($string_array as $chr)
       {
-        
+
+      }
+    }
+  }
+
+  function buildFormatArray()
+  {
+    $this->formats = array();
+    foreach($this->next as $next)
+    {
+      $this->formats[$next] = $this->lexus[$next]['format'];
+    }
+  }
+
+  function charExpected()
+  {
+    $this->expected = array();
+    foreach ($this->formats as $format_type)
+    {
+      foreach ($format_type as $format)
+      {
+        $this->expected[] = $format[0];
+        // if current format is number but a number has already been added allow to go to next character
+        if ($this->dump[strlen($this->dump) - 1]
       }
     }
   }
