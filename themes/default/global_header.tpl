@@ -40,6 +40,8 @@
 		  <li class="dropdown<!-- IF CURRENT_PAGE eq 'settings' --> active<!-- ENDIF -->">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> <span class="caret"></span></a>
 				<ul class="dropdown-menu">
+					<li role="presentation"><a href="?page=invites">Invite codes</a></li>
+					<li role="presentation"><a href="http://we-link.co.uk/projects/public/weightroom" target="_blank">Submit a bug</a></li>
 					<li role="presentation"><a href="?page=settings">Settings</a></li>
 					<li role="presentation"><a href="?page=logout">Logout</a></li>
 				</ul>
