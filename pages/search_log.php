@@ -11,7 +11,7 @@ $log = new log();
 $show = (isset($_GET['show'])) ? $_GET['show'] : 1;
 $exercise_name = (isset($_GET['exercise'])) ? $_GET['exercise'] : '';
 $weight = (isset($_GET['weight'])) ? $_GET['weight'] : 0;
-$reps = (isset($_GET['reps'])) ? $_GET['reps'] : '';
+$reps = (isset($_GET['reps'])) ? $_GET['reps'] : 'any';
 
 $exercises = $log->list_exercises($user->user_id);
 foreach ($exercises as $exercise)
@@ -28,8 +28,8 @@ if ($exercise_name != '' && $log->is_valid_exercise($user->user_id, $exercise_na
 	$pr_data = $log->get_prs($user->user_id, date("Y-m-d"), $exercise_name);
 	// build a reference for current 1rm
 	$pr_weight = max($pr_data);
-	$reps = array_search($pr_weight, $pr_data);
-	$current_1rm = $log->generate_rm($pr_weight, $reps);
+	$pr_reps = array_search($pr_weight, $pr_data);
+	$current_1rm = $log->generate_rm($pr_weight, $pr_reps);
 
 	$params = array();
 	$rep_sql = '';
