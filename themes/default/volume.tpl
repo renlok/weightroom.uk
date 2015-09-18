@@ -50,12 +50,14 @@ $('#from_date').pickmeup({
 	date		: new Date({JS_FROM_DATE}),
 	format  	: 'Y-m-d',
 	calendars	: 1,
+	first_day	: {WEEK_START},
 	hide_on_select	: true
 });
 $('#to_date').pickmeup({
 	date		: new Date({JS_TO_DATE}),
 	format  	: 'Y-m-d',
 	calendars	: 1,
+	first_day	: {WEEK_START},
 	hide_on_select	: true
 });
 

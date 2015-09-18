@@ -63,41 +63,41 @@ if ($exercise_name != '' && $log->is_valid_exercise($user->user_id, $exercise_na
 	$params[] = array(':show', $show, 'str');
 	$db->query($query, $params);
 	$data = array();
-	while ($log = $db->fetch())
+	while ($log_items = $db->fetch())
 	{
-		if (!isset($data[$log['log_id']]))
+		if (!isset($data[$log_items['log_id']]))
 		{
 			// check to see if limit is reached
 			if (count($data) >= $show && $show != 0)
 			{
 				break;
 			}
-			$data[$log['log_id']] = 1;
+			$data[$log_items['log_id']] = 1;
 			$template->assign_block_vars('items', array(
-					'LOG_DATE' => $log['logitem_date'],
-					'VOLUME' => correct_weight($log['logex_volume'], 'kg', $user->user_data['user_unit']),
-					'REPS' => $log['logex_reps'],
-					'SETS' => $log['logex_sets'],
-					'COMMENT' => $log['logex_comment'],
+					'LOG_DATE' => $log_items['logitem_date'],
+					'VOLUME' => correct_weight($log_items['logex_volume'], 'kg', $user->user_data['user_unit']),
+					'REPS' => $log_items['logex_reps'],
+					'SETS' => $log_items['logex_sets'],
+					'COMMENT' => $log_items['logex_comment'],
 					));
 		}
 		$showunit = true;
-		$log['logitem_weight'] = correct_weight($log['logitem_weight'], 'kg', $user->user_data['user_unit']);
-		if ($log['is_bw'] == 0)
+		$log_items['logitem_weight'] = correct_weight($log_items['logitem_weight'], 'kg', $user->user_data['user_unit']);
+		if ($log_items['is_bw'] == 0)
 		{
-			$rep_weight = $log['logitem_weight'];
+			$rep_weight = $log_items['logitem_weight'];
 		}
 		else
 		{
-			if ($log['logitem_weight'] != 0)
+			if ($log_items['logitem_weight'] != 0)
 			{
-				if ($log['logitem_weight'] < 0)
+				if ($log_items['logitem_weight'] < 0)
 				{
-					$rep_weight = 'BW - ' . abs($log['logitem_weight']);
+					$rep_weight = 'BW - ' . abs($log_items['logitem_weight']);
 				}
 				else
 				{
-					$rep_weight = 'BW + ' . $log['logitem_weight'];
+					$rep_weight = 'BW + ' . $log_items['logitem_weight'];
 				}
 			}
 			else
@@ -108,20 +108,21 @@ if ($exercise_name != '' && $log->is_valid_exercise($user->user_id, $exercise_na
 		}
 		$template->assign_block_vars('items.sets', array(
 				'WEIGHT' => $rep_weight,
-				'REPS' => $log['logitem_reps'],
-				'SETS' => $log['logitem_sets'],
-				'RPES' => $log['logitem_rpes'],
-				'COMMENT' => $log['logitem_comment'],
-				'IS_PR' => $log['is_pr'],
+				'REPS' => $log_items['logitem_reps'],
+				'SETS' => $log_items['logitem_sets'],
+				'RPES' => $log_items['logitem_rpes'],
+				'COMMENT' => $log_items['logitem_comment'],
+				'IS_PR' => $log_items['is_pr'],
 				'SHOW_UNIT' => $showunit,
-				'EST1RM' => correct_weight($log['logitem_1rm'], 'kg', $user->user_data['user_unit']),
+				'EST1RM' => correct_weight($log_items['logitem_1rm'], 'kg', $user->user_data['user_unit']),
 				));
-		$average_intensity = (($log['logex_volume']/$log['logex_reps'])/$current_1rm) * 100;
-		$template->alter_block_array('items', array('AVG_INT' => round($average_intensity, 1)), true, 'change');
+		$average_intensity = $log->get_average_intensity($log_items['logex_volume'], $log_items['logex_reps'], $log_items, $current_1rm);
+		$template->alter_block_array('items', array('AVG_INT' => $average_intensity), true, 'change');
 	}
 }
 
 $template->assign_vars(array(
+		'AVG_INTENSITY_TYPE' => $user->user_data['user_viewintensityabs'],
 		'SHOW' => $show,
 		'WEIGHT' => $weight,
 		'REPS' => $reps,

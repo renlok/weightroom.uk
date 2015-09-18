@@ -38,6 +38,7 @@ $sets_data .= "HistoryChartData.push({\n\tvalues: dataset,\n\tkey: 'Total sets',
 $from_date = (!empty($from_date)) ? $from_date : $last_date;
 $to_date = (!empty($to_date)) ? $to_date : $first_date;
 $template->assign_vars(array(
+	'WEEK_START' => $user->user_data['user_weekstart'],
 	'GRAPH_DATA' => $volume_data . $reps_data . $sets_data,
 	'REP_SCALE' => $reps_scale,
 	'SET_SCALE' => $sets_scale,

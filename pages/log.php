@@ -51,14 +51,14 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 		$pr_weight = max($pr_data);
 		$reps = array_search($pr_weight, $pr_data);
 		$current_1rm = $log->generate_rm($pr_weight, $reps);
-		$average_intensity = (($log_items['total_volume']/$log_items['total_reps'])/$current_1rm) * 100;
+		$average_intensity = $log->get_average_intensity($log_items['total_volume'], $log_items['total_reps'], $log_items['sets'], $current_1rm);
 		$total_intensity += $average_intensity;
 		$template->assign_block_vars('items', array(
 				'EXERCISE' => ucwords($log_items['exercise']),
 				'VOLUME' => $log_items['total_volume'],
 				'REPS' => $log_items['total_reps'],
 				'SETS' => $log_items['total_sets'],
-				'AVG_INT' => round($average_intensity, 1),
+				'AVG_INT' => $average_intensity,
 				'COMMENT' => trim($log_items['comment']),
 				));
 		foreach ($log_items['sets'] as $set)
@@ -66,19 +66,19 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 			$showunit = true;
 			if ($set['is_bw'] == 0)
 			{
-				$weight = $set['weight'];
+				$weight = $set['logitem_weight'];
 			}
 			else
 			{
-				if ($set['weight'] != 0)
+				if ($set['logitem_weight'] != 0)
 				{
-					if ($set['weight'] < 0)
+					if ($set['logitem_weight'] < 0)
 					{
-						$weight = 'BW - ' . abs($set['weight']);
+						$weight = 'BW - ' . abs($set['logitem_weight']);
 					}
 					else
 					{
-						$weight = 'BW + ' . $set['weight'];
+						$weight = 'BW + ' . $set['logitem_weight'];
 					}
 				}
 				else
@@ -89,12 +89,12 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 			}
 			$template->assign_block_vars('items.sets', array(
 					'WEIGHT' => $weight,
-					'REPS' => $set['reps'],
-					'SETS' => $set['sets'],
-					'RPES' => $set['rpes'],
+					'REPS' => $set['logitem_reps'],
+					'SETS' => $set['logitem_sets'],
+					'RPES' => $set['logitem_rpes'],
 					'IS_PR' => $set['is_pr'],
 					'SHOW_UNIT' => $showunit,
-					'COMMENT' => trim($set['comment']),
+					'COMMENT' => trim($set['logitem_comment']),
 					'EST1RM' => $set['est1rm'],
 					));
 		}
@@ -130,6 +130,7 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 
 	$timestamp = strtotime($log_date . ' 00:00:00');
 	$template->assign_vars(array(
+		'WEEK_START' => $user->user_data['user_weekstart'],
 		'LOG_DATES' => $log->build_log_list($log_list),
 		'USER_ID' => $user_id,
 		'USERNAME' => $user_data['user_name'],
@@ -145,6 +146,7 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 		'TOTAL_SETS' => $total_sets,
 		'TOTAL_INT' => ($exercise_count > 0) ? round($total_intensity/$exercise_count, 1) : 0,
 
+		'AVG_INTENSITY_TYPE' => $user->user_data['user_viewintensityabs'],
 		'B_LOG' => (!(empty($log_data) && empty($log_ic['log_comment']))),
 		'COMMENT' => $log_ic['log_comment'],
 		'DATE' => $log_date,
@@ -197,7 +199,7 @@ elseif ($_GET['do'] == 'edit')
 		$log_data = $log->parse_new_log($log_text, $weight);
 		$new_prs = $log->store_new_log_data($log_data, $log_text, $log_date, $user->user_id, $weight);
 		// check if there are prs
-		if (count($new_prs) > 0)
+		if (is_array($new_prs) && count($new_prs) > 0)
 		{
 			$pr_string = '';
 			foreach ($new_prs as $exercise => $reps)
@@ -238,6 +240,7 @@ elseif ($_GET['do'] == 'edit')
 		$elist .= "[\"{$exercise['exercise_name']}\", {$exercise['COUNT']}],";
 	}
 	$template->assign_vars(array(
+		'WEEK_START' => $user->user_data['user_weekstart'],
 		'LOG' => (isset($_POST['log'])) ? $_POST['log'] : $log_text,
 		'WEIGHT' => correct_weight($weight, 'kg', $user->user_data['user_unit']),
 		'DATE' => $log_date,

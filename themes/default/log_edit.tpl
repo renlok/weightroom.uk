@@ -108,6 +108,7 @@ $('#track_date').pickmeup({
 	format  	: 'Y-m-d',
 	change		: function(e){ window.location.href = '?do=edit&page=log&date='+e;},
 	calendars	: 1,
+	first_day	: {WEEK_START},
 	render: function(date) {
 		var d = moment(date);
 		var m = d.format('YYYY-MM');

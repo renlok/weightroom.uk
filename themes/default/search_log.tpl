@@ -54,7 +54,7 @@
 <!-- BEGIN items -->
 	<div class="panel-body">
 		<p><h3>{items.LOG_DATE}</h3><a href="?do=view&page=log&date={items.LOG_DATE}">View Log</a></p>
-        <p class="logrow">Volume: <span class="heavy">{items.VOLUME}</span>{WEIGHT_UNIT} - Reps: <span class="heavy">{items.REPS}</span> - Sets: <span class="heavy">{items.SETS}</span> - Avg. Intensity: <span class="heavy">{items.AVG_INT} %</span></p>
+        <p class="logrow">Volume: <span class="heavy">{items.VOLUME}</span>{WEIGHT_UNIT} - Reps: <span class="heavy">{items.REPS}</span> - Sets: <span class="heavy">{items.SETS}</span> - Avg. Intensity: <span class="heavy">{items.AVG_INT} <!-- IF AVG_INTENSITY_TYPE eq 0 -->%<!-- ELSE -->{WEIGHT_UNIT}<!-- ENDIF --></span></p>
 		<table class="table">
 		<tbody>
 		<!-- BEGIN sets -->

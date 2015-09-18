@@ -112,7 +112,10 @@ if (isset($_POST['action']))
 				user_cleanjerkid = :user_cleanjerkid,
 				user_weight = :user_weight,
 				user_gender = :user_gender,
-				user_volumeincfails = :user_volumeincfails
+				user_volumeincfails = :user_volumeincfails,
+				user_weekstart = :user_weekstart,
+				user_viewintensityabs = :user_viewintensityabs,
+				user_limitintensity = :user_limitintensity
 				WHERE user_id = :user_id";
 		$user_showreps = implode('|', array_map('intval', $_POST['showreps']));
 		$params = array(
@@ -126,6 +129,9 @@ if (isset($_POST['action']))
 			array(':user_weight', $_POST['bodyweight'], 'float'),
 			array(':user_gender', $_POST['gender'], 'int'),
 			array(':user_volumeincfails', $_POST['volumeincfails'], 'int'),
+			array(':user_weekstart', $_POST['weekstart'], 'int'),
+			array(':user_viewintensityabs', $_POST['viewintensityabs'], 'int'),
+			array(':user_limitintensity', $_POST['limitintensity'], 'int'),
 			array(':user_id', $user->user_id, 'int'),
 		);
 		$db->query($query, $params);
@@ -139,6 +145,9 @@ if (isset($_POST['action']))
 		$user->user_data['user_weight'] = $_POST['bodyweight'];
 		$user->user_data['user_gender'] = $_POST['gender'];
 		$user->user_data['user_volumeincfails'] = $_POST['volumeincfails'];
+		$user->user_data['user_weekstart'] = $_POST['weekstart'];
+		$user->user_data['user_viewintensityabs'] = $_POST['viewintensityabs'];
+		$user->user_data['user_limitintensity'] = $_POST['limitintensity'];
 		$settings_updated = true;
 	}
 }
@@ -177,7 +186,10 @@ $template->assign_vars(array(
 	'SQUATID' => $user->user_data['user_squatid'],
 	'BENCHID' => $user->user_data['user_benchid'],
 	'WEIGHTUNIT' => $user->user_data['user_unit'],
-	'VOLUMEINCFAILS' => $user->user_data['user_volumeincfails']
+	'VOLUMEINCFAILS' => $user->user_data['user_volumeincfails'],
+	'WEEKSTARTS' => $user->user_data['user_weekstart'],
+	'ITENSITYABS' => $user->user_data['user_viewintensityabs'],
+	'INTENSITY_LIMIT' => $user->user_data['user_limitintensity']
 	));
 $template->set_filenames(array(
 		'body' => 'settings.tpl'

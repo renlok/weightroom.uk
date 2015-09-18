@@ -75,12 +75,12 @@
 <!-- ENDIF -->
 <!-- IF B_LOG -->
 <h3>Workout summary</h3>
-<p class="logrow">Volume: <span class="heavy">{TOTAL_VOLUME}</span>{WEIGHT_UNIT} - Reps: <span class="heavy">{TOTAL_REPS}</span> - Sets: <span class="heavy">{TOTAL_SETS}</span> - Avg. Intensity: <span class="heavy">{TOTAL_INT} %</span></p>
+<p class="logrow">Volume: <span class="heavy">{TOTAL_VOLUME}</span>{WEIGHT_UNIT} - Reps: <span class="heavy">{TOTAL_REPS}</span> - Sets: <span class="heavy">{TOTAL_SETS}</span> - Avg. Intensity: <span class="heavy">{TOTAL_INT} <!-- IF AVG_INTENSITY_TYPE eq 0 -->%<!-- ELSE -->{WEIGHT_UNIT}<!-- ENDIF --></span></p>
 <p class="logrow marginl"><small>Bodyweight: <span class="heavy">{USER_BW}</span>{WEIGHT_UNIT}</small></p>
 <!-- ENDIF -->
 <!-- BEGIN items -->
 	<h3><a href="?page=exercise&ex={items.EXERCISE}">{items.EXERCISE}</a></h3>
-	<p class="logrow">Volume: <span class="heavy">{items.VOLUME}</span>{WEIGHT_UNIT} - Reps: <span class="heavy">{items.REPS}</span> - Sets: <span class="heavy">{items.SETS}</span> - Avg. Intensity: <span class="heavy">{items.AVG_INT} %</span></p>
+	<p class="logrow">Volume: <span class="heavy">{items.VOLUME}</span>{WEIGHT_UNIT} - Reps: <span class="heavy">{items.REPS}</span> - Sets: <span class="heavy">{items.SETS}</span> - Avg. Intensity: <span class="heavy">{items.AVG_INT} <!-- IF AVG_INTENSITY_TYPE eq 0 -->%<!-- ELSE -->{WEIGHT_UNIT}<!-- ENDIF --></span></p>
 	<table class="table">
 	<tbody>
 	<!-- BEGIN sets -->
@@ -156,6 +156,7 @@ $(document).ready(function(){
 			format  	: 'Y-m-d',
 			change		: function(e){ window.location.href = '?do=view&page=log<!-- IF B_NOSELF -->&user_id={USER_ID}<!-- ENDIF -->&date='+e;},
 			calendars	: calendar_count,
+			first_day	: {WEEK_START},
 			render: function(date) {
 				var d = moment(date);
 				var m = d.format('YYYY-MM');

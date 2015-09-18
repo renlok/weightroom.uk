@@ -45,11 +45,11 @@ class log
 				$data[$exercisepointer]['total_volume'] += $weight * $item['logitem_sets'];
 			}
 			$data[$exercisepointer]['sets'][] = array(
-				'weight' => $weight,
-				'reps' => $item['logitem_reps'],
-				'sets' => $item['logitem_sets'],
-				'rpes' => $item['logitem_rpes'],
-				'comment' => $item['logitem_comment'],
+				'logitem_weight' => $weight,
+				'logitem_reps' => $item['logitem_reps'],
+				'logitem_sets' => $item['logitem_sets'],
+				'logitem_rpes' => $item['logitem_rpes'],
+				'logitem_comment' => $item['logitem_comment'],
 				'est1rm' => correct_weight($item['logitem_1rm'], 'kg', $user->user_data['user_unit']),
 				'is_pr' => $item['is_pr'],
 				'is_bw' => $item['is_bw'],
@@ -179,6 +179,7 @@ class log
 			// set details of excersice
 			if (is_numeric($line[0])) // using weight
 			{
+				// match aa weight given
 				if (preg_match("/^([0-9]+\.*[0-9]*)\s*(lbs?|kgs?)*/", $line, $matches)) // 1 = weight, 2 = lb/kg
 				{
 					// clear the weight from the line
@@ -1226,6 +1227,34 @@ class log
 			'max_rm' => $max_rm
 		);
 		return $data;
+	}
+	
+	public function get_average_intensity($volume, $reps, $sets_data, $current_1rm)
+	{
+		global $user;
+		// average intensity is limited
+		if ($user->user_data['user_limitintensity'] > 0)
+		{
+			foreach ($sets_data as $set)
+			{
+				if (isset($set['logitem_weight']) && is_numeric($set['logitem_weight']) && $set['logitem_weight'] < $current_1rm * ($user->user_data['user_limitintensity']/100))
+				{
+					// remove from volume
+					$volume = $volume - ($set['logitem_weight'] * $set['logitem_reps'] * $set['logitem_sets']);
+					$reps = $reps - ($set['logitem_reps'] * $set['logitem_sets']);
+				}
+			}
+		}
+
+		if ($user->user_data['user_viewintensityabs'] == 0)
+		{
+			$average_intensity = (($volume / $reps) / $current_1rm) * 100;
+		}
+		else
+		{
+			$average_intensity = ($volume / $reps);
+		}
+		return round($average_intensity, 1);
 	}
 }
 ?>

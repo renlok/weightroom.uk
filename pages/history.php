@@ -20,12 +20,12 @@ if(!$log->is_valid_exercise($user->user_id, $exercise_name))
 $from_date = (isset($_GET['from'])) ? $_GET['from'] : '';
 $to_date = (isset($_GET['to'])) ? $_GET['to'] : '';
 
-$logs = $log->list_exercise_logs($user->user_id, $from_date, $to_date, $exercise_name);
+$log_data = $log->list_exercise_logs($user->user_id, $from_date, $to_date, $exercise_name);
 $volume_data = $reps_data = $sets_data = $rm_data = $ai_data = "var dataset = [];\n";
 
 // workout how much reps, sets&RM need to be scaled to match volume
-$max_values = $logs[0];
-unset($logs[0]);
+$max_values = $log_data[0];
+unset($log_data[0]);
 $reps_scale = floor($max_values['max_vol'] / $max_values['max_reps']);
 $sets_scale = floor($max_values['max_vol'] / $max_values['max_sets']);
 $rm_scale = floor($max_values['max_vol'] / $max_values['max_rm']);
@@ -36,21 +36,21 @@ $pr_data = $log->get_prs($user->user_id, date("Y-m-d"), $exercise_name);
 $pr_weight = max($pr_data);
 $reps = array_search($pr_weight, $pr_data);
 $current_1rm = $log->generate_rm($pr_weight, $reps);
-foreach ($logs as $log)
+foreach ($log_data as $log_items)
 {
 	$template->assign_block_vars('items', array(
-			'LOG_DATE' => $log['logitem_date'],
-			'VOLUME' => $log['logex_volume'],
-			'REPS' => $log['logex_reps'],
-			'SETS' => $log['logex_sets'],
-			'COMMENT' => $log['logex_comment'],
+			'LOG_DATE' => $log_items['logitem_date'],
+			'VOLUME' => $log_items['logex_volume'],
+			'REPS' => $log_items['logex_reps'],
+			'SETS' => $log_items['logex_sets'],
+			'COMMENT' => $log_items['logex_comment'],
 			));
-	$date = strtotime($log['logitem_date'] . ' 00:00:00') * 1000;
-	$volume_data .= "\tdataset.push({x: new Date($date), y: {$log['logex_volume']}, shape:'circle'});\n";
-	$reps_data .= "\tdataset.push({x: new Date($date), y: " . ($log['logex_reps'] * $reps_scale) . ", shape:'circle'});\n";
-	$sets_data .= "\tdataset.push({x: new Date($date), y: " . ($log['logex_sets'] * $sets_scale) . ", shape:'circle'});\n";
-	$rm_data .= "\tdataset.push({x: new Date($date), y: " . ($log['logex_1rm'] * $rm_scale) . ", shape:'circle'});\n";
-	foreach ($log['sets'] as $set)
+	$date = strtotime($log_items['logitem_date'] . ' 00:00:00') * 1000;
+	$volume_data .= "\tdataset.push({x: new Date($date), y: {$log_items['logex_volume']}, shape:'circle'});\n";
+	$reps_data .= "\tdataset.push({x: new Date($date), y: " . ($log_items['logex_reps'] * $reps_scale) . ", shape:'circle'});\n";
+	$sets_data .= "\tdataset.push({x: new Date($date), y: " . ($log_items['logex_sets'] * $sets_scale) . ", shape:'circle'});\n";
+	$rm_data .= "\tdataset.push({x: new Date($date), y: " . ($log_items['logex_1rm'] * $rm_scale) . ", shape:'circle'});\n";
+	foreach ($log_items['sets'] as $set)
 	{
 		$showunit = true;
 		if ($set['is_bw'] == 0)
@@ -91,8 +91,8 @@ foreach ($logs as $log)
 				'EST1RM' => $set['est1rm'],
 				));
 	}
-	$average_intensity = (($log['logex_volume']/$log['logex_reps'])/$current_1rm) * 100;
-	$template->alter_block_array('items', array('AVG_INT' => round($average_intensity, 1)), true, 'change');
+	$average_intensity = $log->get_average_intensity($log_items['logex_volume'], $log_items['logex_reps'], $log_items, $current_1rm);
+	$template->alter_block_array('items', array('AVG_INT' => $average_intensity), true, 'change');
 	$ai_data .= "\tdataset.push({x: new Date($date), y: " . ($average_intensity * $ai_scale) . ", shape:'circle'});\n";
 }
 $volume_data .= "HistoryChartData.push({\n\tvalues: dataset,\n\tkey: 'Volume',\n\tcolor:'#b84a68'\n});\n";
@@ -102,6 +102,7 @@ $rm_data .= "HistoryChartData.push({\n\tvalues: dataset,\n\tkey: '1RM',\n\tcolor
 $ai_data .= "HistoryChartData.push({\n\tvalues: dataset,\n\tkey: 'Average Intensity',\n\tcolor:'#907fcc'\n});\n";
 
 $template->assign_vars(array(
+	'AVG_INTENSITY_TYPE' => $user->user_data['user_viewintensityabs'],
 	'EXERCISE' => ucwords($exercise_name),
 	'GRAPH_DATA' => $volume_data . $reps_data . $sets_data . $rm_data . $ai_data,
 	'REP_SCALE' => $reps_scale,

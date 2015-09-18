@@ -29,13 +29,25 @@
   <div class="form-group">
     <div>
 		<label for="weightunit">Default Unit</label>
-		<p><small><i>What the site is displayed in also the default weight unit to use to use when no explicit weight unit is specified.</i></small></p>
+		<p><small><i>What the site is displayed in also the default weight unit to use to use when no explicit weight unit is specified</i></small></p>
 	</div>
 	<label class="radio-inline">
 	  <input type="radio" id="weightunit" name="weightunit" value="1"<!-- IF WEIGHTUNIT eq 1 --> checked<!-- ENDIF -->> kg
 	</label>
 	<label class="radio-inline">
 	  <input type="radio" id="weightunit" name="weightunit" value="2"<!-- IF WEIGHTUNIT eq 2 --> checked<!-- ENDIF -->> lb
+	</label>
+  </div>
+  <div class="form-group">
+    <div>
+		<label for="weekstart">Start of the week</label>
+		<p><small><i>Which day do you want the calenders to show as the start of the week</i></small></p>
+	</div>
+	<label class="radio-inline">
+	  <input type="radio" id="weekstart" name="weekstart" value="1"<!-- IF WEEKSTARTS eq 1 --> checked<!-- ENDIF -->> Monday
+	</label>
+	<label class="radio-inline">
+	  <input type="radio" id="weekstart" name="weekstart" value="0"<!-- IF WEEKSTARTS eq 0 --> checked<!-- ENDIF -->> Sunday
 	</label>
   </div>
   <div class="form-group">
@@ -104,7 +116,7 @@
   <div class="form-group">
     <div>
 		<label for="volumeincfails">Include failed lifts in total tonnage (volume)</label>
-		<p><small><i>If enabled when the total tonnage is calculatedfailed lifts will be included as a completed lift.</i></small></p>
+		<p><small><i>If enabled when the total tonnage is calculatedfailed lifts will be included as a completed lift</i></small></p>
 	</div>
 	<label class="radio-inline">
 	  <input type="radio" id="volumeincfails" name="volumeincfails" value="1"<!-- IF VOLUMEINCFAILS eq 1 --> checked<!-- ENDIF -->> enable
@@ -112,6 +124,27 @@
 	<label class="radio-inline">
 	  <input type="radio" id="volumeincfails" name="volumeincfails" value="0"<!-- IF VOLUMEINCFAILS eq 0 --> checked<!-- ENDIF -->> disable
 	</label>
+  </div>
+  <div class="form-group">
+    <div>
+		<label for="viewintensityabs">Show average intensity as % of current 1RM or as abolute value</label>
+	</div>
+	<label class="radio-inline">
+	  <input type="radio" id="viewintensityabs" name="viewintensityabs" value="0"<!-- IF ITENSITYABS eq 0 --> checked<!-- ENDIF -->> % of 1RM value
+	</label>
+	<label class="radio-inline">
+	  <input type="radio" id="viewintensityabs" name="viewintensityabs" value="1"<!-- IF ITENSITYABS eq 1 --> checked<!-- ENDIF -->> absolute value
+	</label>
+  </div>
+  <div class="form-group">
+    <div>
+		<label for="limitintensity">Limit what is included in average intensity calculation</label>
+		<p><small><i>If you track your warmups it is sometimes a good idea to ignore values lower than x% from the average intensity so they do not artificially bring the number down</i></small></p>
+	</div>
+	<div class="input-group">
+	  <input type="text" class="form-control" id="limitintensity" name="limitintensity" value="{INTENSITY_LIMIT}">
+	  <div class="input-group-addon">%</div>
+	</div>
   </div>
   <div class="form-group">
 	  <input type="hidden" name="csrftoken" value="{_CSRFTOKEN}">
