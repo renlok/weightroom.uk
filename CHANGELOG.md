@@ -1,3 +1,13 @@
+<a name"118"></a>
+### 118 (2015-09-18)
+
+
+#### Features
+
+* Added option to set start of week
+* Added option to view average intensity as a % or absolute value
+* Added option to limit as what is included in the intensity
+
 <a name"113"></a>
 ### 113 (2015-09-18)
 
