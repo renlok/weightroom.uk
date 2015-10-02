@@ -1,3 +1,5 @@
+* Added option to hide intensity
+
 <a name"118"></a>
 ### 118 (2015-09-18)
 

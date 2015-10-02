@@ -75,7 +75,7 @@
 <!-- ENDIF -->
 <!-- IF B_LOG -->
 <h3>Workout summary</h3>
-<p class="logrow">Volume: <span class="heavy">{TOTAL_VOLUME}</span>{WEIGHT_UNIT} - Reps: <span class="heavy">{TOTAL_REPS}</span> - Sets: <span class="heavy">{TOTAL_SETS}</span> - Avg. Intensity: <span class="heavy">{TOTAL_INT} <!-- IF AVG_INTENSITY_TYPE eq 0 -->%<!-- ELSE -->{WEIGHT_UNIT}<!-- ENDIF --></span></p>
+<p class="logrow">Volume: <span class="heavy">{TOTAL_VOLUME}</span>{WEIGHT_UNIT} - Reps: <span class="heavy">{TOTAL_REPS}</span> - Sets: <span class="heavy">{TOTAL_SETS}</span> - Avg. Intensity: <span class="heavy">{TOTAL_INT} <!-- IF AVG_INTENSITY_TYPE eq 0 -->%<!-- ELSEIF AVG_INTENSITY_TYPE eq 1 -->{WEIGHT_UNIT}<!-- ENDIF --></span></p>
 <p class="logrow marginl"><small>Bodyweight: <span class="heavy">{USER_BW}</span>{WEIGHT_UNIT}</small></p>
 <!-- ENDIF -->
 <!-- BEGIN items -->
@@ -168,7 +168,7 @@ $(document).ready(function(){
 				if ($.inArray(d.format('YYYY-MM-DD'), arDates) != -1)
 				{
 					return {
-						class_name: 'cal_log_date'                         
+						class_name: 'cal_log_date'
 					}
 				}
 			}

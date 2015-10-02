@@ -135,6 +135,9 @@
 	<label class="radio-inline">
 	  <input type="radio" id="viewintensityabs" name="viewintensityabs" value="1"<!-- IF ITENSITYABS eq 1 --> checked<!-- ENDIF -->> absolute value
 	</label>
+	<label class="radio-inline">
+	  <input type="radio" id="viewintensityabs" name="viewintensityabs" value="2"<!-- IF ITENSITYABS eq 2 --> checked<!-- ENDIF -->> hidden
+	</label>
   </div>
   <div class="form-group">
     <div>
