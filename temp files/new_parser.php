@@ -1,7 +1,6 @@
 <?php
 // TEMP LINES
 $data = array();
-$format = array('0:0:0', '0.0');
 $line = '13:23:56 cock and balls';
 $accepted_char = $accepted_chars = $format_type = array();
 
@@ -21,6 +20,16 @@ $all_format_types = array(
   'R' => array('0'),
   'S' => array('0'),
   'P' => array('0.0'),
+  'C' => array(''),
+);
+// TODO(renlok); make this work
+$format_follows = array(
+  'T' => array('R', 'S', 'P', 'C'),
+  'W' => array('R', 'S', 'P', 'C'),
+  'R' => array('S', 'P', 'C'),
+  'S' => array('P', 'C'),
+  'P' => array('C'),
+  'C' => array(''),
 );
 build_accepted_char ();
 build_accepted_chars ();
@@ -90,6 +99,8 @@ foreach($string_array as $chr)
 }
 // add the last chunk to the data array
 $data[] = $chunk_dump;
+
+// TODO(renlok); remove
 print_r(array($number_dump,
 $format_dump,
 $chunk_dump));
@@ -140,6 +151,17 @@ function build_accepted_chars ($format_chr = '')
     {
       $accepted_chars = array();
     }
+  }
+}
+
+function format_check($format_dump, $format_chr)
+{
+  global $format_type;
+  // check if adding a new character will stick to format
+  // merge $format_type
+  foreach ($format_type as $key => $val)
+  {
+    // TODO(renlok): finish this
   }
 }
 
