@@ -82,6 +82,9 @@ switch ($page)
 	case 'log':
 		include PAGEDIR . 'log.php';
 		break;
+	case 'bodyweight':
+		include PAGEDIR . 'bodyweight.php';
+		break;
 	case 'invites':
 		include PAGEDIR . 'invites.php';
 		break;

@@ -850,6 +850,54 @@ class log
 		}
 	}
 
+	public function get_bodyweight($user_id, $range = 0)
+	{
+		global $db;
+		if ($range > 0)
+		{
+			// load bodyweight after x months ago
+			$query = "SELECT log_date, log_weight FROM logs
+					WHERE user_id = :user_id AND log_date >= :pr_date AND log_weight != 0
+					ORDER BY log_date ASC";
+			$params = array(
+				array(':pr_date', date("Y-m-d", strtotime("-$range months")), 'str'),
+				array(':user_id', $user_id, 'int')
+			);
+		}
+		else
+		{
+			// load all bodyweight
+			$query = "SELECT log_date, log_weight FROM logs
+					WHERE user_id = :user_id AND log_weight != 0
+					ORDER BY log_date ASC";
+			$params = array(
+				array(':user_id', $user_id, 'int')
+			);
+		}
+		$db->query($query, $params);
+		$weights = array();
+
+		$last_weight = 0; // so we can see when it changes
+		$last_date = 0;
+		while ($row = $db->fetch())
+		{
+			// set start weight
+			if ($last_weight != $row['log_weight'])
+			{
+				// TODO(renlok): do I really want this?
+				if ($last_weight != 0)
+				{
+					$weights[$last_date] = $last_weight;
+				}
+				$weights[$row['log_date']] = $row['log_weight'];
+				// set new weight
+				$last_weight = $row['log_weight'];
+				$last_date = $row['log_date'];
+			}
+		}
+		return $weights;
+	}
+
 	public function get_prs_data($user_id, $exercise_name, $range = 0)
 	{
 		global $db;
@@ -1104,6 +1152,21 @@ class log
 				$graph_data .= "prHistoryChartData.push({\n\tvalues: dataset,\n\tkey: '{$rep}{$type_string}'\n});\n";
 			}
 		}
+		return $graph_data;
+	}
+
+	public function build_bodyweight_graph_data($data)
+	{
+		global $user;
+		$graph_data = '';
+		$graph_data .= "var dataset = [];\n";
+		foreach ($data as $date => $weight)
+		{
+			$date = strtotime($date . ' 00:00:00') * 1000;
+			$weight = correct_weight($weight, 'kg', $user->user_data['user_unit']);
+			$graph_data .= "\tdataset.push({x: new Date($date), y: $weight, shape:'circle'});\n";
+		}
+		$graph_data .= "prHistoryChartData.push({\n\tvalues: dataset,\n\tkey: 'Bodyweight'\n});\n";
 		return $graph_data;
 	}
 

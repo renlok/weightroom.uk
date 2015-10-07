@@ -13,3 +13,26 @@
 	<p>Search your log records and find the last time you did something</p>
   </div>
 </div>
+<div class="row">
+  <div class="col-md-4">
+	<a href="?page=bodyweight">Bodyweight graph</a>
+	<p>View how your bodyweight has changed</p>
+  </div>
+  <div class="col-md-4">
+	&nbsp;
+  </div>
+  <div class="col-md-4">
+	&nbsp;
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-4">
+	&nbsp;
+  </div>
+  <div class="col-md-4">
+	&nbsp;
+  </div>
+  <div class="col-md-4">
+	&nbsp;
+  </div>
+</div>

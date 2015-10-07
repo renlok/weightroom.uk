@@ -1,4 +1,11 @@
+<a name"121"></a>
+### 121 (2015-10-07)
+
+
+#### Features
+
 * Added option to hide intensity
+* Added bodyweight graph
 
 <a name"118"></a>
 ### 118 (2015-09-18)
