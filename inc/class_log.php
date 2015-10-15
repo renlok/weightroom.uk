@@ -861,52 +861,81 @@ class log
 		}
 	}
 
-	public function get_bodyweight($user_id, $range = 0)
+	public function get_bodyweight($user_id, $coefficient = '', $range = 0)
 	{
-		global $db;
-		if ($range > 0)
+		global $db, $user;
+		$params = array();
+		if ($coefficient == 'wilks')
 		{
-			// load bodyweight after x months ago
-			$query = "SELECT log_date, log_weight FROM logs
-					WHERE user_id = :user_id AND log_date >= :pr_date AND log_weight != 0
-					ORDER BY log_date ASC";
-			$params = array(
-				array(':pr_date', date("Y-m-d", strtotime("-$range months")), 'str'),
-				array(':user_id', $user_id, 'int')
-			);
+			$coefficient_sql_select = ', e.exercise_name, le.logitem_weight';
+			$coefficient_sql_join = 'INNER JOIN log_items le ON (le.log_id = l.log_id)
+				INNER JOIN exercises e ON (e.exercise_id = le.exercise_id)';
+			$coefficient_sql = 'AND (le.exercise_id = :user_squatid OR le.exercise_id = :user_deadliftid OR le.exercise_id = :user_benchid) AND is_pr = 1';
+			$params[] = array(':user_squatid', $user->user_data['user_squatid'], 'int');
+			$params[] = array(':user_deadliftid', $user->user_data['user_deadliftid'], 'int');
+			$params[] = array(':user_benchid', $user->user_data['user_benchid'], 'int');
+		}
+		elseif ($coefficient == 'sinclair')
+		{
+			$coefficient_sql_select = ', e.exercise_name, le.logitem_weight';
+			$coefficient_sql_join = 'INNER JOIN log_items le ON (le.log_id = l.log_id)
+				INNER JOIN exercises e ON (e.exercise_id = le.exercise_id)';
+			$coefficient_sql = 'AND (le.exercise_id = :user_snatchid OR le.exercise_id = :user_cleanjerkid) AND is_pr = 1';
+			$params[] = array(':user_snatchid', $user->user_data['user_snatchid'], 'int');
+			$params[] = array(':user_cleanjerkid', $user->user_data['user_cleanjerkid'], 'int');
 		}
 		else
 		{
-			// load all bodyweight
-			$query = "SELECT log_date, log_weight FROM logs
-					WHERE user_id = :user_id AND log_weight != 0
-					ORDER BY log_date ASC";
-			$params = array(
-				array(':user_id', $user_id, 'int')
-			);
+			$coefficient_sql_select = '';
+			$coefficient_sql_join = '';
+			$coefficient_sql = ' AND log_weight != 0';
 		}
+		if ($range > 0)
+		{
+			$coefficient_sql .= ' AND log_date >= :pr_date';
+			$params[] = array(':pr_date', date("Y-m-d", strtotime("-$range months")), 'str');
+		}
+		// load all bodyweight
+		$query = "SELECT log_date, log_weight $coefficient_sql_select FROM logs l
+				$coefficient_sql_join
+				WHERE user_id = :user_id
+				$coefficient_sql
+				ORDER BY log_date ASC";
+		$params[] = array(':user_id', $user_id, 'int');
 		$db->query($query, $params);
-		$weights = array();
-
+		$return_array = array(
+			'bodyweight' => array(),
+		);
 		$last_weight = 0; // so we can see when it changes
-		$last_date = 0;
+		$last_exercise = array();
 		while ($row = $db->fetch())
 		{
-			// set start weight
+			// is it a new weight
 			if ($last_weight != $row['log_weight'])
 			{
-				// TODO(renlok): do I really want this?
-				if ($last_weight != 0)
-				{
-					$weights[$last_date] = $last_weight;
-				}
-				$weights[$row['log_date']] = $row['log_weight'];
+				$return_array['bodyweight'][$row['log_date']] = $row['log_weight'];
 				// set new weight
 				$last_weight = $row['log_weight'];
-				$last_date = $row['log_date'];
+			}
+			// are we including exercises
+			if ($coefficient != '')
+			{
+				if ($last_exercise[$row['exercise_name']] != $row['logitem_weight'])
+				{
+					$return_array[$row['exercise_name']][$row['log_date']] = $row['logitem_weight'];
+					// set new weight
+					$last_exercise[$row['exercise_name']] = $row['log_weight'];
+				}
 			}
 		}
-		return $weights;
+		if ($coefficient != '')
+		{
+			return $return_array;
+		}
+		else
+		{
+			return $return_array['bodyweight'];
+		}
 	}
 
 	public function get_prs_data($user_id, $exercise_name, $range = 0)
@@ -1166,6 +1195,7 @@ class log
 		return $graph_data;
 	}
 
+	// TODO can I merge all the graph data function into one? or make a new class for them?
 	public function build_bodyweight_graph_data($data)
 	{
 		global $user;
