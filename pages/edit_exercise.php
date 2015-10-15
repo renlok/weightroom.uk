@@ -24,6 +24,7 @@ if (isset($_POST['exercisenew']) && isset($_GET['exercise_name']))
 		// merge exercises
 		$exercise_id_old = $log->get_exercise_id($user->user_id, $_GET['exercise_name']);
 		$exercise_id_new = $log->get_exercise_id($user->user_id, $_POST['exercisenew']);
+		$exercise_id = $exercise_id_new;
 		// update the exercise id
 		$query = "UPDATE log_exercises SET exercise_id = :exercise_id_new WHERE exercise_id = :exercise_id_old";
 		$params = array(
@@ -51,6 +52,7 @@ if (isset($_POST['exercisenew']) && isset($_GET['exercise_name']))
 	else
 	{
 		$exercise_id_old = $log->get_exercise_id($user->user_id, $_GET['exercise_name']);
+		$exercise_id = $exercise_id_old;
 		// just rename it
 		$query = "UPDATE exercises SET exercise_name = :exercise_name_new WHERE exercise_id = :exercise_id";
 		$params = array(
@@ -61,6 +63,16 @@ if (isset($_POST['exercisenew']) && isset($_GET['exercise_name']))
 	}
 
 	// update the log texts
+	$query = "UPDATE logs l
+			INNER JOIN log_exercises le ON (le.log_id = l.log_id)
+			SET l.log_update_text = 1
+			WHERE l.user_id = :user_id AND le.exercise_id = :exercise_id";
+	$params = array(
+		array(':user_id', $user->user_id, 'int'),
+		array(':exercise_id', $exercise_id, 'int')
+	);
+	$db->query($query, $params);
+	/*
 	$query = "SELECT l.log_date FROM logs l
 			LEFT JOIN log_exercises le ON (le.log_id = l.log_id)
 			WHERE l.user_id = :user_id AND le.exercise_id = :exercise_id";
@@ -84,6 +96,7 @@ if (isset($_POST['exercisenew']) && isset($_GET['exercise_name']))
 		$db->query($query, $params);
 		*/
 	}
+	*/
 	header('location: ?page=exercise&ex=' . urlencode($_POST['exercisenew']));
 }
 

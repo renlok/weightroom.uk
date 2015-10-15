@@ -225,6 +225,11 @@ elseif ($_GET['do'] == 'edit')
 		$log_data = $log->load_log($user->user_id, $log_date);
 		$log_text = $log_data['log_text'];
 		$weight = $log_data['log_weight'];
+		// check if log_text needs to be rewitten
+		if ($log_data['log_update_text'] == 1)
+		{
+			$log_text = $log->rebuild_log_text($user->user_id, $log_date);
+		}
 	}
 	else
 	{

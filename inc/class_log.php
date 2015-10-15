@@ -62,7 +62,7 @@ class log
 	public function is_valid_log($user_id, $log_date)
 	{
         global $db;
-  
+
 		$query = "SELECT log_id FROM logs WHERE user_id = :user_id AND log_date = :log_date";
 		$params = array(
 			array(':user_id', $user_id, 'int'),
@@ -124,7 +124,7 @@ class log
 		}
 		return $logs_data;
 	}
-	
+
 	public function parse_new_log($log, $bodyweight)
 	{
 		global $db, $user;
@@ -164,7 +164,7 @@ class log
 				$exersiceposition++;
 				continue; // end this loop
 			}
-			
+
 			// no exercise yet
 			if ($exercise == '')
 			{
@@ -537,7 +537,7 @@ class log
 							$temp_sets = $set['sets'];
 						}
 					}
-					// insert into log_exercises 
+					// insert into log_exercises
 					$query = "INSERT INTO log_exercises (logex_date, log_id, user_id, exercise_id, logex_volume, logex_reps, logex_sets, logex_1rm, logex_comment, logex_order)
 							VALUES (:logex_date, :log_id, :user_id, :exercise_id, :logex_volume, :logex_reps, :logex_sets, :logex_rm, :logex_comment, :logex_order)";
 					$params = array(
@@ -596,15 +596,18 @@ class log
 				$log_text .= "\n" . trim($log_items['comment']) . "\n"; // set comment
 			$log_text .= "\n";
 		}
+		$log_text = rtrim($log_text);
 		$query = "UPDATE logs SET log_text = :log_text WHERE log_date = :log_date AND user_id = :user_id";
 		$params = array(
-			array(':log_text', rtrim($log_text), 'str'),
+			array(':log_text', $log_text, 'str'),
 			array(':log_date', $log_date, 'str'),
 			array(':user_id', $user_id, 'int')
 		);
 		$db->query($query, $params);
+
+		return $log_text;
 	}
-	
+
 	private function replace_video_urls($comment)
 	{
 		return preg_replace(
@@ -711,7 +714,7 @@ class log
 			return $weight;
 		}
 
-		//for all reps > 1 calculate the 1RMs    
+		//for all reps > 1 calculate the 1RMs
 		$lomonerm = $weight * pow($reps, 1 / 10);
 		$brzonerm = $weight * (36 / (37 - $reps));
 		$eplonerm = $weight * (1 + ($reps / 30));
@@ -980,7 +983,7 @@ class log
 		{
 			// load prs after x months ago
 			$query = "SELECT logitem_weight, logitem_reps, logitem_date FROM log_items
-					WHERE (logitem_weight, logitem_reps, WEEK(logitem_date)) IN 
+					WHERE (logitem_weight, logitem_reps, WEEK(logitem_date)) IN
 					(
 						SELECT MAX(logitem_weight) as logitem_weight, logitem_reps, WEEK(logitem_date)
 						FROM log_items pr
@@ -999,7 +1002,7 @@ class log
 		{
 			// load all prs
 			$query = "SELECT logitem_weight, logitem_reps, logitem_date FROM log_items
-					WHERE (logitem_weight, logitem_reps, WEEK(logitem_date)) IN 
+					WHERE (logitem_weight, logitem_reps, WEEK(logitem_date)) IN
 					(
 						SELECT MAX(logitem_weight) as logitem_weight, logitem_reps, WEEK(logitem_date)
 						FROM log_items pr
@@ -1031,7 +1034,7 @@ class log
 		{
 			// load prs after x months ago
 			$query = "SELECT logitem_weight, logitem_reps, logitem_date FROM log_items
-					WHERE (logitem_weight, logitem_reps, MONTH(logitem_date)) IN 
+					WHERE (logitem_weight, logitem_reps, MONTH(logitem_date)) IN
 					(
 						SELECT MAX(logitem_weight) as logitem_weight, logitem_reps, MONTH(logitem_date)
 						FROM log_items pr
@@ -1050,7 +1053,7 @@ class log
 		{
 			// load all prs
 			$query = "SELECT logitem_weight, logitem_reps, logitem_date FROM log_items
-					WHERE (logitem_weight, logitem_reps, MONTH(logitem_date)) IN 
+					WHERE (logitem_weight, logitem_reps, MONTH(logitem_date)) IN
 					(
 						SELECT MAX(logitem_weight) as logitem_weight, logitem_reps, MONTH(logitem_date)
 						FROM log_items pr
@@ -1197,7 +1200,7 @@ class log
 	public function list_exercise_logs($user_id, $from_date, $to_date, $exercise_name = '')
 	{
 		global $db, $user;
-		
+
 		$params = array();
 		$extra_sql = '';
 		// use data limits
@@ -1291,7 +1294,7 @@ class log
 		);
 		return $data;
 	}
-	
+
 	public function get_average_intensity($volume, $reps, $sets_data, $current_1rm)
 	{
 		global $user;
