@@ -1,3 +1,4 @@
+<a href="?page=dash">Main</a> | <a href="?page=dash&amp;do=logs_only">Logs only</a> | <a href="?page=dash&amp;do=all_logs">View all</a>
 <table class="table">
 <tbody>
 <!-- BEGIN logs -->

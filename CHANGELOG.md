@@ -1,3 +1,11 @@
+<a name"122"></a>
+### 122 (2015-10-15)
+
+
+#### Bug Fixes
+
+* Fixed edit exercise functionality
+
 <a name"121"></a>
 ### 121 (2015-10-07)
 

@@ -7,7 +7,18 @@ if (!$user->is_logged_in())
 
 include INCDIR . 'class_dash.php';
 $dash = new dash();
-$dash_data = $dash->get_dash_data($user->user_id);
+switch ($_GET['do'])
+{
+	case default:
+		$dash_data = $dash->get_dash_data($user->user_id);
+		break;
+	case 'logs_only':
+		$dash_data = $dash->get_dash_data_logs($user->user_id);
+		break;
+	case 'all_logs':
+		$dash_data = $dash->get_dash_data_logs($user->user_id, 1, 0);
+		break;
+}
 
 foreach ($dash_data as $dash_items)
 {
