@@ -4,7 +4,7 @@ if (!$user->is_logged_in())
 	print_message('You are not loged in', '?page=login');
 	exit;
 }
-die('broken functionality/10');
+//die('broken functionality/10');
 require INCDIR . 'class_log.php';
 $log = new log();
 
@@ -85,16 +85,6 @@ if (isset($_POST['exercisenew']) && isset($_GET['exercise_name']))
 	while ($row = $db->fetch())
 	{
 		$log->rebuild_log_text($row['log_date'], $user->user_id);
-		/*
-		$new_log = preg_replace("/#\s*({$_GET['exercise_name']})/m", "#" . $_POST['exercisenew'], $row['log_text']);
-		echo " preg_replace(\"/#\s*({$_GET['exercise_name']})/m\", \"#\" . {$_POST['exercisenew']}, {$row['log_text']})";
-		$query = "UPDATE logs SET log_text = :log_text WHERE log_id = :log_id";
-		$params = array(
-			array(':log_text', $new_log, 'str'),
-			array(':log_id', $row['log_id'], 'int')
-		);
-		$db->query($query, $params);
-		*/
 	}
 	*/
 	header('location: ?page=exercise&ex=' . urlencode($_POST['exercisenew']));

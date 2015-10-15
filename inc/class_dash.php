@@ -82,10 +82,11 @@ class dash {
 		if($followers == 1)
 		{
 			// get the logs you follow
-			$query = "SELECT l.log_date, u.user_name, u.user_id, FROM logs l
+			$query = "SELECT l.log_date, u.user_name, u.user_id FROM logs l
 								LEFT JOIN user_follows f ON (l.user_id = f.follow_user_id)
 								LEFT JOIN users u ON (u.user_id = f.follow_user_id)
 								WHERE f.user_id = :user_id
+								ORDER BY l.log_date DESC
 								LIMIT :offset, :limit";
 			$params = array();
 			$params[] = array(':user_id', $user_id, 'int');
@@ -96,9 +97,9 @@ class dash {
 		else
 		{
 			// get all logs
-			$query = "SELECT l.log_date, u.user_name, u.user_id, FROM logs l
+			$query = "SELECT l.log_date, u.user_name, u.user_id FROM logs l
 								LEFT JOIN users u ON (u.user_id = l.user_id)
-								WHERE l.user_id = :user_id
+								ORDER BY l.log_date DESC
 								LIMIT :offset, :limit";
 			$params = array();
 			$params[] = array(':offset', $offset, 'int');
@@ -126,6 +127,7 @@ class dash {
 				elseif ($interval->d) { $row['posted'] = $interval->format("%d days ago"); }
 			}
 			// build empty data for template
+			$row['true_log_date'] = $row['log_date'];
 			$row['receiver_user_id'] = 0;
 			$row['type'] = 'log';
 			$data[] = $row;

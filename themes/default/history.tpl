@@ -45,6 +45,7 @@
 			</tr>
 		</tbody>
 		</table>
+			<small><a href="?do=view&page=log&date={items.LOG_DATE}">View log</a></small>
       </div>
     </div>
   </div>

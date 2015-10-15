@@ -577,27 +577,35 @@ class log
 				$unit_string = ($units['user_unit'] == 1) ? 'kg' : 'lb';
 				if ($set['is_bw'] == 0)
 				{
-					$weight = $set['weight'] . ' ' . $unit_string;
+					$weight = $set['logitem_weight'] . ' ' . $unit_string;
 				}
 				else
 				{
-					if ($set['weight'] != 0)
+					if ($set['logitem_weight'] != 0)
 					{
-						$weight = 'BW' . $set['weight'] . ' ' . $unit_string;
+						$weight = 'BW' . $set['logitem_weight'] . ' ' . $unit_string;
 					}
 					else
 					{
 						$weight = 'BW';
 					}
 				}
-				$log_text .= "$weight x {$set['reps']} x {$set['sets']} " . trim($set['comment']) . "\n"; // add sets
+				if (!empty($set['logitem_rpes']))
+				{
+					$pre = " @{$set['logitem_rpes']}";
+				}
+				else
+				{
+					$pre = '';
+				}
+				$log_text .= "$weight x {$set['logitem_reps']} x {$set['logitem_sets']}$pre " . trim($set['logitem_comment']) . "\n"; // add sets
 			}
 			if (strlen(trim($log_items['comment'])) > 0)
 				$log_text .= "\n" . trim($log_items['comment']) . "\n"; // set comment
 			$log_text .= "\n";
 		}
 		$log_text = rtrim($log_text);
-		$query = "UPDATE logs SET log_text = :log_text WHERE log_date = :log_date AND user_id = :user_id";
+		$query = "UPDATE logs SET log_text = :log_text, log_update_text = 0 WHERE log_date = :log_date AND user_id = :user_id";
 		$params = array(
 			array(':log_text', $log_text, 'str'),
 			array(':log_date', $log_date, 'str'),

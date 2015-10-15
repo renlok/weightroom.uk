@@ -7,9 +7,10 @@ if (!$user->is_logged_in())
 
 include INCDIR . 'class_dash.php';
 $dash = new dash();
-switch ($_GET['do'])
+$do = (isset($_GET['do'])) ? $_GET['do'] : '';
+switch ($do)
 {
-	case default:
+	default:
 		$dash_data = $dash->get_dash_data($user->user_id);
 		break;
 	case 'logs_only':
