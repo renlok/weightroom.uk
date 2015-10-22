@@ -48,8 +48,8 @@
 </div>
 
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-<link href="http://nvd3.org/assets/css/nv.d3.css" rel="stylesheet">
-<script src="http://nvd3.org/assets/js/nv.d3.js"></script>
+<link href="css/nv.d3.css" rel="stylesheet">
+<script src="js/nv.d3.js"></script>
 <script>
 	$( document ).ready(function() {
 		$("#exlist option").click(function() {
@@ -85,7 +85,7 @@
         var chart = nv.models.lineChart()
 						.margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
 						.useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
-						.transitionDuration(350)  //how fast do you want the lines to transition?
+						.duration(350)  //how fast do you want the lines to transition?
 						.showLegend(true)       //Show the legend, allowing users to turn on/off line series.
 						.showYAxis(true)        //Show the y-axis
 						.showXAxis(true)        //Show the x-axis

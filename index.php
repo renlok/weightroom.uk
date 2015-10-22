@@ -85,6 +85,12 @@ switch ($page)
 	case 'bodyweight':
 		include PAGEDIR . 'bodyweight.php';
 		break;
+	case 'wilks':
+		include PAGEDIR . 'wilks.php';
+		break;
+	case 'sinclair':
+		include PAGEDIR . 'sinclair.php';
+		break;
 	case 'invites':
 		include PAGEDIR . 'invites.php';
 		break;

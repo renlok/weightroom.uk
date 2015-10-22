@@ -50,11 +50,11 @@
 </div>
 
 <!-- IF TYPE eq 'weekly' or TYPE eq 'monthly' -->
-<p>Range: 
-<!-- IF RANGE ne 0 --><a href="?page=exercise&ex={EXERCISE}&do={TYPE}">All</a><!-- ELSE -->All<!-- ENDIF --> | 
-<!-- IF RANGE ne 12 --><a href="?page=exercise&ex={EXERCISE}&do={TYPE}&range=12">1 year</a><!-- ELSE -->1 year<!-- ENDIF --> | 
-<!-- IF RANGE ne 6 --><a href="?page=exercise&ex={EXERCISE}&do={TYPE}&range=6">6 months</a><!-- ELSE -->6 months<!-- ENDIF --> | 
-<!-- IF RANGE ne 3 --><a href="?page=exercise&ex={EXERCISE}&do={TYPE}&range=3">3 months</a><!-- ELSE -->3 months<!-- ENDIF --> | 
+<p>Range:
+<!-- IF RANGE ne 0 --><a href="?page=exercise&ex={EXERCISE}&do={TYPE}">All</a><!-- ELSE -->All<!-- ENDIF --> |
+<!-- IF RANGE ne 12 --><a href="?page=exercise&ex={EXERCISE}&do={TYPE}&range=12">1 year</a><!-- ELSE -->1 year<!-- ENDIF --> |
+<!-- IF RANGE ne 6 --><a href="?page=exercise&ex={EXERCISE}&do={TYPE}&range=6">6 months</a><!-- ELSE -->6 months<!-- ENDIF --> |
+<!-- IF RANGE ne 3 --><a href="?page=exercise&ex={EXERCISE}&do={TYPE}&range=3">3 months</a><!-- ELSE -->3 months<!-- ENDIF --> |
 <!-- IF RANGE ne 1 --><a href="?page=exercise&ex={EXERCISE}&do={TYPE}&range=1">1 month</a><!-- ELSE -->1 month<!-- ENDIF --></p>
 <!-- IF TYPE eq 'weekly' -->
 <p><a href="?page=exercise&ex={EXERCISE}&do=monthly">View monthly maxes</a> | <a href="?page=exercise&ex={EXERCISE}">View Prs</a></p>
@@ -62,18 +62,18 @@
 <p><a href="?page=exercise&ex={EXERCISE}&do=weekly">View weekly maxes</a> | <a href="?page=exercise&ex={EXERCISE}">View Prs</a></p>
 <!-- ENDIF -->
 <!-- ELSE -->
-<p>Range: 
-<!-- IF RANGE ne 0 --><a href="?page=exercise&ex={EXERCISE}">All</a><!-- ELSE -->All<!-- ENDIF --> | 
-<!-- IF RANGE ne 12 --><a href="?page=exercise&ex={EXERCISE}&range=12">1 year</a><!-- ELSE -->1 year<!-- ENDIF --> | 
-<!-- IF RANGE ne 6 --><a href="?page=exercise&ex={EXERCISE}&range=6">6 months</a><!-- ELSE -->6 months<!-- ENDIF --> | 
-<!-- IF RANGE ne 3 --><a href="?page=exercise&ex={EXERCISE}&range=3">3 months</a><!-- ELSE -->3 months<!-- ENDIF --> | 
+<p>Range:
+<!-- IF RANGE ne 0 --><a href="?page=exercise&ex={EXERCISE}">All</a><!-- ELSE -->All<!-- ENDIF --> |
+<!-- IF RANGE ne 12 --><a href="?page=exercise&ex={EXERCISE}&range=12">1 year</a><!-- ELSE -->1 year<!-- ENDIF --> |
+<!-- IF RANGE ne 6 --><a href="?page=exercise&ex={EXERCISE}&range=6">6 months</a><!-- ELSE -->6 months<!-- ENDIF --> |
+<!-- IF RANGE ne 3 --><a href="?page=exercise&ex={EXERCISE}&range=3">3 months</a><!-- ELSE -->3 months<!-- ENDIF --> |
 <!-- IF RANGE ne 1 --><a href="?page=exercise&ex={EXERCISE}&range=1">1 month</a><!-- ELSE -->1 month<!-- ENDIF --></p>
 <p><a href="?page=exercise&ex={EXERCISE}&do=weekly">View weekly maxes</a> | <a href="?page=exercise&ex={EXERCISE}&do=monthly">View monthly maxes</a></p>
 <!-- ENDIF -->
 
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-<link href="http://nvd3.org/assets/css/nv.d3.css" rel="stylesheet">
-<script src="http://nvd3.org/assets/js/nv.d3.js"></script>
+<link href="css/nv.d3.css" rel="stylesheet">
+<script src="js/nv.d3.js"></script>
 
 <style>
 #prHistoryChart .nv-lineChart circle.nv-point {
@@ -93,7 +93,7 @@
         var chart = nv.models.lineChart()
 						.margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
 						.useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
-						.transitionDuration(350)  //how fast do you want the lines to transition?
+						.duration(350)  //how fast do you want the lines to transition?
 						.showLegend(true)       //Show the legend, allowing users to turn on/off line series.
 						.showYAxis(true)        //Show the y-axis
 						.showXAxis(true)        //Show the x-axis

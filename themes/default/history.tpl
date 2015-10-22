@@ -53,7 +53,7 @@
 </div>
 
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-<link href="http://nvd3.org/assets/css/nv.d3.css" rel="stylesheet">
+<link href="css/nv.d3.css" rel="stylesheet">
 <script src="js/nv.d3.js"></script>
 <style>
 #HistoryChart .nv-lineChart circle.nv-point {

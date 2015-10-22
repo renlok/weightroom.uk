@@ -24,11 +24,11 @@
     <svg></svg>
 </div>
 
-<link href="http://weightroom.uk/css/pickmeup.css" rel="stylesheet">
+<link href="css/pickmeup.css" rel="stylesheet">
 <script src="http://nazar-pc.github.io/PickMeUp/js/jquery.pickmeup.js"></script>
 <script src="http://momentjs.com/downloads/moment.js"></script>
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-<link href="http://nvd3.org/assets/css/nv.d3.css" rel="stylesheet">
+<link href="css/nv.d3.css" rel="stylesheet">
 <script src="js/nv.d3.js"></script>
 <style>
 #HistoryChart .nv-lineChart circle.nv-point {

@@ -5,20 +5,24 @@ if (!$user->is_logged_in())
 	exit;
 }
 
-require INCDIR . 'class_log.php';
-$log = new log();
+require INCDIR . 'class_graph.php';
+$graph = new graph();
 
 $range = (!isset($_GET['range']) || !in_array($_GET['range'], array(1,3,6,12))) ? 0 : $_GET['range'];
 
-$full_pr_data = $log->get_bodyweight($user->user_id, 'wilks', $range);
-$graph_data = $log->build_bodyweight_graph_data($full_pr_data); // TODO rewrite this function
+$graph_data = $graph->get_graph_data($user->user_id, 'wilks', $range);
+$graph_data = $graph->build_coefficient_graph_data($graph_data, 'wilks');
+$graph_output = $graph->build_graph_data($graph_data, true);
 
 $template->assign_vars(array(
-	'GRAPH_DATA' => $graph_data,
+	'GRAPH_DATA' => $graph_output,
+	'GRAPH_TYPE_LC' => 'wilks',
+	'GRAPH_TYPE' => 'Wilks',
+	'MULTICHART' => true,
 	'RANGE' => $range
 	));
 $template->set_filenames(array(
-		'body' => 'bodyweight.tpl'
+		'body' => 'graph.tpl'
 		));
 $template->display('header');
 $template->display('body');

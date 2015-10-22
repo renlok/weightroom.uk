@@ -1,6 +1,11 @@
-<a name"122"></a>
-### 122 (2015-10-15)
+<a name"125"></a>
+### 125 (2015-10-15)
 
+
+#### Features
+
+* Added basic options to the dash (allow for viewing everyones logs)
+* Added a view log link in the exercise history page
 
 #### Bug Fixes
 
