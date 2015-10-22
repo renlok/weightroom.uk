@@ -529,7 +529,7 @@ class log
 								array(':is_bw', (($set['is_bw'] == false) ? 0 : 1), 'int'),
 								array(':logitem_order', $set['position'], 'int'),
 							);
-							if ($rpe_arr[$i] == NULL)
+							if (!isset($rpe_arr[$i]) || $rpe_arr[$i] == NULL)
 								$params[] = array(':logitem_rpes', NULL, 'int');
 							else
 								$params[] = array(':logitem_rpes', $rpe_arr[$i], 'float');
@@ -1259,7 +1259,17 @@ class log
 
 		if ($user->user_data['user_viewintensityabs'] == 0)
 		{
-			$average_intensity = (($volume / $reps) / $current_1rm) * 100;
+			if ($current_1rm > 0)
+			{
+				// the current 1rm has been set
+				$average_intensity = (($volume / $reps) / $current_1rm) * 100;
+			}
+			else
+			{
+				//no 1rm
+				// TODO: why do you get this, deal with it properly
+				$average_intensity = 0;
+			}
 		}
 		else
 		{
