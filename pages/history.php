@@ -1,5 +1,5 @@
 <?php
-// get stats, prs, 
+// get stats, prs,
 if (!$user->is_logged_in())
 {
 	print_message('You are not loged in', '?page=login');
@@ -78,7 +78,7 @@ foreach ($log_data as $log_items)
 		}
 		if ($set['is_pr'] && $set['logitem_reps'] == 1)
 		{
-			$current_1rm = $set['logitem_weight'];
+			$current_1rm = $set['logitem_abs_weight'];
 		}
 		$template->assign_block_vars('items.sets', array(
 				'WEIGHT' => $weight,

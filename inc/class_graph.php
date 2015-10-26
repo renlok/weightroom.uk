@@ -19,7 +19,7 @@ class graph
 		$params = array();
 		if ($type == 'wilks')
 		{
-			$type_sql_select = ', e.exercise_name, le.logitem_weight';
+			$type_sql_select = ', e.exercise_name, le.logitem_abs_weight';
 			$type_sql_join = 'INNER JOIN log_items le ON (le.log_id = l.log_id)
 				INNER JOIN exercises e ON (e.exercise_id = le.exercise_id)';
 			$type_sql = 'AND (le.exercise_id = :user_squatid OR le.exercise_id = :user_deadliftid OR le.exercise_id = :user_benchid) AND is_pr = 1';
@@ -29,7 +29,7 @@ class graph
 		}
 		elseif ($type == 'sinclair')
 		{
-			$type_sql_select = ', e.exercise_name, le.logitem_weight';
+			$type_sql_select = ', e.exercise_name, le.logitem_abs_weight';
 			$type_sql_join = 'INNER JOIN log_items le ON (le.log_id = l.log_id)
 				INNER JOIN exercises e ON (e.exercise_id = le.exercise_id)';
 			$type_sql = 'AND (le.exercise_id = :user_snatchid OR le.exercise_id = :user_cleanjerkid) AND is_pr = 1';
@@ -77,9 +77,9 @@ class graph
         {
           $last_exercise[$row['exercise_name']] = array();
         }
-				if ($last_exercise[$row['exercise_name']] != $row['logitem_weight'])
+				if ($last_exercise[$row['exercise_name']] != $row['logitem_abs_weight'])
 				{
-					$return_array[$row['exercise_name']][$row['log_date']] = $row['logitem_weight'];
+					$return_array[$row['exercise_name']][$row['log_date']] = $row['logitem_abs_weight'];
 					// set new weight
 					$last_exercise[$row['exercise_name']] = $row['log_weight'];
 				}

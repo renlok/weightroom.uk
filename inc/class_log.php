@@ -197,12 +197,12 @@ class log
 			}
 			elseif ($line[0] == 'B' && $line[1] == 'W') // using bodyweight
 			{
-				if (preg_match("/^BW(\+|-)*\s*([0-9]+\.*[0-9]*)*\s*(kgs?|lbs?)*/", $line, $matches)) // 1= +/- 2= weight, 3= lb/kg
+				if (preg_match("/^BW\s*(\+|-)*\s*([0-9]+\.*[0-9]*)*\s*(kgs?|lbs?)*/", $line, $matches)) // 1= +/- 2= weight, 3= lb/kg
 				{
 					// clear the weight from the line
 					$line = str_replace($matches[0], '', $line);
 					// check if units were used
-					if ($matches[0] == 'BW')
+					if (rtrim($matches[0]) == 'BW')
 					{
 						$weight = 0;
 					}
@@ -490,37 +490,39 @@ class log
 								$temp_sets++;
 								continue;
 							}
-							$total_volume += ($set['weight'] * $rep_arr[$i] * $set['sets']);
+							$absolute_weight = ($set['is_bw'] == false) ? $set['weight'] : ($set['weight'] + $user_weight);
+							$total_volume += ($absolute_weight * $rep_arr[$i] * $set['sets']);
 							$total_reps += ($rep_arr[$i] * $set['sets']);
 							$total_sets += $temp_sets;
 							$is_pr = false;
 							// check its a pr
-							if ((!isset($prs[$rep_arr[$i]]) || floatval($prs[$rep_arr[$i]]) < floatval($set['weight'])) && $rep_arr[$i] != 0)
+							if ((!isset($prs[$rep_arr[$i]]) || floatval($prs[$rep_arr[$i]]) < floatval($absolute_weight)) && $rep_arr[$i] != 0)
 							{
 								$is_pr = true;
 								// new pr !!
-								$this->update_prs($user_id, $log_date, $exercise_id, $set['weight'], $rep_arr[$i]);
+								$this->update_prs($user_id, $log_date, $exercise_id, $absolute_weight, $rep_arr[$i]);
 								if (!isset($new_prs[$exercise]))
 									$new_prs[$exercise] = array();
-								$new_prs[$exercise][$rep_arr[$i]][] = $set['weight'];
+								$new_prs[$exercise][$rep_arr[$i]][] = $absolute_weight;
 								// update pr array
-								$prs[$rep_arr[$i]] = $set['weight'];
+								$prs[$rep_arr[$i]] = $absolute_weight;
 							}
-							$estimate_rm = $this->generate_rm($set['weight'], $rep_arr[$i]);
+							$estimate_rm = $this->generate_rm($absolute_weight, $rep_arr[$i]);
 							// get estimate 1rm
 							if ($max_estimate_rm < $estimate_rm)
 							{
 								$max_estimate_rm = $estimate_rm;
 							}
 							// insert into log_items
-							$query = "INSERT INTO log_items (logitem_date, log_id, user_id, exercise_id, logitem_weight, logitem_reps, logitem_sets, logitem_rpes, logitem_comment, logitem_1rm, is_pr, is_bw, logitem_order)
-										VALUES (:logitem_date, :log_id, :user_id, :exercise_id, :logitem_weight, :logitem_reps, :logitem_sets, :logitem_rpes, :logitem_comment, :logitem_rm, :is_pr, :is_bw, :logitem_order)";
+							$query = "INSERT INTO log_items (logitem_date, log_id, user_id, exercise_id, logitem_weight, logitem_abs_weight, logitem_reps, logitem_sets, logitem_rpes, logitem_comment, logitem_1rm, is_pr, is_bw, logitem_order)
+										VALUES (:logitem_date, :log_id, :user_id, :exercise_id, :logitem_weight, :logitem_abs_weight, :logitem_reps, :logitem_sets, :logitem_rpes, :logitem_comment, :logitem_rm, :is_pr, :is_bw, :logitem_order)";
 							$params = array(
 								array(':logitem_date', $log_date, 'str'),
 								array(':log_id', $log_id, 'int'),
 								array(':user_id', $user_id, 'int'),
 								array(':exercise_id', $exercise_id, 'int'),
 								array(':logitem_weight', $set['weight'], 'float'),
+								array(':logitem_abs_weight', $absolute_weight, 'float'),
 								array(':logitem_reps', $rep_arr[$i], 'int'),
 								array(':logitem_sets', $temp_sets, 'int'),
 								array(':logitem_comment', $set['line'], 'str'),
@@ -818,7 +820,7 @@ class log
 			array(':pr_weight', $set_weight, 'float')
 		);
 		$db->query($query, $params);
-		$query = "UPDATE log_items SET is_pr = 0 WHERE user_id = :user_id AND logitem_date > :log_date AND exercise_id = :exercise_id AND logitem_reps = :pr_reps AND logitem_weight < :pr_weight";
+		$query = "UPDATE log_items SET is_pr = 0 WHERE user_id = :user_id AND logitem_date > :log_date AND exercise_id = :exercise_id AND logitem_reps = :pr_reps AND logitem_abs_weight < :pr_weight";
 		$params = array(
 			array(':exercise_id', $exercise_id, 'int'),
 			array(':log_date', $log_date, 'str'),
@@ -829,7 +831,7 @@ class log
 		$db->query($query, $params);
 
 		// add past prs if needed
-		$query = "SELECT log_id, logitem_weight FROM log_items WHERE user_id = :user_id AND logitem_date < :log_date AND exercise_id = :exercise_id AND logitem_reps = :pr_reps AND logitem_weight > :pr_weight AND is_pr = 0";
+		$query = "SELECT log_id, logitem_abs_weight FROM log_items WHERE user_id = :user_id AND logitem_date < :log_date AND exercise_id = :exercise_id AND logitem_reps = :pr_reps AND logitem_abs_weight > :pr_weight AND is_pr = 0";
 		$params = array(
 			array(':exercise_id', $exercise_id, 'int'),
 			array(':log_date', $log_date, 'str'),
@@ -853,9 +855,9 @@ class log
 				array(':exercise_id', $exercise_id, 'int'),
 				array(':user_id', $user_id, 'int'),
 				array(':pr_date', $log_date, 'str'),
-				array(':pr_weight', $row['logitem_weight'], 'float'),
+				array(':pr_weight', $row['logitem_abs_weight'], 'float'),
 				array(':pr_reps', $set_reps, 'int'),
-				array(':pr_rm', $this->generate_rm($row['logitem_weight'], $set_reps), 'float'),
+				array(':pr_rm', $this->generate_rm($row['logitem_abs_weight'], $set_reps), 'float'),
 			);
 			$db->query($query, $params);
 		}
@@ -942,10 +944,10 @@ class log
 		if ($range > 0)
 		{
 			// load prs after x months ago
-			$query = "SELECT logitem_weight, logitem_reps, logitem_date FROM log_items
-					WHERE (logitem_weight, logitem_reps, WEEK(logitem_date)) IN
+			$query = "SELECT logitem_abs_weight, logitem_reps, logitem_date FROM log_items
+					WHERE (logitem_abs_weight, logitem_reps, WEEK(logitem_date)) IN
 					(
-						SELECT MAX(logitem_weight) as logitem_weight, logitem_reps, WEEK(logitem_date)
+						SELECT MAX(logitem_abs_weight) as logitem_abs_weight, logitem_reps, WEEK(logitem_date)
 						FROM log_items pr
 						LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id)
 						WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name AND pr.logitem_reps != 0 AND pr.logitem_reps <= 10 AND logitem_date >= :logitem_date
@@ -961,10 +963,10 @@ class log
 		else
 		{
 			// load all prs
-			$query = "SELECT logitem_weight, logitem_reps, logitem_date FROM log_items
-					WHERE (logitem_weight, logitem_reps, WEEK(logitem_date)) IN
+			$query = "SELECT logitem_abs_weight, logitem_reps, logitem_date FROM log_items
+					WHERE (logitem_abs_weight, logitem_reps, WEEK(logitem_date)) IN
 					(
-						SELECT MAX(logitem_weight) as logitem_weight, logitem_reps, WEEK(logitem_date)
+						SELECT MAX(logitem_abs_weight) as logitem_abs_weight, logitem_reps, WEEK(logitem_date)
 						FROM log_items pr
 						LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id)
 						WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name AND pr.logitem_reps != 0 AND pr.logitem_reps <= 10
@@ -993,10 +995,10 @@ class log
 		if ($range > 0)
 		{
 			// load prs after x months ago
-			$query = "SELECT logitem_weight, logitem_reps, logitem_date FROM log_items
-					WHERE (logitem_weight, logitem_reps, MONTH(logitem_date)) IN
+			$query = "SELECT logitem_abs_weight, logitem_reps, logitem_date FROM log_items
+					WHERE (logitem_abs_weight, logitem_reps, MONTH(logitem_date)) IN
 					(
-						SELECT MAX(logitem_weight) as logitem_weight, logitem_reps, MONTH(logitem_date)
+						SELECT MAX(logitem_abs_weight) as logitem_abs_weight, logitem_reps, MONTH(logitem_date)
 						FROM log_items pr
 						LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id)
 						WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name AND pr.logitem_reps != 0 AND pr.logitem_reps <= 10 AND logitem_date >= :logitem_date
@@ -1012,10 +1014,10 @@ class log
 		else
 		{
 			// load all prs
-			$query = "SELECT logitem_weight, logitem_reps, logitem_date FROM log_items
-					WHERE (logitem_weight, logitem_reps, MONTH(logitem_date)) IN
+			$query = "SELECT logitem_abs_weight, logitem_reps, logitem_date FROM log_items
+					WHERE (logitem_abs_weight, logitem_reps, MONTH(logitem_date)) IN
 					(
-						SELECT MAX(logitem_weight) as logitem_weight, logitem_reps, MONTH(logitem_date)
+						SELECT MAX(logitem_abs_weight) as logitem_abs_weight, logitem_reps, MONTH(logitem_date)
 						FROM log_items pr
 						LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id)
 						WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name AND pr.logitem_reps != 0 AND pr.logitem_reps <= 10
@@ -1033,7 +1035,7 @@ class log
 		{
 			if (!isset($prs[$row['logitem_reps']]))
 				$prs[$row['logitem_reps']] = array();
-			$prs[$row['logitem_reps']][$row['logitem_date']] = $row['logitem_weight'];
+			$prs[$row['logitem_reps']][$row['logitem_date']] = $row['logitem_abs_weight'];
 		}
 		return $prs;
 	}
