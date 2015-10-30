@@ -1,19 +1,20 @@
 <?php
 // TEMP LINES
-$data = array();
-$line = '13:23:56, 13:14:15 x5x5@5.0 cock and balls';
-$accepted_char = $accepted_chars = $format_type = array();
-$current_blocks = array('W', 'T');
+echo '<pre>';
+$line = '13:23:56, 13:14:15 x5,4x5,3@5.0,7.0 cock and balls';
 
 // THE CODE
+// setup the variables
+$output_data = array();
+$multiline = 0;
+$accepted_char = $accepted_chars = $format_type = array();
+$current_blocks = array('W', 'T');
+// set up the type data
 $format_type = array(
   'T' => array('0:0:0'),
   'W' => array('0.0'),
 );
-// TODO better way to deal with commas
 $next_values = array(
-  'W' => ',',
-  'T' => ',',
   'R' => 'x',
   'P' => '@',
   'C' => '',
@@ -28,16 +29,14 @@ $all_format_types = array(
   'C' => array(''),
 );
 $next_values_all = array(
-  'W' => ',',
-  'T' => ',',
   'R' => 'x',
   'S' => 'x',
   'P' => '@',
   'C' => '',
 );
 $format_follows = array(
-  'T' => array('T', 'R', 'P', 'C'),
-  'W' => array('W', 'R', 'P', 'C'),
+  'T' => array('R', 'P', 'C'),
+  'W' => array('R', 'P', 'C'),
   'R' => array('S', 'P', 'C'),
   'S' => array('P', 'C'),
   'P' => array('C'),
@@ -57,7 +56,7 @@ foreach($string_array as $chr)
     $chunk_dump .= ' ';
     continue;
   }
-  $format_chr = (is_numeric($chr)) ? '0' : $chr;
+  $format_chr = format_character($chr);
   // check character is in format and empty accepted_chars counts as allowing anything
   if (count($accepted_chars) == 0 || in_array($format_chr, $accepted_chars))
   {
@@ -77,35 +76,51 @@ foreach($string_array as $chr)
       // the character is not a number so just add it to the format
       $format_dump .= $chr;
     }
+    $chunk_dump .= $chr;
   }
   else
   {
     // check the previous chunk is valid
     if (format_check($format_dump))
     {
-      // the current chunk has finshed do something
-      $data[] = trim($chunk_dump);
-      // reset the dumps
-      $number_dump = '';
-      $format_dump = '';
-      $chunk_dump = '';
-      // find the options for the next format
-      if (in_array($format_chr, $next_values))
-      {
-        // find what block comes next
-        $current_blocks = array_keys ($next_values, $chr);
-        // reset $format_type + next values
-        build_next_formats ();
-        // rebuild everything
-        build_accepted_char ();
-        build_accepted_chars ();
-      }
-      else
-      {
-        // assume it is a comment
-        $accepted_chars = array();
-        $accepted_char = array();
-      }
+			// we are repeating the chunk
+			if (count($current_blocks) == 1 && $current_blocks[0] != 'C' && $format_chr == ',')
+			{
+				$output_data[$current_blocks[0]][$multiline] = trim($chunk_dump);
+				$multiline++;
+				// reset the dumps
+				$number_dump = '';
+				$format_dump = '';
+				$chunk_dump = '';
+			}
+			else
+			{
+				// the current chunk has finshed do something
+				$output_data[$current_blocks[0]][$multiline] = trim($chunk_dump);
+				// reset the dumps
+				$number_dump = '';
+				$format_dump = '';
+				$chunk_dump = '';
+				// find the options for the next format
+				if (in_array($format_chr, $next_values))
+				{
+					// find what block comes next
+					$current_blocks = array_keys ($next_values, $chr);
+					// reset $format_type + next values
+					build_next_formats ();
+					// rebuild everything
+					build_accepted_char ();
+					build_accepted_chars ();
+				}
+				else
+				{
+					// assume it is a comment
+					$accepted_chars = array();
+					$accepted_char = array();
+          $chunk_dump .= $chr;
+				}
+				$multiline = 0;
+			}
     }
     else
     {
@@ -113,17 +128,14 @@ foreach($string_array as $chr)
       break;
     }
   }
-  $chunk_dump .= $chr;
 }
 // add the last chunk to the data array
-$data[] = $chunk_dump;
+$output_data[$current_blocks[0]][$multiline] = $chunk_dump;
 
 // TODO(renlok); remove
-print_r(array($number_dump,
-$format_dump,
-$chunk_dump));
-print_r($data);
-print_r($accepted_char);
+//print_r(array($number_dump,$format_dump,$chunk_dump));
+print_r($output_data);
+//print_r($accepted_char);
 
 function build_next_formats ()
 {
@@ -142,6 +154,7 @@ function build_accepted_char ()
 {
   global $accepted_char, $format_type;
 
+  $accepted_char = array();
   foreach ($format_type as $key => $val)
   {
     $accepted_char[$key] = array_unique(str_split(implode('', $val)));
@@ -168,6 +181,8 @@ function build_accepted_chars ($format_chr = '')
         {
           $current_blocks = array('C');
         }
+				// rebuild keys
+        $current_blocks = array_values($current_blocks);
         $rebuild_accepted_chars = true;
       }
     }
@@ -211,6 +226,16 @@ function format_check($format_dump)
     }
   }
   return false;
+}
+
+function format_character($chr)
+{
+  $output_chr = $chr;
+  if (is_numeric($chr))
+  {
+    $output_chr = '0';
+  }
+  return $output_chr;
 }
 
 function flag_error($error)

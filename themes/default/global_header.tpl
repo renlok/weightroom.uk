@@ -42,6 +42,7 @@
 				<ul class="dropdown-menu">
 					<li role="presentation"><a href="?page=invites">Invite codes</a></li>
 					<li role="presentation"><a href="http://we-link.co.uk/projects/public/weightroom" target="_blank">Submit a bug</a></li>
+					<li role="presentation"><a href="http://weightroom.uk/blog/" target="_blank">Blog</a></li>
 					<li role="presentation"><a href="?page=settings">Settings</a></li>
 					<li role="presentation"><a href="?page=logout">Logout</a></li>
 				</ul>
