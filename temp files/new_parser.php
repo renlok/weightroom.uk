@@ -8,25 +8,75 @@ $line = '13:23:56, 13:14:15 x5,4x5,3@5.0,7.0 cock and balls';
 $output_data = array();
 $multiline = 0;
 $accepted_char = $accepted_chars = $format_type = array();
+// TODO: automate generating these 3 variables
 $current_blocks = array('W', 'T');
-// set up the type data
 $format_type = array(
-  'T' => array('0:0:0'),
-  'W' => array('0.0'),
+  'T' => array(
+          array('0:0:0'),
+          array('0:0'),
+          array('0'),
+        ),
+  'W' => array(
+          array('0.0'),
+          array('0'),
+          array('BW'),
+          array('BW+0.0'),
+          array('BW+0'),
+          array('BW-0.0'),
+          array('BW-0'),
+        ),
 );
 $next_values = array(
   'R' => 'x',
   'P' => '@',
   'C' => '',
 );
-// TODO: allow this to work wth multiple format types for each
+
+// pre-defined data
+// TODO: make units work
+$units = array(
+  'T' = array(
+          's' => array(
+            's', 'secs', 'sec', 'seconds', 'second'
+          ),
+          'm' => array(
+            'm', 'mins', 'min', 'minutes', 'minute'
+          ),
+          'h' => array(
+            'h', 'hrs', 'hr', 'hours', 'hour'
+          ),
+        ),
+  'W' = array(
+          'kg' => array(
+            'kg', 'kgs'
+            ),
+          'lb' => array(
+            'lb', 'lbs'
+            ),
+        ),
+);
 $all_format_types = array(
-  'T' => array('0:0:0'),
-  'W' => array('0.0'),
-  'R' => array('0'),
-  'S' => array('0'),
-  'P' => array('0.0'),
-  'C' => array(''),
+  'T' => array(
+          array('0:0:0'),
+          array('0:0'),
+          array('0'),
+        ),
+  'W' => array(
+          array('0.0'),
+          array('0'),
+          array('BW'),
+          array('BW+0.0'),
+          array('BW+0'),
+          array('BW-0.0'),
+          array('BW-0'),
+        ),
+  'R' => array(array('0')),
+  'S' => array(array('0')),
+  'P' => array(
+          array('0.0'),
+          array('0'),
+        ),
+  'C' => array(array('')),
 );
 $next_values_all = array(
   'R' => 'x',
@@ -155,9 +205,19 @@ function build_accepted_char ()
   global $accepted_char, $format_type;
 
   $accepted_char = array();
-  foreach ($format_type as $key => $val)
+  foreach ($format_type as $key => $sub_type)
   {
-    $accepted_char[$key] = array_unique(str_split(implode('', $val)));
+    foreach ($sub_type as $val)
+    {
+      if (isset($accepted_char[$key]))
+      {
+        $accepted_char[$key] = array_unique(array_merge($accepted_char[$key], str_split(implode('', $val))));
+      }
+      else
+      {
+        $accepted_char[$key] = array_unique(str_split(implode('', $val)));
+      }
+    }
   }
 }
 
@@ -215,13 +275,16 @@ function format_check($format_dump)
     return true;
   }
   // check if the final format_dump matches a vlid format type
-  foreach ($format_type as $key => $val)
+  foreach ($format_type as $sub_type)
   {
-    foreach ($val as $format_string)
+    foreach ($sub_type as $key => $val)
     {
-      if ($format_string == $format_dump)
+      foreach ($val as $format_string)
       {
-        return true;
+        if ($format_string == $format_dump)
+        {
+          return true;
+        }
       }
     }
   }
