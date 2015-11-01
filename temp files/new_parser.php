@@ -36,7 +36,7 @@ $units = array(
           'lbs' => 'lb',
         ),
 );
-$all_format_types = array(
+$format_types_all = array(
   'T' => array(
           ('0:0:0'),
           ('0:0'),
@@ -175,13 +175,13 @@ print_r($output_data);
 
 function build_next_formats ()
 {
-  global $all_format_types, $next_values_all, $format_follows;
+  global $format_types_all, $next_values_all, $format_follows;
   global $format_type, $next_values, $current_blocks;
 
   $format_type = $next_values = array();
   foreach ($current_blocks as $key)
   {
-    $format_type[$key] = $all_format_types[$key];
+    $format_type[$key] = $format_types_all[$key];
     $next_values = array_merge($next_values, array_intersect_key($next_values_all, array_flip($format_follows[$key])));
   }
 }
@@ -279,16 +279,16 @@ function format_check($format_dump)
 
 function add_units()
 {
-  global $units, $all_format_types;
+  global $units, $format_types_all;
 
-  $dump_all_format_types = $all_format_types;
+  $dump_all_format_types = $format_types_all;
   foreach ($units as $type => $unit_types)
   {
     foreach ($unit_types as $unit => $val)
     {
       foreach ($dump_all_format_types[$type] as $format)
       {
-        $all_format_types[$type][] = $format . $unit;
+        $format_types_all[$type][] = $format . $unit;
       }
     }
   }
