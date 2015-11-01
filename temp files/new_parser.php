@@ -1,83 +1,67 @@
 <?php
 // TEMP LINES
 echo '<pre>';
-$line = '13:23:56, 13:14:15 x5,4x5,3@5.0,7.0 cock and balls';
+$line = '13 secs, 13:14:15 x5,4x5,3@5.0,7.0 cock and balls';
 
 // THE CODE
 // setup the variables
 $output_data = array();
 $multiline = 0;
 $accepted_char = $accepted_chars = $format_type = array();
-// TODO: automate generating these 3 variables
 $current_blocks = array('W', 'T');
-$format_type = array(
-  'T' => array(
-          array('0:0:0'),
-          array('0:0'),
-          array('0'),
-        ),
-  'W' => array(
-          array('0.0'),
-          array('0'),
-          array('BW'),
-          array('BW+0.0'),
-          array('BW+0'),
-          array('BW-0.0'),
-          array('BW-0'),
-        ),
-);
-$next_values = array(
-  'R' => 'x',
-  'P' => '@',
-  'C' => '',
-);
 
 // pre-defined data
-// TODO: make units work
 $units = array(
-  'T' = array(
-          's' => array(
-            's', 'secs', 'sec', 'seconds', 'second'
-          ),
-          'm' => array(
-            'm', 'mins', 'min', 'minutes', 'minute'
-          ),
-          'h' => array(
-            'h', 'hrs', 'hr', 'hours', 'hour'
-          ),
+  'T' => array(
+          's' => 's',
+          'secs' => 's',
+          'sec' => 's',
+          'seconds' => 's',
+          'second' => 's',
+          'm' => 'm',
+          'mins' => 'm',
+          'min' => 'm',
+          'minutes' => 'm',
+          'minute' => 'm',
+          'h' => 'h',
+          'hrs' => 'h',
+          'hr' => 'h',
+          'hours' => 'h',
+          'hour' => 'h',
         ),
-  'W' = array(
-          'kg' => array(
-            'kg', 'kgs'
-            ),
-          'lb' => array(
-            'lb', 'lbs'
-            ),
+  'W' => array(
+          'kg' => 'kg',
+          'kgs' => 'kg',
+          'lb' => 'lb',
+          'lbs' => 'lb',
         ),
 );
 $all_format_types = array(
   'T' => array(
-          array('0:0:0'),
-          array('0:0'),
-          array('0'),
+          ('0:0:0'),
+          ('0:0'),
+          ('0.0'),
+          ('0'),
         ),
   'W' => array(
-          array('0.0'),
-          array('0'),
-          array('BW'),
-          array('BW+0.0'),
-          array('BW+0'),
-          array('BW-0.0'),
-          array('BW-0'),
+          ('0.0'),
+          ('0'),
+          ('BW'),
+          ('BW+0.0'),
+          ('BW+0'),
+          ('BW-0.0'),
+          ('BW-0'),
         ),
-  'R' => array(array('0')),
-  'S' => array(array('0')),
+  'R' => array(('0')),
+  'S' => array(('0')),
   'P' => array(
-          array('0.0'),
-          array('0'),
+          ('0.0'),
+          ('0'),
         ),
-  'C' => array(array('')),
+  'C' => array(('')),
 );
+// add units to the formats
+add_units();
 $next_values_all = array(
   'R' => 'x',
   'S' => 'x',
@@ -92,6 +76,8 @@ $format_follows = array(
   'P' => array('C'),
   'C' => array(''),
 );
+// build the initial startup data
+build_next_formats ();
 build_accepted_char ();
 build_accepted_chars ();
 $number_dump = '';
@@ -211,11 +197,11 @@ function build_accepted_char ()
     {
       if (isset($accepted_char[$key]))
       {
-        $accepted_char[$key] = array_unique(array_merge($accepted_char[$key], str_split(implode('', $val))));
+        $accepted_char[$key] = array_unique(array_merge($accepted_char[$key], str_split($val)));
       }
       else
       {
-        $accepted_char[$key] = array_unique(str_split(implode('', $val)));
+        $accepted_char[$key] = array_unique(str_split($val));
       }
     }
   }
@@ -277,9 +263,9 @@ function format_check($format_dump)
   // check if the final format_dump matches a vlid format type
   foreach ($format_type as $sub_type)
   {
-    foreach ($sub_type as $key => $val)
+    foreach ($sub_type as $key => $format_string)
     {
-      foreach ($val as $format_string)
+      //foreach ($val as $format_string)
       {
         if ($format_string == $format_dump)
         {
@@ -289,6 +275,23 @@ function format_check($format_dump)
     }
   }
   return false;
+}
+
+function add_units()
+{
+  global $units, $all_format_types;
+
+  $dump_all_format_types = $all_format_types;
+  foreach ($units as $type => $unit_types)
+  {
+    foreach ($unit_types as $unit => $val)
+    {
+      foreach ($dump_all_format_types[$type] as $format)
+      {
+        $all_format_types[$type][] = $format . $unit;
+      }
+    }
+  }
 }
 
 function format_character($chr)
