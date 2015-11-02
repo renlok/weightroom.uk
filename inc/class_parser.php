@@ -17,21 +17,69 @@ class parser
   var $number_dump; // no current use
   var $format_dump;
   var $chunk_dump;
+  // final array
+  var $log_data;
 
-  public function parser ()
+  public function parser ($log_text, $bodyweight)
   {
+    // build the initial startup data
     $this->construct_globals ();
+    $exercise = '';
+		$position = 0; // a pointer for when exercise was done
+    $this->log_data = array('comment' => ''); // the output array
+    // convert log_text to array
+    $log_lines = explode("\n", $log_text);
+    foreach ($log_lines as $line)
+    {
+      // check if blank line
+			if (strlen($line) == 0)
+			{
+				continue;
+			}
+
+      // check if new exercise
+			if ($line[0] == '#')
+			{
+        $position++;
+				$exercise = substr($line, 1); // set exercise marker
+				// add new exercise group to array
+				$this->log_data[$position] = array(
+						'name' => $exercise,
+						'comment' => '',
+						'data' => array());
+				continue; // end this loop
+			}
+
+			// no exercise yet
+			if ($exercise == '')
+			{
+				if (!empty($this->log_data['comment']))
+				{
+					$this->log_data['comment'] .= '<br>';
+				}
+				$this->log_data['comment'] .= $line;
+				continue; // end this loop
+			}
+      else
+      {
+        $this->log_data[$position]['data'] = array_merge($this->log_data[$position]['data'], $this->parse_line ($line));
+      }
+    }
+    // TODO: add a way to deal with units
   }
 
   public function parse_line ($line)
   {
     // build the initial startup data
+    $this->current_blocks = array('W', 'T', 'C');
     $this->build_next_formats ();
     $this->build_accepted_char ();
     $this->build_accepted_chars ();
     $this->number_dump = '';
     $this->format_dump = '';
     $this->chunk_dump = '';
+    $this->multiline = 0;
+    $output_data = array();
     $string_array = str_split($line);
     foreach($string_array as $chr)
     {
@@ -71,7 +119,7 @@ class parser
     			// we are repeating the chunk
     			if (count($this->current_blocks) == 1 && $this->current_blocks[0] != 'C' && $format_chr == ',')
     			{
-    				$output_data[$this->current_blocks[0]][$this->multiline] = trim($this->chunk_dump);
+    				$output_data[$this->multiline][$this->current_blocks[0]] = trim($this->chunk_dump);
     				$this->multiline++;
     				// reset the dumps
     				$this->number_dump = '';
@@ -81,7 +129,7 @@ class parser
     			else
     			{
     				// the current chunk has finshed do something
-    				$output_data[$this->current_blocks[0]][$this->multiline] = trim($this->chunk_dump);
+    				$output_data[$this->multiline][$this->current_blocks[0]] = trim($this->chunk_dump);
     				// reset the dumps
     				$this->number_dump = '';
     				$this->format_dump = '';
@@ -115,7 +163,7 @@ class parser
       }
     }
     // add the last chunk to the data array
-    $output_data[$this->current_blocks[0]][$this->multiline] = $this->chunk_dump;
+    $output_data[$this->multiline][$this->current_blocks[0]] .= $this->chunk_dump;
 
     return $output_data;
   }
