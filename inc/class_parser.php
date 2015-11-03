@@ -68,7 +68,6 @@ class parser
 				$this->log_data[$position]['comment'] .= $line;
 			}
     }
-    // TODO: add a way to deal with units
   }
 
   public function parse_line ($line)
@@ -121,30 +120,25 @@ class parser
         // check the previous chunk is valid
         if ($this->format_check($this->format_dump))
         {
+					// the current chunk has finshed do something
+					$output_data[$multiline][$this->current_blocks[0]] = $this->clean_units(trim($this->chunk_dump), $this->current_blocks[0]);
+					// reset the dumps
+					$this->number_dump = '';
+					$this->format_dump = '';
+					$this->chunk_dump = '';
     			// we are repeating the chunk
 					// TODO: count($this->current_blocks) == 1 && doesn't work with simple inputs can I get around this?
     			if ($this->current_blocks[0] != 'C' && $format_chr == ',')
     			{
-    				$output_data[$multiline][$this->current_blocks[0]] = trim($this->chunk_dump);
     				$multiline++;
 						// new multiline_max?
 						if ($multiline_max < $multiline)
 						{
 							$multiline_max = $multiline;
 						}
-    				// reset the dumps
-    				$this->number_dump = '';
-    				$this->format_dump = '';
-    				$this->chunk_dump = '';
     			}
     			else
     			{
-    				// the current chunk has finshed do something
-    				$output_data[$multiline][$this->current_blocks[0]] = trim($this->chunk_dump);
-    				// reset the dumps
-    				$this->number_dump = '';
-    				$this->format_dump = '';
-    				$this->chunk_dump = '';
     				// find the options for the next format
     				if (in_array($format_chr, $this->next_values))
     				{
@@ -174,6 +168,10 @@ class parser
       }
     }
 		// add the last chunk to the data array
+		if ($this->current_blocks[0] != 'C')
+		{
+			$this->chunk_dump = $this->clean_units($this->chunk_dump, $this->current_blocks[0]);
+		}
 		if (isset($output_data[$multiline][$this->current_blocks[0]]))
 		{
 			$output_data[$multiline][$this->current_blocks[0]] .= $this->chunk_dump;
@@ -383,8 +381,6 @@ class parser
 
   private function add_units()
   {
-    global $units, $format_types_all;
-
     $dump_all_format_types = $this->format_types_all;
     foreach ($this->units as $type => $unit_types)
     {
@@ -397,6 +393,33 @@ class parser
       }
     }
   }
+	
+	private function clean_units($block, $block_type)
+	{
+		// clean units
+		if (isset($this->units[$block_type]))
+		{
+			if ($end = $this->strposa($block, array_keys($this->units[$block_type])) !== false)
+			{
+				$block = array(trim(substr($block, 0, $end)), $this->units[$block_type][substr($block, $end)]);
+			}
+			else
+			{
+				$block = array(trim($block), '');
+			}
+			// TODO: do something with cleaned units
+		}
+		return $block;
+	}
+	
+	private function strposa($haystack, $needle, $offset=0) {
+    if(!is_array($needle)) $needle = array($needle);
+    foreach($needle as $query)
+		{
+      if(($return = strpos($haystack, $query, $offset)) !== false) return $return; // stop on first true result
+    }
+    return false;
+	}
 
   // TODO: add all the possible characters that will be accpected
   private function format_character($chr)
