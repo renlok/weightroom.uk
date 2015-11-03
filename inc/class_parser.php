@@ -11,7 +11,6 @@ class parser
   var $accepted_chars;
   var $format_type;
   var $current_blocks; // the blocks that are expected
-  var $multiline; // for when a line contains commas we can add them as multiple sets
   var $next_values;
   // data dumps
   var $number_dump; // no current use
@@ -40,7 +39,7 @@ class parser
       // check if new exercise
 			if ($line[0] == '#')
 			{
-        $position++;
+				$position++;
 				$exercise = substr($line, 1); // set exercise marker
 				// add new exercise group to array
 				$this->log_data[$position] = array(
@@ -60,10 +59,14 @@ class parser
 				$this->log_data['comment'] .= $line;
 				continue; // end this loop
 			}
-      else
-      {
-        $this->log_data[$position]['data'] = array_merge($this->log_data[$position]['data'], $this->parse_line ($line));
-      }
+			elseif (is_numeric($line[0]) || $line[0] == 'B')
+			{
+				$this->log_data[$position]['data'] = array_merge($this->log_data[$position]['data'], $this->parse_line ($line));
+			}
+			else
+			{
+				$this->log_data[$position]['comment'] .= $line;
+			}
     }
     // TODO: add a way to deal with units
   }
@@ -78,7 +81,9 @@ class parser
     $this->number_dump = '';
     $this->format_dump = '';
     $this->chunk_dump = '';
-    $this->multiline = 0;
+		// for when a line contains commas we can add them as multiple sets
+    $multiline = 0;
+		$multiline_max = 0;
     $output_data = array();
     $string_array = str_split($line);
     foreach($string_array as $chr)
@@ -117,10 +122,16 @@ class parser
         if ($this->format_check($this->format_dump))
         {
     			// we are repeating the chunk
-    			if (count($this->current_blocks) == 1 && $this->current_blocks[0] != 'C' && $format_chr == ',')
+					// TODO: count($this->current_blocks) == 1 && doesn't work with simple inputs can I get around this?
+    			if ($this->current_blocks[0] != 'C' && $format_chr == ',')
     			{
-    				$output_data[$this->multiline][$this->current_blocks[0]] = trim($this->chunk_dump);
-    				$this->multiline++;
+    				$output_data[$multiline][$this->current_blocks[0]] = trim($this->chunk_dump);
+    				$multiline++;
+						// new multiline_max?
+						if ($multiline_max < $multiline)
+						{
+							$multiline_max = $multiline;
+						}
     				// reset the dumps
     				$this->number_dump = '';
     				$this->format_dump = '';
@@ -129,7 +140,7 @@ class parser
     			else
     			{
     				// the current chunk has finshed do something
-    				$output_data[$this->multiline][$this->current_blocks[0]] = trim($this->chunk_dump);
+    				$output_data[$multiline][$this->current_blocks[0]] = trim($this->chunk_dump);
     				// reset the dumps
     				$this->number_dump = '';
     				$this->format_dump = '';
@@ -152,7 +163,7 @@ class parser
     					$this->accepted_char = array();
               $this->chunk_dump .= $chr;
     				}
-    				$this->multiline = 0;
+    				$multiline = 0;
     			}
         }
         else
@@ -162,8 +173,26 @@ class parser
         }
       }
     }
-    // add the last chunk to the data array
-    $output_data[$this->multiline][$this->current_blocks[0]] .= $this->chunk_dump;
+		// add the last chunk to the data array
+		if (isset($output_data[$multiline][$this->current_blocks[0]]))
+		{
+			$output_data[$multiline][$this->current_blocks[0]] .= $this->chunk_dump;
+		}
+		else
+		{
+			$output_data[$multiline][$this->current_blocks[0]] = $this->chunk_dump;
+		}
+		// do something with $multiline_max
+		if ($multiline_max > 1)
+		{
+			// the first line should always be complete so find what was given
+			$blocks = array_keys($output_data[1]);
+			$last_values = array();
+			for ($i = 0; $i <= $multiline_max)
+			{
+				// TODO: finish this
+			}
+		}
 
     return $output_data;
   }
