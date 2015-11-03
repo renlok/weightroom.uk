@@ -183,15 +183,31 @@ class parser
 			$output_data[$multiline][$this->current_blocks[0]] = $this->chunk_dump;
 		}
 		// do something with $multiline_max
-		if ($multiline_max > 1)
+		if ($multiline_max > 0)
 		{
-			// the first line should always be complete so find what was given
-			$blocks = array_keys($output_data[1]);
-			$last_values = array();
-			for ($i = 0; $i <= $multiline_max)
+			// temporarly remove the comment
+			if (isset($output_data[0]['C']))
 			{
-				// TODO: finish this
+				$comment = $output_data[0]['C'];
+				unset($output_data[0]['C']);
 			}
+			// the first line should always be complete so find what was given
+			$blocks = array_keys($output_data[0]);
+			$last_values = array();
+			for ($i = 0; $i <= $multiline_max; $i++)
+			{
+				// check each block
+				foreach ($blocks as $block)
+				{
+					if (!isset($output_data[$i][$block]))
+					{
+						$output_data[$i][$block] = $last_values[$block];
+					}
+				}
+				$last_values = $output_data[$i];
+			}
+			// re add the comment to the end 
+			$output_data[$multiline_max]['C'] = $comment;
 		}
 
     return $output_data;
