@@ -18,19 +18,18 @@ class parser
   var $chunk_dump;
   // final array
   var $log_data;
-	// information for the database
-	var $bodyweight;
+	var $log_text;
 
-  public function parser ($log_text, $bodyweight)
+  public function parser ($log_text)
   {
     // build the initial startup data
     $this->construct_globals ();
-		$this->bodyweight = $bodyweight;
+		$this->log_text = $log_text;
     $exercise = '';
 		$position = 0; // a pointer for when exercise was done
     $this->log_data = array('comment' => '', 'exercises' => array()); // the output array
     // convert log_text to array
-    $log_lines = explode("\n", $log_text);
+    $log_lines = explode("\n", $this->log_text);
     foreach ($log_lines as $line)
     {
       // check if blank line
@@ -214,7 +213,7 @@ class parser
     return $output_data;
   }
 	
-	public function store_log_data ($log_date)
+	public function store_log_data ($log_date, $user_weight)
 	{
 		global $db, $user, $log;
 		// clear old entries
@@ -256,7 +255,7 @@ class parser
 			// update log entry
 			$query = "UPDATE logs SET log_text = :log_text, log_comment = :log_comment, log_weight = :log_weight WHERE log_date = :log_date AND user_id = :user_id";
 			$params = array(
-				array(':log_text', $log_text, 'str'),
+				array(':log_text', $this->log_text, 'str'),
 				array(':log_comment', $this->replace_video_urls($this->log_data['comment']), 'str'),
 				array(':log_weight', $user_weight, 'float'),
 				array(':log_date', $log_date, 'str'),
@@ -269,7 +268,7 @@ class parser
 			// add a new entry
 			$query = "INSERT INTO logs (log_text, log_comment, log_weight, log_date, user_id) VALUES (:log_text, :log_comment, :log_weight, :log_date, :user_id)";
 			$params = array(
-				array(':log_text', $log_text, 'str'),
+				array(':log_text', $this->log_text, 'str'),
 				array(':log_comment', $this->replace_video_urls($this->log_data['comment']), 'str'),
 				array(':log_weight', $user_weight, 'float'),
 				array(':log_date', $log_date, 'str'),
@@ -297,8 +296,9 @@ class parser
 		$log_id = $log_id['log_id'];
 		$new_prs = array();
 		// add all of the exercise details
-		foreach ($this->log_data['exercises'] as $item)
+		for ($i = 0, $count_i = count($this->log_data['exercises']); $i < $count_i; $i++)
 		{
+			$item = $this->log_data['exercises'][$i];
 			// set exercise name
 			$exercise = $item['name'];
 			// reset totals
@@ -306,9 +306,9 @@ class parser
 			$exercise_id = $log->get_exercise_id ($user->user_id, $exercise);
 			$prs = $log->get_prs ($user->user_id, $log_date, $exercise);
 			$max_estimate_rm = 0;
-			foreach ($item['data'] as $set)
+			for ($j = 0, $count_j = count($item['data']); $j < $count_i; $j++)
 			{
-				// TODO: fill in missing groups
+				$set = $item['data'][$j];
 				$is_bw = false;
 				if (isset($set['W']))
 				{
@@ -320,15 +320,17 @@ class parser
 					}
 					$set['W'] = correct_units_for_database ($set['W'], 'W');
 					$is_time = false;
-					$set['T'] = null;
+					$set['T'] = 0;
 				}
 				elseif (isset($set['T']))
 				{
 					$set['T'][0] = str_replace(' ', '', $set['T'][0]);
 					$set['T'] = correct_units_for_database ($set['T'], 'T');
 					$is_time = true;
-					$set['W'] = null;
+					$set['W'] = 0;
 				}
+				$set['R'] = (isset($set['R'])) ? $set['R'] : 1;
+				$set['S'] = (isset($set['S'])) ? $set['S'] : 1;
 				$absolute_weight = ($is_bw == false) ? $set['W'] : ($set['W'] + $user_weight);
 				$total_volume += ($absolute_weight * $set['R'] * $set['S']);
 				$total_reps += ($set['R'] * $set['S']);
@@ -353,9 +355,8 @@ class parser
 					$max_estimate_rm = $estimate_rm;
 				}
 				// insert into log_items
-				// TODO: add time, is_time to db
-				$query = "INSERT INTO log_items (logitem_date, log_id, user_id, exercise_id, logitem_weight, logitem_abs_weight, logitem_reps, logitem_sets, logitem_rpes, logitem_comment, logitem_1rm, is_pr, is_bw, logitem_order)
-							VALUES (:logitem_date, :log_id, :user_id, :exercise_id, :logitem_weight, :logitem_abs_weight, :logitem_reps, :logitem_sets, :logitem_rpes, :logitem_comment, :logitem_rm, :is_pr, :is_bw, :logitem_order)";
+				$query = "INSERT INTO log_items (logitem_date, log_id, user_id, exercise_id, logitem_weight, logitem_abs_weight, logitem_time, logitem_reps, logitem_sets, logitem_rpes, logitem_comment, logitem_1rm, is_pr, is_bw, is_time, logitem_order)
+							VALUES (:logitem_date, :log_id, :user_id, :exercise_id, :logitem_weight, :logitem_abs_weight, :logitem_time, :logitem_reps, :logitem_sets, :logitem_rpes, :logitem_comment, :logitem_rm, :is_pr, :is_bw, :is_time, :logitem_order)";
 				$params = array(
 					array(':logitem_date', $log_date, 'str'),
 					array(':log_id', $log_id, 'int'),
@@ -363,13 +364,15 @@ class parser
 					array(':exercise_id', $exercise_id, 'int'),
 					array(':logitem_weight', $set['W'], 'float'),
 					array(':logitem_abs_weight', $absolute_weight, 'float'),
+					array(':logitem_time', $set['T'], 'int'),
 					array(':logitem_reps', $set['R'], 'int'),
 					array(':logitem_sets', $set['S'], 'int'),
 					array(':logitem_comment', $set['line'], 'str'),
 					array(':logitem_rm', $estimate_rm, 'float'),
 					array(':is_pr', (($is_pr == false) ? 0 : 1), 'int'),
 					array(':is_bw', (($is_bw == false) ? 0 : 1), 'int'),
-					array(':logitem_order', $set['position'], 'int'),
+					array(':is_time', (($is_time == false) ? 0 : 1), 'int'),
+					array(':logitem_order', $j, 'int'),
 				);
 				if (!isset($set['P']) || $set['P'] == NULL)
 					$params[] = array(':logitem_rpes', NULL, 'int');
@@ -390,7 +393,7 @@ class parser
 				array(':logex_sets', $total_sets, 'int'),
 				array(':logex_rm', $max_estimate_rm, 'float'),
 				array(':logex_comment', $this->replace_video_urls($item['comment']), 'str'),
-				array(':logex_order', $item['position'], 'int'),
+				array(':logex_order', $i, 'int'),
 			);
 			$db->query($query, $params);
 		}
