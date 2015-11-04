@@ -125,6 +125,7 @@ class log
 		return $logs_data;
 	}
 
+	// TODO: remove as part of old parser
 	public function parse_new_log($log, $bodyweight)
 	{
 		global $db, $user;
@@ -239,7 +240,7 @@ class log
 		return $log_data;
 	}
 
-	// where the magic happens
+	// TODO: remove as part of old parser
 	private function get_reps($exercise, $weight, $line, $bw = false)
 	{
 		global $position;
@@ -379,6 +380,7 @@ class log
 		return $setrep_data;
 	}
 
+	// TODO: remove as part of old parser
 	public function store_new_log_data($log_data, $log_text, $log_date, $user_id, $user_weight)
 	{
 		global $db;
@@ -618,6 +620,7 @@ class log
 		return $log_text;
 	}
 
+	// TODO: remove as part of old parser
 	private function replace_video_urls($comment)
 	{
 		return preg_replace(
@@ -629,6 +632,7 @@ class log
 		//$height = '385';
 	}
 
+	// TODO: remove as part of old parser
 	private function update_user_weights($user_id, $log_date, $user_weight)
 	{
 		global $db;
@@ -788,7 +792,7 @@ class log
 		}
 	}
 
-	// the user has set a pr we need to add/update it in the database
+	// TODO: remove as part of old parser
 	private function update_prs($user_id, $log_date, $exercise_id, $set_weight, $set_reps)
 	{
 		global $db;

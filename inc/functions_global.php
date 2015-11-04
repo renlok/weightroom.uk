@@ -57,6 +57,24 @@ function correct_weight($weight, $unit_used, $unit_want) // $unit_used = kg/lb $
 	}
 }
 
+function correct_time($time, $unit_used, $unit_want) // $unit_used = s/m/h $unit_want = s/m/h
+{
+	$unit_used = ($unit_used == 's') ? 1 : (($unit_used == 'm') ? 2 : 3);
+	$unit_want = ($unit_want == 's') ? 1 : (($unit_want == 'm') ? 2 : 3);
+	if ($unit_used > $unit_want)
+	{
+		return round(($time * pow (60,($unit_used - $unit_want))), 2);
+	}
+	elseif ($unit_used < $unit_want)
+	{
+		return round(($time / pow(60,($unit_want - $unit_used))), 2);
+	}
+	else
+	{
+		return round($time, 2);
+	}
+}
+
 function in_tools($page, $do)
 {
 	if ($page == 'volume')
