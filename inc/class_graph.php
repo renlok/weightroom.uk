@@ -55,9 +55,13 @@ class graph
 				ORDER BY log_date ASC";
 		$params[] = array(':user_id', $user_id, 'int');
 		$db->query($query, $params);
-		$return_array = array(
+		$graph_array = array(
 			'bodyweight' => array(),
 		);
+		if ($type != '')
+		{
+			$date_array = array();
+		}
 		$last_weight = 0; // so we can see when it changes
 		$last_exercise = array();
 		while ($row = $db->fetch())
@@ -65,7 +69,11 @@ class graph
 			// is it a new weight
 			if ($last_weight != $row['log_weight'])
 			{
-				$return_array['bodyweight'][$row['log_date']] = $row['log_weight'];
+				$graph_array['bodyweight'][$row['log_date']] = $row['log_weight'];
+				if ($type != '')
+				{
+					$date_array[$row['log_date']]['bodyweight'] = $row['log_weight'];
+				}
 				// set new weight
 				$last_weight = $row['log_weight'];
 			}
@@ -79,24 +87,104 @@ class graph
         }
 				if ($last_exercise[$row['exercise_name']] != $row['logitem_abs_weight'])
 				{
-					$return_array[$row['exercise_name']][$row['log_date']] = $row['logitem_abs_weight'];
+					$graph_array[$row['exercise_name']][$row['log_date']] = $row['logitem_abs_weight'];
+					if ($type != '')
+					{
+						$date_array[$row['log_date']][$row['exercise_name']] = $row['logitem_abs_weight'];
+					}
 					// set new weight
 					$last_exercise[$row['exercise_name']] = $row['log_weight'];
 				}
 			}
 		}
-
-    return $return_array;
+		
+		if ($type != '')
+		{
+			return array($graph_array, $date_array);
+		}
+		else
+		{
+			return $graph_array;
+		}
 	}
 
   public function build_coefficient_graph_data($graph_data, $coefficient)
   {
-    // TODO: build this
-    // build an ordered array of changes ordered by dates
-    $temporary_data = array();
+    // build an empty array with each of the lifts
+		$lift_names = array_keys($graph_data[0]);
+		$lift_data = array();
+		foreach ($lift_names as $lift)
+		{
+			$lift_data[$lift] = 0;
+		}
+		$output_data = array();
+		foreach ($graph_data[1] as $date => $exercises)
+		{
+			// overwrite old values
+			$lift_data = array_merge($lift_data, $exercises);
+			// each lift must have a value before we can calculate
+			if (array_product($lift_data) > 0)
+			{
+				if ($coefficient == 'wilks')
+				{
+					$output_data[$date] = $this->calculate_wilks (array_sum($lift_data), $lift_data['bodyweight']);
+				}
+				else if ($coefficient == 'sinclair')
+				{
+					$output_data[$date] = $this->calculate_sinclair (array_sum($lift_data), $lift_data['bodyweight']);
+				}
+			}
+		}
 
     return $graph_data;
   }
+	
+	public function calculate_wilks ($total, $bw)
+	{
+		global $user;
+		if ($user->user_data['user_gender'] == 1)
+		{
+			// male Coefficients
+			$a = -216.0475144;
+			$b = 16.2606339;
+			$c = -0.002388645;
+			$d = -0.00113732;
+			$e = 7.01863E-06;
+			$f = -1.291E-08;
+		}
+		else
+		{
+			// female Coefficients
+			$a = 594.31747775582;
+			$b = -27.23842536447;
+			$c = 0.82112226871;
+			$d = -0.00930733913;
+			$e = 0.00004731582;
+			$f = -0.00000009054;
+		}
+		$coeff = 500/($a + $b * $bw + pow($bw, 2) * $c + pow($bw, 3) * $d + pow($bw, 4) * $e + pow($bw, 5) * $f);
+		return $coeff * $total;
+	}
+	
+	public function calculate_sinclair ($total, $bw)
+	{
+		global $user;
+		// valid until RIO 2016
+		if ($user->user_data['user_gender'] == 1)
+		{
+			// male Coefficients
+			$a = 0.794358141;
+			$b = 174.393;
+		}
+		else
+		{
+			// female Coefficients
+			$a = 0.897260740;
+			$b = 148.026;
+		}
+		$coeff = pow(10, ($a * pow(log10 ($bw / $b), 2)));
+		return $coeff * $total;
+	}
 
   public function build_graph_data($data, $multichart = false)
 	{
