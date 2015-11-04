@@ -19,10 +19,12 @@
 	<p>View how your bodyweight has changed</p>
   </div>
   <div class="col-md-4">
-	&nbsp;
+	<a href="?page=wilks">Wilks Graph</a>
+	<p>View how your Wilks score has improved over time</p>
   </div>
   <div class="col-md-4">
-	&nbsp;
+	<a href="?page=sinclair">Sinclair Graph</a>
+	<p>View how your Sinclair score has improved over time</p>
   </div>
 </div>
 <div class="row">

@@ -19,6 +19,7 @@ $template->assign_vars(array(
 	'GRAPH_TYPE_LC' => 'wilks',
 	'GRAPH_TYPE' => 'Wilks',
 	'MULTICHART' => false,
+	'MESSAGE' => 'The Wilks Coefficient or Wilks Formula is a coefficient that can be used to measure the strength of a powerlifter against other powerlifters despite the different weights of the lifters.',
 	'RANGE' => $range
 	));
 $template->set_filenames(array(

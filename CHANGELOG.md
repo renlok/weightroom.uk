@@ -1,3 +1,16 @@
+<a name"142"></a>
+### 142 (2015-11-04)
+
+
+#### Features
+
+* Added Wilks Graph
+* Added Sinclair Graph
+
+#### Bug Fixes
+
+* Fixed bugs with BW exercises,  PRs and volume
+
 <a name"125"></a>
 ### 125 (2015-10-15)
 

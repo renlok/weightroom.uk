@@ -1265,7 +1265,7 @@ class log
 
 		if ($user->user_data['user_viewintensityabs'] == 0)
 		{
-			if ($current_1rm > 0)
+			if ($current_1rm > 0 && $reps > 0)
 			{
 				// the current 1rm has been set
 				$average_intensity = (($volume / $reps) / $current_1rm) * 100;
@@ -1279,7 +1279,7 @@ class log
 		}
 		else
 		{
-			$average_intensity = ($volume / $reps);
+			$average_intensity = ($reps > 0) ? ($volume / $reps) : 0;
 		}
 		return round($average_intensity, 1);
 	}

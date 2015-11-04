@@ -18,6 +18,7 @@ $template->assign_vars(array(
 	'GRAPH_TYPE_LC' => 'bodyweight',
 	'GRAPH_TYPE' => 'Bodyweigt',
 	'MULTICHART' => false,
+	'MESSAGE' => '',
 	'RANGE' => $range
 	));
 $template->set_filenames(array(

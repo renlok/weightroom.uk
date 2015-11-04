@@ -85,7 +85,7 @@ class graph
         {
           $last_exercise[$row['exercise_name']] = array();
         }
-				if ($last_exercise[$row['exercise_name']] != $row['logitem_abs_weight'])
+				if (floatval($last_exercise[$row['exercise_name']]) < floatval($row['logitem_abs_weight']))
 				{
 					$graph_array[$row['exercise_name']][$row['log_date']] = $row['logitem_abs_weight'];
 					if ($type != '')
@@ -93,11 +93,11 @@ class graph
 						$date_array[$row['log_date']][$row['exercise_name']] = $row['logitem_abs_weight'];
 					}
 					// set new weight
-					$last_exercise[$row['exercise_name']] = $row['log_weight'];
+					$last_exercise[$row['exercise_name']] = $row['logitem_abs_weight'];
 				}
 			}
 		}
-		
+
 		if ($type != '')
 		{
 			return array($graph_array, $date_array);
@@ -136,9 +136,9 @@ class graph
 			}
 		}
 
-    return $graph_data;
+    return $output_data;
   }
-	
+
 	public function calculate_wilks ($total, $bw)
 	{
 		global $user;
@@ -165,7 +165,7 @@ class graph
 		$coeff = 500/($a + $b * $bw + pow($bw, 2) * $c + pow($bw, 3) * $d + pow($bw, 4) * $e + pow($bw, 5) * $f);
 		return $coeff * $total;
 	}
-	
+
 	public function calculate_sinclair ($total, $bw)
 	{
 		global $user;

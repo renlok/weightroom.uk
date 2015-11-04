@@ -1,5 +1,6 @@
 <h2>{GRAPH_TYPE}</h2>
 <h3>Viewing: <!-- IF RANGE eq 0 -->All<!-- ELSE -->Last {RANGE} months<!-- ENDIF --></h3>
+<!-- IF MESSAGE ne '' --><div>{MESSAGE}</div><!-- ENDIF -->
 
 <div id="prHistoryChart">
     <svg></svg>
