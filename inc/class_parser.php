@@ -20,13 +20,13 @@ class parser
   var $log_data;
 	var $log_text;
 
-  public function parser ($log_text)
+  public function parse_text ($log_text)
   {
     // build the initial startup data
     $this->construct_globals ();
 		$this->log_text = $log_text;
     $exercise = '';
-		$position = 0; // a pointer for when exercise was done
+		$position = -1; // a pointer for when exercise was done
     $this->log_data = array('comment' => '', 'exercises' => array()); // the output array
     // convert log_text to array
     $log_lines = explode("\n", $this->log_text);
@@ -206,13 +206,13 @@ class parser
 				}
 				$last_values = $output_data[$i];
 			}
-			// re add the comment to the end 
-			$output_data[$multiline_max]['C'] = $comment;
+			// re add the comment to the end
+			$output_data[$multiline_max]['C'] = (isset($comment)) ? $comment : '';
 		}
 
     return $output_data;
   }
-	
+
 	public function store_log_data ($log_date, $user_weight)
 	{
 		global $db, $user, $log;
@@ -306,7 +306,7 @@ class parser
 			$exercise_id = $log->get_exercise_id ($user->user_id, $exercise);
 			$prs = $log->get_prs ($user->user_id, $log_date, $exercise);
 			$max_estimate_rm = 0;
-			for ($j = 0, $count_j = count($item['data']); $j < $count_i; $j++)
+			for ($j = 0, $count_j = count($item['data']); $j < $count_j; $j++)
 			{
 				$set = $item['data'][$j];
 				$is_bw = false;
@@ -318,19 +318,20 @@ class parser
 						$is_bw = true;
 						$set['W'][0] = substr($set['W'][0], 2);
 					}
-					$set['W'] = correct_units_for_database ($set['W'], 'W');
+					$set['W'] = $this->correct_units_for_database ($set['W'], 'W');
 					$is_time = false;
 					$set['T'] = 0;
 				}
 				elseif (isset($set['T']))
 				{
 					$set['T'][0] = str_replace(' ', '', $set['T'][0]);
-					$set['T'] = correct_units_for_database ($set['T'], 'T');
+					$set['T'] = $this->correct_units_for_database ($set['T'], 'T');
 					$is_time = true;
 					$set['W'] = 0;
 				}
 				$set['R'] = (isset($set['R'])) ? $set['R'] : 1;
 				$set['S'] = (isset($set['S'])) ? $set['S'] : 1;
+				$set['C'] = (isset($set['C'])) ? $set['C'] : '';
 				$absolute_weight = ($is_bw == false) ? $set['W'] : ($set['W'] + $user_weight);
 				$total_volume += ($absolute_weight * $set['R'] * $set['S']);
 				$total_reps += ($set['R'] * $set['S']);
@@ -355,8 +356,8 @@ class parser
 					$max_estimate_rm = $estimate_rm;
 				}
 				// insert into log_items
-				$query = "INSERT INTO log_items (logitem_date, log_id, user_id, exercise_id, logitem_weight, logitem_abs_weight, logitem_time, logitem_reps, logitem_sets, logitem_rpes, logitem_comment, logitem_1rm, is_pr, is_bw, is_time, logitem_order)
-							VALUES (:logitem_date, :log_id, :user_id, :exercise_id, :logitem_weight, :logitem_abs_weight, :logitem_time, :logitem_reps, :logitem_sets, :logitem_rpes, :logitem_comment, :logitem_rm, :is_pr, :is_bw, :is_time, :logitem_order)";
+				$query = "INSERT INTO log_items (logitem_date, log_id, user_id, exercise_id, logitem_weight, logitem_abs_weight, logitem_time, logitem_reps, logitem_sets, logitem_rpes, logitem_comment, logitem_1rm, is_pr, is_bw, is_time, logitem_order, logex_order)
+							VALUES (:logitem_date, :log_id, :user_id, :exercise_id, :logitem_weight, :logitem_abs_weight, :logitem_time, :logitem_reps, :logitem_sets, :logitem_rpes, :logitem_comment, :logitem_rm, :is_pr, :is_bw, :is_time, :logitem_order, :logex_order)";
 				$params = array(
 					array(':logitem_date', $log_date, 'str'),
 					array(':log_id', $log_id, 'int'),
@@ -367,12 +368,13 @@ class parser
 					array(':logitem_time', $set['T'], 'int'),
 					array(':logitem_reps', $set['R'], 'int'),
 					array(':logitem_sets', $set['S'], 'int'),
-					array(':logitem_comment', $set['line'], 'str'),
+					array(':logitem_comment', $set['C'], 'str'),
 					array(':logitem_rm', $estimate_rm, 'float'),
 					array(':is_pr', (($is_pr == false) ? 0 : 1), 'int'),
 					array(':is_bw', (($is_bw == false) ? 0 : 1), 'int'),
 					array(':is_time', (($is_time == false) ? 0 : 1), 'int'),
 					array(':logitem_order', $j, 'int'),
+          array(':logex_order', $i, 'int'),
 				);
 				if (!isset($set['P']) || $set['P'] == NULL)
 					$params[] = array(':logitem_rpes', NULL, 'int');
@@ -401,9 +403,10 @@ class parser
 		//return your new records :)
 		return $new_prs;
 	}
-	
+
 	private function correct_units_for_database ($input, $type)
 	{
+    global $user;
 		// TODO: find a cleaner way to do this if possible
 		if ($type == 'T')
 		{
@@ -443,7 +446,7 @@ class parser
 			}
 		}
 	}
-	
+
 	private function replace_video_urls($comment)
 	{
 		return preg_replace(
@@ -454,7 +457,7 @@ class parser
 		//$width = '640';
 		//$height = '385';
 	}
-	
+
 	private function update_user_weights($user_id, $log_date, $user_weight)
 	{
 		global $db;
@@ -478,10 +481,10 @@ class parser
 		);
 		$db->query($query, $params);
 	}
-	
+
 	private function update_prs($user_id, $log_date, $exercise_id, $set_weight, $set_reps)
 	{
-		global $db;
+		global $db, $log;
 
 		// dont log reps over 10
 		if ($set_reps > 10 || $set_reps < 1)
@@ -496,7 +499,7 @@ class parser
 			array(':pr_date', $log_date, 'str'),
 			array(':pr_weight', $set_weight, 'float'),
 			array(':pr_reps', $set_reps, 'int'),
-			array(':pr_rm', $this->generate_rm($set_weight, $set_reps), 'float'),
+			array(':pr_rm', $log->generate_rm($set_weight, $set_reps), 'float'),
 		);
 		$db->query($query, $params);
 
@@ -547,7 +550,7 @@ class parser
 				array(':pr_date', $log_date, 'str'),
 				array(':pr_weight', $row['logitem_abs_weight'], 'float'),
 				array(':pr_reps', $set_reps, 'int'),
-				array(':pr_rm', $this->generate_rm($row['logitem_abs_weight'], $set_reps), 'float'),
+				array(':pr_rm', $log->generate_rm($row['logitem_abs_weight'], $set_reps), 'float'),
 			);
 			$db->query($query, $params);
 		}
@@ -735,7 +738,7 @@ class parser
       }
     }
   }
-	
+
 	private function clean_units($block, $block_type)
 	{
 		// clean units
@@ -753,7 +756,7 @@ class parser
 		}
 		return $block;
 	}
-	
+
 	private function strposa($haystack, $needle, $offset=0)
 	{
     if(!is_array($needle)) $needle = array($needle);

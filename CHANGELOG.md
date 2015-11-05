@@ -9,7 +9,8 @@
 
 #### Bug Fixes
 
-* Fixed bugs with BW exercises,  PRs and volume
+* Fixed bugs with BW exercises relating to PRs, volume and exercise history
+* Fixed a bug where if you have the same exercise within the log the reps x sets for both will be shown together
 
 <a name"125"></a>
 ### 125 (2015-10-15)

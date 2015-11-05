@@ -7,9 +7,9 @@ class log
 		$query = "SELECT i.*, ex.exercise_name, lx.logex_volume, lx.logex_reps, lx.logex_sets, lx.logex_comment, lx.logex_order
 				FROM log_items As i
 				LEFT JOIN exercises ex ON (ex.exercise_id = i.exercise_id)
-				LEFT JOIN log_exercises As lx ON (lx.exercise_id = ex.exercise_id AND lx.log_id = i.log_id)
+				LEFT JOIN log_exercises As lx ON (lx.exercise_id = ex.exercise_id AND lx.log_id = i.log_id AND i.logex_order = lx.logex_order)
 				WHERE i.logitem_date = :log_date AND i.user_id = :user_id
-				ORDER BY logex_order ASC, logitem_order ASC";
+				ORDER BY lx.logex_order ASC, logitem_order ASC";
 		$params = array(
 			array(':log_date', $date, 'str'),
 			array(':user_id', $user_id, 'int')
@@ -20,6 +20,7 @@ class log
 		// setup vars
 		$data = array();
 		$logex_number = '';
+		$logitem_order = ''; // to avoid multiple items
 		$exercisepointer = 0;
 		for ($i = 0, $count = count($log_data); $i < $count; $i++)
 		{
@@ -37,23 +38,27 @@ class log
 					'sets' => array(),
 				);
 			}
-			$weight = correct_weight($item['logitem_weight'], 'kg', $user->user_data['user_unit']);
-			// include your failed reps in the total volume
-			if ($user->user_data['user_volumeincfails'] == 1 && $item['logitem_reps'] == 0)
+			if ($logitem_order != $item['logitem_order'])
 			{
-				// we are assuming the failed rep now counts as 1 as you still attempted it
-				$data[$exercisepointer]['total_volume'] += $weight * $item['logitem_sets'];
+				$logitem_order = $item['logitem_order'];
+				$weight = correct_weight($item['logitem_weight'], 'kg', $user->user_data['user_unit']);
+				// include your failed reps in the total volume
+				if ($user->user_data['user_volumeincfails'] == 1 && $item['logitem_reps'] == 0)
+				{
+					// we are assuming the failed rep now counts as 1 as you still attempted it
+					$data[$exercisepointer]['total_volume'] += $weight * $item['logitem_sets'];
+				}
+				$data[$exercisepointer]['sets'][] = array(
+					'logitem_weight' => $weight,
+					'logitem_reps' => $item['logitem_reps'],
+					'logitem_sets' => $item['logitem_sets'],
+					'logitem_rpes' => $item['logitem_rpes'],
+					'logitem_comment' => $item['logitem_comment'],
+					'est1rm' => correct_weight($item['logitem_1rm'], 'kg', $user->user_data['user_unit']),
+					'is_pr' => $item['is_pr'],
+					'is_bw' => $item['is_bw'],
+				);
 			}
-			$data[$exercisepointer]['sets'][] = array(
-				'logitem_weight' => $weight,
-				'logitem_reps' => $item['logitem_reps'],
-				'logitem_sets' => $item['logitem_sets'],
-				'logitem_rpes' => $item['logitem_rpes'],
-				'logitem_comment' => $item['logitem_comment'],
-				'est1rm' => correct_weight($item['logitem_1rm'], 'kg', $user->user_data['user_unit']),
-				'is_pr' => $item['is_pr'],
-				'is_bw' => $item['is_bw'],
-			);
 		}
 
 		return $data;
@@ -516,8 +521,8 @@ class log
 								$max_estimate_rm = $estimate_rm;
 							}
 							// insert into log_items
-							$query = "INSERT INTO log_items (logitem_date, log_id, user_id, exercise_id, logitem_weight, logitem_abs_weight, logitem_reps, logitem_sets, logitem_rpes, logitem_comment, logitem_1rm, is_pr, is_bw, logitem_order)
-										VALUES (:logitem_date, :log_id, :user_id, :exercise_id, :logitem_weight, :logitem_abs_weight, :logitem_reps, :logitem_sets, :logitem_rpes, :logitem_comment, :logitem_rm, :is_pr, :is_bw, :logitem_order)";
+							$query = "INSERT INTO log_items (logitem_date, log_id, user_id, exercise_id, logitem_weight, logitem_abs_weight, logitem_reps, logitem_sets, logitem_rpes, logitem_comment, logitem_1rm, is_pr, is_bw, logitem_order, logex_order)
+										VALUES (:logitem_date, :log_id, :user_id, :exercise_id, :logitem_weight, :logitem_abs_weight, :logitem_reps, :logitem_sets, :logitem_rpes, :logitem_comment, :logitem_rm, :is_pr, :is_bw, :logitem_order, :logex_order)";
 							$params = array(
 								array(':logitem_date', $log_date, 'str'),
 								array(':log_id', $log_id, 'int'),
@@ -532,6 +537,7 @@ class log
 								array(':is_pr', (($is_pr == false) ? 0 : 1), 'int'),
 								array(':is_bw', (($set['is_bw'] == false) ? 0 : 1), 'int'),
 								array(':logitem_order', $set['position'], 'int'),
+								array(':logex_order', $item['position'], 'int'),
 							);
 							if (!isset($rpe_arr[$i]) || $rpe_arr[$i] == NULL)
 								$params[] = array(':logitem_rpes', NULL, 'int');
@@ -1216,18 +1222,21 @@ class log
 				if ($max_rm < $row['logex_1rm'])
 					$max_rm = $row['logex_1rm'];
 			}
+			// correct the weight units
 			$weight = correct_weight($row['logitem_weight'], 'kg', $user->user_data['user_unit']);
+			$row['logitem_abs_weight'] = correct_weight($row['logitem_abs_weight'], 'kg', $user->user_data['user_unit']);
 			// include your failed reps in the total volume
 			if ($user->user_data['user_volumeincfails'] == 1 && $row['logitem_reps'] == 0)
 			{
 				// we are assuming the failed rep now counts as 1 as you still attempted it
-				$data[$row['log_id']]['logex_volume'] += $weight * $row['logitem_sets'];
+				$data[$row['log_id']]['logex_volume'] += $row['logitem_abs_weight'] * $row['logitem_sets'];
 			}
 			// check the vol again + new set max
 			if ($max_vol < $data[$row['log_id']]['logex_volume'])
 				$max_vol = $data[$row['log_id']]['logex_volume'];
 			$data[$row['log_id']]['sets'][] = array(
 				'logitem_weight' => $weight,
+				'logitem_abs_weight' => $row['logitem_abs_weight'],
 				'is_bw' => $row['is_bw'],
 				'logitem_reps' => $row['logitem_reps'],
 				'logitem_sets' => $row['logitem_sets'],
