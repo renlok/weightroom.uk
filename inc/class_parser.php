@@ -170,18 +170,29 @@ class parser
       }
     }
 		// add the last chunk to the data array
-		if ($this->current_blocks[0] != 'C')
-		{
-			$this->chunk_dump = $this->clean_units($this->chunk_dump, $this->current_blocks[0]);
-		}
-		if (isset($output_data[$multiline][$this->current_blocks[0]]))
-		{
-			$output_data[$multiline][$this->current_blocks[0]] .= $this->chunk_dump;
-		}
-		else
-		{
-			$output_data[$multiline][$this->current_blocks[0]] = $this->chunk_dump;
-		}
+    if (!empty($this->chunk_dump))
+    {
+  		if ($this->current_blocks[0] != 'C')
+  		{
+  			$this->chunk_dump = $this->clean_units($this->chunk_dump, $this->current_blocks[0]);
+  		}
+  		if (isset($output_data[$multiline][$this->current_blocks[0]]))
+  		{
+        if (is_array($this->chunk_dump))
+        {
+  			  $output_data[$multiline][$this->current_blocks[0]][0] .= $this->chunk_dump[0];
+          $output_data[$multiline][$this->current_blocks[0]][1] .= $this->chunk_dump[1];
+        }
+        else
+        {
+  			  $output_data[$multiline][$this->current_blocks[0]] .= $this->chunk_dump;
+        }
+  		}
+  		else
+  		{
+  			$output_data[$multiline][$this->current_blocks[0]] = $this->chunk_dump;
+  		}
+    }
 		// do something with $multiline_max
 		if ($multiline_max > 0)
 		{
@@ -313,7 +324,7 @@ class parser
 				if (isset($set['W']))
 				{
 					$set['W'][0] = str_replace(' ', '', $set['W'][0]);
-					if (substr($set['W'][0], 0, 2) == 'BW')
+					if (strtoupper(substr($set['W'][0], 0, 2)) == 'BW')
 					{
 						$is_bw = true;
 						$set['W'][0] = substr($set['W'][0], 2);
@@ -334,6 +345,8 @@ class parser
 				$set['C'] = (isset($set['C'])) ? $set['C'] : '';
 				$absolute_weight = ($is_bw == false) ? $set['W'] : ($set['W'] + $user_weight);
 				$total_volume += ($absolute_weight * $set['R'] * $set['S']);
+        // deal the time PRs
+				$absolute_weight = ($is_time == true) ? $set['T'] : $absolute_weight;
 				$total_reps += ($set['R'] * $set['S']);
 				$total_sets += $set['S'];
 				$is_pr = false;
@@ -341,11 +354,12 @@ class parser
 				if ((!isset($prs[$set['R']]) || floatval($prs[$set['R']]) < floatval($absolute_weight)) && $set['R'] != 0)
 				{
 					$is_pr = true;
+          $pr_type = ($is_time == true) ? 'T' : 'W';
 					// the user has set a pr we need to add/update it in the database
 					$this->update_prs ($user->user_id, $log_date, $exercise_id, $absolute_weight, $set['R']);
 					if (!isset($new_prs[$exercise]))
-						$new_prs[$exercise] = array();
-					$new_prs[$exercise][$set['R']][] = $absolute_weight;
+						$new_prs[$exercise] = array('W' => array(), 'T' => array());
+					$new_prs[$exercise][$pr_type][$set['R']][] = $absolute_weight;
 					// update pr array
 					$prs[$set['R']] = $absolute_weight;
 				}
@@ -379,7 +393,7 @@ class parser
 				if (!isset($set['P']) || $set['P'] == NULL)
 					$params[] = array(':logitem_rpes', NULL, 'int');
 				else
-					$params[] = array(':logitem_rpes', $rpe_arr[$i], 'float');
+					$params[] = array(':logitem_rpes', $set['P'], 'float');
 				$db->query($query, $params);
 			}
 			// insert into log_exercises
@@ -561,7 +575,6 @@ class parser
     // pre-defined data
     $this->units = array(
       'T' => array(
-              's' => 's',
               'secs' => 's',
               'sec' => 's',
               'seconds' => 's',
@@ -576,6 +589,7 @@ class parser
               'hr' => 'h',
               'hours' => 'h',
               'hour' => 'h',
+              's' => 's', // needs to be at the end or it ruins the party
             ),
       'W' => array(
               'kg' => 'kg',

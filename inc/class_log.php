@@ -50,6 +50,7 @@ class log
 				}
 				$data[$exercisepointer]['sets'][] = array(
 					'logitem_weight' => $weight,
+					'logitem_time' => $item['logitem_time'],
 					'logitem_reps' => $item['logitem_reps'],
 					'logitem_sets' => $item['logitem_sets'],
 					'logitem_rpes' => $item['logitem_rpes'],
@@ -57,6 +58,7 @@ class log
 					'est1rm' => correct_weight($item['logitem_1rm'], 'kg', $user->user_data['user_unit']),
 					'is_pr' => $item['is_pr'],
 					'is_bw' => $item['is_bw'],
+					'is_time' => $item['is_time']
 				);
 			}
 		}

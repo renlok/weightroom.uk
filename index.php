@@ -79,6 +79,9 @@ switch ($page)
 	case 'register':
 		include PAGEDIR . 'register.php';
 		break;
+	case 'log_beta':
+		include PAGEDIR . 'log_beta.php';
+		break;
 	case 'log':
 		include PAGEDIR . 'log.php';
 		break;

@@ -57,6 +57,38 @@ function correct_weight($weight, $unit_used, $unit_want) // $unit_used = kg/lb $
 	}
 }
 
+function format_time($time)
+{
+	if ($time <= 60)
+	{
+		return $time . ' secs';
+	}
+	elseif ($time % 3600 == 0)
+	{
+		return ($time / 3600) . ' hours';
+	}
+	elseif ($time % 60 == 0)
+	{
+		return ($time / 60) . ' mins';
+	}
+	else
+	{
+		$output = '';
+		$hours = floor($time / 3600);
+		$time = $time % 3600;
+		$mins = floor($time / 60);
+		$secs = $time % 60;
+		if ($hours > 0)
+		{
+			return $hours . ':' . sprintf("%02d", $mins) . ':' . sprintf("%02d", $secs);
+		}
+		else
+		{
+			return $mins . ':' . sprintf("%02d", $secs);
+		}
+	}
+}
+
 function correct_time($time, $unit_used, $unit_want) // $unit_used = s/m/h $unit_want = s/m/h
 {
 	$unit_used = ($unit_used == 's') ? 1 : (($unit_used == 'm') ? 2 : 3);
