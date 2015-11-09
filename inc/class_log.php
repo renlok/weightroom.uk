@@ -83,7 +83,7 @@ class log
 		return true;
 	}
 
-	public function load_log($user_id, $log_date, $results = '*')
+	public function load_log ($user_id, $log_date, $results = '*')
 	{
 		global $db;
 
@@ -629,7 +629,7 @@ class log
 	}
 
 	// TODO: remove as part of old parser
-	private function replace_video_urls($comment)
+	private function replace_video_urls ($comment)
 	{
 		return preg_replace(
 			"/\s*[a-zA-Z\/\/:\.]*youtu(be.com\/watch\?v=|.be\/)([a-zA-Z0-9\-_]+)([a-zA-Z0-9\/\*\-\_\?\&\;\%\=\.]*)/im",
@@ -641,7 +641,7 @@ class log
 	}
 
 	// TODO: remove as part of old parser
-	private function update_user_weights($user_id, $log_date, $user_weight)
+	private function update_user_weights ($user_id, $log_date, $user_weight)
 	{
 		global $db;
 
@@ -665,7 +665,7 @@ class log
 		$db->query($query, $params);
 	}
 
-	public function get_user_weight($user_id, $log_date)
+	public function get_user_weight ($user_id, $log_date)
 	{
 		global $db;
 
@@ -680,7 +680,7 @@ class log
 		return $old_weight;
 	}
 
-	public function get_exercise_id($user_id, $exercise_name)
+	public function get_exercise_id ($user_id, $exercise_name)
 	{
 		global $db;
 
@@ -709,7 +709,20 @@ class log
 		}
 	}
 
-	public function is_valid_exercise($user_id, $exercise_name)
+	public function get_exercise_data ($user_id, $exercise_name, $return_data = '*')
+	{
+		global $db;
+
+		$query = "SELECT $return_data FROM exercises WHERE user_id = :user_id AND exercise_name = :exercise_name LIMIT 1";
+		$params = array(
+			array(':exercise_name', $exercise_name, 'int'),
+			array(':user_id', $user_id, 'int')
+		);
+		$db->query($query, $params);
+		return $db->result();
+	}
+
+	public function is_valid_exercise ($user_id, $exercise_name)
 	{
 		global $db;
 
@@ -729,7 +742,7 @@ class log
 		}
 	}
 
-	public function generate_rm($weight, $reps, $rm = 1)
+	public function generate_rm ($weight, $reps, $rm = 1)
 	{
 		if ($reps == $rm)
 		{
@@ -764,7 +777,7 @@ class log
 	}
 
 	// load the pr of the given exercise on a given day for each rep range
-	public function get_prs($user_id, $log_date, $exercise_name, $return_date = false)
+	public function get_prs ($user_id, $log_date, $exercise_name, $return_date = false)
 	{
 		global $db;
 		// load all preceeding prs
@@ -801,7 +814,7 @@ class log
 	}
 
 	// TODO: remove as part of old parser
-	private function update_prs($user_id, $log_date, $exercise_id, $set_weight, $set_reps)
+	private function update_prs ($user_id, $log_date, $exercise_id, $set_weight, $set_reps)
 	{
 		global $db;
 
@@ -875,7 +888,7 @@ class log
 		}
 	}
 
-	public function get_prs_data($user_id, $exercise_name, $range = 0)
+	public function get_prs_data ($user_id, $exercise_name, $range = 0)
 	{
 		global $db;
 		if ($range > 0)
@@ -1132,7 +1145,7 @@ class log
 		return $graph_data;
 	}
 
-	public function list_exercises($user_id, $count = true)
+	public function list_exercises ($user_id, $count = true)
 	{
 		global $db;
 		// load all exercises

@@ -314,7 +314,9 @@ class parser
 			$exercise = $item['name'];
 			// reset totals
 			$total_volume = $total_reps = $total_sets = 0;
-			$exercise_id = $log->get_exercise_id ($user->user_id, $exercise);
+      $exercise_is_new = !$log->is_valid_exercise ($user->user_id, $exercise);
+      $exercise_id = $log->get_exercise_id ($user->user_id, $exercise);
+      $exercise_is_time = $log->get_exercise_data ($user->user_id, $exercise, 'is_time');
 			$prs = $log->get_prs ($user->user_id, $log_date, $exercise);
 			$max_estimate_rm = 0;
 			for ($j = 0, $count_j = count($item['data']); $j < $count_j; $j++)
@@ -355,14 +357,22 @@ class parser
 				{
 					$is_pr = true;
           $pr_type = ($is_time == true) ? 'T' : 'W';
-					// the user has set a pr we need to add/update it in the database
-					$this->update_prs ($user->user_id, $log_date, $exercise_id, $absolute_weight, $set['R']);
-					if (!isset($new_prs[$exercise]))
-						$new_prs[$exercise] = array('W' => array(), 'T' => array());
-					$new_prs[$exercise][$pr_type][$set['R']][] = $absolute_weight;
-					// update pr array
-					$prs[$set['R']] = $absolute_weight;
+          // TODO fix this
+          if ($exercise_is_new == true || ($exercise_is_time == 1 && $is_time == true) || ($exercise_is_time == 0 && $is_time == false))
+          {
+  					// the user has set a pr we need to add/update it in the database
+  					$this->update_prs ($user->user_id, $log_date, $exercise_id, $absolute_weight, $set['R']);
+  					if (!isset($new_prs[$exercise]))
+  						$new_prs[$exercise] = array('W' => array(), 'T' => array());
+  					$new_prs[$exercise][$pr_type][$set['R']][] = $absolute_weight;
+  					// update pr array
+  					$prs[$set['R']] = $absolute_weight;
+          }
 				}
+        if ($exercise_is_new)
+        {
+          $exercise_is_time = ($is_time == true) ? 1 : 0;
+        }
 				$estimate_rm = $log->generate_rm ($absolute_weight, $set['R']);
 				// get estimate 1rm
 				if ($max_estimate_rm < $estimate_rm)
@@ -396,6 +406,15 @@ class parser
 					$params[] = array(':logitem_rpes', $set['P'], 'float');
 				$db->query($query, $params);
 			}
+      // if new exercise set if it a time based exercise
+      if ($exercise_is_new && $exercise_is_time == 1)
+      {
+        $query = "UPDATE exercises SET is_time = 1 WHERE exercise_id = :exercise_id";
+  			$params = array(
+  				array(':exercise_id', $exercise_id, 'int'),
+  			);
+  			$db->query($query, $params);
+      }
 			// insert into log_exercises
 			$query = "INSERT INTO log_exercises (logex_date, log_id, user_id, exercise_id, logex_volume, logex_reps, logex_sets, logex_1rm, logex_comment, logex_order)
 					VALUES (:logex_date, :log_id, :user_id, :exercise_id, :logex_volume, :logex_reps, :logex_sets, :logex_rm, :logex_comment, :logex_order)";
