@@ -56,7 +56,7 @@ if (isset($_POST['exercisenew']) && isset($_GET['exercise_name']))
 		// just rename it
 		$query = "UPDATE exercises SET exercise_name = :exercise_name_new WHERE exercise_id = :exercise_id";
 		$params = array(
-			array(':exercise_name_new', strtolower($_POST['exercisenew']), 'int'),
+			array(':exercise_name_new', clean_string(strtolower(trim($_POST['exercisenew']))), 'int'),
 			array(':exercise_id', $exercise_id_old, 'int')
 		);
 		$db->query($query, $params);

@@ -42,13 +42,13 @@ if ($exercise_name != '' && $log->is_valid_exercise($user->user_id, $exercise_na
 	// get results subquery limits dont work :(
 	$query = "SELECT i.*, lx.logex_volume, lx.logex_reps, lx.logex_sets, lx.logex_comment, lx.logex_1rm, e.exercise_name
 			FROM log_items AS i
-			LEFT JOIN exercises e ON ( e.exercise_id = i.exercise_id ) 
+			LEFT JOIN exercises e ON ( e.exercise_id = i.exercise_id )
 			LEFT JOIN log_exercises As lx ON (lx.log_id = i.log_id AND e.exercise_id = lx.exercise_id)
 			WHERE i.log_id
 			IN (
 				SELECT i2.log_id
 				FROM log_items i2
-				LEFT JOIN exercises ex ON ( ex.exercise_id = i2.exercise_id ) 
+				LEFT JOIN exercises ex ON ( ex.exercise_id = i2.exercise_id )
 				WHERE i2.user_id = :user_id
 				AND i2.logitem_weight = :weight
 				$rep_sql
@@ -78,7 +78,7 @@ if ($exercise_name != '' && $log->is_valid_exercise($user->user_id, $exercise_na
 					'VOLUME' => correct_weight($log_items['logex_volume'], 'kg', $user->user_data['user_unit']),
 					'REPS' => $log_items['logex_reps'],
 					'SETS' => $log_items['logex_sets'],
-					'COMMENT' => $log_items['logex_comment'],
+					'COMMENT' => clean_output($log_items['logex_comment']),
 					));
 		}
 		$showunit = true;
@@ -111,7 +111,7 @@ if ($exercise_name != '' && $log->is_valid_exercise($user->user_id, $exercise_na
 				'REPS' => $log_items['logitem_reps'],
 				'SETS' => $log_items['logitem_sets'],
 				'RPES' => $log_items['logitem_rpes'],
-				'COMMENT' => $log_items['logitem_comment'],
+				'COMMENT' => clean_output($log_items['logitem_comment']),
 				'IS_PR' => $log_items['is_pr'],
 				'SHOW_UNIT' => $showunit,
 				'EST1RM' => correct_weight($log_items['logitem_1rm'], 'kg', $user->user_data['user_unit']),

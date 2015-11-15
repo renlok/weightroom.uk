@@ -148,7 +148,7 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 
 		'AVG_INTENSITY_TYPE' => $user->user_data['user_viewintensityabs'],
 		'B_LOG' => (!(empty($log_data) && empty($log_ic['log_comment']))),
-		'COMMENT' => $log_ic['log_comment'],
+		'COMMENT' => clean_output($log_ic['log_comment']),
 		'DATE' => $log_date,
 		'TOMORROW' => date("Y-m-d", $timestamp + 86400),
 		'YESTERDAY' => date("Y-m-d", $timestamp - 86400),
@@ -223,7 +223,7 @@ elseif ($_GET['do'] == 'edit')
 	{
 		// load log data
 		$log_data = $log->load_log($user->user_id, $log_date);
-		$log_text = $log_data['log_text'];
+		$log_text = clean_output($log_data['log_text']);
 		$weight = $log_data['log_weight'];
 		// check if log_text needs to be rewitten
 		if ($log_data['log_update_text'] == 1)

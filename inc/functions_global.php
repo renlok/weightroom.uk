@@ -107,6 +107,17 @@ function correct_time($time, $unit_used, $unit_want) // $unit_used = s/m/h $unit
 	}
 }
 
+function clean_string($string)
+{
+	return preg_replace('/[^a-zA-Z0-9\s\.@]/', '', $string);
+}
+
+function clean_output($string)
+{
+	global $charset;
+	return htmlentities($string, ENT_QUOTES | ENT_HTML5, $charset);
+}
+
 function in_tools($page, $do)
 {
 	if ($page == 'volume')

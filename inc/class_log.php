@@ -34,7 +34,7 @@ class log
 					'total_volume' => correct_weight($item['logex_volume'], 'kg', $user->user_data['user_unit']),
 					'total_reps' => $item['logex_reps'],
 					'total_sets' => $item['logex_sets'],
-					'comment' => $item['logex_comment'],
+					'comment' => clean_output($item['logex_comment']),
 					'sets' => array(),
 				);
 			}
@@ -54,7 +54,7 @@ class log
 					'logitem_reps' => $item['logitem_reps'],
 					'logitem_sets' => $item['logitem_sets'],
 					'logitem_rpes' => $item['logitem_rpes'],
-					'logitem_comment' => $item['logitem_comment'],
+					'logitem_comment' => clean_output($item['logitem_comment']),
 					'est1rm' => correct_weight($item['logitem_1rm'], 'kg', $user->user_data['user_unit']),
 					'is_pr' => $item['is_pr'],
 					'is_bw' => $item['is_bw'],
@@ -700,7 +700,7 @@ class log
 			// insert the exercise
 			$query = "INSERT INTO exercises (user_id, exercise_name) VALUES (:user_id, :exercise_name)";
 			$params = array(
-				array(':exercise_name', strtolower(trim($exercise_name)), 'str'),
+				array(':exercise_name', clean_string(strtolower(trim($exercise_name))), 'str'),
 				array(':user_id', $user_id, 'int')
 			);
 			$db->query($query, $params);
@@ -1213,7 +1213,7 @@ class log
 					'logex_1rm' => $row['logex_1rm'],
 					'logex_reps' => $row['logex_reps'],
 					'logex_sets' => $row['logex_sets'],
-					'logex_comment' => $row['logex_comment'],
+					'logex_comment' => clean_output($row['logex_comment']),
 					'sets' => array() // ready for the rest of the data
 					);
 				// set max values
@@ -1243,7 +1243,7 @@ class log
 				'logitem_reps' => $row['logitem_reps'],
 				'logitem_sets' => $row['logitem_sets'],
 				'logitem_rpes' => $row['logitem_rpes'],
-				'logitem_comment' => $row['logitem_comment'],
+				'logitem_comment' => clean_output($row['logitem_comment']),
 				'is_pr' => $row['is_pr'],
 				'est1rm' => correct_weight($row['logitem_1rm'], 'kg', $user->user_data['user_unit']),
 				);

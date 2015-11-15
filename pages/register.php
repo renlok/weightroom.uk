@@ -61,9 +61,9 @@ if (isset($_POST['action']) && isset($_POST['username']) && isset($_POST['passwo
 				// register that bitch!
 				$query = "INSERT INTO users (user_name, user_pass, user_email, user_hash, user_joined) VALUES (:user_name, :user_pass, :user_email, :user_hash, :user_joined)";
 				$params = array(
-					array(':user_name', $_POST['username'], 'str'),
+					array(':user_name', clean_string($_POST['username']), 'str'),
 					array(':user_pass', $hash, 'str'),
-					array(':user_email', $_POST['email'], 'str'),
+					array(':user_email', clean_string($_POST['email']), 'str'),
 					array(':user_hash', get_hash(), 'str'),
 					array(':user_joined', date("Y-m-d"), 'str'),
 				);
