@@ -1,3 +1,18 @@
+<a name"146"></a>
+### 146 (2015-11-16)
+
+
+#### Features
+
+* Improved moblie view
+
+<a name"145"></a>
+### 145 (2015-11-15)
+
+#### Security
+
+* Fixed some XSS vunerabilities
+
 <a name"142"></a>
 ### 142 (2015-11-04)
 

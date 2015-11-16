@@ -115,7 +115,8 @@ function clean_string($string)
 function clean_output($string)
 {
 	global $charset;
-	return htmlentities($string, ENT_QUOTES | ENT_HTML5, $charset);
+	// TODO: replace ENT_QUOTES for ENT_QUOTES | ENT_HTML5 when I upgrade to PHP 5.4
+	return htmlentities($string, ENT_QUOTES, $charset);
 }
 
 function in_tools($page, $do)
