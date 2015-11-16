@@ -94,7 +94,8 @@ if (isset($_POST['exercisenew']) && isset($_GET['exercise_name']))
 $template->assign_vars(array(
 	'EXERCISEOLD' => $_REQUEST['exercise_name'],
 	'EXERCISENEW' => (isset($_POST['exercisenew'])) ? $_POST['exercisenew'] : '',
-	'B_ERROR' => $error
+	'B_ERROR' => $error != '',
+	'ERROR' => $error
 	));
 $template->set_filenames(array(
 		'body' => 'edit_exercise.tpl'

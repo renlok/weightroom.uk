@@ -1,4 +1,10 @@
-<a href="?page=dash">Main</a> | <a href="?page=dash&amp;do=logs_only">Logs only</a> | <a href="?page=dash&amp;do=all_logs">View all</a>
+<div class="padding-sb">
+<div class="btn-group btn-group-sm" role="group" aria-label="type">
+  <a href="?page=dash" class="btn btn-default">Main</a>
+  <a href="?page=dash&amp;do=logs_only" class="btn btn-default">Logs only</a>
+  <a href="?page=dash&amp;do=all_logs" class="btn btn-default">View all</a>
+</div>
+</div>
 <table class="table">
 <tbody>
 <!-- BEGIN logs -->

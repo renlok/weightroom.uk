@@ -38,7 +38,7 @@
 </style>
 
 <!-- IF ERROR ne '' -->
-<div class="bg-danger padding">{ERROR}</div>
+<div class="alert bg-danger" role="alert">{ERROR}</div>
 <!-- ENDIF -->
 <h2>Log workout for {DATE} <button class="btn btn-default glyphicon glyphicon-calendar" aria-hidden="true" id="track_date"></button></h2>
 <small><a href="?do=view&page=log_beta&date={DATE}">&larr; Back to log</a></small>

@@ -2,7 +2,7 @@
 <h2>Edit user settings</h2>
 <form class="form-horizontal" action="?page=settings" method="post">
 <!-- IF ERROR ne '' -->
-  <div class="form-group bg-danger padding">
+  <div class="form-group alert bg-danger" role="alert">
 	{ERROR}
   </div>
 <!-- ENDIF -->

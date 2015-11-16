@@ -1,5 +1,5 @@
 <!-- IF B_ERROR -->
-<p class="bg-danger header">...</p>
+<p class="alert bg-danger" role="alert">{ERROR}</p>
 <!-- ENDIF -->
 <h2>Rename: {EXERCISEOLD}</h2>
 <form class="form-horizontal" action="?page=edit_exercise&exercise_name={EXERCISEOLD}" method="post">
