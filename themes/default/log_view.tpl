@@ -51,7 +51,7 @@
 		</div>
 		</div>
 		<div class="col-md-9 col-md-pull-3">
-		<div class="calender-cont" style="width: 640px;">
+		<div class="calender-cont" style="max-width: 640px;">
 			<p class="hidden-xs"><- <a href="?do=view&page=log&date={YESTERDAY}<!-- IF B_NOSELF -->&user_id={USER_ID}<!-- ENDIF -->">{YESTERDAY}</a> | <strong>{DATE}</strong> | <a href="?do=view&page=log&date={TOMORROW}<!-- IF B_NOSELF -->&user_id={USER_ID}<!-- ENDIF -->">{TOMORROW}</a> -></p>
 			<div class="date"></div>
 		</div>
@@ -122,7 +122,7 @@
 
 
 <link href="http://weightroom.uk/css/pickmeup.css" rel="stylesheet">
-<script src="http://nazar-pc.github.io/PickMeUp/js/jquery.pickmeup.js"></script>
+<script src="js/jquery.pickmeup.js"></script>
 <script src="http://momentjs.com/downloads/moment.js"></script>
 <script src="js/jCollapsible.js"></script>
 

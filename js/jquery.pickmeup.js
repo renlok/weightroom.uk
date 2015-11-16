@@ -5,6 +5,7 @@
  * @copyright	Copyright (c) 2013-2015, Nazar Mokrynskyi
  * @copyright	Copyright (c) 2008-2009, Stefan Petre
  * @license		MIT License, see license.txt
+ * @version		2.8.0 - 16/11/2015 (Modded)
  */
 
 (function (d) {
@@ -101,7 +102,10 @@
 				for (var i = 0; i < 7; ++i) {
 					result	+= '<div>' + d.day[i] + '</div>'
 				}
-				return '<div class="pmu-instance">' +
+				var bootstrap_hide = ' hidden-xs';
+				if (d.is_current)
+					bootstrap_hide = '';
+				return '<div class="pmu-instance' + bootstrap_hide + '">' +
 					'<nav>' +
 						'<div class="pmu-prev pmu-button">' + d.prev + '</div>' +
 						'<div class="pmu-month pmu-button" />' +
@@ -1072,11 +1076,13 @@
 				pickmeup.addClass(options.class_name);
 			}
 			var html = '';
+			var current_cal = Math.floor(options.calendars / 2);
 			for (i = 0; i < options.calendars; i++) {
 				cnt		= options.first_day;
 				html	+= tpl.head({
 					prev	: options.prev,
 					next	: options.next,
+					is_current : (i == current_cal),
 					day		: [
 						options.locale.daysMin[(cnt++) % 7],
 						options.locale.daysMin[(cnt++) % 7],
