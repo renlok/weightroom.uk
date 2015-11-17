@@ -771,6 +771,18 @@ class parser
 		return $block;
 	}
 
+	// TODO: use this correctly
+	private function special_tags($string)
+	{
+		$string = strtolower($string);
+		// line is warmup
+		if ($string == 'w' || $string == 'warmup' || $string == 'warm-up' || $string == 'warm up' || $string == 'wu')
+		{
+			return 'w';
+		}
+		return 0;
+	}
+
 	private function strposa($haystack, $needle, $offset=0)
 	{
     if(!is_array($needle)) $needle = array($needle);
@@ -785,10 +797,17 @@ class parser
   private function format_character($chr)
   {
     $output_chr = $chr;
+		// is number
     if (is_numeric($chr))
     {
       $output_chr = '0';
     }
+    $output_chr = strtolower($output_chr);
+		// is x
+		if ($chr == '*' || $chr == '×')
+		{
+			$output_chr = 'x';
+		}
     return $output_chr;
   }
 

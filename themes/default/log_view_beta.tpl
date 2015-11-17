@@ -26,6 +26,7 @@
 }
 .user-info {
 	width: 150px;
+	padding-bottom: 10px;
 }
 .form-group, .comment-reply-box {
 	border-left: none !important;
@@ -66,17 +67,17 @@
 <p class="margintb"><a href="?do=edit&page=log&date={DATE}" class="btn btn-default">Add Log</a></p>
 	<!-- ENDIF -->
 <!-- ENDIF -->
+<!-- IF B_LOG -->
+<h3>Workout summary</h3>
+<p class="logrow">Volume: <span class="heavy">{TOTAL_VOLUME}</span>{WEIGHT_UNIT} - Reps: <span class="heavy">{TOTAL_REPS}</span> - Sets: <span class="heavy">{TOTAL_SETS}</span> - Avg. Intensity: <span class="heavy">{TOTAL_INT} <!-- IF AVG_INTENSITY_TYPE eq 0 -->%<!-- ELSEIF AVG_INTENSITY_TYPE eq 1 -->{WEIGHT_UNIT}<!-- ENDIF --></span></p>
+<p class="logrow marginl"><small>Bodyweight: <span class="heavy">{USER_BW}</span>{WEIGHT_UNIT}</small></p>
+<!-- ENDIF -->
 <!-- IF COMMENT ne '' -->
 <div class="panel panel-default">
 	<div class="panel-body">
 		{COMMENT}
 	</div>
 </div>
-<!-- ENDIF -->
-<!-- IF B_LOG -->
-<h3>Workout summary</h3>
-<p class="logrow">Volume: <span class="heavy">{TOTAL_VOLUME}</span>{WEIGHT_UNIT} - Reps: <span class="heavy">{TOTAL_REPS}</span> - Sets: <span class="heavy">{TOTAL_SETS}</span> - Avg. Intensity: <span class="heavy">{TOTAL_INT} <!-- IF AVG_INTENSITY_TYPE eq 0 -->%<!-- ELSEIF AVG_INTENSITY_TYPE eq 1 -->{WEIGHT_UNIT}<!-- ENDIF --></span></p>
-<p class="logrow marginl"><small>Bodyweight: <span class="heavy">{USER_BW}</span>{WEIGHT_UNIT}</small></p>
 <!-- ENDIF -->
 <!-- BEGIN items -->
 	<h3><a href="?page=exercise&ex={items.EXERCISE}">{items.EXERCISE}</a></h3>

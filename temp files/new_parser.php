@@ -168,7 +168,6 @@ foreach($string_array as $chr)
 // add the last chunk to the data array
 $output_data[$current_blocks[0]][$multiline] = $chunk_dump;
 
-// TODO(renlok); remove
 //print_r(array($number_dump,$format_dump,$chunk_dump));
 print_r($output_data);
 //print_r($accepted_char);

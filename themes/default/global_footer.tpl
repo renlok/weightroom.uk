@@ -30,7 +30,7 @@
 
 <footer class="footer">
   <div class="container">
-	<p class="text-muted">2015 &#169; weightroom.uk. Use of this site constitutes acceptance of the site's Privacy Policy and Terms of Use.</p>
+	<p class="text-muted">2015 &#169; weightroom.uk.<span class="hidden-xs"> Use of this site constitutes acceptance of the site's Privacy Policy and Terms of Use.</span></p>
   </div>
 </footer>
 
