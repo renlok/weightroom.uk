@@ -483,8 +483,9 @@ class log
 					$item = $items[$j];
 					// reset totals
 					$total_volume = $total_reps = $total_sets = 0;
-					$exercise_id = $this->get_exercise_id($user_id, $exercise);
-					$prs = $this->get_prs($user_id, $log_date, $exercise);
+					$exercise_id = $this->get_exercise_id ($user_id, $exercise);
+					$pr_data = $this->get_prs ($user_id, $log_date, $exercise);
+					$prs = $pr_data['W'];
 					$max_estimate_rm = 0;
 					foreach ($item['sets'] as $set)
 					{
@@ -782,7 +783,7 @@ class log
 		global $db;
 		// load all preceeding prs
 		$pr_date = ($return_date) ? ', MAX(pr_date) as pr_date' : '';
-		$query = "SELECT MAX(pr_weight) as pr_weight, pr_reps " . $pr_date . " FROM exercise_records pr
+		$query = "SELECT MAX(pr_weight) as pr_weight, pr_reps, e.is_time " . $pr_date . " FROM exercise_records pr
 				LEFT JOIN exercises e ON (e.exercise_id = pr.exercise_id)
 				WHERE pr.user_id = :user_id AND e.exercise_name = :exercise_name
 				AND pr_date <= :log_date
@@ -793,15 +794,16 @@ class log
 			array(':user_id', $user_id, 'int')
 		);
 		$db->query($query, $params);
-		$prs = array();
-		$date = array();
+		$prs = array('W' => array(), 'T' => array());
+		$date = array('W' => array(), 'T' => array());
 		while ($row = $db->fetch())
 		{
+			$type = ($row['is_time'] == 1) ? 'T' : 'W';
 			if ($return_date)
 			{
-				$date[$row['pr_reps']] = $row['pr_date'];
+				$date[$type][$row['pr_reps']] = $row['pr_date'];
 			}
-			$prs[$row['pr_reps']] = $row['pr_weight'];
+			$prs[$type][$row['pr_reps']] = $row['pr_weight'];
 		}
 		if ($return_date)
 		{

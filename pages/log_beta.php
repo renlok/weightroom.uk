@@ -46,7 +46,8 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 		$total_reps += $log_items['total_reps'];
 		$total_sets += $log_items['total_sets'];
 		// get current pr
-		$pr_data = $log->get_prs($user_id, $log_date, $log_items['exercise']);
+		$pr_data = $log->get_prs ($user_id, $log_date, $log_items['exercise']);
+		$pr_data = $pr_data['W']; // TODO: make this work for timed exercises
 		// build a reference for current 1rm
 		$pr_weight = max($pr_data);
 		$reps = array_search($pr_weight, $pr_data);

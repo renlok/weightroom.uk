@@ -353,7 +353,10 @@ class parser
 				$total_sets += $set['S'];
 				$is_pr = false;
 				// check its a pr
-				if ((!isset($prs[$set['R']]) || floatval($prs[$set['R']]) < floatval($absolute_weight)) && $set['R'] != 0)
+        if (($is_time && (!isset($prs['T'][$set['R']]) || floatval($prs['T'][$set['R']]) < floatval($absolute_weight))) && // set time PR
+          (!$is_time && (!isset($prs['W'][$set['R']]) || floatval($prs['W'][$set['R']]) < floatval($absolute_weight))) && // set weight PR
+          $set['R'] != 0
+        )
 				{
 					$is_pr = true;
           $pr_type = ($is_time == true) ? 'T' : 'W';
@@ -361,7 +364,7 @@ class parser
           if ($exercise_is_new == true || ($exercise_is_time == 1 && $is_time == true) || ($exercise_is_time == 0 && $is_time == false))
           {
   					// the user has set a pr we need to add/update it in the database
-  					$this->update_prs ($user->user_id, $log_date, $exercise_id, $absolute_weight, $set['R']);
+  					$this->update_prs ($user->user_id, $log_date, $exercise_id, $absolute_weight, $set['R'], $is_time);
   					if (!isset($new_prs[$exercise]))
   						$new_prs[$exercise] = array('W' => array(), 'T' => array());
   					$new_prs[$exercise][$pr_type][$set['R']][] = $absolute_weight;
@@ -371,7 +374,7 @@ class parser
 				}
         if ($exercise_is_new)
         {
-          $exercise_is_time = ($is_time == true) ? 1 : 0;
+          $exercise_is_time = $is_time;
         }
 				$estimate_rm = $log->generate_rm ($absolute_weight, $set['R']);
 				// get estimate 1rm
@@ -515,7 +518,7 @@ class parser
 		$db->query($query, $params);
 	}
 
-	private function update_prs($user_id, $log_date, $exercise_id, $set_weight, $set_reps)
+	private function update_prs($user_id, $log_date, $exercise_id, $set_weight, $set_reps, $is_time)
 	{
 		global $db, $log;
 
@@ -524,8 +527,8 @@ class parser
 			return false;
 
 		// insert new entry
-		$query = "INSERT INTO exercise_records (exercise_id, user_id, pr_date, pr_weight, pr_reps, pr_1rm)
-				VALUES (:exercise_id, :user_id, :pr_date, :pr_weight, :pr_reps, :pr_rm)";
+		$query = "INSERT INTO exercise_records (exercise_id, user_id, pr_date, pr_weight, pr_reps, pr_1rm, is_time)
+				VALUES (:exercise_id, :user_id, :pr_date, :pr_weight, :pr_reps, :pr_rm, :is_time)";
 		$params = array(
 			array(':exercise_id', $exercise_id, 'int'),
 			array(':user_id', $user_id, 'int'),
@@ -533,37 +536,41 @@ class parser
 			array(':pr_weight', $set_weight, 'float'),
 			array(':pr_reps', $set_reps, 'int'),
 			array(':pr_rm', $log->generate_rm($set_weight, $set_reps), 'float'),
+			array(':is_time', $is_time, 'bool'),
 		);
 		$db->query($query, $params);
 
 		// delete future logs that have lower prs
-		$query = "DELETE FROM exercise_records WHERE user_id = :user_id AND pr_date > :log_date AND exercise_id = :exercise_id AND pr_reps = :pr_reps AND pr_weight < :pr_weight";
+		$query = "DELETE FROM exercise_records WHERE user_id = :user_id AND pr_date > :log_date AND exercise_id = :exercise_id AND pr_reps = :pr_reps AND pr_weight < :pr_weight AND is_time = :is_time";
 		$params = array(
 			array(':exercise_id', $exercise_id, 'int'),
 			array(':log_date', $log_date, 'str'),
 			array(':user_id', $user_id, 'int'),
 			array(':pr_reps', $set_reps, 'int'),
-			array(':pr_weight', $set_weight, 'float')
+			array(':pr_weight', $set_weight, 'float'),
+      array(':is_time', $is_time, 'bool'),
 		);
 		$db->query($query, $params);
-		$query = "UPDATE log_items SET is_pr = 0 WHERE user_id = :user_id AND logitem_date > :log_date AND exercise_id = :exercise_id AND logitem_reps = :pr_reps AND logitem_abs_weight < :pr_weight";
+		$query = "UPDATE log_items SET is_pr = 0 WHERE user_id = :user_id AND logitem_date > :log_date AND exercise_id = :exercise_id AND logitem_reps = :pr_reps AND logitem_abs_weight < :pr_weight AND is_time = :is_time";
 		$params = array(
 			array(':exercise_id', $exercise_id, 'int'),
 			array(':log_date', $log_date, 'str'),
 			array(':user_id', $user_id, 'int'),
 			array(':pr_reps', $set_reps, 'int'),
-			array(':pr_weight', $set_weight, 'float')
+			array(':pr_weight', $set_weight, 'float'),
+      array(':is_time', $is_time, 'bool'),
 		);
 		$db->query($query, $params);
 
 		// add past prs if needed
-		$query = "SELECT log_id, logitem_abs_weight FROM log_items WHERE user_id = :user_id AND logitem_date < :log_date AND exercise_id = :exercise_id AND logitem_reps = :pr_reps AND logitem_abs_weight > :pr_weight AND is_pr = 0";
+		$query = "SELECT log_id, logitem_abs_weight FROM log_items WHERE user_id = :user_id AND logitem_date < :log_date AND exercise_id = :exercise_id AND logitem_reps = :pr_reps AND logitem_abs_weight > :pr_weight AND is_pr = 0 AND is_time = :is_time";
 		$params = array(
 			array(':exercise_id', $exercise_id, 'int'),
 			array(':log_date', $log_date, 'str'),
 			array(':user_id', $user_id, 'int'),
 			array(':pr_reps', $set_reps, 'int'),
-			array(':pr_weight', $set_weight, 'float')
+			array(':pr_weight', $set_weight, 'float'),
+      array(':is_time', $is_time, 'bool'),
 		);
 		$db->query($query, $params);
 		while ($row = $db->fetch())
@@ -575,15 +582,16 @@ class parser
 			);
 			$db->query($query, $params);
 			// insert pr data
-			$query = "INSERT INTO exercise_records (exercise_id, user_id, pr_date, pr_weight, pr_reps, pr_1rm)
-					VALUES (:exercise_id, :user_id, :pr_date, :pr_weight, :pr_reps, :pr_rm)";
+			$query = "INSERT INTO exercise_records (exercise_id, user_id, pr_date, pr_weight, pr_reps, pr_1rm, is_time)
+					VALUES (:exercise_id, :user_id, :pr_date, :pr_weight, :pr_reps, :pr_rm, :is_time)";
 			$params = array(
 				array(':exercise_id', $exercise_id, 'int'),
 				array(':user_id', $user_id, 'int'),
 				array(':pr_date', $log_date, 'str'),
 				array(':pr_weight', $row['logitem_abs_weight'], 'float'),
 				array(':pr_reps', $set_reps, 'int'),
-				array(':pr_rm', $log->generate_rm($row['logitem_abs_weight'], $set_reps), 'float'),
+				array(':pr_rm', $log->generate_rm ($row['logitem_abs_weight'], $set_reps), 'float'),
+        array(':is_time', $is_time, 'bool'),
 			);
 			$db->query($query, $params);
 		}

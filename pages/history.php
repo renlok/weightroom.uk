@@ -31,7 +31,8 @@ $sets_scale = floor($max_values['max_vol'] / $max_values['max_sets']);
 $rm_scale = floor($max_values['max_vol'] / $max_values['max_rm']);
 $ai_scale = floor($max_values['max_vol'] / 100);
 // get current pr
-$pr_data = $log->get_prs($user->user_id, date("Y-m-d"), $exercise_name);
+$pr_data = $log->get_prs ($user->user_id, date("Y-m-d"), $exercise_name);
+$pr_data = $pr_data['W']; // TODO: make this work for timed exercises
 // build a reference for current 1rm
 $pr_weight = max($pr_data);
 $reps = array_search($pr_weight, $pr_data);

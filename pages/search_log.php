@@ -25,7 +25,8 @@ foreach ($exercises as $exercise)
 if ($exercise_name != '' && $log->is_valid_exercise($user->user_id, $exercise_name))
 {
 	// get current pr
-	$pr_data = $log->get_prs($user->user_id, date("Y-m-d"), $exercise_name);
+	$pr_data = $log->get_prs ($user->user_id, date("Y-m-d"), $exercise_name);
+	$pr_data = $pr_data['W']; // TODO: make this work with timed exercises
 	// build a reference for current 1rm
 	$pr_weight = max($pr_data);
 	$pr_reps = array_search($pr_weight, $pr_data);
