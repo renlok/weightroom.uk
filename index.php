@@ -138,7 +138,7 @@ switch ($page)
 		}
 		else
 		{
-			include PAGEDIR . 'login.php';
+			include PAGEDIR . 'landing.php';
 		}
 }
 ?>
