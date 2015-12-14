@@ -1,0 +1,10 @@
+- build database migrations http://laravel.com/docs/5.1/migrations
+- build blades (templates) http://laravel.com/docs/5.1/blade
+- define which database colomns are fillable http://laravel.com/docs/5.1/eloquent
+- define eloquent Relationships
+
+- Test route patterns for date & id
+- Add route names with ->name('');
+
+figure out how to do the rest
+https://laracasts.com/series/laravel-5-fundamentals/episodes/7
