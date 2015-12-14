@@ -14,26 +14,20 @@
 // User controller
 Route::group(['prefix' => 'user'], function () {
     Route::get('login', 'UserController@login');
-    Route::post('login/do', 'UserController@login_do');
     Route::get('logout', 'UserController@logout');
     Route::get('register', 'UserController@register');
+    // post pages
+    Route::post('login', 'UserController@login_do');
+    Route::post('register', 'UserController@register_do');
+});
+
+Route::group(['prefix' => 'user', 'middleware' => 'auth'], function () {
     Route::get('search', 'UserController@search');
     Route::get('settings', 'UserController@settings');
 });
 
-// Authentication Routes...
-Route::group(['prefix' => 'auth'], function () {
-    Route::get('login', 'Auth\AuthController@getLogin');
-    Route::post('login', 'Auth\AuthController@postLogin');
-    Route::get('logout', 'Auth\AuthController@getLogout');
-
-    // Registration Routes...
-    Route::get('register', 'Auth\AuthController@getRegister');
-    Route::post('register', 'Auth\AuthController@postRegister');
-});
-
 // Log controller
-Route::group(['prefix' => 'log'], function () {
+Route::group(['prefix' => 'log', 'middleware' => 'auth'], function () {
     Route::get('/', 'LogsController@index');
     Route::get('view/{date}', 'LogsController@view');
     Route::get('edit/{date}', 'LogsController@edit');
@@ -42,7 +36,7 @@ Route::group(['prefix' => 'log'], function () {
 });
 
 // Exercise Controller
-Route::group(['prefix' => 'exercise'], function () {
+Route::group(['prefix' => 'exercise', 'middleware' => 'auth'], function () {
     Route::get('/', 'ExercisesController@index');
     Route::get('list', 'ExercisesController@list');
     Route::get('edit/{id}', 'ExercisesController@edit');
@@ -51,7 +45,7 @@ Route::group(['prefix' => 'exercise'], function () {
 });
 
 // Tools controller
-Route::group(['prefix' => 'tools'], function () {
+Route::group(['prefix' => 'tools', 'middleware' => 'auth'], function () {
     Route::get('/', 'ToolsController@index');
     Route::get('bodyweight', 'ToolsController@bodyweight');
     Route::get('wilks', 'ToolsController@wilks');
@@ -61,9 +55,11 @@ Route::group(['prefix' => 'tools'], function () {
 
 // Misc
 //Route::get('/', 'MiscController@index');
-Route::get('ajax', 'MiscController@ajax');
-Route::get('demo', 'MiscController@demo');
-Route::get('dash', 'MiscController@dash');
+Route::group('middleware' => 'auth'], function () {
+    Route::get('ajax', 'MiscController@ajax');
+    Route::get('demo', 'MiscController@demo');
+    Route::get('dashboard', 'MiscController@dash');
+});
 
 Route::get('/', function () {
     return view('welcome');
