@@ -12,7 +12,7 @@
  *   sold. If you have been sold this script, get a refund.
  ***************************************************************************/
 
-class db_handle 
+class db_handle
 {
 	// database
 	private     $pdo;
@@ -207,7 +207,7 @@ class db_handle
 	private function error_handler($error)
 	{
 		// DO SOMETHING
-		//$this->error = $error;
+		$this->error = $error;
 		$this->error = debug_backtrace();
 		//print_r($this->error);
 	}

@@ -4,7 +4,7 @@ class log
 	public function get_log_data($user_id, $date)
 	{
 		global $db, $user;
-		$query = "SELECT i.*, ex.exercise_name, lx.logex_volume, lx.logex_reps, lx.logex_sets, lx.logex_comment, lx.logex_order
+		$query = "SELECT i.*, ex.exercise_name, ex.is_time as ex_is_time, lx.logex_volume, lx.logex_reps, lx.logex_sets, lx.logex_comment, lx.logex_order
 				FROM log_items As i
 				LEFT JOIN exercises ex ON (ex.exercise_id = i.exercise_id)
 				LEFT JOIN log_exercises As lx ON (lx.exercise_id = ex.exercise_id AND lx.log_id = i.log_id AND i.logex_order = lx.logex_order)
@@ -28,12 +28,14 @@ class log
 			if ($logex_number != $item['logex_order'])
 			{
 				$logex_number = $item['logex_order'];
+				$logitem_order = ''; // reset this counter
 				$exercisepointer++;
 				$data[$exercisepointer] = array(
 					'exercise' => $item['exercise_name'],
 					'total_volume' => correct_weight($item['logex_volume'], 'kg', $user->user_data['user_unit']),
 					'total_reps' => $item['logex_reps'],
 					'total_sets' => $item['logex_sets'],
+					'is_time' => $item['ex_is_time'],
 					'comment' => clean_output($item['logex_comment']),
 					'sets' => array(),
 				);
@@ -716,11 +718,12 @@ class log
 
 		$query = "SELECT $return_data FROM exercises WHERE user_id = :user_id AND exercise_name = :exercise_name LIMIT 1";
 		$params = array(
-			array(':exercise_name', $exercise_name, 'int'),
+			array(':exercise_name', $exercise_name, 'str'),
 			array(':user_id', $user_id, 'int')
 		);
 		$db->query($query, $params);
-		return $db->result();
+		$exercise_data = $db->result();
+		return $exercise_data;
 	}
 
 	public function is_valid_exercise ($user_id, $exercise_name)

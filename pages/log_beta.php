@@ -33,9 +33,9 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 		}
 	}
 
-	$log_list = $log->load_log_list($user_id, $log_date);
+	$log_list = $log->load_log_list ($user_id, $log_date);
 
-	$log_data = $log->get_log_data($user_id, $log_date);
+	$log_data = $log->get_log_data ($user_id, $log_date);
 
 	// loop through the exercises
 	$total_volume = $total_reps = $total_sets = $total_intensity = 0;
@@ -47,12 +47,13 @@ if (!isset($_GET['do']) || (isset($_GET['do']) && $_GET['do'] == 'view'))
 		$total_sets += $log_items['total_sets'];
 		// get current pr
 		$pr_data = $log->get_prs ($user_id, $log_date, $log_items['exercise']);
-		$pr_data = $pr_data['W']; // TODO: make this work for timed exercises
+		print_r($pr_data); // TODO: is this not working?
+		$pr_data = ($log_items['is_time']) ? $pr_data['T'] : $pr_data['W'];
 		// build a reference for current 1rm
 		$pr_weight = max($pr_data);
 		$reps = array_search($pr_weight, $pr_data);
-		$current_1rm = $log->generate_rm($pr_weight, $reps);
-		$average_intensity = $log->get_average_intensity($log_items['total_volume'], $log_items['total_reps'], $log_items['sets'], $current_1rm);
+		$current_1rm = $log->generate_rm ($pr_weight, $reps);
+		$average_intensity = $log->get_average_intensity ($log_items['total_volume'], $log_items['total_reps'], $log_items['sets'], $current_1rm);
 		$total_intensity += $average_intensity;
 		$template->assign_block_vars('items', array(
 				'EXERCISE' => ucwords($log_items['exercise']),

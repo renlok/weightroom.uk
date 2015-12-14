@@ -88,10 +88,10 @@ elseif ((isset($_GET['do']) && ($_GET['do'] == 'weekly' || $_GET['do'] == 'month
 
 	// get current prs
 	$pr_data = $log->get_prs ($user->user_id, date("Y-m-d"), $exercise_name, true);
-	$pr_data = $pr_data['W']; // TODO: make this work for timed exercises
-	$pr_true = $pr_data[0];
-	$pr_dates = $pr_data[1];
-	$pr_data_max = $pr_data[0];
+	// TODO: make this work for timed exercises
+	$pr_true = $pr_data[0]['W'];
+	$pr_dates = $pr_data[1]['W'];
+	$pr_data_max = $pr_data[0]['W'];
 	//check pr data
 	$highest = 0;
 	for ($i = 10; $i >= 1; $i--)
@@ -151,10 +151,10 @@ else
 
 	// get current prs
 	$pr_data = $log->get_prs ($user->user_id, date("Y-m-d"), $exercise_name, true);
-	$pr_data = $pr_data['W']; // TODO: make this work for timed exercises
-	$pr_true = $pr_data[0];
-	$pr_dates = $pr_data[1];
-	$pr_data_max = $pr_data[0];
+	// TODO: make this work for timed exercises
+	$pr_true = $pr_data[0]['W'];
+	$pr_dates = $pr_data[1]['W'];
+	$pr_data_max = $pr_data[0]['W'];
 	//check pr data
 	$highest = 0;
 	for ($i = 10; $i >= 1; $i--)

@@ -311,18 +311,20 @@ class parser
 		{
 			$item = $this->log_data['exercises'][$i];
 			// set exercise name
-			$exercise = $item['name'];
+			$exercise = trim($item['name']);
 			// reset totals
 			$total_volume = $total_reps = $total_sets = 0;
+      // get exercise information
       $exercise_is_new = !$log->is_valid_exercise ($user->user_id, $exercise);
       $exercise_id = $log->get_exercise_id ($user->user_id, $exercise);
       $exercise_is_time = $log->get_exercise_data ($user->user_id, $exercise, 'is_time');
+      $exercise_is_time = $exercise_is_time['is_time'];
 			$prs = $log->get_prs ($user->user_id, $log_date, $exercise);
 			$max_estimate_rm = 0;
 			for ($j = 0, $count_j = count($item['data']); $j < $count_j; $j++)
 			{
 				$set = $item['data'][$j];
-				$is_bw = false;
+				$is_time = $is_bw = false;
 				if (isset($set['W']))
 				{
 					$set['W'][0] = str_replace(' ', '', $set['W'][0]);
@@ -348,20 +350,19 @@ class parser
 				$absolute_weight = ($is_bw == false) ? $set['W'] : ($set['W'] + $user_weight);
 				$total_volume += ($absolute_weight * $set['R'] * $set['S']);
         // deal the time PRs
-				$absolute_weight = ($is_time == true) ? $set['T'] : $absolute_weight;
+				$absolute_weight = floatval(($is_time == true) ? $set['T'] : $absolute_weight);
 				$total_reps += ($set['R'] * $set['S']);
 				$total_sets += $set['S'];
 				$is_pr = false;
 				// check its a pr
-        if (($is_time && (!isset($prs['T'][$set['R']]) || floatval($prs['T'][$set['R']]) < floatval($absolute_weight))) && // set time PR
-          (!$is_time && (!isset($prs['W'][$set['R']]) || floatval($prs['W'][$set['R']]) < floatval($absolute_weight))) && // set weight PR
+        if ((($is_time && (!isset($prs['T'][$set['R']]) || floatval($prs['T'][$set['R']]) < floatval($absolute_weight))) || // set time PR
+          (!$is_time && (!isset($prs['W'][$set['R']]) || floatval($prs['W'][$set['R']]) < floatval($absolute_weight)))) && // set weight PR
           $set['R'] != 0
         )
 				{
 					$is_pr = true;
           $pr_type = ($is_time == true) ? 'T' : 'W';
-          // TODO fix this
-          if ($exercise_is_new == true || ($exercise_is_time == 1 && $is_time == true) || ($exercise_is_time == 0 && $is_time == false))
+          if ($exercise_is_new == true || ($exercise_is_time && $is_time) || ($exercise_is_time == false && $is_time == false))
           {
   					// the user has set a pr we need to add/update it in the database
   					$this->update_prs ($user->user_id, $log_date, $exercise_id, $absolute_weight, $set['R'], $is_time);
@@ -369,7 +370,7 @@ class parser
   						$new_prs[$exercise] = array('W' => array(), 'T' => array());
   					$new_prs[$exercise][$pr_type][$set['R']][] = $absolute_weight;
   					// update pr array
-  					$prs[$set['R']] = $absolute_weight;
+  					$prs[$pr_type][$set['R']] = $absolute_weight;
           }
 				}
         if ($exercise_is_new)
@@ -535,10 +536,11 @@ class parser
 			array(':pr_date', $log_date, 'str'),
 			array(':pr_weight', $set_weight, 'float'),
 			array(':pr_reps', $set_reps, 'int'),
-			array(':pr_rm', $log->generate_rm($set_weight, $set_reps), 'float'),
+			array(':pr_rm', $log->generate_rm ($set_weight, $set_reps), 'float'),
 			array(':is_time', $is_time, 'bool'),
 		);
 		$db->query($query, $params);
+    var_dump(array($query, $params, $db->lastInsertId()));
 
 		// delete future logs that have lower prs
 		$query = "DELETE FROM exercise_records WHERE user_id = :user_id AND pr_date > :log_date AND exercise_id = :exercise_id AND pr_reps = :pr_reps AND pr_weight < :pr_weight AND is_time = :is_time";
