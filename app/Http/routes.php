@@ -55,7 +55,7 @@ Route::group(['prefix' => 'tools', 'middleware' => 'auth'], function () {
 
 // Misc
 //Route::get('/', 'MiscController@index');
-Route::group('middleware' => 'auth'], function () {
+Route::group(['middleware' => 'auth'], function () {
     Route::get('ajax', 'MiscController@ajax');
     Route::get('demo', 'MiscController@demo');
     Route::get('dashboard', 'MiscController@dash');
