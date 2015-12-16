@@ -28,12 +28,12 @@ class CreateUsersTable extends Migration
             $table->integer('user_benchid')->default('0');
             $table->integer('user_snatchid')->default('0');
             $table->integer('user_cleanjerkid')->default('0');
-            $table->bool('user_volumeincfails')->default('0');
-            $table->bool('user_weekstart')->default('0');
+            $table->boolean('user_volumeincfails')->default('0');
+            $table->boolean('user_weekstart')->default('0');
             $table->smallInteger('user_limitintensity')->default('0');
             $table->enum('user_showintensity', ['h', 'p', 'a'])->default('p'); // h = hide, p = percent, a = absolute CHANGE NAME/VALUE
-            $table->bool('user_beta')->default('0');
-            $table->bool('user_admin')->default('0');
+            $table->boolean('user_beta')->default('0');
+            $table->boolean('user_admin')->default('0');
             $table->integer('user_don_level')->default('0');
 
         });

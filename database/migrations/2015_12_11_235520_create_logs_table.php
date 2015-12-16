@@ -19,7 +19,7 @@ class CreateLogsTable extends Migration
             $table->text('log_text');
             $table->text('log_comment');
             $table->double('log_weight', 7, 3);
-            $table->bool('log_update_text');
+            $table->boolean('log_update_text');
             $table->timestamps();
         });
     }

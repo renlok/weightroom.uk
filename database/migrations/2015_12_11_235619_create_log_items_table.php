@@ -28,10 +28,10 @@ class CreateLogItemsTable extends Migration
             $table->text('logitem_comment');
             $table->smallInteger('logitem_order');
             $table->smallInteger('logex_order');
-            $table->bool('is_bw');
-            $table->bool('is_time');
-            $table->bool('is_pr');
-            $table->bool('is_warmup');
+            $table->boolean('is_bw');
+            $table->boolean('is_time');
+            $table->boolean('is_pr');
+            $table->boolean('is_warmup');
             $table->timestamps();
         });
     }
