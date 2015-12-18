@@ -39,7 +39,7 @@ class LoginController extends Controller
 		else {
 			return redirect('login')
 				->withInput()
-				->with('errors', 'Email/password wrong, or account not activated.');
+				->with('error', 'Email/password wrong, or account not activated.');
 		}
 	}
 
