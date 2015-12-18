@@ -11,16 +11,16 @@
 |
 */
 
-// User controller
-Route::group(['prefix' => 'user', 'as' => 'user/'], function () {
-    Route::get('login', 'AuthController@login')->name('login');
-    Route::get('logout', 'AuthController@logout')->name('logout');
-    Route::get('register', 'AuthController@register')->name('register');
-    // post pages
-    Route::post('login', 'AuthController@login_do')->name('login');
-    Route::post('register', 'AuthController@register_do')->name('register');
-});
+// Authentication routes...
+Route::get('login', 'LoginController@getLogin')->name('login');
+Route::post('login', 'LoginController@postLogin');
+Route::get('logout', 'LoginController@getLogout')->name('logout');
 
+// Registration routes...
+Route::get('register', 'LoginController@getRegister')->name('register');
+Route::post('register', 'LoginController@postRegister');
+
+// User controller
 Route::group(['prefix' => 'user', 'middleware' => 'auth', 'as' => 'user/'], function () {
     Route::post('search', 'UserController@search')->name('search');
     Route::get('settings', 'UserController@settings')->name('settings');
