@@ -20,6 +20,14 @@ Route::get('logout', 'LoginController@getLogout')->name('logout');
 Route::get('register', 'LoginController@getRegister')->name('register');
 Route::post('register', 'LoginController@postRegister');
 
+// Password reset link request routes...
+Route::get('password/email', 'Auth\PasswordController@getEmail')->name('emailPassword');
+Route::post('password/email', 'Auth\PasswordController@postEmail');
+
+// Password reset routes...
+Route::get('password/reset/{token}', 'Auth\PasswordController@getReset')->name('passwordReset');
+Route::post('password/reset', 'Auth\PasswordController@postReset');
+
 // User controller
 Route::group(['prefix' => 'user', 'middleware' => 'auth', 'as' => 'user/'], function () {
     Route::post('search', 'UserController@search')->name('search');
