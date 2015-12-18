@@ -8,6 +8,9 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Foundation\Validation\ValidationException;
+
 class Handler extends ExceptionHandler
 {
     /**
@@ -18,6 +21,8 @@ class Handler extends ExceptionHandler
     protected $dontReport = [
         HttpException::class,
         ModelNotFoundException::class,
+        AuthorizationException::class,
+        ValidationException::class,
     ];
 
     /**
