@@ -27,29 +27,29 @@
   <body>
 	<div class="container-fluid" id="header">
 	  <ul class="nav nav-pills">
-		  <li role="presentation" class="{{ Request::is('/') ? 'active' : '' }}"><a href="{{ route('/') }}" class="hidden-xs">Home</a><a href="?" class="visible-xs"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
 	  <!-- IF NOT_LOGGED_IN -->
 		  <li role="presentation" class="{{ Request::is('user/login') ? 'active' : '' }}"><a href="{{ route('user/login') }}">Login</a></li>
 		  <li role="presentation" class="{{ Request::is('user/register') ? 'active' : '' }}"><a href="{{ route('user/register') }}">Register</a></li>
 		  <li role="presentation" class="{{ Request::is('demo') ? 'active' : '' }}"><a href="{{ route('demo') }}">What is this?</a></li>
 	  <!-- ELSE -->
+		  <li role="presentation" class="{{ Request::is('dashboard') ? 'active' : '' }}"><a href="{{ route('dashboard') }}" class="hidden-xs">Home</a><a href="?" class="visible-xs"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
 		  <li role="presentation" class="{{ Request::is('log/edit') ? 'active' : '' }}"><a href="{{ route('log/edit') }}">Track</a></li>
 			<li class="dropdown visible-xs">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span> <span class="caret"></span></a>
 				<ul class="dropdown-menu">
 					<li role="presentation" class="{{ Request::is('log/view') ? 'active' : '' }}"><a href="{{ route('log/view') }}">View Log</a></li>
 					<li role="presentation" class="{{ Request::is('exercise/list') ? 'active' : '' }}"><a href="{{ route('exercise/list') }}">Exercise List</a></li>
-					<li role="presentation" class="{{ Request::is('tools/*') ? 'active' : '' }}"><a href="{{ route('tools') }}">Tools</a></li>
+					<li role="presentation" class="{{ Request::is('tools/*') ? 'active' : '' }}"><a href="{{ route('tools/') }}">Tools</a></li>
 				</ul>
 			</li>
 		  <li role="presentation" class="hidden-xs {{ Request::is('log/view') ? 'active' : '' }}"><a href="{{ route('log/view') }}">View Log</a></li>
 		  <li role="presentation" class="hidden-xs {{ Request::is('exercise/list') ? 'active' : '' }}"><a href="{{ route('exercise/list') }}">Exercise List</a></li>
-		  <li role="presentation" class="hidden-xs {{ Request::is('tools/*') ? 'active' : '' }}"><a href="{{ route('tools') }}">Tools</a></li>
+		  <li role="presentation" class="hidden-xs {{ Request::is('tools/*') ? 'active' : '' }}"><a href="{{ route('tools/') }}">Tools</a></li>
 		  <li role="presentation" class="{{ Request::is('user/search') ? 'active' : '' }}"><a href="#" data-toggle="modal" data-target="#searchUsers"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></a></li>
 		  <li class="dropdown {{ Request::is('user/settings') ? 'active' : '' }}">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> <span class="caret"></span></a>
 				<ul class="dropdown-menu">
-					<li role="presentation"><a href="{{ route('invites') }}">Invite codes</a></li>
+					<li role="presentation"><a href="{{ route('tools/invites') }}">Invite codes</a></li>
 					<li role="presentation"><a href="http://we-link.co.uk/projects/public/weightroom" target="_blank">Submit a bug</a></li>
 					<li role="presentation"><a href="http://weightroom.uk/blog/" target="_blank">Blog</a></li>
 					<li role="presentation"><a href="{{ route('user/settings') }}">Settings</a></li>
