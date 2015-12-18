@@ -28,8 +28,8 @@
 	<div class="container-fluid" id="header">
 	  <ul class="nav nav-pills">
 	  <!-- IF NOT_LOGGED_IN -->
-		  <li role="presentation" class="{{ Request::is('user/login') ? 'active' : '' }}"><a href="{{ route('user/login') }}">Login</a></li>
-		  <li role="presentation" class="{{ Request::is('user/register') ? 'active' : '' }}"><a href="{{ route('user/register') }}">Register</a></li>
+		  <li role="presentation" class="{{ Request::is('login') ? 'active' : '' }}"><a href="{{ route('login') }}">Login</a></li>
+		  <li role="presentation" class="{{ Request::is('register') ? 'active' : '' }}"><a href="{{ route('register') }}">Register</a></li>
 		  <li role="presentation" class="{{ Request::is('demo') ? 'active' : '' }}"><a href="{{ route('demo') }}">What is this?</a></li>
 	  <!-- ELSE -->
 		  <li role="presentation" class="{{ Request::is('dashboard') ? 'active' : '' }}"><a href="{{ route('dashboard') }}" class="hidden-xs">Home</a><a href="?" class="visible-xs"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
@@ -53,7 +53,7 @@
 					<li role="presentation"><a href="http://we-link.co.uk/projects/public/weightroom" target="_blank">Submit a bug</a></li>
 					<li role="presentation"><a href="http://weightroom.uk/blog/" target="_blank">Blog</a></li>
 					<li role="presentation"><a href="{{ route('user/settings') }}">Settings</a></li>
-					<li role="presentation"><a href="{{ route('user/logout') }}">Logout</a></li>
+					<li role="presentation"><a href="{{ route('logout') }}">Logout</a></li>
 				</ul>
 			</li>
 	  <!-- ENDIF -->
