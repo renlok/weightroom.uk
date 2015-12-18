@@ -12,54 +12,55 @@
 */
 
 // User controller
-Route::group(['prefix' => 'user'], function () {
-    Route::get('login', 'UserController@login');
-    Route::get('logout', 'UserController@logout');
-    Route::get('register', 'UserController@register');
+Route::group(['prefix' => 'user', 'as' => 'user/'], function () {
+    Route::get('login', 'UserController@login')->name('login');
+    Route::get('logout', 'UserController@logout')->name('logout');
+    Route::get('register', 'UserController@register')->name('register');
     // post pages
-    Route::post('login', 'UserController@login_do');
-    Route::post('register', 'UserController@register_do');
+    Route::post('login', 'UserController@login_do')->name('login');
+    Route::post('register', 'UserController@register_do')->name('register');
 });
 
-Route::group(['prefix' => 'user', 'middleware' => 'auth'], function () {
-    Route::get('search', 'UserController@search');
-    Route::get('settings', 'UserController@settings');
+Route::group(['prefix' => 'user', 'middleware' => 'auth', 'as' => 'user/'], function () {
+    Route::get('search', 'UserController@search')->name('search');
+    Route::get('settings', 'UserController@settings')->name('settings');
 });
 
 // Log controller
-Route::group(['prefix' => 'log', 'middleware' => 'auth'], function () {
-    Route::get('/', 'LogsController@index');
-    Route::get('view/{date}', 'LogsController@view');
-    Route::get('edit/{date}', 'LogsController@edit');
-    Route::get('search', 'LogsController@search');
-    Route::get('volume', 'LogsController@volume');
+Route::group(['prefix' => 'log', 'middleware' => 'auth', 'as' => 'log/'], function () {
+    Route::get('/', 'LogsController@index')->name('');
+    Route::get('view/{date}', 'LogsController@view')->name('view');
+    Route::get('edit/{date}', 'LogsController@edit')->name('edit');
+    Route::get('search', 'LogsController@search')->name('search');
+    Route::get('volume', 'LogsController@volume')->name('volume');
 });
 
 // Exercise Controller
-Route::group(['prefix' => 'exercise', 'middleware' => 'auth'], function () {
+Route::group(['prefix' => 'exercise', 'middleware' => 'auth', 'as' => 'exercise/'], function () {
     Route::get('/', 'ExercisesController@index');
-    Route::get('list', 'ExercisesController@list');
-    Route::get('edit/{id}', 'ExercisesController@edit');
-    Route::get('history/{id}', 'ExercisesController@history');
-    Route::get('volume/{id}', 'ExercisesController@volume');
+    Route::get('list', 'ExercisesController@list')->name('list');
+    Route::get('edit/{id}', 'ExercisesController@edit')->name('edit');
+    Route::get('history/{id}', 'ExercisesController@history')->name('history');
+    Route::get('volume/{id}', 'ExercisesController@volume')->name('volume');
 });
 
 // Tools controller
-Route::group(['prefix' => 'tools', 'middleware' => 'auth'], function () {
+Route::group(['prefix' => 'tools', 'middleware' => 'auth', 'as' => 'tools/'], function () {
     Route::get('/', 'ToolsController@index');
-    Route::get('bodyweight', 'ToolsController@bodyweight');
-    Route::get('wilks', 'ToolsController@wilks');
-    Route::get('sinclair', 'ToolsController@sinclair');
-    Route::get('invites', 'ToolsController@invites');
+    Route::get('bodyweight', 'ToolsController@bodyweight')->name('bodyweight');
+    Route::get('wilks', 'ToolsController@wilks')->name('wilks');
+    Route::get('sinclair', 'ToolsController@sinclair')->name('sinclair');
+    Route::get('invites', 'ToolsController@invites')->name('invites');
 });
 
 // Misc
 //Route::get('/', 'MiscController@index');
 Route::group(['middleware' => 'auth'], function () {
-    Route::get('ajax', 'MiscController@ajax');
-    Route::get('demo', 'MiscController@demo');
-    Route::get('dashboard', 'MiscController@dash');
+    Route::get('ajax', 'MiscController@ajax')->name('ajax');
+    Route::get('dashboard', 'MiscController@dash')->name('dashboard');
 });
+
+Route::get('demo', 'MiscController@demo')->name('demo');
 
 Route::get('/', function () {
     return view('welcome');
