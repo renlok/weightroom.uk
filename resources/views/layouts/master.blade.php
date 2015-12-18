@@ -5,17 +5,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title') | Weight Room - Track dem gains</title>
-		<base href="http://weightroom.uk/">
-		<link rel="icon" type="image/x-icon" href="http://weightroom.uk/favicon.ico">
-		<meta http-equiv="Content-Language" content="en">
-		<meta name="description" content="The ultimate weightlifting and powerlifting workout tracker. Track each of your workouts with beautiful logging and analysis tools">
-		<meta name="keywords" content="workout tracker, workout journal, training journal, weight training, strength training, powerlifting, weightlifting, strongman">
+	<!-- <base href="http://weightroom.uk/"> -->
+	<link rel="icon" type="image/x-icon" href="http://weightroom.uk/favicon.ico">
+	<meta http-equiv="Content-Language" content="en">
+	<meta name="description" content="The ultimate weightlifting and powerlifting workout tracker. Track each of your workouts with beautiful logging and analysis tools">
+	<meta name="keywords" content="workout tracker, workout journal, training journal, weight training, strength training, powerlifting, weightlifting, strongman">
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="http://weightroom.uk/css/tracker.css">
-		<script src="http://code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
-		<script src="http://getbootstrap.com/dist/js/bootstrap.min.js" charset="utf-8"></script>
+	<script src="http://code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
+	<script src="http://getbootstrap.com/dist/js/bootstrap.min.js" charset="utf-8"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -27,33 +27,33 @@
   <body>
 	<div class="container-fluid" id="header">
 	  <ul class="nav nav-pills">
-		  <li role="presentation"<!-- IF CURRENT_PAGE eq '' --> class="active"<!-- ENDIF -->><a href="?" class="hidden-xs">Home</a><a href="?" class="visible-xs"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
+		  <li role="presentation" class="{{ Request::is('/') ? 'active' : '' }}"><a href="{{ route('/') }}" class="hidden-xs">Home</a><a href="?" class="visible-xs"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
 	  <!-- IF NOT_LOGGED_IN -->
-		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'login' --> class="active"<!-- ENDIF -->><a href="?page=login">Login</a></li>
-		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'register' --> class="active"<!-- ENDIF -->><a href="?page=register">Register</a></li>
-		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'demo' --> class="active"<!-- ENDIF -->><a href="?page=demo">What is this?</a></li>
+		  <li role="presentation" class="{{ Request::is('user/login') ? 'active' : '' }}"><a href="{{ route('user/login') }}">Login</a></li>
+		  <li role="presentation" class="{{ Request::is('user/register') ? 'active' : '' }}"><a href="{{ route('user/register') }}">Register</a></li>
+		  <li role="presentation" class="{{ Request::is('demo') ? 'active' : '' }}"><a href="{{ route('demo') }}">What is this?</a></li>
 	  <!-- ELSE -->
-		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'log' && CURRENT_DO eq 'edit' --> class="active"<!-- ENDIF -->><a href="?do=edit&page=log">Track</a></li>
+		  <li role="presentation" class="{{ Request::is('log/edit') ? 'active' : '' }}"><a href="{{ route('log/edit') }}">Track</a></li>
 			<li class="dropdown visible-xs">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span> <span class="caret"></span></a>
 				<ul class="dropdown-menu">
-					<li role="presentation"<!-- IF CURRENT_PAGE eq 'log' && (CURRENT_DO eq 'view' || CURRENT_DO eq '') --> class="active"<!-- ENDIF -->><a href="?page=log">View Log</a></li>
-					<li role="presentation"<!-- IF CURRENT_PAGE eq 'exercise' && (CURRENT_DO eq 'list' || CURRENT_DO eq '') --> class="active"<!-- ENDIF -->><a href="?page=exercise&do=list">Exercise List</a></li>
-					<li role="presentation"<!-- IF B_IN_TOOLS --> class="active"<!-- ENDIF -->><a href="?page=tools">Tools</a></li>
+					<li role="presentation" class="{{ Request::is('log/view') ? 'active' : '' }}"><a href="{{ route('log/view') }}">View Log</a></li>
+					<li role="presentation" class="{{ Request::is('exercise/list') ? 'active' : '' }}"><a href="{{ route('exercise/list') }}">Exercise List</a></li>
+					<li role="presentation" class="{{ Request::is('tools/*') ? 'active' : '' }}"><a href="{{ route('tools') }}">Tools</a></li>
 				</ul>
 			</li>
-		  <li role="presentation" class="hidden-xs<!-- IF CURRENT_PAGE eq 'log' && (CURRENT_DO eq 'view' || CURRENT_DO eq '') --> active<!-- ENDIF -->"><a href="?page=log">View Log</a></li>
-		  <li role="presentation" class="hidden-xs<!-- IF CURRENT_PAGE eq 'exercise' && (CURRENT_DO eq 'list' || CURRENT_DO eq '') --> active<!-- ENDIF -->"><a href="?page=exercise&do=list">Exercise List</a></li>
-		  <li role="presentation" class="hidden-xs<!-- IF B_IN_TOOLS --> active<!-- ENDIF -->"><a href="?page=tools">Tools</a></li>
-		  <li role="presentation"<!-- IF CURRENT_PAGE eq 'search' --> class="active"<!-- ENDIF -->><a href="#" data-toggle="modal" data-target="#searchUsers"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></a></li>
-		  <li class="dropdown<!-- IF CURRENT_PAGE eq 'settings' --> active<!-- ENDIF -->">
+		  <li role="presentation" class="hidden-xs {{ Request::is('log/view') ? 'active' : '' }}"><a href="{{ route('log/view') }}">View Log</a></li>
+		  <li role="presentation" class="hidden-xs {{ Request::is('exercise/list') ? 'active' : '' }}"><a href="{{ route('exercise/list') }}">Exercise List</a></li>
+		  <li role="presentation" class="hidden-xs {{ Request::is('tools/*') ? 'active' : '' }}"><a href="{{ route('tools') }}">Tools</a></li>
+		  <li role="presentation" class="{{ Request::is('user/search') ? 'active' : '' }}"><a href="#" data-toggle="modal" data-target="#searchUsers"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></a></li>
+		  <li class="dropdown {{ Request::is('user/settings') ? 'active' : '' }}">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> <span class="caret"></span></a>
 				<ul class="dropdown-menu">
-					<li role="presentation"><a href="?page=invites">Invite codes</a></li>
+					<li role="presentation"><a href="{{ route('invites') }}">Invite codes</a></li>
 					<li role="presentation"><a href="http://we-link.co.uk/projects/public/weightroom" target="_blank">Submit a bug</a></li>
 					<li role="presentation"><a href="http://weightroom.uk/blog/" target="_blank">Blog</a></li>
-					<li role="presentation"><a href="?page=settings">Settings</a></li>
-					<li role="presentation"><a href="?page=logout">Logout</a></li>
+					<li role="presentation"><a href="{{ route('user/settings') }}">Settings</a></li>
+					<li role="presentation"><a href="{{ route('user/logout') }}">Logout</a></li>
 				</ul>
 			</li>
 	  <!-- ENDIF -->
@@ -72,7 +72,7 @@
         <h4 class="modal-title" id="searchUsersLabel">Search Users</h4>
       </div>
       <div class="modal-body">
-		<form class="form-inline" method="post" action="?page=search">
+		<form class="form-inline" method="post" action="{{ route('user/search') }}">
 		  <div class="form-group">
 			<label class="sr-only">Username</label>
 		  </div>
@@ -80,7 +80,7 @@
 			<label for="Username2" class="sr-only">Username</label>
 			<input type="text" class="form-control" id="Username2" placeholder="Username" name="username">
 		  </div>
-		  <input type="hidden" name="csrftoken" value="{_CSRFTOKEN}">
+          {{ csrf_field() }}
 		  <button type="submit" class="btn btn-default">Search</button>
 		</form>
       </div>
