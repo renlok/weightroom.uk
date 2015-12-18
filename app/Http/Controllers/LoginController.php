@@ -73,7 +73,7 @@ class LoginController extends Controller
 			'user_password' => bcrypt($input['password']),
 		]);
 
-		if (Auth::attempt('user_name' => $input['username'], 'password' => $input['email'])) {
+		if (Auth::attempt(['user_name' => $input['username'], 'password' => $input['email']])) {
 			// Authentication passed...
 			return redirect()->intended('dashboard');
 		}
