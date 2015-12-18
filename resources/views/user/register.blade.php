@@ -8,13 +8,13 @@
   <div class="form-group">
     <label for="username" class="col-sm-2 control-label">Username</label>
     <div class="col-sm-10">
-      <input type="text" class="form-control" id="username" name="username" placeholder="username" value="{{ old('username') }}">
+      <input type="text" class="form-control" id="user_name" name="user_name" placeholder="Username" value="{{ old('user_name') }}">
     </div>
   </div>
   <div class="form-group">
     <label for="email" class="col-sm-2 control-label">Email</label>
     <div class="col-sm-10">
-      <input type="email" class="form-control" id="email" name="email" placeholder="Email" value="{{ old('email') }}">
+      <input type="email" class="form-control" id="user_email" name="user_email" placeholder="Email" value="{{ old('user_email') }}">
     </div>
   </div>
   <div class="form-group">
@@ -42,3 +42,4 @@
     </div>
   </div>
 </form>
+@endsection

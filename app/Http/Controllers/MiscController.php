@@ -9,23 +9,23 @@ use App\Http\Controllers\Controller;
 
 class MiscController extends Controller
 {
-  public function index()
-  {
-    return view('misc.volume');
-  }
+    public function index()
+    {
+        return view('landing');
+    }
 
-  public function ajax()
-  {
-    //
-  }
+    public function ajax()
+    {
+        //
+    }
 
-  public function demo()
-  {
-    return view('misc.demo');
-  }
+    public function demo()
+    {
+        return view('demo');
+    }
 
-  public function dash()
-  {
-    return view('misc.dash');
-  }
+    public function dash()
+    {
+        return view('dash');
+    }
 }

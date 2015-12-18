@@ -8,6 +8,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Auth;
 use Validator;
+use User;
 
 class LoginController extends Controller
 {
@@ -57,8 +58,8 @@ class LoginController extends Controller
 	public function postRegister(Request $request)
 	{
 		$validator = Validator::make($request->all(), [
-			'username' => 'required|unique:users|max:255',
-			'email' => 'required|unique:users|max:255',
+			'user_name' => 'required|unique:users|max:255',
+			'user_email' => 'required|unique:users|max:255',
 			'password' => 'required|confirmed|min:6',
 			'invcode' => 'required',
 		]);
@@ -72,13 +73,13 @@ class LoginController extends Controller
 
 		// TODO: check for invite code
 		$input = $request->all();
-		User::create([
-			'user_name' => $input['username'],
-			'user_email' => $input['email'],
+		App\User::create([
+			'user_name' => $input['user_name'],
+			'user_email' => $input['user_email'],
 			'user_password' => bcrypt($input['password']),
 		]);
 
-		if (Auth::attempt(['user_name' => $input['username'], 'password' => $input['email']])) {
+		if (Auth::attempt(['user_name' => $input['user_name'], 'password' => $input['password']])) {
 			// Authentication passed...
 			return redirect()->intended('dashboard');
 		}

@@ -10,14 +10,3 @@
         </ul>
     </div>
 @endif
-
-@if (count($error) > 0)
-    <!-- Form Error List -->
-    <div class="alert alert-danger">
-        <strong>Whoops! Something went wrong!</strong>
-
-        <ul>
-                <li>{{ $error }}</li>
-        </ul>
-    </div>
-@endif
