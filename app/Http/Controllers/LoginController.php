@@ -11,12 +11,12 @@ use Validator;
 
 class LoginController extends Controller
 {
-	public function login()
+	public function getLogin()
 	{
 		return view('user.login');
 	}
 
-	public function login_do (Request $request)
+	public function postLogin(Request $request)
 	{
 		$validator = Validator::make($request->all(), [
 			'username' => 'required|max:255',
@@ -38,18 +38,18 @@ class LoginController extends Controller
 		}
 	}
 
-	public function logout()
+	public function getLogout()
 	{
 		Auth::logout();
 
 	}
 
-	public function register()
+	public function getRegister()
 	{
 	  return view('user.register');
 	}
 
-	public function register_do (Request $request)
+	public function postRegister(Request $request)
 	{
 		$validator = Validator::make($request->all(), [
 			'username' => 'required|unique:users|max:255',
