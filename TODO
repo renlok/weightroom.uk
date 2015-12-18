@@ -6,5 +6,7 @@
 - Test route patterns for date & id
 - Add route names with ->name('');
 
+- Added variables to titles make them unique
+
 figure out how to do the rest
 https://laracasts.com/series/laravel-5-fundamentals/episodes/7
