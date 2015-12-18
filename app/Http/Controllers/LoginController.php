@@ -8,7 +8,9 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Auth;
 use Validator;
-use User;
+use App\User;
+use App\Invite_code;
+use Illuminate\Support\Collection;
 
 class LoginController extends Controller
 {
@@ -71,13 +73,25 @@ class LoginController extends Controller
 				->withErrors($validator);
 		}
 
-		// TODO: check for invite code
 		$input = $request->all();
-		\App\User::create([
+
+		// is this a valid invite code?
+		$invite_code = Invite_code::isvalid($input['invcode'])->first();
+		if ($invite_code->isEmpty())
+		{
+			return redirect('register')
+				->withInput()
+				->with('error', 'Invalid invite code');
+		}
+
+		User::create([
 			'user_name' => $input['user_name'],
 			'user_email' => $input['user_email'],
 			'user_password' => bcrypt($input['password']),
 		]);
+
+		// Account created remove use from invite code
+		Invite_code::where('code_id', $invite_code->code_id)->decrement('code_uses');
 
 		if (Auth::attempt(['user_name' => $input['user_name'], 'password' => $input['password']])) {
 			// Authentication passed...

@@ -27,11 +27,11 @@
   <body>
 	<div class="container-fluid" id="header">
 	  <ul class="nav nav-pills">
-	  <!-- IF NOT_LOGGED_IN -->
+	  @if (!Auth::check())
 		  <li role="presentation" class="{{ Request::is('login') ? 'active' : '' }}"><a href="{{ route('login') }}">Login</a></li>
 		  <li role="presentation" class="{{ Request::is('register') ? 'active' : '' }}"><a href="{{ route('register') }}">Register</a></li>
 		  <li role="presentation" class="{{ Request::is('demo') ? 'active' : '' }}"><a href="{{ route('demo') }}">What is this?</a></li>
-	  <!-- ELSE -->
+	  @else
 		  <li role="presentation" class="{{ Request::is('dashboard') ? 'active' : '' }}"><a href="{{ route('dashboard') }}" class="hidden-xs">Home</a><a href="?" class="visible-xs"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
 		  <li role="presentation" class="{{ Request::is('log/edit') ? 'active' : '' }}"><a href="{{ route('log/edit') }}">Track</a></li>
 			<li class="dropdown visible-xs">
@@ -56,7 +56,7 @@
 					<li role="presentation"><a href="{{ route('logout') }}">Logout</a></li>
 				</ul>
 			</li>
-	  <!-- ENDIF -->
+	  @endif
 		</ul>
 	</div>
 	<div class="container-fluid" id="body-div">

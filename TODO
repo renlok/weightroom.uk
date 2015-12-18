@@ -3,13 +3,13 @@
 - define which database colomns are fillable http://laravel.com/docs/5.1/eloquent
 - define eloquent Relationships
 
-- Test route patterns for date & id
-- Add route names with ->name('');
-
 - Add variables to titles make them unique
-
 - Add warning message to login when username/password incorrect
 - Add check for invite code
 
 figure out how to do the rest
 https://laracasts.com/series/laravel-5-fundamentals/episodes/7
+
+
+- Test route patterns for date & id
+- Test invite codes
