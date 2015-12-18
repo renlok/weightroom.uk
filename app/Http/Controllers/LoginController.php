@@ -32,9 +32,14 @@ class LoginController extends Controller
 
 		$input = $request->all();
 
-		if (Auth::attempt(['user_name' => $input['username'], 'password' => $input['password']], $input['rememberme'])) {
+		if (Auth::attempt(['user_name' => $input['username'], 'password' => $input['password']], isset($input['rememberme']))) {
 			// Authentication passed...
 			return redirect()->intended('dashboard');
+		}
+		else {
+			return redirect('login')
+				->withInput()
+				->with('errors', 'Email/password wrong, or account not activated.');
 		}
 	}
 
