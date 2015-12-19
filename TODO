@@ -54,11 +54,11 @@ https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 |                      |       |            |        |
 | settings.php         | x     | x          |        |
 |                      |       |            |        |
-| sinclair.php         | x     |            |        |
+| sinclair.php         | x     | s          |        |
 |                      |       |            |        |
 | tools.php            | x     | x          |        |
 |                      |       |            |        |
 | volume.php           |       |            |        |
 |                      |       |            |        |
-| wilks.php            | x     |            |        |
+| wilks.php            | x     | s          |        |
 +----------------------+-------+------------+--------+
