@@ -3,7 +3,8 @@
 @section('title', 'Register')
 
 @section('content')
-@include('common.errors')
+@include('errors.validation')
+@include('errors.simple')
 <form class="form-horizontal" action="{{ route('register') }}" method="post">
   <div class="form-group">
     <label for="username" class="col-sm-2 control-label">Username</label>

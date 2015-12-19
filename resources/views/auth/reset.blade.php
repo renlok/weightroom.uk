@@ -4,7 +4,7 @@
 @section('title', 'Reset password')
 
 @section('content')
-@include('common.errors')
+@include('errors.validation')
 <form method="POST" action="{{ route('password/reset') }}">
     {!! csrf_field() !!}
     <input type="hidden" name="token" value="{{ $token }}">

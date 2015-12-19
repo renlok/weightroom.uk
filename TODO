@@ -4,17 +4,60 @@
 - define eloquent Relationships
 
 - Add variables to titles make them unique
-- Add warning message to login when username/password incorrect
-- Add check for invite code
 
 figure out how to do the rest
 https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 
 
 - Test route patterns for date & id
-- Test invite codes
 
-
-
-
-- Update demo with new screens
++----------------------+-------+------------+--------+
+|         PAGE         | BLADE | CONTROLLER | TESTED |
++----------------------+-------+------------+--------+
+|                      |       |            |        |
+| ajax.php             |       |            |        |
+|                      |       |            |        |
+| bodyweight.php       |       |            |        |
+|                      |       |            |        |
+| dash.php             | s     |            |        |
+|                      |       |            |        |
+| demo.php             | x     | x          |        | Update demo with new screens
+|                      |       |            |        |
+| edit_exercise.php    |       |            |        |
+|                      |       |            |        |
+| exercise.php compare |       |            |        |
+|                      |       |            |        |
+| exercise.php list    |       |            |        |
+|                      |       |            |        |
+| exercise.php prs     |       |            |        |
+|                      |       |            |        |
+| history.php          |       |            |        |
+|                      |       |            |        |
+| invites.php          | x     | x          | x      |
+|                      |       |            |        |
+| landing.php          | x     | x          |        |
+|                      |       |            |        |
+| log.php view         |       |            |        |
+|                      |       |            |        |
+| log.php edit         |       |            |        |
+|                      |       |            |        |
+| login.php            | x     | x          |        |
+|                      |       |            |        |
+| logout.php           | x     | x          |        |
+|                      |       |            |        |
+| register.php         | x     | x          |        |
+|                      |       |            |        |
+| search.php           |       |            |        |
+|                      |       |            |        |
+| search_log.php       |       |            |        |
+|                      |       |            |        |
+| settings.php         | s     | s          |        |
+|                      |       |            |        |
+| sinclair.php         |       |            |        |
+|                      |       |            |        |
+| tools.php            | x     | x          |        |
+|                      |       |            |        |
+| volume.php           |       |            |        |
+|                      |       |            |        |
+| wilks.php            |       |            |        |
++----------------------+-------+------------+--------+

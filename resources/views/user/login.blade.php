@@ -3,7 +3,8 @@
 @section('title', 'Login')
 
 @section('content')
-@include('common.errors')
+@include('errors.validation')
+@include('errors.simple')
 <form class="form-horizontal" action="{{ route('login') }}" method="post">
   <div class="form-group">
     <label for="username" class="col-sm-2 control-label">Username</label>
@@ -29,7 +30,7 @@
   </div>
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
-	  {{ csrf_field() }}
+	  {{!! csrf_field() !!}}
       <button type="submit" class="btn btn-default" name="action">Sign in</button>
     </div>
   </div>

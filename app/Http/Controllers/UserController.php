@@ -5,6 +5,8 @@ namespace App\Http\Controllers\User;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Auth;
+use App\User;
 
 class UserController extends Controller
 {
@@ -13,8 +15,15 @@ class UserController extends Controller
       return view('user.search');
     }
 
-    public function settings()
+    public function getSettings()
     {
-      return view('user.settings');
+        $user = Auth::user();
+        return view('user.settings', compact('user'));
+    }
+
+    public function postSettings()
+    {
+        $user = Auth::user();
+        return view('user.settings', compact('user'));
     }
 }

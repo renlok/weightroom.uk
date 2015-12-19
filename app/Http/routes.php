@@ -31,7 +31,8 @@ Route::post('password/reset', 'Auth\PasswordController@postReset');
 // User controller
 Route::group(['prefix' => 'user', 'middleware' => 'auth'], function () {
     Route::post('search', 'UserController@search')->name('userSearch');
-    Route::get('settings', 'UserController@settings')->name('userSettings');
+    Route::get('settings', 'UserController@getSettings')->name('userSettings');
+    Route::post('settings', 'UserController@postSettings');
 });
 
 // Log controller

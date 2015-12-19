@@ -4,7 +4,7 @@
 @section('title', 'Forgot Password')
 
 @section('content')
-@include('common.errors')
+@include('errors.validation')
 <form class="form-horizontal" method="POST" action="{{ route('password/email') }}">
     {!! csrf_field() !!}
 
