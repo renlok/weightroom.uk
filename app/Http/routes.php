@@ -72,4 +72,4 @@ Route::get('demo', 'MiscController@demo')->name('demo');
 
 Route::get('/', function () {
     return view('welcome');
-});
+})->name('home');
