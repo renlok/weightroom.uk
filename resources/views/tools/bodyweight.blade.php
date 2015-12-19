@@ -2,5 +2,4 @@
 
 @section('title', 'Bodyweight')
 
-@section('content')
-@endsection
+@include('common.graph', ['type' => 'Bodyweight', 'message' => 'View how your bodyweight has changed.'])

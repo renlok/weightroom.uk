@@ -2,5 +2,4 @@
 
 @section('title', 'Wilks')
 
-@section('content')
-@endsection
+@include('common.graph', ['type' => 'Wilks', 'message' => 'The Wilks Coefficient or Wilks Formula is a coefficient that can be used to measure the strength of a powerlifter against other powerlifters despite the different weights of the lifters.'])

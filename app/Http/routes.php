@@ -39,16 +39,21 @@ Route::group(['prefix' => 'user', 'middleware' => 'auth'], function () {
 Route::group(['prefix' => 'log', 'middleware' => 'auth'], function () {
     Route::get('/', 'LogsController@index')->name('');
     Route::get('view/{date}', 'LogsController@view')->name('view');
-    Route::get('edit/{date}', 'LogsController@edit')->name('edit');
+    Route::get('edit/{date}', 'LogsController@edit')->name('editLog');
+    Route::get('new', 'LogsController@new')->name('newLog');
     Route::get('search', 'LogsController@search')->name('searchLog');
     Route::get('volume', 'LogsController@volume')->name('totalVolume');
 });
 
 // Exercise Controller
 Route::group(['prefix' => 'exercise', 'middleware' => 'auth'], function () {
-    Route::get('/', 'ExercisesController@index');
-    Route::get('list', 'ExercisesController@list')->name('list');
-    Route::get('edit/{id}', 'ExercisesController@edit')->name('edit');
+    // list exercises
+    Route::get('/', 'ExercisesController@list');
+    Route::get('list', 'ExercisesController@list')->name('listExercises');
+    Route::get('view/{exercise_name}', 'ExercisesController@list')->name('viewExercise');
+    // edit exercise routes
+    Route::get('edit/{exercise_name}', 'ExercisesController@getEdit')->name('editExercise');
+    Route::post('edit/{exercise_name}', 'ExercisesController@postEdit');
     Route::get('history/{id}', 'ExercisesController@history')->name('history');
     Route::get('volume/{id}', 'ExercisesController@volume')->name('volume');
     Route::get('compare', 'ToolsController@compare')->name('compareExercises');
@@ -57,9 +62,9 @@ Route::group(['prefix' => 'exercise', 'middleware' => 'auth'], function () {
 // Tools controller
 Route::group(['prefix' => 'tools', 'middleware' => 'auth'], function () {
     Route::get('/', 'ToolsController@index')->name('tools');
-    Route::get('bodyweight', 'ToolsController@bodyweight')->name('bodyweightGraph');
-    Route::get('wilks', 'ToolsController@wilks')->name('wilksGraph');
-    Route::get('sinclair', 'ToolsController@sinclair')->name('sinclairGraph');
+    Route::get('bodyweight/{range?}', 'ToolsController@bodyweight')->name('bodyweightGraph');
+    Route::get('wilks/{range?}', 'ToolsController@wilks')->name('wilksGraph');
+    Route::get('sinclair/{range?}', 'ToolsController@sinclair')->name('sinclairGraph');
     Route::get('invites', 'ToolsController@invites')->name('invites');
 });
 

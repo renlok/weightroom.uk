@@ -8,6 +8,7 @@
 figure out how to do the rest
 https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 
+- Make typography of the site less crappy looking
 
 - Test route patterns for date & id
 
@@ -17,17 +18,17 @@ https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 |                      |       |            |        |
 | ajax.php             |       |            |        |
 |                      |       |            |        |
-| bodyweight.php       |       |            |        |
+| bodyweight.php       | x     | x          |        |
 |                      |       |            |        |
 | dash.php             | s     |            |        |
 |                      |       |            |        |
 | demo.php             | x     | x          |        | Update demo with new screens
 |                      |       |            |        |
-| edit_exercise.php    |       |            |        |
+| edit_exercise.php    | s     | s          |        |
 |                      |       |            |        |
 | exercise.php compare |       |            |        |
 |                      |       |            |        |
-| exercise.php list    |       |            |        |
+| exercise.php list    | x     | x          |        |
 |                      |       |            |        |
 | exercise.php prs     |       |            |        |
 |                      |       |            |        |
@@ -53,11 +54,11 @@ https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 |                      |       |            |        |
 | settings.php         | x     | x          |        |
 |                      |       |            |        |
-| sinclair.php         |       |            |        |
+| sinclair.php         | x     |            |        |
 |                      |       |            |        |
 | tools.php            | x     | x          |        |
 |                      |       |            |        |
 | volume.php           |       |            |        |
 |                      |       |            |        |
-| wilks.php            |       |            |        |
+| wilks.php            | x     |            |        |
 +----------------------+-------+------------+--------+
