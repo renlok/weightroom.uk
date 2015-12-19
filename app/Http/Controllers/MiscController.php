@@ -28,4 +28,9 @@ class MiscController extends Controller
     {
         return view('dash');
     }
+
+    public function privacyPolicy()
+    {
+        return view('help.privacypolicy');
+    }
 }

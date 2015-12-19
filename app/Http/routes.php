@@ -29,35 +29,36 @@ Route::get('password/reset/{token}', 'Auth\PasswordController@getReset')->name('
 Route::post('password/reset', 'Auth\PasswordController@postReset');
 
 // User controller
-Route::group(['prefix' => 'user', 'middleware' => 'auth', 'as' => 'user/'], function () {
-    Route::post('search', 'UserController@search')->name('search');
-    Route::get('settings', 'UserController@settings')->name('settings');
+Route::group(['prefix' => 'user', 'middleware' => 'auth'], function () {
+    Route::post('search', 'UserController@search')->name('userSearch');
+    Route::get('settings', 'UserController@settings')->name('userSettings');
 });
 
 // Log controller
-Route::group(['prefix' => 'log', 'middleware' => 'auth', 'as' => 'log/'], function () {
+Route::group(['prefix' => 'log', 'middleware' => 'auth'], function () {
     Route::get('/', 'LogsController@index')->name('');
     Route::get('view/{date}', 'LogsController@view')->name('view');
     Route::get('edit/{date}', 'LogsController@edit')->name('edit');
-    Route::get('search', 'LogsController@search')->name('search');
-    Route::get('volume', 'LogsController@volume')->name('volume');
+    Route::get('search', 'LogsController@search')->name('searchLog');
+    Route::get('volume', 'LogsController@volume')->name('totalVolume');
 });
 
 // Exercise Controller
-Route::group(['prefix' => 'exercise', 'middleware' => 'auth', 'as' => 'exercise/'], function () {
+Route::group(['prefix' => 'exercise', 'middleware' => 'auth'], function () {
     Route::get('/', 'ExercisesController@index');
     Route::get('list', 'ExercisesController@list')->name('list');
     Route::get('edit/{id}', 'ExercisesController@edit')->name('edit');
     Route::get('history/{id}', 'ExercisesController@history')->name('history');
     Route::get('volume/{id}', 'ExercisesController@volume')->name('volume');
+    Route::get('compare', 'ToolsController@compare')->name('compareExercises');
 });
 
 // Tools controller
-Route::group(['prefix' => 'tools', 'middleware' => 'auth', 'as' => 'tools/'], function () {
-    Route::get('/', 'ToolsController@index');
-    Route::get('bodyweight', 'ToolsController@bodyweight')->name('bodyweight');
-    Route::get('wilks', 'ToolsController@wilks')->name('wilks');
-    Route::get('sinclair', 'ToolsController@sinclair')->name('sinclair');
+Route::group(['prefix' => 'tools', 'middleware' => 'auth'], function () {
+    Route::get('/', 'ToolsController@index')->name('tools');
+    Route::get('bodyweight', 'ToolsController@bodyweight')->name('bodyweightGraph');
+    Route::get('wilks', 'ToolsController@wilks')->name('wilksGraph');
+    Route::get('sinclair', 'ToolsController@sinclair')->name('sinclairGraph');
     Route::get('invites', 'ToolsController@invites')->name('invites');
 });
 
@@ -69,6 +70,9 @@ Route::group(['middleware' => 'auth'], function () {
 });
 
 Route::get('demo', 'MiscController@demo')->name('demo');
+
+// legal guff
+Route::get('help/privacypolicy', 'MiscController@privacyPolicy')->name('privacyPolicy');
 
 Route::get('/', function () {
     return view('welcome');
