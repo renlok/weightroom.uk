@@ -5,11 +5,11 @@
 @section('content')
 <h2>Edit user settings</h2>
 @include('errors.simple')
-<!-- IF SETTINGS_UPDATED -->
+@if ($settings_updated)
   <div class="alert bg-success" role="alert">
 	Settings updated
   </div>
-<!-- ENDIF -->
+@endif
 <form class="form-horizontal" action="{{ url('user/settings') }}" method="post">
   <div class="form-group">
     <div>
@@ -40,22 +40,26 @@
   </div>
   <div class="form-group">
     <div>
-		<label for="weekstart">Start of the week</label>
-		<p><small><i>Which day do you want the calenders to show as the start of the week</i></small></p>
-	</div>
-	<label class="radio-inline">
-	  <input type="radio" id="weekstart" name="weekstart" value="1" {{ $user->user_weekstart == '1' ? 'checked' : '' }}> Monday
-	</label>
-	<label class="radio-inline">
-	  <input type="radio" id="weekstart" name="weekstart" value="0" {{ $user->user_weekstart == '0' ? 'checked' : '' }}> Sunday
-	</label>
+  		<label for="weekstart">Start of the week</label>
+  		<p><small><i>Which day do you want the calenders to show as the start of the week</i></small></p>
+  	</div>
+  	<label class="radio-inline">
+  	  <input type="radio" id="weekstart" name="weekstart" value="1" {{ $user->user_weekstart == '1' ? 'checked' : '' }}> Monday
+  	</label>
+  	<label class="radio-inline">
+  	  <input type="radio" id="weekstart" name="weekstart" value="0" {{ $user->user_weekstart == '0' ? 'checked' : '' }}> Sunday
+  	</label>
   </div>
   <div class="form-group">
     <div>
-		<label for="showreps">Rep max. to show</label>
-		<p><small><i>These is the rep ranges which will show on the graphs in the exercise PR page</i></small></p>
-	</div>
-    {SHOWREPHTML}
+  		<label for="showreps">Rep max. to show</label>
+  		<p><small><i>These is the rep ranges which will show on the graphs in the exercise PR page</i></small></p>
+  	</div>
+@for ($i = 0; $i < 10; $i++)
+    <label class="checkbox-inline">
+      <input type="checkbox" name="showreps[]" id="inlineCheckbox{{ $i }}" value="{{ $i }}"{{ $showreps[$i] }}> {{ $i }} RM
+    </label>
+@endfor
   </div>
   <div class="form-group">
     <h3>For the Wilks Calculator</h3>
@@ -64,27 +68,27 @@
     <label for="squat" class="control-label">Preferred squat variation for stats</label>
       <select name="squat" required id="squat" class="form-control">
 			<option value="0">None selected</option>
-		<!-- BEGIN exercise -->
-			<option value="{exercise.EXERCISE_ID}"<!-- IF exercise.EXERCISE_ID eq SQUATID --> selected<!-- ENDIF -->>{exercise.EXERCISE}</option>
-		<!-- END -->
+@foreach ($exercises as $exercise)
+			<option value="{{ $exercise->exercise_id }}"@if($exercise->exercise_id == $user->user_squatid) selected @endif>{{ $exercise->exercise_name }}</option>
+@endforeach
 	  </select>
   </div>
   <div class="form-group">
     <label for="bench" class="control-label">Preferred bench press variation for stats</label>
       <select name="bench" required id="bench" class="form-control">
 			<option value="0">None selected</option>
-		<!-- BEGIN exercise -->
-			<option value="{exercise.EXERCISE_ID}"<!-- IF exercise.EXERCISE_ID eq BENCHID --> selected<!-- ENDIF -->>{exercise.EXERCISE}</option>
-		<!-- END -->
+@foreach ($exercises as $exercise)
+			<option value="{{ $exercise->exercise_id }}"@if($exercise->exercise_id == $user->user_benchid) selected @endif>{{ $exercise->exercise_name }}</option>
+@endforeach
 	  </select>
   </div>
   <div class="form-group">
     <label for="deadlift" class="control-label">Preferred deadlift variation for stats</label>
       <select name="deadlift" required id="deadlift" class="form-control">
 			<option value="0">None selected</option>
-		<!-- BEGIN exercise -->
-			<option value="{exercise.EXERCISE_ID}"<!-- IF exercise.EXERCISE_ID eq DEADLIFTID --> selected<!-- ENDIF -->>{exercise.EXERCISE}</option>
-		<!-- END -->
+@foreach ($exercises as $exercise)
+			<option value="{{ $exercise->exercise_id }}"@if($exercise->exercise_id == $user->user_deadliftid) selected @endif>{{ $exercise->exercise_name }}</option>
+@endforeach
 	  </select>
   </div>
   <div class="form-group">
@@ -95,18 +99,18 @@
     <label for="snatch" class="control-label">Preferred snatch variation for stats</label>
       <select name="snatch" required id="snatch" class="form-control">
 			<option value="0">None selected</option>
-		<!-- BEGIN exercise -->
-			<option value="{exercise.EXERCISE_ID}"<!-- IF exercise.EXERCISE_ID eq SNATCHID --> selected<!-- ENDIF -->>{exercise.EXERCISE}</option>
-		<!-- END -->
+@foreach ($exercises as $exercise)
+			<option value="{{ $exercise->exercise_id }}"@if($exercise->exercise_id == $user->user_snatchid) selected @endif>{{ $exercise->exercise_name }}</option>
+@endforeach
 	  </select>
   </div>
   <div class="form-group">
     <label for="cnj" class="control-label">Preferred clean and jerk variation for stats</label>
       <select name="cnj" required id="cnj" class="form-control">
 			<option value="0">None selected</option>
-		<!-- BEGIN exercise -->
-			<option value="{exercise.EXERCISE_ID}"<!-- IF exercise.EXERCISE_ID eq CLEANJERKID --> selected<!-- ENDIF -->>{exercise.EXERCISE}</option>
-		<!-- END -->
+@foreach ($exercises as $exercise)
+			<option value="{{ $exercise->exercise_id }}"@if($exercise->exercise_id == $user->user_cleanjerkid) selected @endif>{{ $exercise->exercise_name }}</option>
+@endforeach
 	  </select>
   </div>
   <div class="form-group">
@@ -119,10 +123,10 @@
 		<p><small><i>If enabled when the total tonnage is calculatedfailed lifts will be included as a completed lift</i></small></p>
 	</div>
 	<label class="radio-inline">
-	  <input type="radio" id="volumeincfails" name="volumeincfails" value="1"<!-- IF VOLUMEINCFAILS eq 1 --> checked<!-- ENDIF -->> enable
+	  <input type="radio" id="volumeincfails" name="volumeincfails" value="1" {{ $user->user_volumeincfails == '1' ? 'checked' : '' }}> enable
 	</label>
 	<label class="radio-inline">
-	  <input type="radio" id="volumeincfails" name="volumeincfails" value="0"<!-- IF VOLUMEINCFAILS eq 0 --> checked<!-- ENDIF -->> disable
+	  <input type="radio" id="volumeincfails" name="volumeincfails" value="0" {{ $user->user_volumeincfails == '0' ? 'checked' : '' }}> disable
 	</label>
   </div>
   <div class="form-group">
@@ -130,13 +134,13 @@
 		<label for="viewintensityabs">Show average intensity as % of current 1RM or as abolute value</label>
 	</div>
 	<label class="radio-inline">
-	  <input type="radio" id="viewintensityabs" name="viewintensityabs" value="0"<!-- IF ITENSITYABS eq 0 --> checked<!-- ENDIF -->> % of 1RM value
+	  <input type="radio" id="viewintensityabs" name="viewintensityabs" value="p" {{ $user->user_showintensity == 'p' ? 'checked' : '' }}> % of 1RM value
 	</label>
 	<label class="radio-inline">
-	  <input type="radio" id="viewintensityabs" name="viewintensityabs" value="1"<!-- IF ITENSITYABS eq 1 --> checked<!-- ENDIF -->> absolute value
+	  <input type="radio" id="viewintensityabs" name="viewintensityabs" value="a" {{ $user->user_showintensity == 'a' ? 'checked' : '' }}> absolute value
 	</label>
 	<label class="radio-inline">
-	  <input type="radio" id="viewintensityabs" name="viewintensityabs" value="2"<!-- IF ITENSITYABS eq 2 --> checked<!-- ENDIF -->> hidden
+	  <input type="radio" id="viewintensityabs" name="viewintensityabs" value="h" {{ $user->user_showintensity == 'h' ? 'checked' : '' }}> hidden
 	</label>
   </div>
   <div class="form-group">
@@ -145,7 +149,7 @@
 		<p><small><i>If you track your warmups it is sometimes a good idea to ignore values lower than x% from the average intensity so they do not artificially bring the number down</i></small></p>
 	</div>
 	<div class="input-group">
-	  <input type="text" class="form-control" id="limitintensity" name="limitintensity" value="{INTENSITY_LIMIT}">
+	  <input type="text" class="form-control" id="limitintensity" name="limitintensity" value="{{ $user->user_limitintensity }}">
 	  <div class="input-group-addon">%</div>
 	</div>
   </div>
