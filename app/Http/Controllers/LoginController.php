@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
 use App\Http\Requests;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Http\Controllers\Controller;
 use Auth;
 use Validator;
@@ -19,20 +19,8 @@ class LoginController extends Controller
 		return view('user.login');
 	}
 
-	public function postLogin(Request $request)
+	public function postLogin(LoginRequest $request)
 	{
-		$validator = Validator::make($request->all(), [
-			'username' => 'required|max:255',
-			'password' => 'required|min:6',
-		]);
-
-		if ($validator->fails())
-		{
-			return redirect('login')
-				->withInput()
-				->withErrors($validator);
-		}
-
 		$input = $request->all();
 
 		if (Auth::attempt(['user_name' => $input['username'], 'password' => $input['password']], isset($input['rememberme']))) {
@@ -57,22 +45,8 @@ class LoginController extends Controller
 	  return view('user.register');
 	}
 
-	public function postRegister(Request $request)
+	public function postRegister(RegisterRequest $request)
 	{
-		$validator = Validator::make($request->all(), [
-			'user_name' => 'required|unique:users|max:255',
-			'user_email' => 'required|unique:users|max:255',
-			'password' => 'required|confirmed|min:6',
-			'invcode' => 'required',
-		]);
-
-		if ($validator->fails())
-		{
-			return redirect('register')
-				->withInput()
-				->withErrors($validator);
-		}
-
 		$input = $request->all();
 
 		// is this a valid invite code?
