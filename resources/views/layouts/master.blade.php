@@ -72,7 +72,7 @@
         <h4 class="modal-title" id="searchUsersLabel">Search Users</h4>
       </div>
       <div class="modal-body">
-		<form class="form-inline" method="post" action="{{ route('user/search') }}">
+		<form class="form-inline" method="post" action="{{ route('userSearch') }}">
 		  <div class="form-group">
 			<label class="sr-only">Username</label>
 		  </div>

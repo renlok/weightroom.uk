@@ -2,7 +2,7 @@
 
 use App\Http\Requests\Request;
 
-class UpdateUserSettingsRequest extends Request
+class RegisterRequest extends Request
 {
     /**
     * Get the validation rules that apply to the request.
@@ -15,7 +15,7 @@ class UpdateUserSettingsRequest extends Request
 			'user_name' => 'required|unique:users|max:255',
 			'user_email' => 'required|unique:users|max:255',
 			'password' => 'required|confirmed|min:6',
-			'invcode' => 'required|exists:invite_code,code,code_uses,!0',
+			'invcode' => 'required|isvalid:invite_codes,code,code_uses,code_expires',
         ];
     }
 
@@ -40,7 +40,7 @@ class UpdateUserSettingsRequest extends Request
     public function messages()
     {
         return [
-            'invcode.exists' => 'The invite code has been used',
+            'invcode.exists' => 'The invite code is not valid',
         ];
     }
 }
