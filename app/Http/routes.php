@@ -37,10 +37,11 @@ Route::group(['prefix' => 'user', 'middleware' => 'auth'], function () {
 
 // Log controller
 Route::group(['prefix' => 'log', 'middleware' => 'auth'], function () {
-    Route::get('/', 'LogsController@index')->name('');
-    Route::get('view/{date}', 'LogsController@view')->name('view');
-    Route::get('edit/{date}', 'LogsController@edit')->name('editLog');
-    Route::get('new', 'LogsController@new')->name('newLog');
+    Route::get('{?user}', 'LogsController@index')->name('');
+    Route::get('{date}/view/{?user}', 'LogsController@view')->name('view');
+    Route::get('{date}/edit', 'LogsController@edit')->name('editLog');
+    Route::get('{date}/new', 'LogsController@new')->name('newLog');
+    Route::get('{date}/delete', 'LogsController@delete')->name('deleteLog');
     Route::get('search', 'LogsController@search')->name('searchLog');
     Route::get('volume', 'LogsController@volume')->name('totalVolume');
 });
@@ -52,10 +53,11 @@ Route::group(['prefix' => 'exercise', 'middleware' => 'auth'], function () {
     Route::get('list', 'ExercisesController@list')->name('listExercises');
     Route::get('view/{exercise_name}', 'ExercisesController@list')->name('viewExercise');
     // edit exercise routes
-    Route::get('edit/{exercise_name}', 'ExercisesController@getEdit')->name('editExercise');
-    Route::post('edit/{exercise_name}', 'ExercisesController@postEdit');
-    Route::get('history/{id}', 'ExercisesController@history')->name('history');
-    Route::get('volume/{id}', 'ExercisesController@volume')->name('volume');
+    // can automatically pull the exercise with (App\Exercise $user)
+    Route::get('{exercise_name}/edit', 'ExercisesController@getEdit')->name('editExercise');
+    Route::post('{exercise_name}/edit', 'ExercisesController@postEdit');
+    Route::get('{exercise_name}/history', 'ExercisesController@history')->name('history');
+    Route::get('{exercise_name}/volume', 'ExercisesController@volume')->name('volume');
     Route::get('compare', 'ToolsController@compare')->name('compareExercises');
 });
 
@@ -71,7 +73,6 @@ Route::group(['prefix' => 'tools', 'middleware' => 'auth'], function () {
 // Misc
 //Route::get('/', 'MiscController@index');
 Route::group(['middleware' => 'auth'], function () {
-    Route::get('ajax', 'MiscController@ajax')->name('ajax');
     Route::get('dashboard', 'MiscController@dash')->name('dashboard');
 });
 
@@ -83,3 +84,12 @@ Route::get('help/privacypolicy', 'MiscController@privacyPolicy')->name('privacyP
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
+
+// check routes with artisan routes:list
+//http://laravel.com/docs/master/controllers#restful-resource-controllers
+Route::resource('blog', 'BlogController', ['names' => [
+    'create' => 'photo.build'
+]]);
+Route::resource('comment', 'CommentController', ['names' => [
+    'create' => 'photo.build'
+]]);
