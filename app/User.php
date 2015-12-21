@@ -29,7 +29,7 @@ class User extends Model implements AuthenticatableContract,
      *
      * @var array
      */
-    protected $fillable = ['user_name', 'user_email', 'user_password'];
+    protected $guarded = ['user_id', 'user_beta', 'user_admin', 'user_don_level'];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -37,6 +37,16 @@ class User extends Model implements AuthenticatableContract,
      * @var array
      */
     protected $hidden = ['user_password', 'remember_token'];
+
+    protected $dates = ['user_joined'];
+
+    protected $casts = [
+        'user_beta' => 'boolean',
+        'user_admin' => 'boolean',
+        'user_volumeincfails' => 'boolean',
+        'user_weekstart' => 'boolean',
+        'user_showreps' => 'array',
+    ];
 
     public function getAuthPassword() {
         return $this->user_password;

@@ -22,7 +22,7 @@ class CreateUsersTable extends Migration
             $table->double('user_weight', 7, 3);
             $table->enum('user_unit', ['kg', 'lb'])->default('kg'); //CHANGE VALUE
             $table->enum('user_gender', ['m', 'f'])->default('m'); //CHANGE VALUE
-            $table->string('user_showreps', 15)->default('1|2|3|5|8|10');
+            $table->string('user_showreps', 15)->default('[1,2,3,5,8,10]'); //CHANGE VALUE
             $table->integer('user_squatid')->default('0');
             $table->integer('user_deadliftid')->default('0');
             $table->integer('user_benchid')->default('0');

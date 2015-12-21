@@ -10,6 +10,10 @@ class Exercise extends Model
 {
     protected $primaryKey = 'exercise_id';
 
+    protected $casts = [
+        'is_time' => 'boolean',
+    ];
+
     public function scopeListexercises($query, $count)
     {
         if ($count)
@@ -26,5 +30,15 @@ class Exercise extends Model
                         ->where('user_id', Auth::user()->user_id)
                         ->orderBy('exercise_name', 'asc');
         }
+    }
+
+    public function getExerciseNameAttribute($value)
+    {
+        return ucfirst($value);
+    }
+
+    public function setExerciseNameAttribute($value)
+    {
+        $this->attributes['exercise_name'] = strtolower($value);
     }
 }

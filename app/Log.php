@@ -8,6 +8,9 @@ class Log extends Model
 {
     protected $primaryKey = 'log_id';
     protected $dates = ['log_date'];
+    protected $casts = [
+        'log_update_text' => 'boolean',
+    ];
 
     public function scopeGetbodyweight($query, $user_id)
     {

@@ -7,4 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Exercise_record extends Model
 {
     protected $primaryKey = 'pr_id';
+    protected $dates = ['pr_date'];
+    protected $casts = [
+        'is_time' => 'boolean',
+    ];
 }
