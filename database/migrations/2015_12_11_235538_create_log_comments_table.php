@@ -13,7 +13,7 @@ class CreateLogCommentsTable extends Migration
     public function up()
     {
         Schema::create('log_comments', function (Blueprint $table) {
-            $table->increments('id');
+            $table->increments('log_comment_id');
             $table->integer('parent_id')->index();
             $table->text('comment');
             $table->integer('log_id')->index();
