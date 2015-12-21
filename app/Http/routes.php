@@ -33,14 +33,21 @@ Route::group(['prefix' => 'user', 'middleware' => 'auth'], function () {
     Route::post('search', 'UserController@search')->name('userSearch');
     Route::get('settings', 'UserController@getSettings')->name('userSettings');
     Route::post('settings', 'UserController@postSettings');
+    // follow/unfollow routes
+    Route::get('follow/{user}/{?date}', 'UserController@follow')->name('followUser');
+    Route::get('unfollow/{user}/{?date}', 'UserController@unfollow')->name('unfollowUser');
 });
 
 // Log controller
 Route::group(['prefix' => 'log', 'middleware' => 'auth'], function () {
-    Route::get('{?user}', 'LogsController@index')->name('');
-    Route::get('{date}/view/{?user}', 'LogsController@view')->name('view');
-    Route::get('{date}/edit', 'LogsController@edit')->name('editLog');
-    Route::get('{date}/new', 'LogsController@new')->name('newLog');
+    Route::get('{?user}', 'LogsController@index')->name('viewUser');
+    Route::get('{date}/view/{?user}', 'LogsController@view')->name('viewLog');
+    //edit log
+    Route::get('{date}/edit', 'LogsController@getEdit')->name('editLog');
+    Route::post('{date}/edit', 'LogsController@postEdit');
+    //new log
+    Route::get('{date}/new', 'LogsController@getNew')->name('newLog');
+    Route::post('{date}/new', 'LogsController@postNew');
     Route::get('{date}/delete', 'LogsController@delete')->name('deleteLog');
     Route::get('search', 'LogsController@search')->name('searchLog');
     Route::get('volume', 'LogsController@volume')->name('totalVolume');

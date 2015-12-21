@@ -7,22 +7,39 @@ use App\Http\Controllers\Controller;
 use Auth;
 use App\User;
 use App\Exercise;
+use App\Invite_code;
 
 class UserController extends Controller
 {
     public function search()
     {
-      return view('user.search');
+        return view('user.search');
+    }
+
+    public function follow($user_name, $date)
+    {
+        $invite_code = new Invite_code();
+        //$invite_code->user_id = Auth::user()->user_id;
+        $invite_code->follow_user_id = User::where('user_name', $user_name)->firstOrFail()->user_id;
+        Auth::user()->invite_codes()->save($invite_code);
+        return redirect('viewLog', ['user' => $user_name, 'date' => $date]);
+    }
+
+    public function unfollow($user_name, $date)
+    {
+        Invite_code()::where('user_id', Auth::user()->user_id)
+                    ->where('follow_user_id', User::where('user_name', $user_name)->firstOrFail()->user_id)
+                    ->delete();
+        return redirect('viewLog', ['user' => $user_name, 'date' => $date]);
     }
 
     public function getSettings()
     {
         $user = Auth::user();
-        $user_showreps = array_flip(explode('|', $user->user_showreps));
         $showreps = [];
         for ($i = 1; $i <= 10; $i++)
         {
-        	$showreps[$i] = (isset($user_showreps[$i])) ? ' checked' : '';
+        	$showreps[$i] = (isset($user->user_showreps[$i])) ? ' checked' : '';
         }
         $exercises = Exercise->listexercises(false)->get();
         $settings_updated = false;
@@ -36,7 +53,7 @@ class UserController extends Controller
         //build temporary new data
         $user = User::find(Auth::user()->user_id);
         $user->user_unit = $request->input('weightunit');
-        $user_showreps = implode('|', array_map('intval', $request->input('showreps.*')));
+        $user_showreps = $request->input('showreps.*');
         $user->user_showreps = $user_showreps;
         $user->user_squatid = $request->input('squat');
         $user->user_deadliftid = $request->input('deadlift');
@@ -52,11 +69,10 @@ class UserController extends Controller
         $errors = [];
         $user->save();
 
-        $user_showreps = array_flip(explode('|', $user->user_showreps));
         $showreps = [];
         for ($i = 1; $i <= 10; $i++)
         {
-        	$showreps[$i] = (isset($user_showreps[$i])) ? ' checked' : '';
+        	$showreps[$i] = (isset($user->user_showreps[$i])) ? ' checked' : '';
         }
         $exercises = Exercise->listexercises(false)->get();
         $settings_updated = false;

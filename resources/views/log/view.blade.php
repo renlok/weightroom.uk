@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'View Log')
+@section('title', 'View Log: '.)
 
 @section('headerstyle')
 <style>
@@ -46,39 +46,39 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-md-3 col-md-push-9">
-		<div class="user-info">
-			<h4>{{ $user->user_name }} @include('common.userBadges')</h4>
-			<p><small>Member since: {{ $user->user_joined }}</small></p>
-<!-- IF B_NOSELF -->
-	<!-- IF B_FOLLOWING -->
-			<p class="btn btn-default"><a href="?do=view&page=log&date={DATE}&user_id={USER_ID}&follow=false">Unfollow <img src="img/user_delete.png"></a></p>
-	<!-- ELSE -->
-			<p class="btn btn-default"><a href="?do=view&page=log&date={DATE}&user_id={USER_ID}&follow=true">Follow <img src="img/user_add.png"></a></p>
-	<!-- ENDIF -->
-<!-- ENDIF -->
-		</div>
+			<div class="user-info">
+				<h4>{{ $user->user_name }} @include('common.userBadges')</h4>
+				<p><small>Member since: {{ $user->user_joined }}</small></p>
+@if ($user->user_id != Auth::user()->user_id)
+	@if ($is_following)
+				<p class="btn btn-default"><a href="{{ route('unfollowUser', ['user' => $user->user_name, 'date' => $log->log_date]) }}">Unfollow <img src="img/user_delete.png"></a></p>
+	@else
+				<p class="btn btn-default"><a href="{{ route('followUser', ['user' => $user->user_name, 'date' => $log->log_date]) }}">Follow <img src="img/user_add.png"></a></p>
+	@endif
+@endif
+			</div>
 		</div>
 		<div class="col-md-9 col-md-pull-3">
-		<div class="calender-cont" style="max-width: 640px;">
-			<p class="hidden-xs"><- <a href="?do=view&page=log&date={YESTERDAY}<!-- IF B_NOSELF -->&user_id={USER_ID}<!-- ENDIF -->">{YESTERDAY}</a> | <strong>{DATE}</strong> | <a href="?do=view&page=log&date={TOMORROW}<!-- IF B_NOSELF -->&user_id={USER_ID}<!-- ENDIF -->">{TOMORROW}</a> -></p>
-			<div class="date"></div>
-		</div>
+			<div class="calender-cont" style="max-width: 640px;">
+				<p class="hidden-xs"><- <a href="{{ route('viewLog', ['date' => {YESTERDAY},'user' => $user->user_id]) }}">{YESTERDAY}</a> | <strong>{DATE}</strong> | <a href="{{ route('viewLog', ['date' => {TOMORROW},'user' => $user->user_id]) }}">{TOMORROW}</a> -></p>
+				<div class="date"></div>
+			</div>
 		</div>
 	</div>
 </div>
 
-<!-- IF ! B_NOSELF -->
-	<!-- IF B_LOG -->
+@if ($user->user_id == Auth::user()->user_id)
+	@if ($is_log)
 <p class="margintb"><a href="?do=edit&page=log&date={DATE}" class="btn btn-default">Edit Log</a></p>
-	<!-- ELSE -->
+	@else
 <p class="margintb"><a href="?do=edit&page=log&date={DATE}" class="btn btn-default">Add Log</a></p>
-	<!-- ENDIF -->
-<!-- ENDIF -->
-<!-- IF B_LOG -->
+	@endif
+@endif
+@if ($is_log)
 <h3>Workout summary</h3>
 <p class="logrow">Volume: <span class="heavy">{TOTAL_VOLUME}</span>{WEIGHT_UNIT} - Reps: <span class="heavy">{TOTAL_REPS}</span> - Sets: <span class="heavy">{TOTAL_SETS}</span> - Avg. Intensity: <span class="heavy">{TOTAL_INT} <!-- IF AVG_INTENSITY_TYPE eq 0 -->%<!-- ELSEIF AVG_INTENSITY_TYPE eq 1 -->{WEIGHT_UNIT}<!-- ENDIF --></span></p>
 <p class="logrow marginl"><small>Bodyweight: <span class="heavy">{USER_BW}</span>{WEIGHT_UNIT}</small></p>
-<!-- ENDIF -->
+@endif
 <!-- IF COMMENT ne '' -->
 <div class="panel panel-default">
 	<div class="panel-body">
@@ -111,9 +111,9 @@
 	</tbody>
 	</table>
 <!-- END items -->
-<!-- IF B_LOG -->
+@if ($is_log)
 @include('common.commentTree')
-<!-- ENDIF -->
+@endif
 @endsection
 
 @section('endjs')

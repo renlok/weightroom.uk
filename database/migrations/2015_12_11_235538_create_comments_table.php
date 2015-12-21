@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLogCommentsTable extends Migration
+class CreateCommentsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,8 +12,9 @@ class CreateLogCommentsTable extends Migration
      */
     public function up()
     {
-        Schema::create('log_comments', function (Blueprint $table) {
-            $table->increments('log_comment_id');
+        Schema::create('comments', function (Blueprint $table) {
+            $table->increments('comment_id');
+            $table->string('comment_type'); // NEW
             $table->integer('parent_id')->unsigned()->index();
             $table->text('comment');
             $table->integer('log_id')->unsigned()->index();
@@ -32,6 +33,6 @@ class CreateLogCommentsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('log_comments');
+        Schema::drop('comments');
     }
 }

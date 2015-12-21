@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Auth;
-use App\Invite_code;
+use App\User;
 use App\Log;
 use App\Log_item;
 
@@ -58,7 +58,9 @@ class ToolsController extends Controller
 
     public function invites()
     {
-        $codes = Invite_code::valid(Auth::user()->user_id)->get();
+        $user = User::find(Auth::user()->user_id);
+        $codes = $user->invite_codes->toArray();
+        //$codes = Invite_code::valid(Auth::user()->user_id)->get();
         return view('tools.invites', compact('codes'));
     }
 }
