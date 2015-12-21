@@ -13,38 +13,39 @@ class AddForeignKeys extends Migration
     public function up()
     {
         Schema::table('exercises', function ($table) {
-            $table->foreign('user_id')->references('user_id')->on('users');
+            $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
         });
         Schema::table('exercise_records', function ($table) {
-            $table->foreign('user_id')->references('user_id')->on('users');
+            $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
             $table->foreign('exercise_id')->references('exercise_id')->on('exercises');
         });
         Schema::table('invite_codes', function ($table) {
-            $table->foreign('user_id')->references('user_id')->on('users');
+            $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
         });
         Schema::table('logs', function ($table) {
-            $table->foreign('user_id')->references('user_id')->on('users');
+            $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
         });
         Schema::table('log_comments', function ($table) {
-            $table->foreign('log_id')->references('log_id')->on('logs');
+            $table->foreign('log_id')->references('log_id')->on('logs')->onDelete('cascade');
             $table->foreign('sender_user_id')->references('user_id')->on('users');
             $table->foreign('receiver_user_id')->references('user_id')->on('users');
         });
         Schema::table('log_exercises', function ($table) {
-            $table->foreign('user_id')->references('user_id')->on('users');
+            $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
             $table->foreign('exercise_id')->references('exercise_id')->on('exercises');
-            $table->foreign('log_id')->references('log_id')->on('logs');
+            $table->foreign('log_id')->references('log_id')->on('logs')->onDelete('cascade');
         });
         Schema::table('log_items', function ($table) {
-            $table->foreign('user_id')->references('user_id')->on('users');
+            $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
+            $table->foreign('log_id')->references('log_id')->on('logs')->onDelete('cascade');
+            $table->foreign('logex_id')->references('logex_id')->on('log_exercises');
             $table->foreign('exercise_id')->references('exercise_id')->on('exercises');
-            $table->foreign('log_id')->references('log_id')->on('logs');
         });
         Schema::table('notifications', function ($table) {
-            $table->foreign('user_id')->references('user_id')->on('users');
+            $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
         });
         Schema::table('user_follows', function ($table) {
-            $table->foreign('user_id')->references('user_id')->on('users');
+            $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
             $table->foreign('follow_user_id')->references('user_id')->on('users');
         });
     }
@@ -83,6 +84,7 @@ class AddForeignKeys extends Migration
             $table->dropForeign('log_items_user_id_foreign');
             $table->dropForeign('log_items_exercise_id_foreign');
             $table->dropForeign('log_items_log_id_foreign');
+            $table->dropForeign('log_items_logex_id_foreign');
         });
         Schema::table('notifications', function ($table) {
             $table->dropForeign('notifications_user_id_foreign');

@@ -14,4 +14,14 @@ class Log_item extends Model
         'is_pr' => 'boolean',
         'is_warmup' => 'boolean',
     ];
+
+    /**
+     * a user can many log exercises
+     *
+     * @returns Illuminate\Database\Eloquent\Relations\hasMany
+     */
+    public function log_exercise()
+    {
+        $this->belongsTo('App\Log_exercise');
+    }
 }

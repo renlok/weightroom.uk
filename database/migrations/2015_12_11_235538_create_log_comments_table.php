@@ -14,12 +14,12 @@ class CreateLogCommentsTable extends Migration
     {
         Schema::create('log_comments', function (Blueprint $table) {
             $table->increments('log_comment_id');
-            $table->integer('parent_id')->index();
+            $table->integer('parent_id')->unsigned()->index();
             $table->text('comment');
-            $table->integer('log_id')->index();
+            $table->integer('log_id')->unsigned()->index();
             $table->date('log_date');
-            $table->integer('sender_user_id');
-            $table->integer('receiver_user_id');
+            $table->integer('sender_user_id')->unsigned();
+            $table->integer('receiver_user_id')->unsigned();
             $table->dateTime('comment_date');
             $table->timestamps();
         });

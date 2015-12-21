@@ -55,4 +55,34 @@ class User extends Model implements AuthenticatableContract,
     public function getAuthIdentifierName () {
         return $this->user_id;
     }
+
+    /**
+     * a user can many logs
+     *
+     * @returns Illuminate\Database\Eloquent\Relations\hasMany
+     */
+    public function logs()
+    {
+        $this->hasMany('App\Log');
+    }
+
+    /**
+     * a user can many notifications
+     *
+     * @returns Illuminate\Database\Eloquent\Relations\hasMany
+     */
+    public function notifications()
+    {
+        $this->hasMany('App\Notification');
+    }
+
+    /**
+     * a user can many invite codes
+     *
+     * @returns Illuminate\Database\Eloquent\Relations\hasMany
+     */
+    public function invite_codes()
+    {
+        $this->hasMany('App\Invite_code');
+    }
 }

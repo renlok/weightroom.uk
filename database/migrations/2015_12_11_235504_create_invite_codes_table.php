@@ -14,7 +14,7 @@ class CreateInviteCodesTable extends Migration
     {
         Schema::create('invite_codes', function (Blueprint $table) {
             $table->increments('code_id');
-            $table->integer('user_id')->index();
+            $table->integer('user_id')->unsigned()->index();
             $table->string('code', 6);
             $table->smallInteger('code_uses');
             $table->date('code_expires'); //CHANGED NAME

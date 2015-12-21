@@ -14,8 +14,8 @@ class CreateExerciseRecordsTable extends Migration
     {
         Schema::create('exercise_records', function (Blueprint $table) {
             $table->increments('pr_id');
-            $table->integer('exercise_id')->index();
-            $table->integer('user_id')->index();
+            $table->integer('exercise_id')->unsigned()->index();
+            $table->integer('user_id')->unsigned()->index();
             $table->date('pr_date');
             $table->double('pr_value', 20, 3); // CHANGED NAME
             $table->integer('pr_reps');

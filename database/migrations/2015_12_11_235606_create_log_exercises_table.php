@@ -15,9 +15,9 @@ class CreateLogExercisesTable extends Migration
         Schema::create('log_exercises', function (Blueprint $table) {
             $table->increments('logex_id');
             $table->date('logex_date');
-            $table->integer('log_id')->index();
-            $table->integer('user_id')->index();
-            $table->integer('exercise_id')->index();
+            $table->integer('log_id')->unsigned()->index();
+            $table->integer('user_id')->unsigned()->index();
+            $table->integer('exercise_id')->unsigned()->index();
             $table->double('logex_volume', 20, 3);
             $table->integer('logex_reps');
             $table->integer('logex_sets');

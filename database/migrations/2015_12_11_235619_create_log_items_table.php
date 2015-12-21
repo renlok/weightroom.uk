@@ -15,9 +15,10 @@ class CreateLogItemsTable extends Migration
         Schema::create('log_items', function (Blueprint $table) {
             $table->increments('logitem_id');
             $table->date('logitem_date');
-            $table->integer('log_id')->index();
-            $table->integer('user_id')->index();
-            $table->integer('exercise_id')->index();
+            $table->integer('logex_id')->unsigned()->index();
+            $table->integer('log_id')->unsigned();
+            $table->integer('user_id')->unsigned()->index();
+            $table->integer('exercise_id')->unsigned()->index();
             $table->double('logitem_weight', 20, 3);
             $table->double('logitem_time', 20, 3);
             $table->double('logitem_abs_weight', 20, 3);

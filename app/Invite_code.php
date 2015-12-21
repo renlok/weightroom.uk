@@ -25,4 +25,14 @@ class Invite_code extends Model
     {
         return $query->where('code_expires', '<=', Carbon::now())->where('code_uses', '>', 0)->where('code', '=', $code);
     }
+
+    /**
+     * invite codes belongs to a single user
+     *
+     * @returns Illuminate\Database\Eloquent\Relations\belongsTo
+     */
+    public function user()
+    {
+        $this->belongsTo('App\User');
+    }
 }
