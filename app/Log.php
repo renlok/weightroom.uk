@@ -11,6 +11,7 @@ class Log extends Model
     protected $casts = [
         'log_update_text' => 'boolean',
     ];
+    protected $appends = ['average_intensity'];
 
     public function scopeGetbodyweight($query, $user_id)
     {
@@ -43,5 +44,15 @@ class Log extends Model
     public function user()
     {
         $this->belongsTo('App\User');
+    }
+
+    /**
+     * logs should have an intensity rating
+     *
+     * @returns double
+     */
+    public function getAverageIntensityAttribute()
+    {
+        // TODO: make this
     }
 }

@@ -1,3 +1,4 @@
+{!-- TODO --!}
 <a name="comments"></a>
 {LOG_COMMENTS}
 <form action="?do=view&page=log&date={DATE}&user_id={USER_ID}#comments" method="post">

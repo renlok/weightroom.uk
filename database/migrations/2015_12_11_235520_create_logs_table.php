@@ -17,6 +17,10 @@ class CreateLogsTable extends Migration
             $table->integer('user_id')->unsigned()->index();
             $table->date('log_date');
             $table->text('log_text');
+            $table->double('log_total_volume', 20, 3);
+            $table->double('log_failed_volume', 20, 3);
+            $table->integer('log_total_reps');
+            $table->integer('log_total_sets');
             $table->text('log_comment');
             $table->double('log_weight', 7, 3);
             $table->boolean('log_update_text');

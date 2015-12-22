@@ -23,7 +23,7 @@ class LogsController extends Controller
         $log = $user->log->getlog($date, $user);
         $is_log = $log->count();
         $is_following = $user->invite_code->where('follow_user_id', $user->user_id)->count();
-        return view('log.view', compact('user', 'log', 'is_following', 'is_log'));
+        return view('log.view', compact('date', 'user', 'log', 'is_following', 'is_log'));
     }
 
     public function getEdit()

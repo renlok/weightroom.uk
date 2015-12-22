@@ -51,16 +51,16 @@
 				<p><small>Member since: {{ $user->user_joined }}</small></p>
 @if ($user->user_id != Auth::user()->user_id)
 	@if ($is_following)
-				<p class="btn btn-default"><a href="{{ route('unfollowUser', ['user' => $user->user_name, 'date' => $log->log_date]) }}">Unfollow <img src="img/user_delete.png"></a></p>
+				<p class="btn btn-default"><a href="{{ route('unfollowUser', ['user' => $user->user_name, 'date' => $date]) }}">Unfollow <img src="img/user_delete.png"></a></p>
 	@else
-				<p class="btn btn-default"><a href="{{ route('followUser', ['user' => $user->user_name, 'date' => $log->log_date]) }}">Follow <img src="img/user_add.png"></a></p>
+				<p class="btn btn-default"><a href="{{ route('followUser', ['user' => $user->user_name, 'date' => $date]) }}">Follow <img src="img/user_add.png"></a></p>
 	@endif
 @endif
 			</div>
 		</div>
 		<div class="col-md-9 col-md-pull-3">
 			<div class="calender-cont" style="max-width: 640px;">
-				<p class="hidden-xs"><- <a href="{{ route('viewLog', ['date' => {YESTERDAY},'user' => $user->user_id]) }}">{YESTERDAY}</a> | <strong>{DATE}</strong> | <a href="{{ route('viewLog', ['date' => {TOMORROW},'user' => $user->user_id]) }}">{TOMORROW}</a> -></p>
+				<p class="hidden-xs"><- <a href="{{ route('viewLog', ['date' => {YESTERDAY},'user' => $user->user_id]) }}">{YESTERDAY}</a> | <strong>{{ $date }}</strong> | <a href="{{ route('viewLog', ['date' => {TOMORROW},'user' => $user->user_id]) }}">{TOMORROW}</a> -></p>
 				<div class="date"></div>
 			</div>
 		</div>
@@ -69,50 +69,28 @@
 
 @if ($user->user_id == Auth::user()->user_id)
 	@if ($is_log)
-<p class="margintb"><a href="?do=edit&page=log&date={DATE}" class="btn btn-default">Edit Log</a></p>
+<p class="margintb"><a href="{{ route('editLog', ['date' => $date]) }}" class="btn btn-default">Edit Log</a></p>
 	@else
-<p class="margintb"><a href="?do=edit&page=log&date={DATE}" class="btn btn-default">Add Log</a></p>
+<p class="margintb"><a href="{{ route('newLog', ['date' => $date]) }}" class="btn btn-default">Add Log</a></p>
 	@endif
 @endif
 @if ($is_log)
 <h3>Workout summary</h3>
-<p class="logrow">Volume: <span class="heavy">{TOTAL_VOLUME}</span>{WEIGHT_UNIT} - Reps: <span class="heavy">{TOTAL_REPS}</span> - Sets: <span class="heavy">{TOTAL_SETS}</span> - Avg. Intensity: <span class="heavy">{TOTAL_INT} <!-- IF AVG_INTENSITY_TYPE eq 0 -->%<!-- ELSEIF AVG_INTENSITY_TYPE eq 1 -->{WEIGHT_UNIT}<!-- ENDIF --></span></p>
-<p class="logrow marginl"><small>Bodyweight: <span class="heavy">{USER_BW}</span>{WEIGHT_UNIT}</small></p>
+<p class="logrow">Volume: <span class="heavy">{{ $log->log_total_volume + ($log->log_failed_volume * $user->user_volumeincfails) }}</span>{{ $user->user_unit }} - Reps: <span class="heavy">{{ $log->log_total_reps }}</span> - Sets: <span class="heavy">{{ $log->log_total_reps }}</span> - Avg. Intensity: <span class="heavy">{TOTAL_INT} <!-- IF AVG_INTENSITY_TYPE eq 0 -->%<!-- ELSEIF AVG_INTENSITY_TYPE eq 1 -->{WEIGHT_UNIT}<!-- ENDIF --></span></p>
+<p class="logrow marginl"><small>Bodyweight: <span class="heavy">{{ $log->log_weight }}</span>{{ $user->user_unit }}</small></p>
 @endif
-<!-- IF COMMENT ne '' -->
+@if ($log->log_comment != '')
 <div class="panel panel-default">
 	<div class="panel-body">
-		{COMMENT}
+		{{ $log->log_comment }}
 	</div>
 </div>
-<!-- ENDIF -->
-<!-- BEGIN items -->
-	<h3><a href="?page=exercise&ex={items.EXERCISE}">{items.EXERCISE}</a></h3>
-	<p class="logrow">Volume: <span class="heavy">{items.VOLUME}</span>{WEIGHT_UNIT} - Reps: <span class="heavy">{items.REPS}</span> - Sets: <span class="heavy">{items.SETS}</span> - Avg. Intensity: <span class="heavy">{items.AVG_INT} <!-- IF AVG_INTENSITY_TYPE eq 0 -->%<!-- ELSE -->{WEIGHT_UNIT}<!-- ENDIF --></span></p>
-	<table class="table">
-	<tbody>
-	<!-- BEGIN sets -->
-		<tr<!-- IF items.sets.IS_PR --> class="alert alert-success"<!-- ENDIF --><!-- IF items.sets.REPS eq 0 --> class="alert alert-danger"<!-- ENDIF -->>
-			<td class="tdpr">
-				<!-- IF items.sets.IS_PR --><span class="glyphicon glyphicon-star" aria-hidden="true"></span><!-- ELSE -->&nbsp;<!-- ENDIF -->
-			</td>
-			<td class="logrow">
-				<!-- IF items.sets.REPS eq 0 --><del><!-- ENDIF --><span class="heavy">{items.sets.WEIGHT}</span><!-- IF items.sets.SHOW_UNIT -->{WEIGHT_UNIT}<!-- ENDIF --><!-- IF (items.sets.IS_TIME eq 1 and items.sets.REPS gt 1) || items.sets.IS_TIME eq 0  --> x <span class="heavy">{items.sets.REPS}</span><!-- ENDIF --><!-- IF (items.sets.IS_TIME eq 1 and items.sets.SETS gt 1) || items.sets.IS_TIME eq 0 --> x <span class="heavy">{items.sets.SETS}</span><!-- ENDIF --><!-- IF items.sets.REPS eq 0 --></del><!-- ELSEIF items.sets.REPS gt 1 && items.sets.SHOW_UNIT --> <small class="leftspace"><i>&#8776; {items.sets.EST1RM} {WEIGHT_UNIT}</i></small><!-- ENDIF --><!-- IF items.sets.RPES ne NULL --> @ {items.sets.RPES}<!-- ENDIF -->
-				<!-- IF items.sets.COMMENT ne '' --><div class="well well-sm">{items.sets.COMMENT}</div><!-- ENDIF -->
-			</td>
-			<td class="tdpr2">
-				<!-- IF items.sets.IS_PR --><span class="heavy">{items.sets.REPS} RM</span><!-- ELSE -->&nbsp;<!-- ENDIF -->
-			</td>
-		</tr>
-	<!-- END sets -->
-		<tr>
-			<td colspan="3">{items.COMMENT}</td>
-		</tr>
-	</tbody>
-	</table>
-<!-- END items -->
+@endif
+@for ($log->log_exercises() as $log_exercise)
+	@include('common.logExercise')
+@endfor
 @if ($is_log)
-@include('common.commentTree')
+	@include('common.commentTree')
 @endif
 @endsection
 
@@ -179,7 +157,7 @@ $(document).ready(function(){
 				page: 'ajax',
 				do: 'cal',
 				date: date,
-				user_id: {USER_ID}
+				user_id: {{ $user->user_id }}
 			},
 			type: 'GET',
 			dataType: 'json',

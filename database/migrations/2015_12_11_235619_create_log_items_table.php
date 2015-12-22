@@ -25,7 +25,7 @@ class CreateLogItemsTable extends Migration
             $table->double('logitem_1rm', 20, 3);
             $table->integer('logitem_reps');
             $table->integer('logitem_sets');
-            $table->double('logitem_pre', 3, 1); // CAHNGED NAME
+            $table->double('logitem_pre', 3, 1)->nullable()->default(NULL); // CAHNGED NAME
             $table->text('logitem_comment');
             $table->smallInteger('logitem_order');
             $table->smallInteger('logex_order');

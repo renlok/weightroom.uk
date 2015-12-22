@@ -43,7 +43,6 @@ class User extends Model implements AuthenticatableContract,
     protected $casts = [
         'user_beta' => 'boolean',
         'user_admin' => 'boolean',
-        'user_volumeincfails' => 'boolean',
         'user_weekstart' => 'boolean',
         'user_showreps' => 'array',
     ];

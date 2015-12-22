@@ -41,4 +41,14 @@ class Exercise extends Model
     {
         $this->attributes['exercise_name'] = strtolower($value);
     }
+
+    /**
+     * a log can many log exercises
+     *
+     * @returns Illuminate\Database\Eloquent\Relations\hasMany
+     */
+    public function log_exercises()
+    {
+        $this->hasMany('App\Log_exercise');
+    }
 }

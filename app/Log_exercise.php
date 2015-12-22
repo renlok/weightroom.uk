@@ -28,4 +28,14 @@ class Log_exercise extends Model
     {
         $this->belongsTo('App\Log');
     }
+
+    /**
+     * Log_exercise belongs to a single exercise
+     *
+     * @returns Illuminate\Database\Eloquent\Relations\belongsTo
+     */
+    public function exercise()
+    {
+        $this->belongsTo('App\Exercise');
+    }
 }
