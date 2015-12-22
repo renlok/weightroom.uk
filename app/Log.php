@@ -47,6 +47,14 @@ class Log extends Model
     }
 
     /**
+     * Get all of the log's comments.
+     */
+    public function photos()
+    {
+        return $this->morphMany('App\Comment', 'commentable');
+    }
+
+    /**
      * logs should have an intensity rating
      *
      * @returns double

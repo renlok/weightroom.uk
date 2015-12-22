@@ -70,10 +70,10 @@ class AddForeignKeys extends Migration
         Schema::table('logs', function ($table) {
             $table->dropForeign('logs_user_id_foreign');
         });
-        Schema::table('log_comments', function ($table) {
-            $table->dropForeign('log_comments_user_id_foreign');
-            $table->dropForeign('log_comments_sender_user_id_foreign');
-            $table->dropForeign('log_comments_receiver_user_id_foreign');
+        Schema::table('comments', function ($table) {
+            $table->dropForeign('comments_user_id_foreign');
+            $table->dropForeign('comments_sender_user_id_foreign');
+            $table->dropForeign('comments_receiver_user_id_foreign');
         });
         Schema::table('log_exercises', function ($table) {
             $table->dropForeign('log_exercises_user_id_foreign');

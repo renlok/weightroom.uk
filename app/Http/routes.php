@@ -98,5 +98,5 @@ Route::resource('blog', 'BlogController', ['names' => [
     'create' => 'photo.build'
 ]]);
 Route::resource('comment', 'CommentController', ['names' => [
-    'create' => 'photo.build'
+    'store' => 'saveComment'
 ]]);
