@@ -58,12 +58,12 @@ Route::group(['prefix' => 'exercise', 'middleware' => 'auth'], function () {
     // list exercises
     Route::get('/', 'ExercisesController@list');
     Route::get('list', 'ExercisesController@list')->name('listExercises');
-    Route::get('view/{exercise_name}', 'ExercisesController@list')->name('viewExercise');
+    Route::get('{exercise_name}/view', 'ExercisesController@list')->name('viewExercise');
     // edit exercise routes
     // can automatically pull the exercise with (App\Exercise $user)
     Route::get('{exercise_name}/edit', 'ExercisesController@getEdit')->name('editExercise');
     Route::post('{exercise_name}/edit', 'ExercisesController@postEdit');
-    Route::get('{exercise_name}/history', 'ExercisesController@history')->name('history');
+    Route::get('{exercise_name}/history', 'ExercisesController@history')->name('exerciseHistory');
     Route::get('{exercise_name}/volume', 'ExercisesController@volume')->name('volume');
     Route::get('compare', 'ToolsController@compare')->name('compareExercises');
 });
