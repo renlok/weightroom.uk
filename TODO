@@ -5,6 +5,7 @@
 
 - Add variables to titles make them unique
 - Add _tokens to forms
+- rewrite PRs
 
 figure out how to do the rest
 https://laracasts.com/series/laravel-5-fundamentals/episodes/7
@@ -25,7 +26,7 @@ https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 |                      |       |            |        |
 | demo.php             | x     | x          |        | Update demo with new screens
 |                      |       |            |        |
-| edit_exercise.php    | s     | s          |        |
+| edit_exercise.php    | x     | x          |        |
 |                      |       |            |        |
 | exercise.php compare |       |            |        |
 |                      |       |            |        |
