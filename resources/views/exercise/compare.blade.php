@@ -1,3 +1,7 @@
+@extends('layouts.master')
+
+@section('title', 'Compare Exercises')
+
 @section('headerstyle')
 <style>
 #prHistoryChart .nv-lineChart circle.nv-point {

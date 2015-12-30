@@ -1,3 +1,7 @@
+@extends('layouts.master')
+
+@section('title', 'Compare Exercises')
+
 @section('headerstyle')
 @endsection
 

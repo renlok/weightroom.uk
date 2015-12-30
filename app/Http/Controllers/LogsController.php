@@ -9,6 +9,8 @@ use App\Http\Controllers\Controller;
 use App\User;
 use App\Log;
 use Auth;
+use App\Extends\PRs;
+use App\Extends\Parser;
 
 class LogsController extends Controller
 {
@@ -17,7 +19,7 @@ class LogsController extends Controller
         return $this->view();
     }
 
-    public function view($date, $user_name = Auth::user()->user_id)
+    public function view($date, $user_name = Auth::user()->user_name)
     {
         $user = User::where('user_name', $user_name)->firstOrFail();
         $log = $user->log->getlog($date, $user);
@@ -26,9 +28,18 @@ class LogsController extends Controller
         return view('log.view', compact('date', 'user', 'log', 'is_following', 'is_log'));
     }
 
-    public function getEdit()
+    public function getEdit($date)
     {
-        return view('log.edit');
+        $user = User::find(Auth::user()->user_id)->firstOrFail();
+        $log = Log::where('log_date', $date)
+                    ->select('log_text', 'log_weight', 'log_update_text')
+                    ->where('user_id', $user->user_id)
+                    ->firstOrFail();
+        if ($log->log_update_text == 1)
+		{
+			$log->log_text = Parser::rebuild_log_text ($user->user_id, $date);
+		}
+        return view('log.edit', compact('date', 'log', 'user'));
     }
 
     public function postEdit(LogRequest $requests)
@@ -39,9 +50,14 @@ class LogsController extends Controller
         return redirect('viewLog', ['date' => '']);
     }
 
-    public function getNew()
+    public function getNew($date)
     {
-        return view('log.new');
+        $user = User::find(Auth::user()->user_id)->firstOrFail();
+        $log = collect([
+            'log_text' => '',
+            'log_weight' Log::getlastbodyweight->get(),
+        ]);
+        return view('log.edit', compact('date', 'log', 'user'));
     }
 
     public function postNew(LogRequest $requests)
