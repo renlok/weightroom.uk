@@ -76,8 +76,44 @@ class ExercisesController extends Controller
         return view('exercise.volume');
     }
 
-    public function compare($exercise1, $exercise2, $exercise3, $exercise4, $exercise5)
+    public function getCompareForm()
     {
+        $exercises = Exercise::listexercises(false)->get();
+        return view('exercise.compareform', compact('exercises'));
+    }
 
+    public function getCompare($reps = '', $exercise1 = '', $exercise2 = '', $exercise3 = '', $exercise4 = '', $exercise5 = '')
+    {
+        if ($reps > 10)
+        {
+            $error = 'You cannot view rep ranges over 10';
+            $reps = 10;
+        }
+        $exercises = Exercise::listexercises(false)->get();
+        $records = DB::table('exercise_records')
+            ->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
+            ->select('pr_weight', 'pr_reps', 'pr_date', 'exercise_name', 'pr_1rm')
+            ->where('user_id', Auth::user()->user_id)
+            ->whereIn('exercise_name', [$exercise1, $exercise2, $exercise3, $exercise4, $exercise5]);
+        if ($reps = 0)
+        {
+            $records = $records->where('is_est1rm', 1);
+        }
+        else
+        {
+            $records = $records->where('pr_reps', $reps);
+        }
+        $records = $records->orderBy('pr_date', 'asc');
+        // group them
+        $records = $records->groupBy('exercise_name');
+        return view('exercise.compare', compact('exercises', 'records', 'exercise1', 'exercise2', 'exercise3', 'exercise4', 'exercise5', 'error'));
+    }
+
+    public function postCompare(Request $request)
+    {
+        return redirect()
+            ->route('ExercisesController',
+            ['exercise_name' => $exercise_name,
+            ]);
     }
 }

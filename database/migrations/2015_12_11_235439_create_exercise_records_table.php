@@ -20,6 +20,7 @@ class CreateExerciseRecordsTable extends Migration
             $table->double('pr_value', 20, 3); // CHANGED NAME
             $table->integer('pr_reps');
             $table->double('pr_1rm', 20, 3);
+            $table->boolean('is_est1rm'); // NEW COLOMN
             $table->boolean('is_time');
             $table->timestamps();
         });

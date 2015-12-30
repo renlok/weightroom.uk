@@ -65,7 +65,9 @@ Route::group(['prefix' => 'exercise', 'middleware' => 'auth'], function () {
     Route::post('{exercise_name}/edit', 'ExercisesController@postEdit');
     Route::get('{exercise_name}/history', 'ExercisesController@history')->name('exerciseHistory');
     Route::get('{exercise_name}/volume', 'ExercisesController@volume')->name('volume');
-    Route::get('compare/{exercise1?}/{exercise2?}/{exercise3?}/{exercise4?}/{exercise5?}', 'ExercisesController@compare')->name('compareExercises');
+    Route::get('compare', 'ExercisesController@getCompareForm')->name('compareExercisesForm');
+    Route::get('compare/{reps}/{exercise1}/{exercise2?}/{exercise3?}/{exercise4?}/{exercise5?}', 'ExercisesController@getCompare')->name('compareExercises');
+    Route::post('compare', 'ExercisesController@postCompare');
 });
 
 // Tools controller

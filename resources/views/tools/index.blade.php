@@ -10,7 +10,7 @@
 	<p>View the total volume of the weight you have lifted in the past</p>
   </div>
   <div class="col-md-4">
-	<a href="{{ route('compareExercises') }}">Compare Exercises</a>
+	<a href="{{ route('compareExercisesForm') }}">Compare Exercises</a>
 	<p>See how your PRs of different exercises have changed over time</p>
   </div>
   <div class="col-md-4">

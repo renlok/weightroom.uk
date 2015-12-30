@@ -49,7 +49,7 @@ class Log extends Model
     /**
      * Get all of the log's comments.
      */
-    public function photos()
+    public function comments()
     {
         return $this->morphMany('App\Comment', 'commentable');
     }
