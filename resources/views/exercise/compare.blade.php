@@ -7,7 +7,6 @@
 @endsection
 
 @section('content')
-@include('errors.simple')
 <span id="showhide"><button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span> Hide</button></span>
 <div id="compareform" class="hidebox">
 	@include('exercise.common.compareform')

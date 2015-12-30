@@ -2,7 +2,7 @@
 @endsection
 
 @section('content')
-@include('errors.simple')
+@include('errors.validation')
 @include('exercise.common.compareform')
 @endsection
 

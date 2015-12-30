@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use DB;
+use Validator;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Exercise;
@@ -84,24 +85,19 @@ class ExercisesController extends Controller
 
     public function getCompare($reps = '', $exercise1 = '', $exercise2 = '', $exercise3 = '', $exercise4 = '', $exercise5 = '')
     {
-        if ($reps > 10)
-        {
-            $error = 'You cannot view rep ranges over 10';
-            $reps = 10;
-        }
         $exercises = Exercise::listexercises(false)->get();
         $records = DB::table('exercise_records')
             ->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
             ->select('pr_weight', 'pr_reps', 'pr_date', 'exercise_name', 'pr_1rm')
             ->where('user_id', Auth::user()->user_id)
             ->whereIn('exercise_name', [$exercise1, $exercise2, $exercise3, $exercise4, $exercise5]);
-        if ($reps = 0)
+        if ($reps > 0)
         {
-            $records = $records->where('is_est1rm', 1);
+            $records = $records->where('pr_reps', $reps);
         }
         else
         {
-            $records = $records->where('pr_reps', $reps);
+            $records = $records->where('is_est1rm', 1);
         }
         $records = $records->orderBy('pr_date', 'asc');
         // group them
@@ -111,9 +107,35 @@ class ExercisesController extends Controller
 
     public function postCompare(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'reps' => 'required|between:0,10',
+            'exercises.0' => 'required',
+            'exercises.*' => 'exists:exercises,exercise_id,user_id,'.Auth::user()->user_id
+        ]);
+        if ($validator->fails()) {
+            return redirect('exercise/compare')
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+        $exercises = $request->input('exercises');
+        $route_data = ['reps' => $request->input('reps'), 'exercise1' => $exercises[0]];
+        if (isset($exercises[1]))
+        {
+            $route_data['exercise2'] = $exercises[1];
+        }
+        if (isset($exercises[2]))
+        {
+            $route_data['exercise3'] = $exercises[2];
+        }
+        if (isset($exercises[3]))
+        {
+            $route_data['exercise4'] = $exercises[3];
+        }
+        if (isset($exercises[4]))
+        {
+            $route_data['exercise5'] = $exercises[4];
+        }
         return redirect()
-            ->route('ExercisesController',
-            ['exercise_name' => $exercise_name,
-            ]);
+            ->route('ExercisesController', $route_data);
     }
 }
