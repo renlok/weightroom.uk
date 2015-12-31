@@ -92,21 +92,21 @@
 <p class="margintb"><a href="{{ route('newLog', ['date' => $date->toDateString()]) }}" class="btn btn-default">Add Log</a></p>
 	@endif
 @endif
-@if ($is_log)
-<h3>Workout summary</h3>
-<p class="logrow">Volume: <span class="heavy">{{ $log->log_total_volume + ($log->log_failed_volume * $user->user_volumeincfails) }}</span>{{ $user->user_unit }} - Reps: <span class="heavy">{{ $log->log_total_reps }}</span> - Sets: <span class="heavy">{{ $log->log_total_reps }}</span> - Avg. Intensity: <span class="heavy">{TOTAL_INT} <!-- IF AVG_INTENSITY_TYPE eq 0 -->%<!-- ELSEIF AVG_INTENSITY_TYPE eq 1 -->{WEIGHT_UNIT}<!-- ENDIF --></span></p>
-<p class="logrow marginl"><small>Bodyweight: <span class="heavy">{{ $log->log_weight }}</span>{{ $user->user_unit }}</small></p>
-@if ($log->log_comment != '')
-<div class="panel panel-default">
-	<div class="panel-body">
-		{{ $log->log_comment }}
+@if ($log != null)
+	<h3>Workout summary</h3>
+	<p class="logrow">Volume: <span class="heavy">{{ $log->log_total_volume + ($log->log_failed_volume * $user->user_volumeincfails) }}</span>{{ $user->user_unit }} - Reps: <span class="heavy">{{ $log->log_total_reps }}</span> - Sets: <span class="heavy">{{ $log->log_total_reps }}</span> - Avg. Intensity: <span class="heavy">{TOTAL_INT} <!-- IF AVG_INTENSITY_TYPE eq 0 -->%<!-- ELSEIF AVG_INTENSITY_TYPE eq 1 -->{WEIGHT_UNIT}<!-- ENDIF --></span></p>
+	<p class="logrow marginl"><small>Bodyweight: <span class="heavy">{{ $log->log_weight }}</span>{{ $user->user_unit }}</small></p>
+	@if ($log->log_comment != '')
+	<div class="panel panel-default">
+		<div class="panel-body">
+			{{ $log->log_comment }}
+		</div>
 	</div>
-</div>
-@endif
-@foreach ($log->log_exercises as $log_exercise)
-	@include('common.logExercise')
-@endforeach
-@include('common.commentTree', ['comments' => $log->comments])
+	@endif
+	@foreach ($log->log_exercises as $log_exercise)
+		@include('common.logExercise')
+	@endforeach
+	@include('common.commentTree', ['comments' => $log->comments])
 @endif
 @endsection
 

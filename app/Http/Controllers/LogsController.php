@@ -31,12 +31,10 @@ class LogsController extends Controller
         if ($user->logs != null)
         {
             $log = $user->logs()->where('log_date', $date)->first();
-            $is_log = 1;
         }
         else
         {
-            $log = [];
-            $is_log = 0;
+            $log = null;
         }
         if ($user->invite_code == null)
         {
@@ -47,7 +45,7 @@ class LogsController extends Controller
             $is_following = $user->invite_code->where('follow_user_id', $user->user_id)->count();
         }
         $date = Carbon::createFromFormat('Y-m-d', $date);
-        return view('log.view', compact('date', 'user', 'log', 'is_following', 'is_log'));
+        return view('log.view', compact('date', 'user', 'log', 'is_following'));
     }
 
     public function getEdit($date)

@@ -241,8 +241,8 @@ class Parser
 	public function store_log_data ($log_date, $user_weight, $is_new)
 	{
 		// clear old entries
-        DB::table('log_exercises')->where('logex_date', $log_date)->where('user_id', $this->user->user_id)->delete();
         DB::table('log_items')->where('logitem_date', $log_date)->where('user_id', $this->user->user_id)->delete();
+        DB::table('log_exercises')->where('logex_date', $log_date)->where('user_id', $this->user->user_id)->delete();
         DB::table('exercise_records')->where('pr_date', $log_date)->where('user_id', $this->user->user_id)->delete();
 
 		// delete log and exit function if no data
