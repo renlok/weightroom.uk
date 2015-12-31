@@ -62,7 +62,7 @@ class User extends Model implements AuthenticatableContract,
      */
     public function logs()
     {
-        $this->hasMany('App\Log');
+        return $this->hasMany('App\Log');
     }
 
     /**
@@ -72,7 +72,7 @@ class User extends Model implements AuthenticatableContract,
      */
     public function notifications()
     {
-        $this->hasMany('App\Notification');
+        return $this->hasMany('App\Notification');
     }
 
     /**
@@ -82,7 +82,7 @@ class User extends Model implements AuthenticatableContract,
      */
     public function invite_codes()
     {
-        $this->hasMany('App\Invite_code');
+        return $this->hasMany('App\Invite_code');
     }
 
     /**
@@ -92,6 +92,6 @@ class User extends Model implements AuthenticatableContract,
      */
     public function user_follows()
     {
-        $this->hasMany('App\User_follow');
+        return $this->hasMany('App\User_follow');
     }
 }

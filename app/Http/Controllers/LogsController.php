@@ -72,7 +72,8 @@ class LogsController extends Controller
         $weight = $parser->get_input_weight($request->input('weight'), $date);
         $parser->parse_text ($request->input('log'));
 		$new_prs = $parser->store_log_data ($date, $weight, false);
-        return redirect('viewLog', ['date' => $date])
+        return redirect()
+                ->route('viewLog', ['date' => $date])
                 ->with('new_prs', $new_prs);
     }
 
@@ -93,7 +94,8 @@ class LogsController extends Controller
         $weight = $parser->get_input_weight($request->input('weight'), $date);
         $parser->parse_text ($request->input('log'));
 		$new_prs = $parser->store_log_data ($date, $weight, true);
-        return redirect('viewLog', ['date' => $date])
+        return redirect()
+                ->route('viewLog', ['date' => $date])
                 ->with('new_prs', $new_prs);
     }
 

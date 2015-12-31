@@ -42,7 +42,7 @@ class Log extends Model
      */
     public function log_exercises()
     {
-        $this->hasMany('App\Log_exercise');
+        return $this->hasMany('App\Log_exercise');
     }
 
     /**
@@ -52,7 +52,7 @@ class Log extends Model
      */
     public function user()
     {
-        $this->belongsTo('App\User');
+        return $this->belongsTo('App\User');
     }
 
     /**

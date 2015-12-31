@@ -56,6 +56,6 @@ class Exercise extends Model
      */
     public function log_exercises()
     {
-        $this->hasMany('App\Log_exercise');
+        return $this->hasMany('App\Log_exercise');
     }
 }

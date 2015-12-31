@@ -77,7 +77,7 @@
 		</div>
 		<div class="col-md-9 col-md-pull-3">
 			<div class="calender-cont" style="max-width: 640px;">
-				<p class="hidden-xs"><- <a href="{{ route('viewLog', ['date' => $date->subDay()->toDateString(),'user' => $user->user_id]) }}">{{ $date->toDateString() }}</a> | <strong>{{ $date->addDay()->toDateString() }}</strong> | <a href="{{ route('viewLog', ['date' => $date->addDay()->toDateString(),'user' => $user->user_id]) }}">{{ $date->toDateString() }}</a> -></p>
+				<p class="hidden-xs"><- <a href="{{ route('viewLog', ['date' => $date->subDay()->toDateString(),'user' => $user->user_name]) }}">{{ $date->toDateString() }}</a> | <strong>{{ $date->addDay()->toDateString() }}</strong> | <a href="{{ route('viewLog', ['date' => $date->addDay()->toDateString(),'user' => $user->user_name]) }}">{{ $date->toDateString() }}</a> -></p>
 				{{-- $date->subDay() --}}
 				<div class="date"></div>
 			</div>

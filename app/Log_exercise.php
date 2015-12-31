@@ -18,7 +18,7 @@ class Log_exercise extends Model
      */
     public function log_items()
     {
-        $this->hasMany('App\Log_item');
+        return $this->hasMany('App\Log_item');
     }
 
     /**
@@ -28,7 +28,7 @@ class Log_exercise extends Model
      */
     public function log()
     {
-        $this->belongsTo('App\Log');
+        return $this->belongsTo('App\Log');
     }
 
     /**
@@ -38,6 +38,6 @@ class Log_exercise extends Model
      */
     public function exercise()
     {
-        $this->belongsTo('App\Exercise');
+        return $this->belongsTo('App\Exercise');
     }
 }

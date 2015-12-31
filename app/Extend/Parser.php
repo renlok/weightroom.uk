@@ -271,6 +271,11 @@ class Parser
 		}
 		else
 		{
+            // just incase lets run a delete
+            DB::table('logs')
+                ->where('log_date', $log_date)
+                ->where('user_id', $this->user->user_id)
+                ->delete();
 			// add a new entry
             $log_id = DB::table('logs')
                         ->insertGetId([
@@ -330,7 +335,6 @@ class Parser
                 'log_id' => $log_id,
                 'user_id' => $this->user->user_id,
                 'exercise_id' => $exercise_id,
-                'logex_1rm' => $max_estimate_rm,
                 'logex_comment' => $this->replace_video_urls($item['comment']),
                 'logex_order' => $i
             ]);
@@ -457,6 +461,7 @@ class Parser
             DB::table('log_exercises')
                 ->where('logex_id', $log_exercises_id)
                 ->update([
+                    'logex_1rm' => $max_estimate_rm,
                     'logex_volume' => $total_volume,
                     'logex_reps' => $total_reps,
                     'logex_sets' => $total_sets,
