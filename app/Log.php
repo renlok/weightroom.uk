@@ -32,7 +32,7 @@ class Log extends Model
 
     public function scopeGetlog($query, $date, $user)
     {
-        return $query->where('log_date', $date)->where('user_id', $user)->first();
+        return $query->where('log_date', $date)->where('user_id', $user);
     }
 
     /**

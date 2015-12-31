@@ -25,12 +25,12 @@ class LogsController extends Controller
     {
         if ($user_name == '')
         {
-             $user_name = Auth::user()->user_name;
+            $user_name = Auth::user()->user_name;
         }
         $user = User::where('user_name', $user_name)->firstOrFail();
-        if ($user->log != null)
+        if ($user->logs != null)
         {
-            $log = $user->log->getlog($date, $user);
+            $log = $user->logs()->where('log_date', $date)->first();
             $is_log = 1;
         }
         else

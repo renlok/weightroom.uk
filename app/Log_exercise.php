@@ -18,7 +18,7 @@ class Log_exercise extends Model
      */
     public function log_items()
     {
-        return $this->hasMany('App\Log_item');
+        return $this->hasMany('App\Log_item', 'logex_id');
     }
 
     /**

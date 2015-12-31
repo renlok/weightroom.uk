@@ -103,10 +103,10 @@
 	</div>
 </div>
 @endif
-@foreach ($log->log_exercises() as $log_exercise)
+@foreach ($log->log_exercises as $log_exercise)
 	@include('common.logExercise')
 @endforeach
-@include('common.commentTree')
+@include('common.commentTree', ['comments' => $log->comments])
 @endif
 @endsection
 

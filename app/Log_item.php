@@ -26,7 +26,7 @@ class Log_item extends Model
      */
     public function log_exercise()
     {
-        return $this->belongsTo('App\Log_exercise');
+        return $this->belongsTo('App\Log_exercise', 'logex_id');
     }
 
     /**

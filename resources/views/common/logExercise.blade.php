@@ -2,7 +2,7 @@
 <p class="logrow">Volume: <span class="heavy">{{ $log_exercise->logex_volume }}</span>{WEIGHT_UNIT} - Reps: <span class="heavy">{{ $log_exercise->logex_reps }}</span> - Sets: <span class="heavy">{{ $log_exercise->logex_sets }}</span> - Avg. Intensity: <span class="heavy">{items.AVG_INT} <!-- IF AVG_INTENSITY_TYPE eq 0 -->%<!-- ELSE -->{WEIGHT_UNIT}<!-- ENDIF --></span></p>
 <table class="table">
 <tbody>
-@for ($log_exercise->log_items() as $log_item)
+@foreach ($log_exercise->log_items as $log_item)
     <tr class="{{ $log_item->is_pr ? 'alert alert-success' : ''}}{{ ($log_item->logitem_reps == 0) ? 'alert alert-danger' : ''}}">
         <td class="tdpr">
             @if($log_item->is_pr)
@@ -39,7 +39,7 @@
             @endif
         </td>
     </tr>
-@endfor
+@endforeach
     <tr>
         <td colspan="3">{{ $log_exercise->logex_comment }}</td>
     </tr>
