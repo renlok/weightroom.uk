@@ -11,6 +11,7 @@ use App\Log;
 use Auth;
 use App\Extend\PRs;
 use App\Extend\Parser;
+use Carbon\Carbon;
 
 class LogsController extends Controller
 {
@@ -44,6 +45,7 @@ class LogsController extends Controller
         {
             $is_following = $user->invite_code->where('follow_user_id', $user->user_id)->count();
         }
+        $date = Carbon::createFromFormat('Y-m-d', $date);
         return view('log.view', compact('date', 'user', 'log', 'is_following', 'is_log'));
     }
 

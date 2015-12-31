@@ -77,7 +77,7 @@
 		</div>
 		<div class="col-md-9 col-md-pull-3">
 			<div class="calender-cont" style="max-width: 640px;">
-				<p class="hidden-xs"><- <a href="{{ route('viewLog', ['date' => Carbon::createFromFormat('Y-m-d', $date)->subDay(),'user' => $user->user_id]) }}">{{ Carbon::createFromFormat('Y-m-d', $date)->subDay() }}</a> | <strong>{{ $date }}</strong> | <a href="{{ route('viewLog', ['date' => {{ Carbon::createFromFormat('Y-m-d', $date)->addDay() }},'user' => $user->user_id]) }}">{{ Carbon::createFromFormat('Y-m-d', $date)->addDay() }}</a> -></p>
+				<p class="hidden-xs"><- <a href="{{ route('viewLog', ['date' => $date->subDay(),'user' => $user->user_id]) }}">{{ $$date->subDay() }}</a> | <strong>{{ $date }}</strong> | <a href="{{ route('viewLog', ['date' => $date->addDay(),'user' => $user->user_id]) }}">{{ $date->addDay() }}</a> -></p>
 				<div class="date"></div>
 			</div>
 		</div>
@@ -103,9 +103,9 @@
 	</div>
 </div>
 @endif
-@for ($log->log_exercises() as $log_exercise)
+@foreach ($log->log_exercises() as $log_exercise)
 	@include('common.logExercise')
-@endfor
+@endforeach
 @if ($is_log)
 	@include('common.commentTree')
 @endif
