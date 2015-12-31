@@ -34,14 +34,14 @@ Route::group(['prefix' => 'user', 'middleware' => 'auth'], function () {
     Route::get('settings', 'UserController@getSettings')->name('userSettings');
     Route::post('settings', 'UserController@postSettings');
     // follow/unfollow routes
-    Route::get('follow/{user}/{?date}', 'UserController@follow')->name('followUser');
-    Route::get('unfollow/{user}/{?date}', 'UserController@unfollow')->name('unfollowUser');
+    Route::get('follow/{user}/{date?}', 'UserController@follow')->name('followUser');
+    Route::get('unfollow/{user}/{date?}', 'UserController@unfollow')->name('unfollowUser');
 });
 
 // Log controller
 Route::group(['prefix' => 'log', 'middleware' => 'auth'], function () {
-    Route::get('{?user}', 'LogsController@index')->name('viewUser');
-    Route::get('{date}/view/{?user}', 'LogsController@view')->name('viewLog');
+    Route::get('{user?}', 'LogsController@index')->name('viewUser');
+    Route::get('{date}/view/{user?}', 'LogsController@view')->name('viewLog');
     //edit log
     Route::get('{date}/edit', 'LogsController@getEdit')->name('editLog');
     Route::post('{date}/edit', 'LogsController@postEdit');
@@ -56,9 +56,9 @@ Route::group(['prefix' => 'log', 'middleware' => 'auth'], function () {
 // Exercise Controller
 Route::group(['prefix' => 'exercise', 'middleware' => 'auth'], function () {
     // list exercises
-    Route::get('/', 'ExercisesController@list');
-    Route::get('list', 'ExercisesController@list')->name('listExercises');
-    Route::get('{exercise_name}/view', 'ExercisesController@list')->name('viewExercise');
+    Route::get('/', 'ExercisesController@getList');
+    Route::get('list', 'ExercisesController@getList')->name('listExercises');
+    Route::get('{exercise_name}/view', 'ExercisesController@getViewExercise')->name('viewExercise');
     // edit exercise routes
     // can automatically pull the exercise with (App\Exercise $user)
     Route::get('{exercise_name}/edit', 'ExercisesController@getEdit')->name('editExercise');

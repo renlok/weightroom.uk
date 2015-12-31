@@ -12,7 +12,7 @@
 	</li>
 @empty
 	<li class="list-group-item">
-		You have not added any exercises yet, why not get started and <a href="{{ route('newLog') }}">track your first workout</a>.
+		You have not added any exercises yet, why not get started and <a href="{{ route('newLog', ['date' => Carbon\Carbon::now()->format('Y-m-d')]) }}">track your first workout</a>.
 	</li>
 @endforelse
 </ul>

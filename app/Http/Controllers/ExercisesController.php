@@ -9,11 +9,11 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Exercise;
 use App\Logs;
-use App\Extends\PRs;
+use App\Extend\PRs;
 
 class ExercisesController extends Controller
 {
-    public function list()
+    public function getList()
     {
         $exercises = Exercise::listexercises(true)->get();
         return view('exercise.list', compact('exercises'));
@@ -75,6 +75,11 @@ class ExercisesController extends Controller
     public function volume($exercise_name)
     {
         return view('exercise.volume');
+    }
+
+    public function getViewExercise($exercise_name)
+    {
+        return view('exercise.view');
     }
 
     public function getCompareForm()

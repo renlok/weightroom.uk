@@ -9,8 +9,8 @@ use App\Http\Controllers\Controller;
 use App\User;
 use App\Log;
 use Auth;
-use App\Extends\PRs;
-use App\Extends\Parser;
+use App\Extend\PRs;
+use App\Extend\Parser;
 
 class LogsController extends Controller
 {

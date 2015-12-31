@@ -27,7 +27,7 @@ class UserController extends Controller
 
     public function unfollow($user_name, $date)
     {
-        Invite_code()::where('user_id', Auth::user()->user_id)
+        Invite_code::where('user_id', Auth::user()->user_id)
                     ->where('follow_user_id', User::where('user_name', $user_name)->firstOrFail()->user_id)
                     ->delete();
         return redirect('viewLog', ['user' => $user_name, 'date' => $date]);
@@ -41,7 +41,7 @@ class UserController extends Controller
         {
         	$showreps[$i] = (isset($user->user_showreps[$i])) ? ' checked' : '';
         }
-        $exercises = Exercise->listexercises(false)->get();
+        $exercises = Exercise::listexercises(false)->get();
         $settings_updated = false;
         return view('user.settings', compact('user', 'showreps', 'exercises', 'settings_updated'));
     }
@@ -74,7 +74,7 @@ class UserController extends Controller
         {
         	$showreps[$i] = (isset($user->user_showreps[$i])) ? ' checked' : '';
         }
-        $exercises = Exercise->listexercises(false)->get();
+        $exercises = Exercise::listexercises(false)->get();
         $settings_updated = false;
 
         return view('user.settings', compact('user', 'errors', 'showreps', 'exercises', 'settings_updated'));
