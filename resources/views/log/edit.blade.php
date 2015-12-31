@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'Edit Log')
+@section('title', ucfirst($type) . ' Log')
 
 @section('headerstyle')
 <style>
@@ -93,7 +93,7 @@ you can also have the same exercise multiple times
 </div>
 <div class="input-group margintb">
 	{!! csrf_field() !!}
-	<input type="submit" name="action" class="btn btn-default" value="{{ $type }} log">
+	<input type="submit" name="action" class="btn btn-default" value="{{ ucfirst($type) }} log">
 </div>
 </form>
 @endsection

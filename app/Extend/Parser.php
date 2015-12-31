@@ -2,13 +2,15 @@
 
 namespace App\Extend;
 
+use Auth;
+use DB;
 use App\Log;
 use App\User;
-use App\Exercises;
-use App\Exercise_records;
+use App\Exercise;
+use App\Exercise_record;
 use Carbon\Carbon;
 
-class Parser {
+class Parser
 {
     // the predefined data variables
     var $units; // array of units for each block type
@@ -264,7 +266,7 @@ class Parser {
                 ->update([
                     'log_text' => $this->log_text,
                     'log_comment' => $this->replace_video_urls($this->log_data['comment']),
-                    'log_weight' => $this->user_weight
+                    'log_weight' => $user_weight
                 ]);
 		}
 		else
@@ -305,12 +307,12 @@ class Parser {
 			$total_volume = $total_reps = $total_sets = 0;
             $logex_warmup_volume = $logex_warmup_reps = $logex_warmup_sets = 0;
             // get exercise information
-            $exercise = Exercises->getexercise($exercise_name, $this->user->user_id);
+            $exercise = Exercise::getexercise($exercise_name, $this->user->user_id)->first();
             // new exercise
             if ($exercise == null)
             {
                 $exercise_is_new = true;
-                $exercise_id = Exercises->insertGetId([
+                $exercise_id = Exercise::insertGetId([
                     'exercise_name' => $exercise_name,
                     'user_id' => $this->user->user_id
                 ]);
@@ -322,7 +324,12 @@ class Parser {
                 $exercise_id = $exercise->exercise_id;
                 $exercise_is_time = $exercise->is_time;
             }
-            $prs = Exercise_records::getexerciseprs($this->user->user_id, $log_date, $exercise_name);
+            $prs = Exercise_record::getexerciseprs($this->user->user_id, $log_date, $exercise_name)
+                    ->get()
+                    ->groupBy(function ($item, $key) {
+                        return ($item['is_time']) ? 'T' : 'W';
+                    })
+                    ->toArray();
 			$max_estimate_rm = 0;
 			for ($j = 0, $count_j = count($item['data']); $j < $count_j; $j++)
 			{
@@ -539,7 +546,7 @@ class Parser {
         DB::table('logs')
             ->where('log_date', '>', $log_date)
             ->where('user_id', $user_id)
-            ->where('log_weight' => $old_weight)
+            ->where('log_weight', $old_weight)
             ->update(['log_weight' => $user_weight]);
 	}
 
@@ -567,7 +574,7 @@ class Parser {
             ->where('pr_date', '>=', $log_date)
             ->where('exercise_id', $exercise_id)
             ->where('pr_reps', $set_reps)
-            ->where(function($query){
+            ->where(function($query) use ($is_time, $set_weight){
                 if ($is_time == 0)
                 {
                     $query->where('pr_value', '<=', $set_weight)
@@ -588,7 +595,7 @@ class Parser {
                 ->where('user_id', $user_id)
                 ->where('pr_date', '>=', $log_date)
                 ->where('exercise_id', $exercise_id)
-                ->where(function($query){
+                ->where(function($query) use ($is_time, $set_weight){
                     if ($is_time == 0)
                     {
                         $query->where('pr_1rm', '<=', $set_weight)
@@ -621,7 +628,7 @@ class Parser {
             ->where('logitem_date', '>', $log_date)
             ->where('exercise_id', $exercise_id)
             ->where('logitem_reps', $set_reps)
-            ->where(function($query){
+            ->where(function($query) use ($is_time, $set_weight){
                 if ($is_time == 0)
                 {
                     $query->where('logitem_abs_weight', '<=', $set_weight)
@@ -637,12 +644,12 @@ class Parser {
 
 		// add past prs if needed
         $sets = DB::table('log_items')
-                    ->select('log_id', 'log_date', 'logitem_abs_weight')
+                    ->select('log_id', 'logitem_date', 'logitem_abs_weight')
                     ->where('user_id', $user_id)
                     ->where('logitem_date', '<', $log_date)
                     ->where('exercise_id', $exercise_id)
                     ->where('logitem_reps', $set_reps)
-                    ->where(function($query){
+                    ->where(function($query) use ($is_time, $set_weight){
                         if ($is_time == 0)
                         {
                             $query->where('logitem_abs_weight', '>', $set_weight)

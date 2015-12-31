@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use App\Http\Requests\LogRequest;
 use App\Http\Controllers\Controller;
 use App\User;
 use App\Log;
@@ -65,7 +66,7 @@ class LogsController extends Controller
         return view('log.edit', compact('date', 'log', 'user', 'type'));
     }
 
-    public function postEdit($date, LogRequest $requests)
+    public function postEdit($date, LogRequest $request)
     {
         $parser = new Parser;
         $weight = $parser->get_input_weight($request->input('weight'), $date);
@@ -86,7 +87,7 @@ class LogsController extends Controller
         return view('log.edit', compact('date', 'log', 'user', 'type'));
     }
 
-    public function postNew($date, LogRequest $requests)
+    public function postNew($date, LogRequest $request)
     {
 
         $parser = new Parser;

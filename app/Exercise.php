@@ -36,8 +36,7 @@ class Exercise extends Model
     public function scopeGetexercise($query, $exercise_name, $user_id)
     {
         return $query->where('exercise_name', $exercise_name)
-                    ->where('user_id', $user_id)
-                    ->first();
+                    ->where('user_id', $user_id);
     }
 
     public function getExerciseNameAttribute($value)
