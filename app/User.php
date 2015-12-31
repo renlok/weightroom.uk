@@ -84,4 +84,14 @@ class User extends Model implements AuthenticatableContract,
     {
         $this->hasMany('App\Invite_code');
     }
+
+    /**
+     * a user can many user follows
+     *
+     * @returns Illuminate\Database\Eloquent\Relations\hasMany
+     */
+    public function user_follows()
+    {
+        $this->hasMany('App\User_follow');
+    }
 }

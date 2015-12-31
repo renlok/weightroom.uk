@@ -19,12 +19,31 @@ class LogsController extends Controller
         return $this->view();
     }
 
-    public function view($date, $user_name = Auth::user()->user_name)
+    public function view($date, $user_name)
     {
+        if (!isset($user_name))
+        {
+             $user_name = Auth::user()->user_name;
+        }
         $user = User::where('user_name', $user_name)->firstOrFail();
-        $log = $user->log->getlog($date, $user);
-        $is_log = $log->count();
-        $is_following = $user->invite_code->where('follow_user_id', $user->user_id)->count();
+        if ($user->log != null)
+        {
+            $log = $user->log->getlog($date, $user);
+            $is_log = 1;
+        }
+        else
+        {
+            $log = [];
+            $is_log = 0;
+        }
+        if ($user->invite_code == null)
+        {
+            $is_following = 0;
+        }
+        else
+        {
+            $is_following = $user->invite_code->where('follow_user_id', $user->user_id)->count();
+        }
         return view('log.view', compact('date', 'user', 'log', 'is_following', 'is_log'));
     }
 
@@ -57,7 +76,7 @@ class LogsController extends Controller
         $user = User::find(Auth::user()->user_id)->firstOrFail();
         $log = collect([
             'log_text' => '',
-            'log_weight' Log::getlastbodyweight->get(),
+            'log_weight' => Log::getlastbodyweight(Auth::user()->user_id, $date)->value('log_weight'),
         ]);
         return view('log.edit', compact('date', 'log', 'user'));
     }

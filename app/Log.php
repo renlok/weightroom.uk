@@ -23,12 +23,11 @@ class Log extends Model
                     ->orderBy('log_date', 'asc');
     }
 
-    public function scopeGetlastbodyweight($query, $user_id, $log_date)
+    public function scopeGetlastbodyweight($query, $user_id, $date)
     {
         return $query->where('user_id', $user_id)
                     ->where('log_weight', '!=', 0)
-                    ->where('log_date', $date)
-                    ->value('log_weight');
+                    ->where('log_date', $date);
     }
 
     public function scopeGetlog($query, $date, $user)
