@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'View Log: ' . $date)
+@section('title', 'View Log: ' . $date->toDateString())
 
 @section('headerstyle')
 <style>
@@ -68,16 +68,16 @@
 				<p><small>Member since: {{ $user->user_joined }}</small></p>
 @if ($user->user_id != Auth::user()->user_id)
 	@if ($is_following)
-				<p class="btn btn-default"><a href="{{ route('unfollowUser', ['user' => $user->user_name, 'date' => $date]) }}">Unfollow <img src="img/user_delete.png"></a></p>
+				<p class="btn btn-default"><a href="{{ route('unfollowUser', ['user' => $user->user_name, 'date' => $date->toDateString()]) }}">Unfollow <img src="img/user_delete.png"></a></p>
 	@else
-				<p class="btn btn-default"><a href="{{ route('followUser', ['user' => $user->user_name, 'date' => $date]) }}">Follow <img src="img/user_add.png"></a></p>
+				<p class="btn btn-default"><a href="{{ route('followUser', ['user' => $user->user_name, 'date' => $date->toDateString()]) }}">Follow <img src="img/user_add.png"></a></p>
 	@endif
 @endif
 			</div>
 		</div>
 		<div class="col-md-9 col-md-pull-3">
 			<div class="calender-cont" style="max-width: 640px;">
-				<p class="hidden-xs"><- <a href="{{ route('viewLog', ['date' => $date->subDay(),'user' => $user->user_id]) }}">{{ $$date->subDay() }}</a> | <strong>{{ $date }}</strong> | <a href="{{ route('viewLog', ['date' => $date->addDay(),'user' => $user->user_id]) }}">{{ $date->addDay() }}</a> -></p>
+				<p class="hidden-xs"><- <a href="{{ route('viewLog', ['date' => $date->subDay()->toDateString(),'user' => $user->user_id]) }}">{{ $date->subDay()->toDateString() }}</a> | <strong>{{ $date->toDateString() }}</strong> | <a href="{{ route('viewLog', ['date' => $date->addDay()->toDateString(),'user' => $user->user_id]) }}">{{ $date->addDay()->toDateString() }}</a> -></p>
 				<div class="date"></div>
 			</div>
 		</div>
@@ -86,16 +86,15 @@
 
 @if ($user->user_id == Auth::user()->user_id)
 	@if ($is_log)
-<p class="margintb"><a href="{{ route('editLog', ['date' => $date]) }}" class="btn btn-default">Edit Log</a></p>
+<p class="margintb"><a href="{{ route('editLog', ['date' => $date->toDateString()]) }}" class="btn btn-default">Edit Log</a></p>
 	@else
-<p class="margintb"><a href="{{ route('newLog', ['date' => $date]) }}" class="btn btn-default">Add Log</a></p>
+<p class="margintb"><a href="{{ route('newLog', ['date' => $date->toDateString()]) }}" class="btn btn-default">Add Log</a></p>
 	@endif
 @endif
 @if ($is_log)
 <h3>Workout summary</h3>
 <p class="logrow">Volume: <span class="heavy">{{ $log->log_total_volume + ($log->log_failed_volume * $user->user_volumeincfails) }}</span>{{ $user->user_unit }} - Reps: <span class="heavy">{{ $log->log_total_reps }}</span> - Sets: <span class="heavy">{{ $log->log_total_reps }}</span> - Avg. Intensity: <span class="heavy">{TOTAL_INT} <!-- IF AVG_INTENSITY_TYPE eq 0 -->%<!-- ELSEIF AVG_INTENSITY_TYPE eq 1 -->{WEIGHT_UNIT}<!-- ENDIF --></span></p>
 <p class="logrow marginl"><small>Bodyweight: <span class="heavy">{{ $log->log_weight }}</span>{{ $user->user_unit }}</small></p>
-@endif
 @if ($log->log_comment != '')
 <div class="panel panel-default">
 	<div class="panel-body">
@@ -106,8 +105,7 @@
 @foreach ($log->log_exercises() as $log_exercise)
 	@include('common.logExercise')
 @endforeach
-@if ($is_log)
-	@include('common.commentTree')
+@include('common.commentTree')
 @endif
 @endsection
 
