@@ -8,10 +8,12 @@ class Log extends Model
 {
     protected $primaryKey = 'log_id';
     protected $dates = ['log_date'];
+    protected $dateFormat = 'Y-m-d';
     protected $casts = [
         'log_update_text' => 'boolean',
     ];
     protected $appends = ['average_intensity'];
+    protected $guarded = ['log_id'];
 
     public function scopeGetbodyweight($query, $user_id)
     {

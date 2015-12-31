@@ -9,10 +9,10 @@ use DB;
 class Exercise extends Model
 {
     protected $primaryKey = 'exercise_id';
-
     protected $casts = [
         'is_time' => 'boolean',
     ];
+    protected $guarded = ['exercise_id'];
 
     public function scopeListexercises($query, $count)
     {
@@ -30,6 +30,13 @@ class Exercise extends Model
                         ->where('user_id', Auth::user()->user_id)
                         ->orderBy('exercise_name', 'asc');
         }
+    }
+
+    public function scopeGetexercise($query, $exercise_name, $user_id)
+    {
+        return $query->where('exercise_name', $exercise_name)
+                    ->where('user_id', $user_id)
+                    ->first();
     }
 
     public function getExerciseNameAttribute($value)

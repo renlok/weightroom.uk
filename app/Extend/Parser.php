@@ -2,6 +2,12 @@
 
 namespace App\Extend;
 
+use App\Log;
+use App\User;
+use App\Exercises;
+use App\Exercise_records;
+use Carbon\Carbon;
+
 class Parser {
 {
     // the predefined data variables
@@ -9,6 +15,7 @@ class Parser {
     var $format_types_all; // all possible formats for all possible blocks
     var $next_values_all; // flags that show a certain type of block is coming up
     var $format_follows; // what should come after each block type
+    var $user;
     // the working variables
     var $accepted_char;
     var $accepted_chars;
@@ -31,6 +38,8 @@ class Parser {
         $exercise = '';
         $position = -1; // a pointer for when exercise was done
         $this->log_data = array('comment' => '', 'exercises' => array()); // the output array
+        // get user
+        $this->user = Auth::user();
         // convert log_text to array
         $log_lines = explode("\n", $this->log_text);
         foreach ($log_lines as $line)
@@ -227,102 +236,93 @@ class Parser {
         return $output_data;
     }
 
-	public function store_log_data ($log_date, $user_weight)
+	public function store_log_data ($log_date, $user_weight, $is_new)
 	{
-		global $db, $user, $log;
 		// clear old entries
-		$query = "DELETE FROM log_exercises WHERE logex_date = :log_date AND user_id = :user_id";
-		$params = array(
-			array(':log_date', $log_date, 'str'),
-			array(':user_id', $user->user_id, 'int')
-		);
-		$db->query($query, $params);
-		$query = "DELETE FROM log_items WHERE logitem_date = :log_date AND user_id = :user_id";
-		$params = array(
-			array(':log_date', $log_date, 'str'),
-			array(':user_id', $user->user_id, 'int')
-		);
-		$db->query($query, $params);
-		// clear out old pr data
-		$query = "DELETE FROM exercise_records WHERE pr_date = :log_date AND user_id = :user_id";
-		$params = array(
-			array(':log_date', $log_date, 'str'),
-			array(':user_id', $user->user_id, 'int')
-		);
-		$db->query($query, $params);
+        DB::table('log_exercises')->where('logex_date', $log_date)->where('user_id', $this->user->user_id)->delete();
+        DB::table('log_items')->where('logitem_date', $log_date)->where('user_id', $this->user->user_id)->delete();
+        DB::table('exercise_records')->where('pr_date', $log_date)->where('user_id', $this->user->user_id)->delete();
 
 		// delete log and exit function if no data
 		if (count($this->log_data) <= 1)
 		{
-			$query = "DELETE FROM logs WHERE log_date = :log_date AND user_id = :user_id";
-			$params = array(
-				array(':log_date', $log_date, 'str'),
-				array(':user_id', $user->user_id, 'int')
-			);
-			$db->query($query, $params);
+            DB::table('logs')->where('log_date', $log_date)->where('user_id', $this->user->user_id)->delete();
 			return false;
 		}
 
 		//check if its new
-		if ($log->is_valid_log($user->user_id, $log_date))
+		if (!$is_new)
 		{
 			// update log entry
-			$query = "UPDATE logs SET log_text = :log_text, log_comment = :log_comment, log_weight = :log_weight WHERE log_date = :log_date AND user_id = :user_id";
-			$params = array(
-				array(':log_text', $this->log_text, 'str'),
-				array(':log_comment', $this->replace_video_urls($this->log_data['comment']), 'str'),
-				array(':log_weight', $user_weight, 'float'),
-				array(':log_date', $log_date, 'str'),
-				array(':user_id', $user->user_id, 'int')
-			);
-			$db->query($query, $params);
+            $log_id = DB::table('logs')
+                    ->where('log_date', $log_date)
+                    ->where('user_id', $this->user->user_id)
+                    ->value('log_id');
+            DB::table('logs')
+                ->where('log_date', $log_date)
+                ->where('user_id', $this->user->user_id)
+                ->update([
+                    'log_text' => $this->log_text,
+                    'log_comment' => $this->replace_video_urls($this->log_data['comment']),
+                    'log_weight' => $this->user_weight
+                ]);
 		}
 		else
 		{
 			// add a new entry
-			$query = "INSERT INTO logs (log_text, log_comment, log_weight, log_date, user_id) VALUES (:log_text, :log_comment, :log_weight, :log_date, :user_id)";
-			$params = array(
-				array(':log_text', $this->log_text, 'str'),
-				array(':log_comment', $this->replace_video_urls($this->log_data['comment']), 'str'),
-				array(':log_weight', $user_weight, 'float'),
-				array(':log_date', $log_date, 'str'),
-				array(':user_id', $user->user_id, 'int')
-			);
-			$db->query($query, $params);
+            $log_id = DB::table('logs')
+                        ->insertGetId([
+                            'log_text' => $this->log_text,
+                            'log_comment' => $this->replace_video_urls($this->log_data['comment']),
+                            'log_weight' => $user_weight,
+                            'log_date' => $log_date,
+                            'user_id' => $this->user->user_id
+                        ]);
 		}
+        // values that must be updated later
+        $log_warmup_volume = $log_warmup_reps = $log_warmup_sets = $log_total_volume = $log_failed_volume = $log_total_reps = $log_total_sets = 0;
 		// todays log then update weight
 		if ($log_date == date("Y-m-d"))
 		{
-			$query = "UPDATE users SET user_weight = :log_weight WHERE user_id = :user_id";
-			$params = array(
-				array(':log_weight', $user_weight, 'float'),
-				array(':user_id', $user->user_id, 'int')
-			);
-			$db->query($query, $params);
+            DB::table('users')
+                ->where('user_id', $this->user->user_id)
+                ->update(['user_weight' => $user_weight]);
 		}
 		else
 		{
 			// update future logs
-			$this->update_user_weights ($user->user_id, $log_date, $user_weight);
+			$this->update_user_weights ($this->user->user_id, $log_date, $user_weight);
 		}
 
-		$log_id = $log->load_log ($user->user_id, $log_date, 'log_id');
-		$log_id = $log_id['log_id'];
 		$new_prs = array();
 		// add all of the exercise details
 		for ($i = 0, $count_i = count($this->log_data['exercises']); $i < $count_i; $i++)
 		{
 			$item = $this->log_data['exercises'][$i];
 			// set exercise name
-			$exercise = trim($item['name']);
+			$exercise_name = trim($item['name']);
 			// reset totals
 			$total_volume = $total_reps = $total_sets = 0;
+            $logex_warmup_volume = $logex_warmup_reps = $logex_warmup_sets = 0;
             // get exercise information
-            $exercise_is_new = !$log->is_valid_exercise ($user->user_id, $exercise);
-            $exercise_id = $log->get_exercise_id ($user->user_id, $exercise);
-            $exercise_is_time = $log->get_exercise_data ($user->user_id, $exercise, 'is_time');
-            $exercise_is_time = $exercise_is_time['is_time'];
-			$prs = $log->get_prs ($user->user_id, $log_date, $exercise);
+            $exercise = Exercises->getexercise($exercise_name, $this->user->user_id);
+            // new exercise
+            if ($exercise == null)
+            {
+                $exercise_is_new = true;
+                $exercise_id = Exercises->insertGetId([
+                    'exercise_name' => $exercise_name,
+                    'user_id' => $this->user->user_id
+                ]);
+                $exercise_is_time = false; // assume this for now
+            }
+            else
+            {
+                $exercise_is_new = false;
+                $exercise_id = $exercise->exercise_id;
+                $exercise_is_time = $exercise->is_time;
+            }
+            $prs = Exercise_records::getexerciseprs($this->user->user_id, $log_date, $exercise_name);
 			$max_estimate_rm = 0;
 			for ($j = 0, $count_j = count($item['data']); $j < $count_j; $j++)
 			{
@@ -350,94 +350,124 @@ class Parser {
 				$set['R'] = (isset($set['R'])) ? $set['R'] : 1;
 				$set['S'] = (isset($set['S'])) ? $set['S'] : 1;
 				$set['C'] = (isset($set['C'])) ? $set['C'] : '';
+                $is_warmup = false;
+                // check if the comment is a special tag
+                if($options = $this->special_tags($set['C']) != 0)
+                {
+                    $set['C'] = '';
+                    if ($options == 'w')
+                    {
+                        $is_warmup = true;
+                    }
+                }
 				$absolute_weight = ($is_bw == false) ? $set['W'] : ($set['W'] + $user_weight);
-				$total_volume += ($absolute_weight * $set['R'] * $set['S']);
+                $item_volume = ($absolute_weight * $set['R'] * $set['S']);
+				$total_volume += $item_volume;
+                $log_failed_volume += ($set['R'] == 0) ? ($absolute_weight * $set['S']) : 0;
                 // deal the time PRs
 				$absolute_weight = floatval(($is_time == true) ? $set['T'] : $absolute_weight);
 				$total_reps += ($set['R'] * $set['S']);
 				$total_sets += $set['S'];
+                if ($is_warmup)
+                {
+                    $log_warmup_volume += $item_volume;
+                    $log_warmup_reps += ($set['R'] * $set['S']);
+                    $log_warmup_sets += $set['S'];
+                    $logex_warmup_volume += $item_volume;
+                    $logex_warmup_reps += ($set['R'] * $set['S']);
+                    $logex_warmup_sets += $set['S'];
+                }
 				$is_pr = false;
 				// check its a pr
-                if ((($is_time && (!isset($prs['T'][$set['R']]) || floatval($prs['T'][$set['R']]) < floatval($absolute_weight))) || // set time PR
+                if ((($is_time && (!isset($prs['T'][$set['R']]) || floatval($prs['T'][$set['R']]) > floatval($absolute_weight))) || // set time PR
                     (!$is_time && (!isset($prs['W'][$set['R']]) || floatval($prs['W'][$set['R']]) < floatval($absolute_weight)))) && // set weight PR
                     $set['R'] != 0)
 				{
 					$is_pr = true;
                     $pr_type = ($is_time == true) ? 'T' : 'W';
-                    if ($exercise_is_new == true || ($exercise_is_time && $is_time) || ($exercise_is_time == false && $is_time == false))
-                    {
-                        // the user has set a pr we need to add/update it in the database
-                        $this->update_prs ($user->user_id, $log_date, $exercise_id, $absolute_weight, $set['R'], $is_time);
-                        if (!isset($new_prs[$exercise]))
-                            $new_prs[$exercise] = array('W' => array(), 'T' => array());
-                        $new_prs[$exercise][$pr_type][$set['R']][] = $absolute_weight;
-                        // update pr array
-                        $prs[$pr_type][$set['R']] = $absolute_weight;
-                    }
+                    // the user has set a pr we need to add/update it in the database
+                    $this->update_prs ($this->user->user_id, $log_date, $exercise_id, $absolute_weight, $set['R'], $is_time);
+                    if (!isset($new_prs[$exercise_name]))
+                        $new_prs[$exercise_name] = array('W' => array(), 'T' => array());
+                    $new_prs[$exercise_name][$pr_type][$set['R']][] = $absolute_weight;
+                    // update pr array
+                    $prs[$pr_type][$set['R']] = $absolute_weight;
 				}
                 if ($exercise_is_new)
                 {
                     $exercise_is_time = $is_time;
                 }
-				$estimate_rm = $log->generate_rm ($absolute_weight, $set['R']);
+				$estimate_rm = $this->generate_rm ($absolute_weight, $set['R']);
 				// get estimate 1rm
 				if ($max_estimate_rm < $estimate_rm)
 				{
 					$max_estimate_rm = $estimate_rm;
 				}
 				// insert into log_items
-				$query = "INSERT INTO log_items (logitem_date, log_id, user_id, exercise_id, logitem_weight, logitem_abs_weight, logitem_time, logitem_reps, logitem_sets, logitem_rpes, logitem_comment, logitem_1rm, is_pr, is_bw, is_time, logitem_order, logex_order)
-							VALUES (:logitem_date, :log_id, :user_id, :exercise_id, :logitem_weight, :logitem_abs_weight, :logitem_time, :logitem_reps, :logitem_sets, :logitem_rpes, :logitem_comment, :logitem_rm, :is_pr, :is_bw, :is_time, :logitem_order, :logex_order)";
-				$params = array(
-					array(':logitem_date', $log_date, 'str'),
-					array(':log_id', $log_id, 'int'),
-					array(':user_id', $user->user_id, 'int'),
-					array(':exercise_id', $exercise_id, 'int'),
-					array(':logitem_weight', $set['W'], 'float'),
-					array(':logitem_abs_weight', $absolute_weight, 'float'),
-					array(':logitem_time', $set['T'], 'int'),
-					array(':logitem_reps', $set['R'], 'int'),
-					array(':logitem_sets', $set['S'], 'int'),
-					array(':logitem_comment', $set['C'], 'str'),
-					array(':logitem_rm', $estimate_rm, 'float'),
-					array(':is_pr', (($is_pr == false) ? 0 : 1), 'int'),
-					array(':is_bw', (($is_bw == false) ? 0 : 1), 'int'),
-					array(':is_time', (($is_time == false) ? 0 : 1), 'int'),
-					array(':logitem_order', $j, 'int'),
-                    array(':logex_order', $i, 'int'),
-				);
+                $log_item_data = [
+                    'logitem_date' => $log_date,
+                    'log_id' => $log_id,
+                    'logex_id' => $i,
+                    'user_id' => $this->user->user_id,
+                    'exercise_id' => $exercise_id,
+                    'logitem_weight' => $set['W'],
+                    'logitem_abs_weight' => $absolute_weight,
+                    'logitem_time' => $set['T'],
+                    'logitem_reps' => $set['R'],
+                    'logitem_sets' => $set['S'],
+                    'logitem_comment' => $set['C'],
+                    'logitem_1rm' => $estimate_rm,
+                    'is_pr' => $is_pr,
+                    'is_bw' => $is_bw,
+                    'is_time' => $is_time,
+                    'is_warmup' => $is_warmup,
+                    'options' => $options,
+                    'logitem_order' => $j,
+                    'logex_order' => $i,
+                ];
 				if (!isset($set['P']) || $set['P'] == NULL)
-					$params[] = array(':logitem_rpes', NULL, 'int');
+					$log_item_data['logitem_pre'] = NULL;
 				else
-					$params[] = array(':logitem_rpes', $set['P'], 'float');
-				$db->query($query, $params);
+					$log_item_data['logitem_pre'] = $set['P'];
+                DB::table('log_items')->insert($log_item_data);
 			}
             // if new exercise set if it a time based exercise
             if ($exercise_is_new && $exercise_is_time == 1)
             {
-                $query = "UPDATE exercises SET is_time = 1 WHERE exercise_id = :exercise_id";
-                $params = array(
-                	array(':exercise_id', $exercise_id, 'int'),
-                );
-                $db->query($query, $params);
+                DB::table('exercises')->where('exercise_id', $exercise_id)->update(['is_time' => 1]);
             }
 			// insert into log_exercises
-			$query = "INSERT INTO log_exercises (logex_date, log_id, user_id, exercise_id, logex_volume, logex_reps, logex_sets, logex_1rm, logex_comment, logex_order)
-					VALUES (:logex_date, :log_id, :user_id, :exercise_id, :logex_volume, :logex_reps, :logex_sets, :logex_rm, :logex_comment, :logex_order)";
-			$params = array(
-				array(':logex_date', $log_date, 'str'),
-				array(':log_id', $log_id, 'int'),
-				array(':user_id', $user->user_id, 'int'),
-				array(':exercise_id', $exercise_id, 'int'),
-				array(':logex_volume', $total_volume, 'float'),
-				array(':logex_reps', $total_reps, 'int'),
-				array(':logex_sets', $total_sets, 'int'),
-				array(':logex_rm', $max_estimate_rm, 'float'),
-				array(':logex_comment', $this->replace_video_urls($item['comment']), 'str'),
-				array(':logex_order', $i, 'int'),
-			);
-			$db->query($query, $params);
+            DB::table('log_exercises')->insert([
+                'logex_date' => $log_date,
+                'log_id' => $log_id,
+                'user_id' => $this->user->user_id,
+                'exercise_id' => $exercise_id,
+                'logex_volume' => $total_volume,
+                'logex_reps' => $total_reps,
+                'logex_sets' => $total_sets,
+                'logex_warmup_volume' => $logex_warmup_volume,
+                'logex_warmup_reps' => $logex_warmup_reps,
+                'logex_warmup_sets' => $logex_warmup_sets,
+                'logex_1rm' => $max_estimate_rm,
+                'logex_comment' => $this->replace_video_urls($item['comment']),
+                'logex_order' => $i
+            ]);
+            $log_total_volume += $total_volume;
+            $log_total_reps += $total_reps;
+            $log_total_sets += $total_sets;
 		}
+        // insert total volumes
+        DB::table('logs')
+            ->where('log_id', $log_id)
+            ->update([
+                'log_total_volume' => $log_total_volume,
+                'log_failed_volume' => $log_failed_volume,
+                'log_total_reps' => $log_total_reps,
+                'log_total_sets' => $log_total_sets,
+                'log_warmup_volume' => $log_warmup_volume,
+                'log_warmup_reps' => $log_warmup_reps,
+                'log_warmup_sets' => $log_warmup_sets,
+            ]);
 
 		//return your new records :)
 		return $new_prs;
@@ -445,7 +475,6 @@ class Parser {
 
 	private function correct_units_for_database ($input, $type)
 	{
-        global $user;
 		// TODO: find a cleaner way to do this if possible
 		if ($type == 'T')
 		{
@@ -471,11 +500,11 @@ class Parser {
 		elseif ($type == 'W')
 		{
 			// users default is lb
-			if ($user->user_data['user_unit'] == 2 && $input[1] == '')
+			if ($this->user->user_unit == 'lb' && $input[1] == '')
 			{
 				return correct_weight($input[0], 'lb', 1);
 			}
-			elseif ($user->user_data['user_unit'] == 1 && $input[1] == '')
+			elseif ($this->user->user_unit == 'kg' && $input[1] == '')
 			{
 				return $input[0];
 			}
@@ -499,105 +528,162 @@ class Parser {
 
 	private function update_user_weights($user_id, $log_date, $user_weight)
 	{
-		global $db;
-
 		// get old weight
-		$query = "SELECT log_weight FROM logs WHERE log_date < :log_date AND user_id = :user_id ORDER BY log_date DESC LIMIT 1";
-		$params = array(
-			array(':log_date', $log_date, 'str'),
-			array(':user_id', $user_id, 'int')
-		);
-		$db->query($query, $params);
-		$old_weight = $db->result('log_weight');
+        $old_weight = DB::table('logs')
+                        ->where('log_date', '<', $log_date)
+                        ->where('user_id', $user_id)
+                        ->orderBy('log_date', 'desc')
+                        ->value('log_weight');
 
 		// update log entries with new weight
-		$query = "UPDATE logs SET log_weight = :log_weight WHERE log_date > :log_date AND user_id = :user_id AND log_weight = :old_weight";
-		$params = array(
-			array(':log_weight', $user_weight, 'float'),
-			array(':old_weight', $old_weight, 'float'),
-			array(':log_date', $log_date, 'str'),
-			array(':user_id', $user_id, 'int')
-		);
-		$db->query($query, $params);
+        DB::table('logs')
+            ->where('log_date', '>', $log_date)
+            ->where('user_id', $user_id)
+            ->where('log_weight' => $old_weight)
+            ->update(['log_weight' => $user_weight]);
 	}
 
 	private function update_prs($user_id, $log_date, $exercise_id, $set_weight, $set_reps, $is_time)
 	{
-		global $db, $log;
-
 		// dont log reps over 10
 		if ($set_reps > 10 || $set_reps < 1)
+        {
 			return false;
+        }
 
-		// insert new entry
-		$query = "INSERT INTO exercise_records (exercise_id, user_id, pr_date, pr_weight, pr_reps, pr_1rm, is_time)
-				VALUES (:exercise_id, :user_id, :pr_date, :pr_weight, :pr_reps, :pr_rm, :is_time)";
-		$params = array(
-			array(':exercise_id', $exercise_id, 'int'),
-			array(':user_id', $user_id, 'int'),
-			array(':pr_date', $log_date, 'str'),
-			array(':pr_weight', $set_weight, 'float'),
-			array(':pr_reps', $set_reps, 'int'),
-			array(':pr_rm', $log->generate_rm ($set_weight, $set_reps), 'float'),
-			array(':is_time', $is_time, 'bool'),
-		);
-		$db->query($query, $params);
-    var_dump(array($query, $params, $db->lastInsertId()));
+        $old_1rm = DB::table('exercise_records')
+                    ->where('user_id', $user_id)
+                    ->where('pr_date', '<', $log_date)
+                    ->where('exercise_id', $exercise_id)
+                    ->where('is_time', $is_time)
+                    ->orderBy('pr_date', 'desc')
+                    ->value('pr_1rm');
+        $new_1rm = $this->generate_rm ($set_weight, $set_reps);
+        $is_est1rm = ($old_1rm < $new_1rm) ? true : false;
 
 		// delete future logs that have lower prs
-		$query = "DELETE FROM exercise_records WHERE user_id = :user_id AND pr_date > :log_date AND exercise_id = :exercise_id AND pr_reps = :pr_reps AND pr_weight < :pr_weight AND is_time = :is_time";
-		$params = array(
-			array(':exercise_id', $exercise_id, 'int'),
-			array(':log_date', $log_date, 'str'),
-			array(':user_id', $user_id, 'int'),
-			array(':pr_reps', $set_reps, 'int'),
-			array(':pr_weight', $set_weight, 'float'),
-      array(':is_time', $is_time, 'bool'),
-		);
-		$db->query($query, $params);
-		$query = "UPDATE log_items SET is_pr = 0 WHERE user_id = :user_id AND logitem_date > :log_date AND exercise_id = :exercise_id AND logitem_reps = :pr_reps AND logitem_abs_weight < :pr_weight AND is_time = :is_time";
-		$params = array(
-			array(':exercise_id', $exercise_id, 'int'),
-			array(':log_date', $log_date, 'str'),
-			array(':user_id', $user_id, 'int'),
-			array(':pr_reps', $set_reps, 'int'),
-			array(':pr_weight', $set_weight, 'float'),
-      array(':is_time', $is_time, 'bool'),
-		);
-		$db->query($query, $params);
+        DB::table('exercise_records')
+            ->where('user_id', $user_id)
+            ->where('pr_date', '>=', $log_date)
+            ->where('exercise_id', $exercise_id)
+            ->where('pr_reps', $set_reps)
+            ->where(function($query){
+                if ($is_time == 0)
+                {
+                    $query->where('pr_value', '<=', $set_weight)
+                            ->where('is_time', 0);
+                }
+                else
+                {
+                    $query->where('pr_value', '>=', $set_weight)
+                            ->where('is_time', 1);
+                }
+            })
+            ->delete();
+
+        if ($is_est1rm)
+        {
+            // reset newer is_est1rm flags if they are now invalid
+            DB::table('exercise_records')
+                ->where('user_id', $user_id)
+                ->where('pr_date', '>=', $log_date)
+                ->where('exercise_id', $exercise_id)
+                ->where(function($query){
+                    if ($is_time == 0)
+                    {
+                        $query->where('pr_1rm', '<=', $set_weight)
+                                ->where('is_time', 0);
+                    }
+                    else
+                    {
+                        $query->where('pr_1rm', '>=', $set_weight)
+                                ->where('is_time', 1);
+                    }
+                })
+                ->update(['is_est1rm' => 0]);
+        }
+
+		// insert new entry
+        DB::table('exercise_records')
+            ->insert([
+                'exercise_id' => $exercise_id,
+                'user_id' => $user_id,
+                'pr_date' => $log_date,
+                'pr_value' => $set_weight,
+                'pr_reps' => $set_reps,
+                'pr_1rm' => $new_1rm,
+                'is_est1rm' => $is_est1rm,
+                'is_time' => $is_time
+            ]);
+
+        DB::table('log_items')
+            ->where('user_id', $user_id)
+            ->where('logitem_date', '>', $log_date)
+            ->where('exercise_id', $exercise_id)
+            ->where('logitem_reps', $set_reps)
+            ->where(function($query){
+                if ($is_time == 0)
+                {
+                    $query->where('logitem_abs_weight', '<=', $set_weight)
+                            ->where('is_time', 0);
+                }
+                else
+                {
+                    $query->where('logitem_abs_weight', '>=', $set_weight)
+                            ->where('is_time', 1);
+                }
+            })
+            ->update(['is_pr' => 0]);
 
 		// add past prs if needed
-		$query = "SELECT log_id, logitem_abs_weight FROM log_items WHERE user_id = :user_id AND logitem_date < :log_date AND exercise_id = :exercise_id AND logitem_reps = :pr_reps AND logitem_abs_weight > :pr_weight AND is_pr = 0 AND is_time = :is_time";
-		$params = array(
-			array(':exercise_id', $exercise_id, 'int'),
-			array(':log_date', $log_date, 'str'),
-			array(':user_id', $user_id, 'int'),
-			array(':pr_reps', $set_reps, 'int'),
-			array(':pr_weight', $set_weight, 'float'),
-            array(':is_time', $is_time, 'bool'),
-		);
-		$db->query($query, $params);
-		while ($row = $db->fetch())
+        $sets = DB::table('log_items')
+                    ->select('log_id', 'log_date', 'logitem_abs_weight')
+                    ->where('user_id', $user_id)
+                    ->where('logitem_date', '<', $log_date)
+                    ->where('exercise_id', $exercise_id)
+                    ->where('logitem_reps', $set_reps)
+                    ->where(function($query){
+                        if ($is_time == 0)
+                        {
+                            $query->where('logitem_abs_weight', '>', $set_weight)
+                                    ->where('is_time', 0);
+                        }
+                        else
+                        {
+                            $query->where('logitem_abs_weight', '<', $set_weight)
+                                    ->where('is_time', 1);
+                        }
+                    })
+                    ->where('is_pr', 0)
+                    ->get();
+		foreach ($sets as $set)
 		{
 			// update is_pr flag
-			$query = "UPDATE log_items SET is_pr = 1 WHERE log_id = :log_id";
-			$params = array(
-				array(':log_id', $row['log_id'], 'int')
-			);
-			$db->query($query, $params);
+            DB::table('log_items')
+                ->where('log_id', $set['log_id'])
+                ->update(['is_pr' => 1]);
+            // get old est 1rm data
+            $old_1rm = DB::table('exercise_records')
+                        ->where('user_id', $user_id)
+                        ->where('pr_date', '<', $set['log_date'])
+                        ->where('exercise_id', $exercise_id)
+                        ->where('is_time', $is_time)
+                        ->orderBy('pr_date', 'desc')
+                        ->value('pr_1rm');
+            $new_1rm = $this->generate_rm ($set['logitem_abs_weight'], $set_reps);
+            $is_est1rm = ($old_1rm < $new_1rm) ? true : false;
 			// insert pr data
-			$query = "INSERT INTO exercise_records (exercise_id, user_id, pr_date, pr_weight, pr_reps, pr_1rm, is_time)
-					VALUES (:exercise_id, :user_id, :pr_date, :pr_weight, :pr_reps, :pr_rm, :is_time)";
-			$params = array(
-				array(':exercise_id', $exercise_id, 'int'),
-				array(':user_id', $user_id, 'int'),
-				array(':pr_date', $log_date, 'str'),
-				array(':pr_weight', $row['logitem_abs_weight'], 'float'),
-				array(':pr_reps', $set_reps, 'int'),
-				array(':pr_rm', $log->generate_rm ($row['logitem_abs_weight'], $set_reps), 'float'),
-                array(':is_time', $is_time, 'bool'),
-			);
-			$db->query($query, $params);
+            DB::table('exercise_records')
+                ->insert([
+                    'exercise_id' => $exercise_id,
+                    'user_id' => $user_id,
+                    'pr_date' => $log_date,
+                    'pr_value' => $set['logitem_abs_weight'],
+                    'pr_reps' => $set_reps,
+                    'pr_1rm' => $new_1rm,
+                    'is_est1rm' => $is_est1rm,
+                    'is_time' => $is_time
+                ]);
 		}
 	}
 
@@ -800,7 +886,6 @@ class Parser {
 		return $block;
 	}
 
-	// TODO: use this correctly
 	private function special_tags($string)
 	{
 		$string = strtolower($string);
@@ -840,59 +925,112 @@ class Parser {
         return $output_chr;
     }
 
-    public function rebuild_log_text($user_id, $date)
+    public function rebuild_log_text($user_id, $log_date)
 	{
-		global $user, $db;
 		// get the log data
-		$log_data = $this->get_log_data($user_id, $log_date);
+        $log_data = Log::getlog($user_id, $log_date);
 		$log_text = ''; // set that variable !!
-		foreach ($log_data as $log_items)
+        $user = User::find($user_id);
+		foreach ($log_data->log_exercises() as $log_items)
 		{
 			$log_text .= "#" . ucwords($log_items['exercise']) . "\n"; // set exersice name
-			foreach ($log_items['sets'] as $set)
+			foreach ($log_items->log_items() as $set)
 			{
-				// get user units
-				$units = $user->get_user_data($user_id, 'user_unit');
-				$unit_string = ($units['user_unit'] == 1) ? 'kg' : 'lb';
-				if ($set['is_bw'] == 0)
-				{
-					$weight = $set['logitem_weight'] . ' ' . $unit_string;
-				}
-				else
-				{
-					if ($set['logitem_weight'] != 0)
-					{
-						$weight = 'BW' . $set['logitem_weight'] . ' ' . $unit_string;
-					}
-					else
-					{
-						$weight = 'BW';
-					}
-				}
-				if (!empty($set['logitem_rpes']))
-				{
-					$pre = " @{$set['logitem_rpes']}";
-				}
-				else
-				{
-					$pre = '';
-				}
-				$log_text .= "$weight x {$set['logitem_reps']} x {$set['logitem_sets']}$pre " . trim($set['logitem_comment']) . "\n"; // add sets
+                if ($set['is_time'] == 1)
+                {
+                    $time = explode('.', $set['logitem_time']);
+                    $decimaltime = (isset($time[1]) && $time[1] > 0) ? '.' . $time[1] : '';
+                    $setvalue = Carbon::now()->timestamp($time[0])->toTimeString() . $decimaltime;
+                }
+                else
+                {
+    				// get user units
+    				if ($set['is_bw'] == 0)
+    				{
+    					$setvalue = $set['logitem_weight'] . ' ' . $user->user_unit;
+    				}
+    				else
+    				{
+    					if ($set['logitem_weight'] != 0)
+    					{
+    						$setvalue = 'BW' . $set['logitem_weight'] . ' ' . $user->user_unit;
+    					}
+    					else
+    					{
+    						$setvalue = 'BW';
+    					}
+    				}
+                }
+				$pre = (!empty($set['logitem_pre'])) ? " @{$set['logitem_pre']}" : '';
+                $type_key = ($set['is_warmup']) ? ' warmup' : '';
+				$log_text .= "$setvalue x {$set['logitem_reps']} x {$set['logitem_sets']}$pre " . trim($set['logitem_comment']) . $type_key . "\n"; // add sets
 			}
 			if (strlen(trim($log_items['comment'])) > 0)
 				$log_text .= "\n" . trim($log_items['comment']) . "\n"; // set comment
 			$log_text .= "\n";
 		}
 		$log_text = rtrim($log_text);
-		$query = "UPDATE logs SET log_text = :log_text, log_update_text = 0 WHERE log_date = :log_date AND user_id = :user_id";
-		$params = array(
-			array(':log_text', $log_text, 'str'),
-			array(':log_date', $log_date, 'str'),
-			array(':user_id', $user_id, 'int')
-		);
-		$db->query($query, $params);
+        // insert the new log text
+        Log::where('user_id', $user_id)
+            ->where('log_date', $log_date)
+            ->update(['log_text' => $log_text, 'log_update_text' => 0]);
 		return $log_text;
 	}
+
+    public function generate_rm ($weight, $reps, $rm = 1)
+	{
+		if ($reps == $rm)
+		{
+			return $weight;
+		}
+		//for all reps > 1 calculate the 1RMs
+		$lomonerm = $weight * pow($reps, 1 / 10);
+		$brzonerm = $weight * (36 / (37 - $reps));
+		$eplonerm = $weight * (1 + ($reps / 30));
+		$mayonerm = ($weight * 100) / (52.2 + (41.9 * exp(-1 * ($reps * 0.055))));
+		$ocoonerm = $weight * (1 + $reps * 0.025);
+		$watonerm = ($weight * 100) / (48.8 + (53.8 * exp(-1 * ($reps * 0.075))));
+		$lanonerm = $weight * 100 / (101.3 - 2.67123 * $reps);
+		if ($rm == 1)
+		{
+			// get the average
+			return ($lomonerm + $brzonerm + $eplonerm + $mayonerm + $ocoonerm + $watonerm + $lanonerm) / 7;
+		}
+		$lomrm = floor($lomonerm / (pow($rm, 1 / 10)));
+		$brzrm = floor(($brzonerm * (37 - $rm)) / 36);
+		$eplrm = floor($eplonerm / ((1 + ($rm / 30))));
+		$mayrm = floor(($mayonerm * (52.2 + (41.9 * exp(-1 * ($rm * 0.055))))) / 100);
+		$ocorm = floor(($ocoonerm / (1 + $rm * 0.025)));
+		$watrm = floor(($watonerm * (48.8 + (53.8 * exp(-1 * ($rm * 0.075))))) / 100);
+		$lanrm = floor((($lanonerm * (101.3 - 2.67123 * $rm)) / 100));
+		// return the average value
+		return floor(($lomrm + $brzrm + $eplrm + $mayrm + $ocorm + $watrm + $lanrm) / 7);
+	}
+
+    public function get_input_weight($weight_input, $log_date)
+    {
+        if (strlen($weight_input) == 0 || intval($weight_input) == 0)
+		{
+            $query = DB::table('logs')
+                        ->where('log_date', '<', $log_date)
+                        ->where('user_id', Auth::user()->user_id)
+                        ->where('log_weight', '>', 0)
+                        ->orderBy('log_date', 'desc');
+			if ($query->count() > 0)
+			{
+				$weight = $query->value('log_weight');
+			}
+			else
+			{
+				$weight = Auth::user()->user_weight;
+			}
+		}
+		else
+		{
+			$weight = floatval($weight_input);
+		}
+        return $weight;
+    }
 
     private function flag_error($error)
     {

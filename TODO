@@ -6,6 +6,7 @@
 - Add variables to titles make them unique
 - Add _tokens to forms
 - rewrite PRs
+- test exercise records Getexerciseprs
 
 figure out how to do the rest
 https://laracasts.com/series/laravel-5-fundamentals/episodes/7
@@ -42,7 +43,7 @@ https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 |                      |       |            |        |
 | log.php view         | x     |            |        |
 |                      |       |            |        |
-| log.php edit         |       |            |        |
+| log.php edit         | x     | x          |        |
 |                      |       |            |        |
 | login.php            | x     | x          |        |
 |                      |       |            |        |

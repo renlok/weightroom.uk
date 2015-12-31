@@ -21,6 +21,9 @@ class CreateLogExercisesTable extends Migration
             $table->double('logex_volume', 20, 3);
             $table->integer('logex_reps');
             $table->integer('logex_sets');
+            $table->double('logex_warmup_volume', 20, 3); // NEW colomn
+            $table->integer('logex_warmup_reps'); // NEW colomn
+            $table->integer('logex_warmup_sets'); // NEW colomn
             $table->integer('logex_comment');
             $table->double('logex_1rm', 20, 3);
             $table->smallInteger('logex_order');

@@ -43,6 +43,23 @@
 @endsection
 
 @section('content')
+@if (isset($new_prs) && count($new_prs) > 0)
+<div class="alert alert-info">
+	@foreach ($new_prs as $exercise => $types)
+		@foreach ($types as $type => $reps)
+			@foreach ($reps as $rep => $weights)
+				@foreach ($weights as $weight)
+					@if ($type == 'W')
+						<p>You have set a new <strong>{{ $exercise }} {{ $rep }}RM</strong> of <strong>{{ $weight }}</strong> kg</p>
+					@else
+						<p>You have set a new <strong>{{ $exercise }} {{ $rep }}RM</strong> of <strong>{{ $weight }}</strong>s</p>
+					@endif
+				@endforeach
+			@endforeach
+		@endforeach
+	@endforeach
+</div>
+@endif
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-md-3 col-md-push-9">

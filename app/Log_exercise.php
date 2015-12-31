@@ -8,6 +8,8 @@ class Log_exercise extends Model
 {
     protected $primaryKey = 'logex_id';
     protected $dates = ['pr_date'];
+    protected $dateFormat = 'Y-m-d';
+    protected $guarded = ['logex_id'];
 
     /**
      * a log exercise can have many log items

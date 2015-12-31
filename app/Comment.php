@@ -8,6 +8,7 @@ class Comment extends Model
 {
     protected $primaryKey = 'log_comment_id';
     protected $dates = ['comment_date', 'log_date'];
+    protected $guarded = ['log_comment_id'];
 
     /**
      * Get all of the owning commentable models.

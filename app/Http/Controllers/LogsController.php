@@ -42,12 +42,14 @@ class LogsController extends Controller
         return view('log.edit', compact('date', 'log', 'user'));
     }
 
-    public function postEdit(LogRequest $requests)
+    public function postEdit($date, LogRequest $requests)
     {
-        // TODO finish this
-        $log = Log()::find($log_id);
-        Auth::user()->logs()->save($log);
-        return redirect('viewLog', ['date' => '']);
+        $parser = new Parser;
+        $weight = $parser->get_input_weight($request->input('weight'), $date);
+        $parser->parse_text ($request->input('log'));
+		$new_prs = $parser->store_log_data ($date, $weight, false);
+        return redirect('viewLog', ['date' => $date])
+                ->with('new_prs', $new_prs);
     }
 
     public function getNew($date)
@@ -60,11 +62,21 @@ class LogsController extends Controller
         return view('log.edit', compact('date', 'log', 'user'));
     }
 
-    public function postNew(LogRequest $requests)
+    public function postNew($date, LogRequest $requests)
     {
-        $log = new Log($requests->all());
-        Auth::user()->logs()->save($log);
-        return redirect('viewLog', ['date' => '']);
+
+        $parser = new Parser;
+        $weight = $parser->get_input_weight($request->input('weight'), $date);
+        $parser->parse_text ($request->input('log'));
+		$new_prs = $parser->store_log_data ($date, $weight, true);
+        return redirect('viewLog', ['date' => $date])
+                ->with('new_prs', $new_prs);
+    }
+
+    public function delete($date)
+    {
+        DB::table('logs')->where('log_date', $date)->where('user_id', Auth::user()->user_id)->delete();
+        return redirect('viewLog', ['date' => $date]);
     }
 
     public function search()

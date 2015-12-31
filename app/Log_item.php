@@ -9,6 +9,7 @@ class Log_item extends Model
 {
     protected $primaryKey = 'logitem_id';
     protected $dates = ['logitem_date'];
+    protected $dateFormat = 'Y-m-d';
     protected $casts = [
         'is_bw' => 'boolean',
         'is_time' => 'boolean',
@@ -16,6 +17,7 @@ class Log_item extends Model
         'is_warmup' => 'boolean',
     ];
     protected $appends = ['display_value', 'show_unit'];
+    protected $guarded = ['logitem_id'];
 
     /**
      * a user can many log exercises

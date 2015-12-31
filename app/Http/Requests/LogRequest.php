@@ -12,8 +12,8 @@ class LogRequest extends Request
     public function rules()
     {
         return [
-			'username' => 'required|max:255',
-			'password' => 'required|min:6',
+			'log' => 'required',
+			'weight' => 'numeric',
         ];
     }
 

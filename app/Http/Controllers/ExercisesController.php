@@ -19,12 +19,12 @@ class ExercisesController extends Controller
         return view('exercise.list', compact('exercises'));
     }
 
-    public function getEdit($exercise_name, Request $request)
+    public function getEdit($exercise_name)
     {
         return view('exercise.edit', compact('exercise_name'));
     }
 
-    public function postEdit($exercise_name)
+    public function postEdit($exercise_name, Request $request)
     {
         $new_name = $request->input('exercisenew');
         $exercise_old = Exercise::where('exercise_name', $exercise_name)->first();
@@ -88,7 +88,7 @@ class ExercisesController extends Controller
         $exercises = Exercise::listexercises(false)->get();
         $records = DB::table('exercise_records')
             ->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
-            ->select('pr_weight', 'pr_reps', 'pr_date', 'exercise_name', 'pr_1rm')
+            ->select('pr_value', 'pr_reps', 'pr_date', 'exercise_name', 'pr_1rm')
             ->where('user_id', Auth::user()->user_id)
             ->whereIn('exercise_name', [$exercise1, $exercise2, $exercise3, $exercise4, $exercise5]);
         if ($reps > 0)

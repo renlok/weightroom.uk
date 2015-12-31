@@ -15,8 +15,8 @@ class CreateLogItemsTable extends Migration
         Schema::create('log_items', function (Blueprint $table) {
             $table->increments('logitem_id');
             $table->date('logitem_date');
-            $table->integer('logex_id')->unsigned()->index();
             $table->integer('log_id')->unsigned();
+            $table->integer('logex_id')->unsigned()->index();
             $table->integer('user_id')->unsigned()->index();
             $table->integer('exercise_id')->unsigned()->index();
             $table->double('logitem_weight', 20, 3);
@@ -33,6 +33,7 @@ class CreateLogItemsTable extends Migration
             $table->boolean('is_time');
             $table->boolean('is_pr');
             $table->boolean('is_warmup');
+            $table->enum('options', ['w']); // NEW colomn, set array
             $table->timestamps();
         });
     }

@@ -16,7 +16,7 @@ class CreateExercisesTable extends Migration
             $table->increments('exercise_id');
 	        $table->string('exercise_name');
             $table->integer('user_id')->unsigned()->index();
-            $table->boolean('is_time');
+            $table->boolean('is_time')->default('0');
             $table->timestamps();
         });
     }

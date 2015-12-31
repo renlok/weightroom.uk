@@ -8,4 +8,5 @@ class User_follow extends Model
 {
     protected $primaryKey = 'follow_id';
     protected $dates = ['follow_date'];
+    protected $guarded = ['follow_id'];
 }
