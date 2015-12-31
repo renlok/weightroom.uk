@@ -61,7 +61,8 @@ class LogsController extends Controller
 		{
 			$log['log_text'] = Parser::rebuild_log_text ($user->user_id, $date);
 		}
-        return view('log.edit', compact('date', 'log', 'user'));
+        $type = 'edit';
+        return view('log.edit', compact('date', 'log', 'user', 'type'));
     }
 
     public function postEdit($date, LogRequest $requests)
@@ -81,7 +82,8 @@ class LogsController extends Controller
             'log_text' => '',
             'log_weight' => Log::getlastbodyweight(Auth::user()->user_id, $date)->value('log_weight'),
         ];
-        return view('log.edit', compact('date', 'log', 'user'));
+        $type = 'edit';
+        return view('log.edit', compact('date', 'log', 'user', 'type'));
     }
 
     public function postNew($date, LogRequest $requests)

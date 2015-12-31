@@ -48,7 +48,7 @@
 <h2>Log workout for {{ $date }} <button class="btn btn-default glyphicon glyphicon-calendar" aria-hidden="true" id="track_date"></button></h2>
 <small><a href="{{ route('viewLog', ['date' => $date]) }}">&larr; Back to log</a></small>
 
-<form action="{{ url($date . '/edit') }}" method="post">
+<form action="{{ url('log/' . $date . '/' . $type) }}" method="post">
 <div class="form-group">
     <label for="log">Log Data:</label>
 	<textarea rows="30" cols="50" name="log" id="log" class="form-control">{{ $log['log_text'] }}</textarea>
@@ -93,7 +93,7 @@ you can also have the same exercise multiple times
 </div>
 <div class="input-group margintb">
 	{!! csrf_field() !!}
-	<input type="submit" name="action" class="btn btn-default" value="Edit log">
+	<input type="submit" name="action" class="btn btn-default" value="{{ $type }} log">
 </div>
 </form>
 @endsection
