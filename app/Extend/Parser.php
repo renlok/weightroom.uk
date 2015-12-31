@@ -324,6 +324,16 @@ class Parser
                 $exercise_id = $exercise->exercise_id;
                 $exercise_is_time = $exercise->is_time;
             }
+            // insert log_exercise
+            $log_exercises_id = DB::table('log_exercises')->insertGetId([
+                'logex_date' => $log_date,
+                'log_id' => $log_id,
+                'user_id' => $this->user->user_id,
+                'exercise_id' => $exercise_id,
+                'logex_1rm' => $max_estimate_rm,
+                'logex_comment' => $this->replace_video_urls($item['comment']),
+                'logex_order' => $i
+            ]);
             $prs = Exercise_record::getexerciseprs($this->user->user_id, $log_date, $exercise_name)
                     ->get()
                     ->groupBy(function ($item, $key) {
@@ -414,7 +424,7 @@ class Parser
                 $log_item_data = [
                     'logitem_date' => $log_date,
                     'log_id' => $log_id,
-                    'logex_id' => $i,
+                    'logex_id' => $log_exercises_id,
                     'user_id' => $this->user->user_id,
                     'exercise_id' => $exercise_id,
                     'logitem_weight' => $set['W'],
@@ -444,21 +454,16 @@ class Parser
                 DB::table('exercises')->where('exercise_id', $exercise_id)->update(['is_time' => 1]);
             }
 			// insert into log_exercises
-            DB::table('log_exercises')->insert([
-                'logex_date' => $log_date,
-                'log_id' => $log_id,
-                'user_id' => $this->user->user_id,
-                'exercise_id' => $exercise_id,
-                'logex_volume' => $total_volume,
-                'logex_reps' => $total_reps,
-                'logex_sets' => $total_sets,
-                'logex_warmup_volume' => $logex_warmup_volume,
-                'logex_warmup_reps' => $logex_warmup_reps,
-                'logex_warmup_sets' => $logex_warmup_sets,
-                'logex_1rm' => $max_estimate_rm,
-                'logex_comment' => $this->replace_video_urls($item['comment']),
-                'logex_order' => $i
-            ]);
+            DB::table('log_exercises')
+                ->where('logex_id', $log_exercises_id)
+                ->update([
+                    'logex_volume' => $total_volume,
+                    'logex_reps' => $total_reps,
+                    'logex_sets' => $total_sets,
+                    'logex_warmup_volume' => $logex_warmup_volume,
+                    'logex_warmup_reps' => $logex_warmup_reps,
+                    'logex_warmup_sets' => $logex_warmup_sets,
+                ]);
             $log_total_volume += $total_volume;
             $log_total_reps += $total_reps;
             $log_total_sets += $total_sets;

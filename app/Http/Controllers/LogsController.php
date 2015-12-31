@@ -83,13 +83,12 @@ class LogsController extends Controller
             'log_text' => '',
             'log_weight' => Log::getlastbodyweight(Auth::user()->user_id, $date)->value('log_weight'),
         ];
-        $type = 'edit';
+        $type = 'new';
         return view('log.edit', compact('date', 'log', 'user', 'type'));
     }
 
     public function postNew($date, LogRequest $request)
     {
-
         $parser = new Parser;
         $weight = $parser->get_input_weight($request->input('weight'), $date);
         $parser->parse_text ($request->input('log'));
