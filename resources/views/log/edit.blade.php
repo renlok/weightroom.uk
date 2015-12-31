@@ -92,7 +92,7 @@ you can also have the same exercise multiple times
 	<span class="input-group-addon" id="basic-addon2">{{ $user->user_unit }}</span>
 </div>
 <div class="input-group margintb">
-	{{!! csrf_field() !!}}
+	{!! csrf_field() !!}
 	<input type="submit" name="action" class="btn btn-default" value="Edit log">
 </div>
 </form>

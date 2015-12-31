@@ -154,7 +154,7 @@
 	</div>
   </div>
   <div class="form-group">
-	  {{!! csrf_field() !!}}
+	  {!! csrf_field() !!}
       <button type="submit" class="btn btn-default" name="action">Save</button>
   </div>
 </form>

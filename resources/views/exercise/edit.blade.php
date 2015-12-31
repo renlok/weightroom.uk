@@ -15,7 +15,7 @@
   </div>
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
-	  {{!! csrf_field() !!}}
+	  {!! csrf_field() !!}
       <button type="submit" class="btn btn-default" name="action">Rename</button>
     </div>
   </div>

@@ -26,7 +26,7 @@ class AddForeignKeys extends Migration
             $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
         });
         Schema::table('comments', function ($table) {
-            $table->foreign('log_id')->references('log_id')->on('logs')->onDelete('cascade');
+            $table->foreign('commentable_id')->references('log_id')->on('logs')->onDelete('cascade');
             $table->foreign('sender_user_id')->references('user_id')->on('users');
             $table->foreign('receiver_user_id')->references('user_id')->on('users');
         });

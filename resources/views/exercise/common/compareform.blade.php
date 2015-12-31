@@ -17,6 +17,6 @@
     @endfor
     </select>
 </div>
-{{!! csrf_field() !!}}
+{!! csrf_field() !!}
 <input type="submit" name="action" value="Compare" class="btn btn-default">
 </form>

@@ -34,17 +34,17 @@
 		  <li role="presentation" class="{{ Request::is('demo') ? 'active' : '' }}"><a href="{{ route('demo') }}">What is this?</a></li>
 	  @else
 		  <li role="presentation" class="{{ Request::is('dashboard') ? 'active' : '' }}"><a href="{{ route('dashboard') }}" class="hidden-xs">Home</a><a href="?" class="visible-xs"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
-		  <li role="presentation" class="{{ Request::is('log/edit') ? 'active' : '' }}"><a href="{{ route('log/edit') }}">Track</a></li>
+		  <li role="presentation" class="{{ Request::is('log/*/new') ? 'active' : '' }}"><a href="{{ route('newLog', ['date' => Carbon\Carbon::now()->format('Y-m-d')]) }}">Track</a></li>
 			<li class="dropdown visible-xs">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span> <span class="caret"></span></a>
 				<ul class="dropdown-menu">
-					<li role="presentation" class="{{ Request::is('log/view') ? 'active' : '' }}"><a href="{{ route('log/view') }}">View Log</a></li>
-					<li role="presentation" class="{{ Request::is('exercise/list') ? 'active' : '' }}"><a href="{{ route('listExercises') }}">Exercise List</a></li>
+					<li role="presentation" class="{{ Request::is('log/*/view') ? 'active' : '' }}"><a href="{{ route('viewLog', ['date' => Carbon\Carbon::now()->format('Y-m-d')]) }}">View Log</a></li>
+					<li role="presentation" class="{{ Request::is('exercise/*') ? 'active' : '' }}"><a href="{{ route('listExercises') }}">Exercise List</a></li>
 					<li role="presentation" class="{{ Request::is('tools/*') ? 'active' : '' }}"><a href="{{ route('tools') }}">Tools</a></li>
 				</ul>
 			</li>
-		  <li role="presentation" class="hidden-xs {{ Request::is('log/view') ? 'active' : '' }}"><a href="{{ route('log/view') }}">View Log</a></li>
-		  <li role="presentation" class="hidden-xs {{ Request::is('exercise/list') ? 'active' : '' }}"><a href="{{ route('listExercises') }}">Exercise List</a></li>
+		  <li role="presentation" class="hidden-xs {{ Request::is('log/*/view') ? 'active' : '' }}"><a href="{{ route('viewLog', ['date' => Carbon\Carbon::now()->format('Y-m-d')]) }}">View Log</a></li>
+		  <li role="presentation" class="hidden-xs {{ Request::is('exercise/*') ? 'active' : '' }}"><a href="{{ route('listExercises') }}">Exercise List</a></li>
 		  <li role="presentation" class="hidden-xs {{ Request::is('tools/*') ? 'active' : '' }}"><a href="{{ route('tools') }}">Tools</a></li>
 		  <li role="presentation" class="{{ Request::is('user/search') ? 'active' : '' }}"><a href="#" data-toggle="modal" data-target="#searchUsers"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></a></li>
 		  <li class="dropdown {{ Request::is('user/settings') ? 'active' : '' }}">
