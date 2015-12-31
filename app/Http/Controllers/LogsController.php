@@ -19,9 +19,9 @@ class LogsController extends Controller
         return $this->view();
     }
 
-    public function view($date, $user_name)
+    public function view($date, $user_name = '')
     {
-        if (!isset($user_name))
+        if ($user_name == '')
         {
              $user_name = Auth::user()->user_name;
         }

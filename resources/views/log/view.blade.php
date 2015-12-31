@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'View Log: '.)
+@section('title', 'View Log: ' . $date)
 
 @section('headerstyle')
 <style>
@@ -77,7 +77,7 @@
 		</div>
 		<div class="col-md-9 col-md-pull-3">
 			<div class="calender-cont" style="max-width: 640px;">
-				<p class="hidden-xs"><- <a href="{{ route('viewLog', ['date' => {YESTERDAY},'user' => $user->user_id]) }}">{YESTERDAY}</a> | <strong>{{ $date }}</strong> | <a href="{{ route('viewLog', ['date' => {TOMORROW},'user' => $user->user_id]) }}">{TOMORROW}</a> -></p>
+				<p class="hidden-xs"><- <a href="{{ route('viewLog', ['date' => Carbon::createFromFormat('Y-m-d', $date)->subDay(),'user' => $user->user_id]) }}">{{ Carbon::createFromFormat('Y-m-d', $date)->subDay() }}</a> | <strong>{{ $date }}</strong> | <a href="{{ route('viewLog', ['date' => {{ Carbon::createFromFormat('Y-m-d', $date)->addDay() }},'user' => $user->user_id]) }}">{{ Carbon::createFromFormat('Y-m-d', $date)->addDay() }}</a> -></p>
 				<div class="date"></div>
 			</div>
 		</div>
