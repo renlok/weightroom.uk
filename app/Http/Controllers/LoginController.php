@@ -14,6 +14,11 @@ use Illuminate\Support\Collection;
 
 class LoginController extends Controller
 {
+	public function __construct()
+	{
+		$this->middleware('guest', ['except' => 'getLogout']);
+	}
+
 	public function getLogin()
 	{
 		return view('user.login');
