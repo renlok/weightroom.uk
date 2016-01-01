@@ -43,11 +43,15 @@ Route::group(['prefix' => 'log', 'middleware' => 'auth'], function () {
     Route::get('{user?}', 'LogsController@index')->name('viewUser');
     Route::get('{date}/view/{user?}', 'LogsController@view')->name('viewLog');
     //edit log
-    Route::get('{date}/edit', 'LogsController@getEdit')->name('editLog');
-    Route::post('{date}/edit', 'LogsController@postEdit');
+    Route::group(['middleware' => 'log.notexists'], function () {
+        Route::get('{date}/edit', 'LogsController@getEdit')->name('editLog');
+        Route::post('{date}/edit', 'LogsController@postEdit');
+    });
     //new log
-    Route::get('{date}/new', 'LogsController@getNew')->name('newLog');
-    Route::post('{date}/new', 'LogsController@postNew');
+    Route::group(['middleware' => 'log.exists'], function () {
+        Route::get('{date}/new', 'LogsController@getNew')->name('newLog');
+        Route::post('{date}/new', 'LogsController@postNew');
+    });
     Route::get('{date}/delete', 'LogsController@delete')->name('deleteLog');
     Route::get('search', 'LogsController@search')->name('searchLog');
     Route::get('volume', 'LogsController@volume')->name('totalVolume');

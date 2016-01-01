@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use App\Log;
 
 class RedirectLogifNotExists
 {
@@ -15,6 +16,11 @@ class RedirectLogifNotExists
      */
     public function handle($request, Closure $next)
     {
+        if (!Log::isvalid($request->route()->parameters()['date'], $request->user()->user_id))
+        {
+            return redirect()
+                    ->route('newLog', ['date' => $request->route()->parameters()['date']]);
+        }
         return $next($request);
     }
 }
