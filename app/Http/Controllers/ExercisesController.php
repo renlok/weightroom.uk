@@ -9,6 +9,7 @@ use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Exercise;
 use App\Logs;
+use App\Log_exercise;
 use App\Extend\PRs;
 
 class ExercisesController extends Controller
@@ -64,12 +65,33 @@ class ExercisesController extends Controller
             ->route('viewExercise', ['exercise_name' => $exercise_name]);
     }
 
-    public function history($exercise_name)
+    public function history($exercise_name, $from_date = '', $to_date = '')
     {
         $exercise = Exercise::where('exercise_name', $exercise_name)
                     ->where('user_id', Auth::user()->user_id)->firstOrFail();
         $log_exercises = $exercise->log_exercises();
-        return view('exercise.history', compact('exercise_name', 'log_exercises'));
+        if (!empty($from_date))
+		{
+            $log_exercises = $log_exercises->where('logitem_date', '>=', $from_date);
+		}
+		if (!empty($to_date))
+		{
+            $log_exercises = $log_exercises->where('logitem_date', '<=', $to_date);
+		}
+        // get log_exercises
+        $log_exercises = $log_exercises->get();
+        // set scales
+        $max_volume = $log_exercises->max('price');
+        $max_reps = $log_exercises->max('price');
+        $max_sets = $log_exercises->max('price');
+        $max_rm = $log_exercises->max('price');
+        $scales = [
+            'reps' => floor($max_volume / $max_reps),
+            'sets' => floor($max_volume / $max_sets),
+            'rm' => floor($max_volume / $max_rm),
+            'ai' => floor($max_volume / 100)
+        ];
+        return view('exercise.history', compact('exercise_name', 'log_exercises', 'scales'));
     }
 
     public function volume($exercise_name)
