@@ -13,7 +13,7 @@
 <form class="form-horizontal" action="{{ url('user/settings') }}" method="post">
   <div class="form-group">
     <div>
-	<label for="gender">Gender</label>
+	  <label for="gender">Gender</label>
 	</div>
 	<select class="form-control" id="gender" name="gender">
 	  <option value="m" {{ $user->user_gender == 'm' ? 'selected' : '' }}>Male</option>

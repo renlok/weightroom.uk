@@ -16,7 +16,7 @@ class CreateLogItemsTable extends Migration
             $table->increments('logitem_id');
             $table->date('logitem_date');
             $table->integer('log_id')->unsigned();
-            $table->integer('logex_id')->unsigned()->index();
+            $table->integer('logex_id')->unsigned()->index(); // NEW colomn
             $table->integer('user_id')->unsigned()->index();
             $table->integer('exercise_id')->unsigned()->index();
             $table->double('logitem_weight', 20, 3);
