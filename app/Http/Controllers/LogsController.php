@@ -9,6 +9,7 @@ use App\Http\Requests\LogRequest;
 use App\Http\Controllers\Controller;
 use App\User;
 use App\Log;
+use App\Exercise;
 use Auth;
 use App\Extend\PRs;
 use App\Extend\Parser;
@@ -48,8 +49,8 @@ class LogsController extends Controller
         {
             $commenting = false;
         }
-        $date = Carbon::createFromFormat('Y-m-d', $date);
-        return view('log.view', compact('date', 'user', 'log', 'is_following', 'commenting'));
+        $carbon_date = Carbon::createFromFormat('Y-m-d', $date);
+        return view('log.view', compact('date', 'carbon_date', 'user', 'log', 'is_following', 'commenting'));
     }
 
     public function getEdit($date)
@@ -65,7 +66,13 @@ class LogsController extends Controller
 			$log['log_text'] = Parser::rebuild_log_text ($user->user_id, $date);
 		}
         $type = 'edit';
-        $exercises = Exercise::listexercises(true)->toJson();
+        $exercise_list = Exercise::listexercises(true)->get();
+        $exercises = [];
+        foreach ($exercise_list as $exercise)
+        {
+            $exercises[$exercise['exercise_name']] = $exercise['COUNT'];
+        }
+        $exercises = $exercises->toJson();
         return view('log.edit', compact('date', 'log', 'user', 'type', 'exercises'));
     }
 
@@ -88,7 +95,13 @@ class LogsController extends Controller
             'log_weight' => Log::getlastbodyweight(Auth::user()->user_id, $date)->value('log_weight'),
         ];
         $type = 'new';
-        $exercises = Exercise::listexercises(true)->toJson();
+        $exercise_list = Exercise::listexercises(true)->get();
+        $exercises = [];
+        foreach ($exercise_list as $exercise)
+        {
+            $exercises[$exercise['exercise_name']] = $exercise['COUNT'];
+        }
+        $exercises = $exercises->toJson();
         return view('log.edit', compact('date', 'log', 'user', 'type', 'exercises'));
     }
 

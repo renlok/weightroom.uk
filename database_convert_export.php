@@ -19,19 +19,20 @@ $renamed = [
     'invite_codes' => ['code_expire' => 'code_expires'],
     'log_comments' => [
         'log_id' => 'commentable_id',
-        'log_date' => NULL,
-        'comment_date' => NULL
+        'log_date' => '',
+        'sender_user_id' => 'user_id',
+        'receiver_user_id' => ''
     ],
     'log_exercises' => [],
     'log_items' => ['logitem_rpes' => 'logitem_pre'],
     'logs' => [],
     'notifications' => [],
-    'user_follows' => ['follow_date' => NULL],
+    'user_follows' => ['follow_date' => ''],
     'users' => [
-        'user_unit' => NULL,
-        'user_gender' => NULL,
-        'user_showreps' => NULL,
-        'user_showintensity' => NULL
+        'user_unit' => '',
+        'user_gender' => '',
+        'user_showreps' => '',
+        'user_showintensity' => ''
     ]
 ];
 
@@ -50,7 +51,7 @@ foreach ($tables as $old_name => $table)
                 $values .= ',';
                 $colomns .= ',';
             }
-            if (isset($renamed[$old_name][$key]) && $renamed[$old_name][$key] != NULL)
+            if (isset($renamed[$old_name][$key]) && $renamed[$old_name][$key] != '')
             {
                 $values .= '"' . str_replace('"', '\"', $row[$key]) . '"';
                 $colomns .= "`" . $renamed[$old_name][$key] . "`";

@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'View Log: ' . $date->toDateString())
+@section('title', 'View Log: ' . $date)
 
 @section('headerstyle')
 <style>
@@ -68,17 +68,16 @@
 				<p><small>Member since: {{ $user->user_joined }}</small></p>
 @if ($user->user_id != Auth::user()->user_id)
 	@if ($is_following)
-				<p class="btn btn-default"><a href="{{ route('unfollowUser', ['user' => $user->user_name, 'date' => $date->toDateString()]) }}">Unfollow <img src="{{ asset('img/user_delete.png') }}"></a></p>
+				<p class="btn btn-default"><a href="{{ route('unfollowUser', ['user' => $user->user_name, 'date' => $date]) }}">Unfollow <img src="{{ asset('img/user_delete.png') }}"></a></p>
 	@else
-				<p class="btn btn-default"><a href="{{ route('followUser', ['user' => $user->user_name, 'date' => $date->toDateString()]) }}">Follow <img src="{{ asset('img/user_add.png') }}"></a></p>
+				<p class="btn btn-default"><a href="{{ route('followUser', ['user' => $user->user_name, 'date' => $date]) }}">Follow <img src="{{ asset('img/user_add.png') }}"></a></p>
 	@endif
 @endif
 			</div>
 		</div>
 		<div class="col-md-9 col-md-pull-3">
 			<div class="calender-cont" style="max-width: 640px;">
-				<p class="hidden-xs"><- <a href="{{ route('viewLog', ['date' => $date->subDay()->toDateString(),'user_name' => $user->user_name]) }}">{{ $date->toDateString() }}</a> | <strong>{{ $date->addDay()->toDateString() }}</strong> | <a href="{{ route('viewLog', ['date' => $date->addDay()->toDateString(),'user' => $user->user_name]) }}">{{ $date->toDateString() }}</a> -></p>
-				{{-- $date->subDay() --}}
+				<p class="hidden-xs"><- <a href="{{ route('viewLog', ['date' => $carbon_date->subDay()->toDateString(),'user_name' => $user->user_name]) }}">{{ $carbon_date->toDateString() }}</a> | <strong>{{ $carbon_date->addDay()->toDateString() }}</strong> | <a href="{{ route('viewLog', ['date' => $carbon_date->addDay()->toDateString(),'user' => $user->user_name]) }}">{{ $carbon_date->toDateString() }}</a> -></p>
 				<div class="date"></div>
 			</div>
 		</div>
@@ -87,9 +86,9 @@
 
 @if ($user->user_id == Auth::user()->user_id)
 	@if ($log != null)
-<p class="margintb"><a href="{{ route('editLog', ['date' => $date->toDateString()]) }}" class="btn btn-default">Edit Log</a></p>
+<p class="margintb"><a href="{{ route('editLog', ['date' => $date]) }}" class="btn btn-default">Edit Log</a></p>
 	@else
-<p class="margintb"><a href="{{ route('newLog', ['date' => $date->toDateString()]) }}" class="btn btn-default">Add Log</a></p>
+<p class="margintb"><a href="{{ route('newLog', ['date' => $date]) }}" class="btn btn-default">Add Log</a></p>
 	@endif
 @endif
 @if ($log != null)
@@ -119,7 +118,14 @@
 <script>
 var calendar_count = 3;
 $(document).ready(function(){
-	$('.log_comments').collapsible({xoffset:'-30', symbolhide:'[-]', symbolshow:'[+]'@if ($commenting), defaulthide:false@endif});
+	$('.log_comments').collapsible({
+		xoffset:'-30',
+		symbolhide:'[-]',
+		symbolshow:'[+]'
+	@if ($commenting)
+		, defaulthide:false
+	@endif
+	});
 	$('.reply').click(function() {
 		var parent_id = $(this).attr('id');
 		var element = $(this).parent().parent().find(".comment-reply-box").first();
@@ -141,7 +147,7 @@ $(document).ready(function(){
 
 	$(function () {
 		$('.date').pickmeup({
-			date		: moment('{{ $date->toDateString() }}','YYYY-MM-DD').format(),
+			date		: moment('{{ $date }}','YYYY-MM-DD').format(),
 			flat		: true,
 			format  	: 'Y-m-d',
 			change		: function(e){

@@ -1,5 +1,5 @@
 <h3><a href="{{ route('viewExercise', ['exercise_name' => $log_exercise->exercise->exercise_name]) }}">{{ $log_exercise->exercise->exercise_name }}</a></h3>
-<p class="logrow">Volume: <span class="heavy">{{ $log_exercise->logex_volume }}</span>{WEIGHT_UNIT} - Reps: <span class="heavy">{{ $log_exercise->logex_reps }}</span> - Sets: <span class="heavy">{{ $log_exercise->logex_sets }}</span> - Avg. Intensity: <span class="heavy">{items.AVG_INT} <!-- IF AVG_INTENSITY_TYPE eq 0 -->%<!-- ELSE -->{WEIGHT_UNIT}<!-- ENDIF --></span></p>
+<p class="logrow">Volume: <span class="heavy">{{ $log_exercise->logex_volume }}</span>{{ $user->user_unit }} - Reps: <span class="heavy">{{ $log_exercise->logex_reps }}</span> - Sets: <span class="heavy">{{ $log_exercise->logex_sets }}</span> - Avg. Intensity: <span class="heavy">{items.AVG_INT} <!-- IF AVG_INTENSITY_TYPE eq 0 -->%<!-- ELSE -->{WEIGHT_UNIT}<!-- ENDIF --></span></p>
 <table class="table">
 <tbody>
 @foreach ($log_exercise->log_items as $log_item)

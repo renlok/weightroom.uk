@@ -3,7 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Extend\Time;
+use App\Extend\Format;
 
 class Log_item extends Model
 {
@@ -38,7 +38,7 @@ class Log_item extends Model
     {
         if ($this->attributes['is_time'])
 		{
-			return Time::format_time($this->attributes['logitem_time']);
+			return Format::format_time($this->attributes['logitem_time']);
 		}
 		elseif ($this->attributes['is_bw'] == 0)
 		{

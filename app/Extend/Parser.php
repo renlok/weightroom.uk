@@ -8,6 +8,7 @@ use App\Log;
 use App\User;
 use App\Exercise;
 use App\Exercise_record;
+use App\Extend\Format;
 use Carbon\Carbon;
 
 class Parser
@@ -511,7 +512,7 @@ class Parser
 			}
 			else
 			{
-				return correct_time($input[0], $input[1], 's');
+				return Format::correct_time($input[0], $input[1], 's');
 			}
 		}
 		elseif ($type == 'W')
@@ -519,7 +520,7 @@ class Parser
 			// users default is lb
 			if ($this->user->user_unit == 'lb' && $input[1] == '')
 			{
-				return correct_weight($input[0], 'lb', 1);
+				return Format::correct_weight($input[0], 'lb', 'kg');
 			}
 			elseif ($this->user->user_unit == 'kg' && $input[1] == '')
 			{
@@ -527,7 +528,7 @@ class Parser
 			}
 			else
 			{
-				return correct_weight($input[0], $input[1], 1);
+				return Format::correct_weight($input[0], $input[1], 'kg');
 			}
 		}
 	}
@@ -942,16 +943,16 @@ class Parser
         return $output_chr;
     }
 
-    public function rebuild_log_text($user_id, $log_date)
+    public static function rebuild_log_text($user_id, $log_date)
 	{
 		// get the log data
-        $log_data = Log::getlog($user_id, $log_date);
+        $log_data = Log::getlog($log_date, $user_id)->firstOrFail();
 		$log_text = ''; // set that variable !!
         $user = User::find($user_id);
-		foreach ($log_data->log_exercises() as $log_items)
+		foreach ($log_data->log_exercises as $log_items)
 		{
-			$log_text .= "#" . ucwords($log_items['exercise']) . "\n"; // set exersice name
-			foreach ($log_items->log_items() as $set)
+			$log_text .= "#" . ucwords($log_items->exercise->exercise_name) . "\n"; // set exersice name
+			foreach ($log_items->log_items as $set)
 			{
                 if ($set['is_time'] == 1)
                 {
@@ -978,7 +979,7 @@ class Parser
     					}
     				}
                 }
-				$pre = (!empty($set['logitem_pre'])) ? " @{$set['logitem_pre']}" : '';
+				$pre = (!empty($set['logitem_pre']) && $set['logitem_pre'] > 0) ? " @{$set['logitem_pre']}" : '';
                 $type_key = ($set['is_warmup']) ? ' warmup' : '';
 				$log_text .= "$setvalue x {$set['logitem_reps']} x {$set['logitem_sets']}$pre " . trim($set['logitem_comment']) . $type_key . "\n"; // add sets
 			}

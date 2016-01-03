@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('user_password', 60);
             $table->rememberToken();
             $table->timestamps();
-            $table->double('user_weight', 7, 3);
+            $table->double('user_weight', 7, 2);
             $table->enum('user_unit', ['kg', 'lb'])->default('kg'); //CHANGE VALUE
             $table->enum('user_gender', ['m', 'f'])->default('m'); //CHANGE VALUE
             $table->string('user_showreps', 15)->default('[1,2,3,5,8,10]'); //CHANGE VALUE
