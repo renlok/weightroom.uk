@@ -67,12 +67,11 @@ class LogsController extends Controller
 		}
         $type = 'edit';
         $exercise_list = Exercise::listexercises(true)->get();
-        $exercises = [];
+        $exercises = '';
         foreach ($exercise_list as $exercise)
         {
             $exercises[$exercise['exercise_name']] = $exercise['COUNT'];
         }
-        $exercises = $exercises->toJson();
         return view('log.edit', compact('date', 'log', 'user', 'type', 'exercises'));
     }
 
@@ -96,12 +95,11 @@ class LogsController extends Controller
         ];
         $type = 'new';
         $exercise_list = Exercise::listexercises(true)->get();
-        $exercises = [];
+        $exercises = '';
         foreach ($exercise_list as $exercise)
         {
             $exercises[$exercise['exercise_name']] = $exercise['COUNT'];
         }
-        $exercises = $exercises->toJson();
         return view('log.edit', compact('date', 'log', 'user', 'type', 'exercises'));
     }
 

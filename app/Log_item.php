@@ -36,32 +36,35 @@ class Log_item extends Model
      */
     public function getDisplayValueAttribute()
     {
-        if ($this->attributes['is_time'])
-		{
-			return Format::format_time($this->attributes['logitem_time']);
-		}
-		elseif ($this->attributes['is_bw'] == 0)
-		{
-			return $this->attributes['logitem_weight'];
-		}
-		else
-		{
-			if ($this->attributes['logitem_weight'] != 0)
-			{
-				if ($this->attributes['logitem_weight'] < 0)
-				{
-					return 'BW - ' . abs($this->attributes['logitem_weight']);
-				}
-				else
-				{
-					return 'BW + ' . $this->attributes['logitem_weight'];
-				}
-			}
-			else
-			{
-				return 'BW';
-			}
-		}
+        if (isset($this->attributes['is_time']) && isset($this->attributes['is_bw']) && isset($this->attributes['logitem_weight']) && isset($this->attributes['logitem_time']))
+        {
+            if ($this->attributes['is_time'])
+    		{
+    			return Format::format_time($this->attributes['logitem_time']);
+    		}
+    		elseif ($this->attributes['is_bw'] == 0)
+    		{
+    			return $this->attributes['logitem_weight'];
+    		}
+    		else
+    		{
+    			if ($this->attributes['logitem_weight'] != 0)
+    			{
+    				if ($this->attributes['logitem_weight'] < 0)
+    				{
+    					return 'BW - ' . abs($this->attributes['logitem_weight']);
+    				}
+    				else
+    				{
+    					return 'BW + ' . $this->attributes['logitem_weight'];
+    				}
+    			}
+    			else
+    			{
+    				return 'BW';
+    			}
+    		}
+        }
     }
 
     /**
@@ -71,24 +74,27 @@ class Log_item extends Model
      */
     public function getShowUnitAttribute()
     {
-        if ($this->attributes['is_time'])
-		{
-			return false;
-		}
-		elseif ($this->attributes['is_bw'] == 0)
-		{
-			return true;
-		}
-		else
-		{
-			if ($this->attributes['logitem_weight'] != 0)
-			{
-				return true;
-			}
-			else
-			{
-				return false;
-			}
-		}
+        if (isset($this->attributes['is_time']) && isset($this->attributes['is_bw']) && isset($this->attributes['logitem_weight']))
+        {
+            if ($this->attributes['is_time'])
+    		{
+    			return false;
+    		}
+    		elseif ($this->attributes['is_bw'] == 0)
+    		{
+    			return true;
+    		}
+    		else
+    		{
+    			if ($this->attributes['logitem_weight'] != 0)
+    			{
+    				return true;
+    			}
+    			else
+    			{
+    				return false;
+    			}
+    		}
+        }
     }
 }

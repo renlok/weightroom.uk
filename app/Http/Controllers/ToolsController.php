@@ -27,13 +27,13 @@ class ToolsController extends Controller
 
     public function wilks($range = 0)
     {
-        $graph_data = Log_item::select('log_date', 'exercise_name', 'logitem_abs_weight as log_weight')
-                                ->join('exercises', 'log_items.log_id', '=', 'exercises.log_id')
-                                ->where('user_id', Auth::user()->user_id)
+        $graph_data = Log_item::select('logitem_date', 'exercise_name', 'logitem_abs_weight as log_weight')
+                                ->join('exercises', 'log_items.exercise_id', '=', 'exercises.exercise_id')
+                                ->where('log_items.user_id', Auth::user()->user_id)
                                 ->where('is_pr', 1)
                                 ->whereIn('log_items.exercise_id', [Auth::user()->user_squatid, Auth::user()->user_deadliftid, Auth::user()->user_benchid])
-                                ->orderBy('log_date', 'asc');
-        $graphs = $graph_data->groupBy('exercise_name')->toArray();
+                                ->orderBy('logitem_date', 'asc');
+        $graphs = $graph_data->get()->groupBy('exercise_name')->toArray();
         $graphs['Bodyweight'] = Log::getbodyweight(Auth::user()->user_id)->get();
         $graphs['Wilks'] = []; //TODO ->map()
         $graphs->map(function ($item, $key) {
@@ -44,13 +44,13 @@ class ToolsController extends Controller
 
     public function sinclair($range = 0)
     {
-        $graph_data = Log_item::select('log_date', 'exercise_name', 'logitem_abs_weight as log_weight')
-                                ->join('exercises', 'log_items.log_id', '=', 'exercises.log_id')
-                                ->where('user_id', Auth::user()->user_id)
+        $graph_data = Log_item::select('logitem_date', 'exercise_name', 'logitem_abs_weight as log_weight')
+                                ->join('exercises', 'log_items.exercise_id', '=', 'exercises.exercise_id')
+                                ->where('log_items.user_id', Auth::user()->user_id)
                                 ->where('is_pr', 1)
                                 ->whereIn('log_items.exercise_id', [Auth::user()->user_snatchid, Auth::user()->user_cleanjerkid])
-                                ->orderBy('log_date', 'asc');
-        $graphs = $graph_data->groupBy('exercise_name')->toArray();
+                                ->orderBy('logitem_date', 'asc');
+        $graphs = $graph_data->get()->groupBy('exercise_name')->toArray();
         $graphs['Bodyweight'] = Log::getbodyweight(Auth::user()->user_id)->get();
         $graphs['Sinclair'] = []; //TODO
         return view('tools.sinclair', compact('range', 'graphs'));

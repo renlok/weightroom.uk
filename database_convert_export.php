@@ -106,12 +106,12 @@ while ($row = $result->fetch_assoc())
 }
 
 // get logex_id
-$query = "SELECT i.logitem_id, e.logex_id FROM `log_items` i
+$query = "SELECT i.exercise_id, i.log_id, e.logex_id FROM `log_items` i
         JOIN log_exercises e ON (i.user_id = e.user_id AND i.log_id = e.log_id AND i.exercise_id = e.exercise_id)
         GROUP BY i.exercise_id, i.log_id";
 $result = $db->query($query);
 while ($row = $result->fetch_assoc())
 {
-    echo "UPDATE log_items SET logex_id = {$row['logex_id']} WHERE logitem_id = {$row['logitem_id']};\n";
+    echo "UPDATE log_items SET logex_id = {$row['logex_id']} WHERE exercise_id = {$row['exercise_id']} AND log_id = {$row['log_id']};\n";
 }
 $db->close();
