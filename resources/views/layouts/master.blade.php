@@ -12,7 +12,7 @@
 	<meta name="keywords" content="workout tracker, workout journal, training journal, weight training, strength training, powerlifting, weightlifting, strongman">
 
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ asset('css/tracker.css') }}">
 	<script src="http://code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
 	<script src="http://getbootstrap.com/dist/js/bootstrap.min.js" charset="utf-8"></script>

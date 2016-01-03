@@ -35,13 +35,6 @@ class Log extends Model
         return $query->where('log_date', $date)->where('user_id', $user);
     }
 
-    public function isvalid($date, $user_id)
-    {
-        return ($this->where('log_date', $date)
-                ->where('user_id', $user_id)
-                ->count() == 1);
-    }
-
     /**
      * a log can many log exercises
      *

@@ -16,7 +16,7 @@ class RedirectLogifNotExists
      */
     public function handle($request, Closure $next)
     {
-        if (!Log::isvalid($request->route()->parameters()['date'], $request->user()->user_id))
+        if (Log::scopeGetlog($request->route()->parameters()['date'], $request->user()->user_id)->count() == 0)
         {
             return redirect()
                     ->route('newLog', ['date' => $request->route()->parameters()['date']]);
