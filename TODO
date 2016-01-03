@@ -1,19 +1,31 @@
-- build database migrations http://laravel.com/docs/5.1/migrations
 - build blades (templates) http://laravel.com/docs/5.1/blade
-- define which database colomns are fillable http://laravel.com/docs/5.1/eloquent
-- define eloquent Relationships
 
 - Add variables to titles make them unique
-- Add _tokens to forms
 - rewrite PRs
 - test exercise records Getexerciseprs
+- Test route patterns for date & id
 
 figure out how to do the rest
 https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 
 - Make typography of the site less crappy looking
-
-- Test route patterns for date & id
+- make undo for edit Exercise (http://goodui.org/#8)
+- add delete log (with undo function)
+- simplyfy signup page (http://goodui.org/#13)
+- split user settings page (hide advanced options)
+- change the demo, show the user how it works (logger) (http://goodui.org/#22)
+- give user promts to make first log (view log&exercise list) (http://goodui.org/#25)
+- add opt-out newsletter (http://goodui.org/#26)
+- try add defaults to the user options (http://goodui.org/#28)
+- add inline validation to all forms (http://goodui.org/#33)
+- can i make keyboard shortcuts? (http://goodui.org/#40)
+- try adding natural language to explain things (http://goodui.org/#48)
+- Try to simplify the data shown (dates etc) (http://goodui.org/#53)
+- Add humour (http://goodui.org/#60)
+- Add constructive feedback with every form (http://goodui.org/#61)
+- Make use of progressive reduction (http://goodui.org/#66)
+- Reword things to make *You* the subject (http://goodui.org/#67)
+- Explain each form field (http://goodui.org/#68)
 
 +----------------------+-------+------------+--------+
 |         PAGE         | BLADE | CONTROLLER | TESTED |
