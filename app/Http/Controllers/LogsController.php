@@ -16,7 +16,7 @@ use Carbon\Carbon;
 
 class LogsController extends Controller
 {
-    public function index()
+    public function index($user_name = '')
     {
         return $this->view();
     }
@@ -101,6 +101,16 @@ class LogsController extends Controller
     {
         DB::table('logs')->where('log_date', $date)->where('user_id', Auth::user()->user_id)->delete();
         return redirect('viewLog', ['date' => $date]);
+    }
+
+    public function getAjaxcal($date, $user_name)
+    {
+        $user = User::where('user_name', $user_name)->firstOrFail();
+        $month = Carbon::createFromFormat('Y-m', $date);
+        $log_dates = Log::where('user_id', $user->user_id)
+                        ->whereBetween('log_date', [$month->startOfMonth()->toDateString(), $month->endOfMonth()->toDateString()])
+                        ->lists('log_date');
+        return response()->json(['dates' => $log_dates]);
     }
 
     public function search()

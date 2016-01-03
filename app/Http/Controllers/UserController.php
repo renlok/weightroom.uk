@@ -22,7 +22,7 @@ class UserController extends Controller
         //$invite_code->user_id = Auth::user()->user_id;
         $invite_code->follow_user_id = User::where('user_name', $user_name)->firstOrFail()->user_id;
         Auth::user()->invite_codes()->save($invite_code);
-        return redirect('viewLog', ['user' => $user_name, 'date' => $date]);
+        return redirect('viewLog', ['user_name' => $user_name, 'date' => $date]);
     }
 
     public function unfollow($user_name, $date)
@@ -30,7 +30,7 @@ class UserController extends Controller
         Invite_code::where('user_id', Auth::user()->user_id)
                     ->where('follow_user_id', User::where('user_name', $user_name)->firstOrFail()->user_id)
                     ->delete();
-        return redirect('viewLog', ['user' => $user_name, 'date' => $date]);
+        return redirect('viewLog', ['user_name' => $user_name, 'date' => $date]);
     }
 
     public function getSettings()

@@ -112,11 +112,14 @@ you can also have the same exercise multiple times
 var arDates = [];
 var calMonths = [];
 $('#track_date').pickmeup({
-	date		: moment('{DATE}','YYYY-MM-DD').format(),
+	date		: moment('{{ $date }}','YYYY-MM-DD').format(),
 	format  	: 'Y-m-d',
-	change		: function(e){ window.location.href = '{{ route('viewLog', ['date' => '+e+']) }}';},
+	change		: function(e){
+		var url = '{{ route($type . "Log", ["date" => ":date", "user" => $user->user_name]) }}';
+		window.location.href = url.replace(':date', e);
+	},
 	calendars	: 1,
-	first_day	: {WEEK_START},
+	first_day	: {{ $user->user_weekstart }},
 	render: function(date) {
 		var d = moment(date);
 		var m = d.format('YYYY-MM');
@@ -136,14 +139,9 @@ $('#track_date').pickmeup({
 
 function loadlogdata(date)
 {
+	var url = '{{ route(ajaxCal, [date => :date, user_name => $user->user_name]) }}';
 	$.ajax({
-		url: "index.php",
-		data: {
-			page: 'ajax',
-			do: 'cal',
-			date: date,
-			user_id: {{ $user->user_id }}
-		},
+		url: url.replace(':date', date),
 		type: 'GET',
 		dataType: 'json',
 		cache: false

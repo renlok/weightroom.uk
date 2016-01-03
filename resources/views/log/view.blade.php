@@ -77,7 +77,7 @@
 		</div>
 		<div class="col-md-9 col-md-pull-3">
 			<div class="calender-cont" style="max-width: 640px;">
-				<p class="hidden-xs"><- <a href="{{ route('viewLog', ['date' => $date->subDay()->toDateString(),'user' => $user->user_name]) }}">{{ $date->toDateString() }}</a> | <strong>{{ $date->addDay()->toDateString() }}</strong> | <a href="{{ route('viewLog', ['date' => $date->addDay()->toDateString(),'user' => $user->user_name]) }}">{{ $date->toDateString() }}</a> -></p>
+				<p class="hidden-xs"><- <a href="{{ route('viewLog', ['date' => $date->subDay()->toDateString(),'user_name' => $user->user_name]) }}">{{ $date->toDateString() }}</a> | <strong>{{ $date->addDay()->toDateString() }}</strong> | <a href="{{ route('viewLog', ['date' => $date->addDay()->toDateString(),'user' => $user->user_name]) }}">{{ $date->toDateString() }}</a> -></p>
 				{{-- $date->subDay() --}}
 				<div class="date"></div>
 			</div>
@@ -86,7 +86,7 @@
 </div>
 
 @if ($user->user_id == Auth::user()->user_id)
-	@if ($is_log)
+	@if ($log != null)
 <p class="margintb"><a href="{{ route('editLog', ['date' => $date->toDateString()]) }}" class="btn btn-default">Edit Log</a></p>
 	@else
 <p class="margintb"><a href="{{ route('newLog', ['date' => $date->toDateString()]) }}" class="btn btn-default">Add Log</a></p>
@@ -141,12 +141,15 @@ $(document).ready(function(){
 
 	$(function () {
 		$('.date').pickmeup({
-			date		: moment('{DATE}','YYYY-MM-DD').format(),
+			date		: moment('{{ $date->toDateString() }}','YYYY-MM-DD').format(),
 			flat		: true,
 			format  	: 'Y-m-d',
-			change		: function(e){ window.location.href = '?do=view&page=log<!-- IF B_NOSELF -->&user_id={USER_ID}<!-- ENDIF -->&date='+e;},
+			change		: function(e){
+				var url = '{{ route("viewLog", ["date" => ":date", "user_name" => $user->user_name]) }}';
+				window.location.href = url.replace(':date', e);
+			},
 			calendars	: calendar_count,
-			first_day	: {WEEK_START},
+			first_day	: {{ $user->user_weekstart }},
 			render: function(date) {
 				var d = moment(date);
 				var m = d.format('YYYY-MM');
@@ -167,14 +170,9 @@ $(document).ready(function(){
 
 	function loadlogdata(date)
 	{
+		var url = '{{ route(ajaxCal, [date => :date, user_name => $user->user_name]) }}';
 		$.ajax({
-			url: "index.php",
-			data: {
-				page: 'ajax',
-				do: 'cal',
-				date: date,
-				user_id: {{ $user->user_id }}
-			},
+			url: url.replace(':date', date),
 			type: 'GET',
 			dataType: 'json',
 			cache: false

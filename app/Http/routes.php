@@ -34,14 +34,17 @@ Route::group(['prefix' => 'user', 'middleware' => 'auth'], function () {
     Route::get('settings', 'UserController@getSettings')->name('userSettings');
     Route::post('settings', 'UserController@postSettings');
     // follow/unfollow routes
-    Route::get('follow/{user}/{date?}', 'UserController@follow')->name('followUser');
-    Route::get('unfollow/{user}/{date?}', 'UserController@unfollow')->name('unfollowUser');
+    Route::get('follow/{user_name}/{date?}', 'UserController@follow')->name('followUser');
+    Route::get('unfollow/{user_name}/{date?}', 'UserController@unfollow')->name('unfollowUser');
 });
 
 // Log controller
 Route::group(['prefix' => 'log', 'middleware' => 'auth'], function () {
-    Route::get('{user?}', 'LogsController@index')->name('viewUser');
-    Route::get('{date}/view/{user?}', 'LogsController@view')->name('viewLog');
+    Route::get('{user_name?}', 'LogsController@index')->name('viewUser');
+    // ajax
+    Route::get('{date}/cal/{user_name}', 'LogsController@getAjaxcal')->name('ajaxCal');
+    // view log
+    Route::get('{date}/view/{user_name?}', 'LogsController@view')->name('viewLog');
     //edit log
     Route::group(['middleware' => 'log.notexists'], function () {
         Route::get('{date}/edit', 'LogsController@getEdit')->name('editLog');
