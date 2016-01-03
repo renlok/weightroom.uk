@@ -16,7 +16,7 @@ class RedirectLogifExists
      */
     public function handle($request, Closure $next)
     {
-        if (Log::scopeGetlog($request->route()->parameters()['date'], $request->user()->user_id)->count() > 0)
+        if (Log::getlog($request->route()->parameters()['date'], $request->user()->user_id)->count() > 0)
         {
             return redirect()
                     ->route('editLog', ['date' => $request->route()->parameters()['date']]);
