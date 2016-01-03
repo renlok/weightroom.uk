@@ -111,7 +111,7 @@
 @endsection
 
 @section('endjs')
-<link href="http://weightroom.uk/css/pickmeup.css" rel="stylesheet">
+<link href="css/pickmeup.css" rel="stylesheet">
 <script src="js/jquery.pickmeup.js"></script>
 <script src="http://momentjs.com/downloads/moment.js"></script>
 <script src="js/jCollapsible.js"></script>

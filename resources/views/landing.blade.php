@@ -8,11 +8,11 @@
     <meta name="viewport" content="width=device-width" />
 
     <title>Weightroom.uk - Coming soon</title>
-	<link rel="icon" type="image/x-icon" href="http://weightroom.uk/favicon.ico">
+	<link rel="icon" type="image/x-icon" href="favicon.ico">
 	<meta http-equiv="Content-Language" content="en">
 
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.css" rel="stylesheet" />
-	<link href="http://weightroom.uk/css/coming-sssoon.css" rel="stylesheet" />
+	<link href="css/coming-sssoon.css" rel="stylesheet" />
 
     <!--     Fonts     -->
     <link href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
