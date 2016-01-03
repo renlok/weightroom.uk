@@ -6,14 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title') | Weight Room - Track dem gains</title>
 	<!-- <base href="http://weightroom.uk/"> -->
-	<link rel="icon" type="image/x-icon" href="favicon.ico">
+	<link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
 	<meta http-equiv="Content-Language" content="en">
 	<meta name="description" content="The ultimate weightlifting and powerlifting workout tracker. Track each of your workouts with beautiful logging and analysis tools">
 	<meta name="keywords" content="workout tracker, workout journal, training journal, weight training, strength training, powerlifting, weightlifting, strongman">
 
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/tracker.css">
+    <link rel="stylesheet" href="{{ asset('css/tracker.css') }}">
 	<script src="http://code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
 	<script src="http://getbootstrap.com/dist/js/bootstrap.min.js" charset="utf-8"></script>
 

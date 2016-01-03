@@ -46,7 +46,7 @@
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container -->
 </nav>
-<div class="main" style="background-image: url('http://weightroom.uk/img/background-1.jpg')">
+<div class="main" style="background-image: {{ asset('img/background-1.jpg') }}">
 
 <!--    Change the image source '/images/default.jpg' with your favourite image.     -->
 

@@ -68,9 +68,9 @@
 				<p><small>Member since: {{ $user->user_joined }}</small></p>
 @if ($user->user_id != Auth::user()->user_id)
 	@if ($is_following)
-				<p class="btn btn-default"><a href="{{ route('unfollowUser', ['user' => $user->user_name, 'date' => $date->toDateString()]) }}">Unfollow <img src="img/user_delete.png"></a></p>
+				<p class="btn btn-default"><a href="{{ route('unfollowUser', ['user' => $user->user_name, 'date' => $date->toDateString()]) }}">Unfollow <img src="{{ asset('img/user_delete.png') }}"></a></p>
 	@else
-				<p class="btn btn-default"><a href="{{ route('followUser', ['user' => $user->user_name, 'date' => $date->toDateString()]) }}">Follow <img src="img/user_add.png"></a></p>
+				<p class="btn btn-default"><a href="{{ route('followUser', ['user' => $user->user_name, 'date' => $date->toDateString()]) }}">Follow <img src="{{ asset('img/user_add.png') }}"></a></p>
 	@endif
 @endif
 			</div>
@@ -111,10 +111,10 @@
 @endsection
 
 @section('endjs')
-<link href="css/pickmeup.css" rel="stylesheet">
-<script src="js/jquery.pickmeup.js"></script>
+<link href="{{ asset('css/pickmeup.css') }}" rel="stylesheet">
+<script src="{{ asset('js/jquery.pickmeup.js') }}"></script>
 <script src="http://momentjs.com/downloads/moment.js"></script>
-<script src="js/jCollapsible.js"></script>
+<script src="{{ asset('js/jCollapsible.js') }}"></script>
 
 <script>
 var calendar_count = 3;

@@ -4,6 +4,7 @@
 - rewrite PRs
 - test exercise records Getexerciseprs
 - Test route patterns for date & id
+- deal with assets better with elixier
 
 figure out how to do the rest
 https://laracasts.com/series/laravel-5-fundamentals/episodes/7
@@ -31,7 +32,7 @@ https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 |         PAGE         | BLADE | CONTROLLER | TESTED |
 +----------------------+-------+------------+--------+
 |                      |       |            |        |
-| ajax.php             |       |            |        |
+| ajax.php             | x     | x          |        |
 |                      |       |            |        |
 | bodyweight.php       | x     | x          |        |
 |                      |       |            |        |

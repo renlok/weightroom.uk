@@ -37,8 +37,8 @@
 
 @section('endjs')
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-<link href="css/nv.d3.css" rel="stylesheet">
-<script src="js/nv.d3.js"></script>
+<link href="{{ asset('css/nv.d3.css') }}" rel="stylesheet">
+<script src="{{ asset('js/nv.d3.js') }}"></script>
 
 <style>
 #prHistoryChart .nv-lineChart circle.nv-point {

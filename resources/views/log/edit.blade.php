@@ -99,7 +99,7 @@ you can also have the same exercise multiple times
 @endsection
 
 @section('endjs')
-<link href="css/pickmeup.css" rel="stylesheet">
+<link href="{{ asset('css/pickmeup.css') }}" rel="stylesheet">
 <script src="http://nazar-pc.github.io/PickMeUp/js/jquery.pickmeup.js"></script>
 <script src="http://momentjs.com/downloads/moment.js"></script>
 <script src="http://codemirror.net/lib/codemirror.js"></script>
