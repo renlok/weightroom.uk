@@ -44,8 +44,12 @@ class LogsController extends Controller
         {
             $is_following = $user->invite_code->where('follow_user_id', $user->user_id)->count();
         }
+        if (!isset($commenting))
+        {
+            $commenting = false;
+        }
         $date = Carbon::createFromFormat('Y-m-d', $date);
-        return view('log.view', compact('date', 'user', 'log', 'is_following'));
+        return view('log.view', compact('date', 'user', 'log', 'is_following', 'commenting'));
     }
 
     public function getEdit($date)
@@ -61,7 +65,8 @@ class LogsController extends Controller
 			$log['log_text'] = Parser::rebuild_log_text ($user->user_id, $date);
 		}
         $type = 'edit';
-        return view('log.edit', compact('date', 'log', 'user', 'type'));
+        $exercises = Exercise::listexercises(true)->toJson();
+        return view('log.edit', compact('date', 'log', 'user', 'type', 'exercises'));
     }
 
     public function postEdit($date, LogRequest $request)
@@ -83,7 +88,8 @@ class LogsController extends Controller
             'log_weight' => Log::getlastbodyweight(Auth::user()->user_id, $date)->value('log_weight'),
         ];
         $type = 'new';
-        return view('log.edit', compact('date', 'log', 'user', 'type'));
+        $exercises = Exercise::listexercises(true)->toJson();
+        return view('log.edit', compact('date', 'log', 'user', 'type', 'exercises'));
     }
 
     public function postNew($date, LogRequest $request)
@@ -110,7 +116,7 @@ class LogsController extends Controller
         $log_dates = Log::where('user_id', $user->user_id)
                         ->whereBetween('log_date', [$month->startOfMonth()->toDateString(), $month->endOfMonth()->toDateString()])
                         ->lists('log_date');
-        return response()->json(['dates' => $log_dates]);
+        return response()->json(['dates' => $log_dates, 'cals' => $date]);
     }
 
     public function search()

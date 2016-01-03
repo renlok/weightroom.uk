@@ -3,12 +3,14 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\User;
 
 class Comment extends Model
 {
-    protected $primaryKey = 'log_comment_id';
-    protected $dates = ['comment_date', 'log_date'];
-    protected $guarded = ['log_comment_id'];
+    protected $primaryKey = 'comment_id';
+    protected $dates = ['comment_date'];
+    protected $guarded = ['comment_id'];
+    protected $appends = ['user_name'];
 
     /**
      * Get all of the owning commentable models.
@@ -26,5 +28,15 @@ class Comment extends Model
     public function children()
     {
         return $this->hasMany('App\Comment','parent_id');
+    }
+
+    /**
+     * get display value
+     *
+     * @returns bool
+     */
+    public function getUserNameAttribute()
+    {
+        return User::find($this->attributes['user_id'])->value('user_name');
     }
 }

@@ -119,7 +119,7 @@
 <script>
 var calendar_count = 3;
 $(document).ready(function(){
-	$('.log_comments').collapsible({xoffset:'-30', symbolhide:'[-]', symbolshow:'[+]'<!-- IF COMMENTING -->, defaulthide:false<!-- ENDIF -->});
+	$('.log_comments').collapsible({xoffset:'-30', symbolhide:'[-]', symbolshow:'[+]'@if ($commenting), defaulthide:false@endif});
 	$('.reply').click(function() {
 		var parent_id = $(this).attr('id');
 		var element = $(this).parent().parent().find(".comment-reply-box").first();

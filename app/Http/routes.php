@@ -107,6 +107,7 @@ Route::get('/', function () {
 Route::resource('blog', 'BlogController', ['names' => [
     'create' => 'photo.build'
 ]]);
-Route::resource('comment', 'CommentController', ['names' => [
-    'store' => 'saveComment'
-]]);
+
+Route::group(['middleware' => 'auth'], function () {
+    Route::post('comment/{log_id}', 'CommentController@store')->name('saveComment');
+});
