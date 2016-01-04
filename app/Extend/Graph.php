@@ -3,7 +3,7 @@
 namespace App\Extend;
 
 class Graph {
-    public function calculate_wilks ($total, $bw, $gender)
+    public static function calculate_wilks ($total, $bw, $gender)
 	{
 		if ($gender == 'm')
 		{
@@ -28,7 +28,8 @@ class Graph {
 		$coeff = 500/($a + $b * $bw + pow($bw, 2) * $c + pow($bw, 3) * $d + pow($bw, 4) * $e + pow($bw, 5) * $f);
 		return $coeff * $total;
 	}
-	public function calculate_sinclair ($total, $bw, $gender)
+
+	public static function calculate_sinclair ($total, $bw, $gender)
 	{
 		global $user;
 		// valid until RIO 2016

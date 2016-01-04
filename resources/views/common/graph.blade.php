@@ -39,6 +39,7 @@
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <link href="{{ asset('css/nv.d3.css') }}" rel="stylesheet">
 <script src="{{ asset('js/nv.d3.js') }}"></script>
+<script src="http://momentjs.com/downloads/moment.js"></script>
 
 <style>
 #prHistoryChart .nv-lineChart circle.nv-point {
@@ -51,14 +52,13 @@
 @foreach ($graphs as $graph_name => $graph_data)
 		var dataset = [];
 	@foreach ($graph_data as $data)
-		dataset.push({x: moment('{{ $data->log_date }}','YYYY-MM-DD').format(), y: {{ $data->log_weight }}, shape:'circle'});
+		dataset.push({x: moment('{{ $data->log_date->toDateString() }}','YYYY-MM-DD').format(), y: {{ $data->log_weight }}, shape:'circle'});
 	@endforeach
 		prHistoryChartData.push({
 			values: dataset,
 			key: '{{ $graph_name }}'
 		});
 @endforeach
-		{{ $graph_data }}
 		return prHistoryChartData;
     }
 

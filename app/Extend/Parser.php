@@ -339,12 +339,9 @@ class Parser
                 'logex_comment' => $this->replace_video_urls($item['comment']),
                 'logex_order' => $i
             ]);
-            $prs = Exercise_record::getexerciseprs($this->user->user_id, $log_date, $exercise_name)
-                    ->get()
-                    ->groupBy(function ($item, $key) {
-                        return ($item['is_time']) ? 'T' : 'W';
-                    })
-                    ->toArray();
+            $prs = [];
+            $prs['T'] = Exercise_record::getexerciseprs($this->user->user_id, $log_date, $exercise_name, false, true)->get()->toArray();
+            $prs['W'] = Exercise_record::getexerciseprs($this->user->user_id, $log_date, $exercise_name, false, false)->get()->toArray();
 			$max_estimate_rm = 0;
 			for ($j = 0, $count_j = count($item['data']); $j < $count_j; $j++)
 			{
