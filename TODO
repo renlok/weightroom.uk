@@ -27,6 +27,8 @@ https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 - Reword things to make *You* the subject (http://goodui.org/#67)
 - Explain each form field (http://goodui.org/#68)
 
+- On users first log if they define most entires as a unit other than their default ask them if they want to change their default
+
 +----------------------+-------+------------+--------+
 |         PAGE         | BLADE | CONTROLLER | TESTED |
 +----------------------+-------+------------+--------+
