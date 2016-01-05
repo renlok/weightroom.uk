@@ -14,8 +14,8 @@ class CreateLogItemsTable extends Migration
     {
         Schema::create('log_items', function (Blueprint $table) {
             $table->increments('logitem_id');
-            $table->date('logitem_date');
             $table->integer('log_id')->unsigned();
+            $table->date('log_date'); //RENAMED colomn
             $table->integer('logex_id')->unsigned()->index(); // NEW colomn
             $table->integer('user_id')->unsigned()->index();
             $table->integer('exercise_id')->unsigned()->index();
