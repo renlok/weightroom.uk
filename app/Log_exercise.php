@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Log_exercise extends Model
 {
     protected $primaryKey = 'logex_id';
-    protected $dates = ['pr_date'];
+    protected $dates = ['log_date'];
     protected $dateFormat = 'Y-m-d';
     protected $guarded = ['logex_id'];
 

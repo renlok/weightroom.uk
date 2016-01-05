@@ -242,9 +242,9 @@ class Parser
 	public function store_log_data ($log_date, $user_weight, $is_new)
 	{
 		// clear old entries
-        DB::table('log_items')->where('logitem_date', $log_date)->where('user_id', $this->user->user_id)->delete();
-        DB::table('log_exercises')->where('logex_date', $log_date)->where('user_id', $this->user->user_id)->delete();
-        DB::table('exercise_records')->where('pr_date', $log_date)->where('user_id', $this->user->user_id)->delete();
+        DB::table('log_items')->where('log_date', $log_date)->where('user_id', $this->user->user_id)->delete();
+        DB::table('log_exercises')->where('log_date', $log_date)->where('user_id', $this->user->user_id)->delete();
+        DB::table('exercise_records')->where('log_date', $log_date)->where('user_id', $this->user->user_id)->delete();
 
 		// delete log and exit function if no data
 		if (count($this->log_data) <= 1)
@@ -332,7 +332,7 @@ class Parser
             }
             // insert log_exercise
             $log_exercises_id = DB::table('log_exercises')->insertGetId([
-                'logex_date' => $log_date,
+                'log_date' => $log_date,
                 'log_id' => $log_id,
                 'user_id' => $this->user->user_id,
                 'exercise_id' => $exercise_id,
@@ -340,8 +340,8 @@ class Parser
                 'logex_order' => $i
             ]);
             $prs = [];
-            $prs['T'] = Exercise_record::getexerciseprs($this->user->user_id, $log_date, $exercise_name, false, true)->get()->toArray();
-            $prs['W'] = Exercise_record::getexerciseprs($this->user->user_id, $log_date, $exercise_name, false, false)->get()->toArray();
+            $prs['T'] = Exercise_record::getexerciseprs($this->user->user_id, $log_date, $exercise_name, true)->get()->toArray();
+            $prs['W'] = Exercise_record::getexerciseprs($this->user->user_id, $log_date, $exercise_name, false)->get()->toArray();
 			$max_estimate_rm = 0;
 			for ($j = 0, $count_j = count($item['data']); $j < $count_j; $j++)
 			{
@@ -424,7 +424,7 @@ class Parser
 				}
 				// insert into log_items
                 $log_item_data = [
-                    'logitem_date' => $log_date,
+                    'log_date' => $log_date,
                     'log_id' => $log_id,
                     'logex_id' => $log_exercises_id,
                     'user_id' => $this->user->user_id,
@@ -568,10 +568,10 @@ class Parser
 
         $old_1rm = DB::table('exercise_records')
                     ->where('user_id', $user_id)
-                    ->where('pr_date', '<', $log_date)
+                    ->where('log_date', '<', $log_date)
                     ->where('exercise_id', $exercise_id)
                     ->where('is_time', $is_time)
-                    ->orderBy('pr_date', 'desc')
+                    ->orderBy('log_date', 'desc')
                     ->value('pr_1rm');
         $new_1rm = $this->generate_rm ($set_weight, $set_reps);
         $is_est1rm = ($old_1rm < $new_1rm) ? true : false;
@@ -579,7 +579,7 @@ class Parser
 		// delete future logs that have lower prs
         DB::table('exercise_records')
             ->where('user_id', $user_id)
-            ->where('pr_date', '>=', $log_date)
+            ->where('log_date', '>=', $log_date)
             ->where('exercise_id', $exercise_id)
             ->where('pr_reps', $set_reps)
             ->where(function($query) use ($is_time, $set_weight){
@@ -601,7 +601,7 @@ class Parser
             // reset newer is_est1rm flags if they are now invalid
             DB::table('exercise_records')
                 ->where('user_id', $user_id)
-                ->where('pr_date', '>=', $log_date)
+                ->where('log_date', '>=', $log_date)
                 ->where('exercise_id', $exercise_id)
                 ->where(function($query) use ($is_time, $set_weight){
                     if ($is_time == 0)
@@ -623,7 +623,7 @@ class Parser
             ->insert([
                 'exercise_id' => $exercise_id,
                 'user_id' => $user_id,
-                'pr_date' => $log_date,
+                'log_date' => $log_date,
                 'pr_value' => $set_weight,
                 'pr_reps' => $set_reps,
                 'pr_1rm' => $new_1rm,
@@ -633,7 +633,7 @@ class Parser
 
         DB::table('log_items')
             ->where('user_id', $user_id)
-            ->where('logitem_date', '>', $log_date)
+            ->where('log_date', '>', $log_date)
             ->where('exercise_id', $exercise_id)
             ->where('logitem_reps', $set_reps)
             ->where(function($query) use ($is_time, $set_weight){
@@ -652,9 +652,9 @@ class Parser
 
 		// add past prs if needed
         $sets = DB::table('log_items')
-                    ->select('log_id', 'logitem_date', 'logitem_abs_weight')
+                    ->select('log_id', 'log_date', 'logitem_abs_weight')
                     ->where('user_id', $user_id)
-                    ->where('logitem_date', '<', $log_date)
+                    ->where('log_date', '<', $log_date)
                     ->where('exercise_id', $exercise_id)
                     ->where('logitem_reps', $set_reps)
                     ->where(function($query) use ($is_time, $set_weight){
@@ -680,10 +680,10 @@ class Parser
             // get old est 1rm data
             $old_1rm = DB::table('exercise_records')
                         ->where('user_id', $user_id)
-                        ->where('pr_date', '<', $set['log_date'])
+                        ->where('log_date', '<', $set['log_date'])
                         ->where('exercise_id', $exercise_id)
                         ->where('is_time', $is_time)
-                        ->orderBy('pr_date', 'desc')
+                        ->orderBy('log_date', 'desc')
                         ->value('pr_1rm');
             $new_1rm = $this->generate_rm ($set['logitem_abs_weight'], $set_reps);
             $is_est1rm = ($old_1rm < $new_1rm) ? true : false;
@@ -692,7 +692,7 @@ class Parser
                 ->insert([
                     'exercise_id' => $exercise_id,
                     'user_id' => $user_id,
-                    'pr_date' => $log_date,
+                    'log_date' => $log_date,
                     'pr_value' => $set['logitem_abs_weight'],
                     'pr_reps' => $set_reps,
                     'pr_1rm' => $new_1rm,

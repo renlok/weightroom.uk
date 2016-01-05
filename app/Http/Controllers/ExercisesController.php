@@ -8,9 +8,11 @@ use Validator;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Exercise;
+use App\Exercise_record;
 use App\Logs;
 use App\Log_exercise;
 use App\Extend\PRs;
+use Carbon\Carbon;
 
 class ExercisesController extends Controller
 {
@@ -72,11 +74,11 @@ class ExercisesController extends Controller
         $log_exercises = $exercise->log_exercises();
         if (!empty($from_date))
 		{
-            $log_exercises = $log_exercises->where('logitem_date', '>=', $from_date);
+            $log_exercises = $log_exercises->where('log_date', '>=', $from_date);
 		}
 		if (!empty($to_date))
 		{
-            $log_exercises = $log_exercises->where('logitem_date', '<=', $to_date);
+            $log_exercises = $log_exercises->where('log_date', '<=', $to_date);
 		}
         // get log_exercises
         $log_exercises = $log_exercises->get();
@@ -101,7 +103,17 @@ class ExercisesController extends Controller
 
     public function getViewExercise($exercise_name)
     {
-        return view('exercise.view');
+        $exercise = Exercise::getexercise($exercise_name, Auth::user()->user_id);
+        $current_prs = Exercise_record::getexerciseprs(Auth::user()->user_id, Carbon::now()->toDateString(), $exercise_name, $exercise->is_time)->get();
+        $last_pr = 0;
+        $filtered_prs = $current_prs->reverse()->map(function ($item, $key) use (&$last_pr) {
+            $value = ($item > $last_pr) ? $item : $last_pr . '*';
+            $last_pr = $value;
+            return $value;
+        })->reverse()->toArray();
+        $current_prs = $current_prs->toArray();
+        $prs = Exercise_record::getexerciseprsall(Auth::user()->user_id, Carbon::now()->toDateString(), $exercise_name, $exercise->is_time)->get()->groupBy('pr_reps');
+        return view('exercise.view', compact('exercise_name', 'current_prs', 'filtered_prs', 'prs'));
     }
 
     public function getCompareForm()
@@ -115,7 +127,7 @@ class ExercisesController extends Controller
         $exercises = Exercise::listexercises(false)->get();
         $records = DB::table('exercise_records')
             ->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
-            ->select('pr_value', 'pr_reps', 'pr_date', 'exercise_name', 'pr_1rm')
+            ->select('pr_value', 'pr_reps', 'log_date', 'exercise_name', 'pr_1rm')
             ->where('user_id', Auth::user()->user_id)
             ->whereIn('exercise_name', [$exercise1, $exercise2, $exercise3, $exercise4, $exercise5]);
         if ($reps > 0)
@@ -126,7 +138,7 @@ class ExercisesController extends Controller
         {
             $records = $records->where('is_est1rm', 1);
         }
-        $records = $records->orderBy('pr_date', 'asc');
+        $records = $records->orderBy('log_date', 'asc');
         // group them
         $records = $records->groupBy('exercise_name');
         return view('exercise.compare', compact('exercises', 'records', 'exercise1', 'exercise2', 'exercise3', 'exercise4', 'exercise5', 'error'));

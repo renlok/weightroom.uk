@@ -9,7 +9,7 @@ use App\Http\Controllers\Controller;
 use Auth;
 use App\User;
 use App\Log;
-use App\Log_item;
+use App\Exercise_record;
 use App\Entend\Graph;
 
 class ToolsController extends Controller
@@ -28,17 +28,17 @@ class ToolsController extends Controller
 
     public function wilks($range = 0)
     {
-        $graph_data = Log_item::select('logitem_date as log_date', 'exercise_name', 'logitem_abs_weight as log_weight')
-                                ->join('exercises', 'log_items.exercise_id', '=', 'exercises.exercise_id')
-                                ->where('log_items.user_id', Auth::user()->user_id)
-                                ->where('is_pr', 1)
-                                ->whereIn('log_items.exercise_id', [Auth::user()->user_squatid, Auth::user()->user_deadliftid, Auth::user()->user_benchid])
-                                ->orderBy('logitem_date', 'asc');
+        $graph_data = Exercise_record::select('log_date', 'exercise_name', 'pr_1rm as log_weight')
+                                ->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
+                                ->where('exercise_records.user_id', Auth::user()->user_id)
+                                ->where('is_est1rm', 1)
+                                ->whereIn('exercise_records.exercise_id', [Auth::user()->user_squatid, Auth::user()->user_deadliftid, Auth::user()->user_benchid])
+                                ->orderBy('log_date', 'asc');
         $graphs = $graph_data->get()->groupBy('exercise_name')->toArray();
         $graphs['Bodyweight'] = Log::getbodyweight(Auth::user()->user_id)->get();
         // build a useful array for wilks data
         $wilks_exercises = $graph_data->get()->groupBy(function ($item, $key) {
-            return $item['logitem_date']->toDateString();
+            return $item['log_date']->toDateString();
         })->toArray();
         $wilks_bodyweight = $graphs['Bodyweight']->groupBy(function ($item, $key) {
             return $item['log_date']->toDateString();
@@ -72,17 +72,17 @@ class ToolsController extends Controller
 
     public function sinclair($range = 0)
     {
-        $graph_data = Log_item::select('logitem_date as log_date', 'exercise_name', 'logitem_abs_weight as log_weight')
-                                ->join('exercises', 'log_items.exercise_id', '=', 'exercises.exercise_id')
-                                ->where('log_items.user_id', Auth::user()->user_id)
-                                ->where('is_pr', 1)
+        $graph_data = Exercise_record::select('log_date', 'exercise_name', 'pr_1rm as log_weight')
+                                ->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
+                                ->where('exercise_records.user_id', Auth::user()->user_id)
+                                ->where('is_est1rm', 1)
                                 ->whereIn('log_items.exercise_id', [Auth::user()->user_snatchid, Auth::user()->user_cleanjerkid])
-                                ->orderBy('logitem_date', 'asc');
+                                ->orderBy('log_date', 'asc');
         $graphs = $graph_data->get()->groupBy('exercise_name')->toArray();
         $graphs['Bodyweight'] = Log::getbodyweight(Auth::user()->user_id)->get();
         // build a useful array for wilks data
         $wilks_exercises = $graph_data->get()->groupBy(function ($item, $key) {
-            return $item['logitem_date']->toDateString();
+            return $item['log_date']->toDateString();
         })->toArray();
         $wilks_bodyweight = $graphs['Bodyweight']->groupBy(function ($item, $key) {
             return $item['log_date']->toDateString();

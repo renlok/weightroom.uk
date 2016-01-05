@@ -59,11 +59,10 @@ class LogsController extends Controller
         $log = Log::where('log_date', $date)
                     ->select('log_text', 'log_weight', 'log_update_text')
                     ->where('user_id', $user->user_id)
-                    ->firstOrFail()
-                    ->toArray();
-        if ($log['log_update_text'] == 1)
+                    ->firstOrFail();
+        if ($log->log_update_text == 1)
 		{
-			$log['log_text'] = Parser::rebuild_log_text ($user->user_id, $date);
+			$log->log_text = Parser::rebuild_log_text ($user->user_id, $date);
 		}
         $type = 'edit';
         $exercise_list = Exercise::listexercises(true)->get();
@@ -89,10 +88,10 @@ class LogsController extends Controller
     public function getNew($date)
     {
         $user = User::find(Auth::user()->user_id)->firstOrFail();
-        $log = [
+        $log = collect([
             'log_text' => '',
             'log_weight' => Log::getlastbodyweight(Auth::user()->user_id, $date)->value('log_weight'),
-        ];
+        ]);
         $type = 'new';
         $exercise_list = Exercise::listexercises(true)->get();
         $exercises = '';

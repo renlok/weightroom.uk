@@ -8,7 +8,7 @@ use App\Extend\Format;
 class Log_item extends Model
 {
     protected $primaryKey = 'logitem_id';
-    protected $dates = ['logitem_date'];
+    protected $dates = ['log_date'];
     protected $dateFormat = 'Y-m-d';
     protected $casts = [
         'is_bw' => 'boolean',

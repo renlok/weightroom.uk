@@ -71,7 +71,7 @@ foreach ($tables as $old_name => $table)
 }
 
 // calculate is_est1rm
-$query = "SELECT * FROM exercise_records ORDER BY user_id, exercise_id, pr_reps, pr_date ASC";
+$query = "SELECT * FROM exercise_records ORDER BY user_id, exercise_id, pr_reps, log_date ASC";
 $user_id = $exercise_id = $pr_reps = $max = 0;
 $result = $db->query($query);
 while ($row = $result->fetch_assoc())

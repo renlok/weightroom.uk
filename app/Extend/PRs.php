@@ -20,7 +20,7 @@ class PRs {
 		$data = $db->fetchall();
 		foreach($data as $row)
 		{
-			$query = "SELECT logitem_id, logitem_weight, logitem_reps, logitem_date FROM log_items WHERE exercise_id = :exercise_id ORDER BY logitem_date ASC";
+			$query = "SELECT logitem_id, logitem_weight, logitem_reps, log_date FROM log_items WHERE exercise_id = :exercise_id ORDER BY log_date ASC";
 			$params = array(
 				array(':exercise_id', $row['exercise_id'], 'int')
 			);
@@ -36,12 +36,12 @@ class PRs {
 						array(':logitem_id', $ex_data['logitem_id'], 'int')
 					);
 					$db->query($query, $params);
-					$query = "INSERT INTO exercise_records (exercise_id, user_id, pr_date, pr_value, pr_reps)
-							VALUES (:exercise_id, :user_id, :pr_date, :pr_value, :pr_reps)";
+					$query = "INSERT INTO exercise_records (exercise_id, user_id, log_date, pr_value, pr_reps)
+							VALUES (:exercise_id, :user_id, :log_date, :pr_value, :pr_reps)";
 					$params = array(
 						array(':exercise_id', $row['exercise_id'], 'int'),
 						array(':user_id', $row['user_id'], 'int'),
-						array(':pr_date', $ex_data['logitem_date'], 'str'),
+						array(':log_date', $ex_data['log_date'], 'str'),
 						array(':pr_value', $ex_data['logitem_weight'], 'float'),
 						array(':pr_reps', $ex_data['logitem_reps'], 'int')
 					);
@@ -62,9 +62,9 @@ class PRs {
             ->update(['is_pr' => 0]);
 
         $log_items = DB::table('log_items')
-            ->select('logitem_id', 'logitem_abs_weight', 'logitem_reps', 'logitem_date', 'user_id', 'is_time')
+            ->select('logitem_id', 'logitem_abs_weight', 'logitem_reps', 'log_date', 'user_id', 'is_time')
             ->where('exercise_id', $exercise_id)
-            ->orderBy('logitem_date', 'asc')
+            ->orderBy('log_date', 'asc')
             ->get();
 		$pr_time = array(1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0, 7 => 0, 8 => 0, 9 => 0, 10 => 0);
         $pr_value = array(1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0, 7 => 0, 8 => 0, 9 => 0, 10 => 0);
@@ -86,7 +86,7 @@ class PRs {
                 DB::table('exercise_records')->insert(
                     ['exercise_id' => $exercise_id,
                     'user_id' => $log_item['user_id'],
-                    'pr_date' => $log_item['logitem_date'],
+                    'log_date' => $log_item['log_date'],
                     'pr_value' => $log_item['logitem_abs_weight'],
                     'pr_reps' => $log_item['logitem_reps'],
                     'is_time' => $log_item['is_time']]);
@@ -102,14 +102,14 @@ class PRs {
                     ->select('pr_reps', 'exercises.is_time', DB::raw('MAX(pr_value) as pr_value'))
                     ->where('exercise_records.user_id', $user_id)
                     ->where('exercises.exercise_name', $exercise_name)
-                    ->where('pr_date', '<=', $log_date)
+                    ->where('log_date', '<=', $log_date)
                     ->groupBy(function ($item, $key) {
                         return ($item['is_time']) ? 'T' : 'W';
                     })
                     ->groupBy('pr_reps');
         if ($return_date)
         {
-            $records = $records->addSelect(DB::raw('MAX(pr_date) as pr_date'));
+            $records = $records->addSelect(DB::raw('MAX(log_date) as log_date'));
         }
         $records = $records->get();
 		$prs = array('W' => array(), 'T' => array());
@@ -119,7 +119,7 @@ class PRs {
 			$type = ($row['is_time'] == 1) ? 'T' : 'W';
 			if ($return_date)
 			{
-				$date[$type][$row['pr_reps']] = $row['pr_date'];
+				$date[$type][$row['pr_reps']] = $row['log_date'];
 			}
 			$prs[$type][$row['pr_reps']] = $row['pr_value'];
 		}
