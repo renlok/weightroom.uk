@@ -23,8 +23,11 @@ $renamed = [
         'sender_user_id' => 'user_id',
         'receiver_user_id' => ''
     ],
-    'log_exercises' => [],
-    'log_items' => ['logitem_rpes' => 'logitem_pre'],
+    'log_exercises' => ['logex_date' => 'log_date'],
+    'log_items' => [
+        'logitem_rpes' => 'logitem_pre'.
+        'logitem_date' => 'log_date'
+    ],
     'logs' => [],
     'notifications' => [],
     'user_follows' => ['follow_date' => ''],
