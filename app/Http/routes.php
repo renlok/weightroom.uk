@@ -57,7 +57,9 @@ Route::group(['prefix' => 'log', 'middleware' => 'auth'], function () {
     });
     Route::get('{date}/delete', 'LogsController@delete')->name('deleteLog');
     Route::get('search', 'LogsController@search')->name('searchLog');
-    Route::get('volume', 'LogsController@volume')->name('totalVolume');
+    // total volume
+    Route::get('volume/{from_date?}/{to_date?}', 'LogsController@getVolume')->name('totalVolume');
+    Route::post('volume/{from_date?}/{to_date?}', 'LogsController@postVolume');
 });
 
 // Exercise Controller
@@ -65,14 +67,14 @@ Route::group(['prefix' => 'exercise', 'middleware' => 'auth'], function () {
     // list exercises
     Route::get('/', 'ExercisesController@getList');
     Route::get('list', 'ExercisesController@getList')->name('listExercises');
-    Route::get('{exercise_name}/view', 'ExercisesController@getViewExercise')->name('viewExercise');
+    Route::get('{exercise_name}/view/{type?}/{range?}/{force_pr_type?}/', 'ExercisesController@getViewExercise')->name('viewExercise');
     // edit exercise routes
     // can automatically pull the exercise with (App\Exercise $user)
     Route::get('{exercise_name}/edit', 'ExercisesController@getEdit')->name('editExercise');
     Route::post('{exercise_name}/edit', 'ExercisesController@postEdit');
     Route::get('{exercise_name}/history', 'ExercisesController@history')->name('exerciseHistory');
     Route::get('{exercise_name}/history/{from_date}/{to_date}', 'ExercisesController@history')->name('exerciseHistoryRange');
-    Route::get('{exercise_name}/volume', 'ExercisesController@volume')->name('volume');
+    Route::get('{exercise_name}/volume/{from_date?}/{to_date?}', 'ExercisesController@volume')->name('volume');
     Route::get('compare', 'ExercisesController@getCompareForm')->name('compareExercisesForm');
     Route::get('compare/{reps}/{exercise1}/{exercise2?}/{exercise3?}/{exercise4?}/{exercise5?}', 'ExercisesController@getCompare')->name('compareExercises');
     Route::post('compare', 'ExercisesController@postCompare');

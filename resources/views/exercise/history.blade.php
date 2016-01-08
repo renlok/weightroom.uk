@@ -3,6 +3,7 @@
 @section('title', $exercise_name . ' History')
 
 @section('headerstyle')
+<link href="{{ asset('css/nv.d3.css') }}" rel="stylesheet">
 <style>
 .leftspace {
 	margin-left: 10px;
@@ -69,7 +70,6 @@
 
 @section('endjs')
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-<link href="{{ asset('css/nv.d3.css') }}" rel="stylesheet">
 <script src="{{ asset('js/nv.d3.js') }}"></script>
 <script>
     function HistoryData() {
@@ -84,31 +84,31 @@
 		chart.tooltipContent(function(key, y, e, graph)
 		{
 			//console.log(key);
-			var units = '{WEIGHT_UNIT}';
+			var units = '{{ $user->user_unit }}';
 			var point_value = key.point.y;
 			if (key.point.color == '#b84a68')
 				var tool_type = 'Volume';
 			if (key.point.color == '#a6bf50')
 			{
 				var tool_type = 'Total reps';
-				point_value = Math.round(point_value / {REP_SCALE});
+				point_value = Math.round(point_value / {{ $rep_scale }});
 				units = '';
 			}
 			if (key.point.color == '#56c5a6')
 			{
 				var tool_type = 'Total sets';
-				point_value = Math.round(point_value / {SET_SCALE});
+				point_value = Math.round(point_value / {{ $set_scale }});
 				units = '';
 			}
 			if (key.point.color == '#765dcb')
 			{
 				var tool_type = '1RM';
-				point_value = (point_value / {RM_SCALE}).toFixed(2);
+				point_value = (point_value / {{ $rm_scale }}).toFixed(2);
 			}
 			if (key.point.color == '#907fcc')
 			{
 				var tool_type = 'Average Intensity';
-				point_value = Math.round(point_value / {AI_SCALE});
+				point_value = Math.round(point_value / {{ $ai_scale }});
 				units = '%';
 			}
 			return '<pre>' + tool_type + ': ' + point_value + units + '</pre>';

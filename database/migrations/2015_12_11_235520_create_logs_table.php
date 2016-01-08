@@ -18,9 +18,10 @@ class CreateLogsTable extends Migration
             $table->date('log_date');
             $table->text('log_text');
             $table->double('log_total_volume', 20, 2); // NEW colomn
-            $table->double('log_failed_volume', 20, 2); // NEW colomn
             $table->integer('log_total_reps'); // NEW colomn
             $table->integer('log_total_sets'); // NEW colomn
+            $table->double('log_failed_volume', 20, 2); // NEW colomn
+            $table->double('log_failed_sets', 20, 2); // NEW colomn
             $table->double('log_warmup_volume', 20, 2); // NEW colomn
             $table->integer('log_warmup_reps'); // NEW colomn
             $table->integer('log_warmup_sets'); // NEW colomn

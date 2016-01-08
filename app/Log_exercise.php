@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Extend\PRs;
 
 class Log_exercise extends Model
 {
@@ -10,6 +11,7 @@ class Log_exercise extends Model
     protected $dates = ['log_date'];
     protected $dateFormat = 'Y-m-d';
     protected $guarded = ['logex_id'];
+    protected $appends = ['average_intensity'];
 
     /**
      * a log exercise can have many log items
@@ -39,5 +41,15 @@ class Log_exercise extends Model
     public function exercise()
     {
         return $this->belongsTo('App\Exercise');
+    }
+
+    /**
+     * logs should have an intensity rating
+     *
+     * @returns double
+     */
+    public function getAverageIntensityAttribute()
+    {
+        $this->attributes['average_intensity'] = PRs::average_intensity($this->attributes['user_id'], $this->attributes['exercise_id'], $this->attributes['logex_id']);
     }
 }

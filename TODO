@@ -1,4 +1,4 @@
-- build blades (templates) http://laravel.com/docs/5.1/blade
+- build blades with ideal data format then modify back end to work with blades
 
 - Add variables to titles make them unique
 - rewrite PRs
@@ -36,7 +36,7 @@ https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 |                      |       |            |        |
 | ajax.php             | x     | x          | x      |
 |                      |       |            |        |
-| bodyweight.php       | x     | x          |        |
+| bodyweight.php       | x     | s          |        |
 |                      |       |            |        |
 | dash.php             | s     |            |        |
 |                      |       |            |        |
@@ -48,9 +48,9 @@ https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 |                      |       |            |        |
 | exercise.php list    | x     | x          |        |
 |                      |       |            |        |
-| exercise.php prs     |       |            |        |
+| exercise.php prs     | x     |            |        |
 |                      |       |            |        |
-| history.php          |       |            |        |
+| history.php          | s     |            |        |
 |                      |       |            |        |
 | invites.php          | x     | x          | x      |
 |                      |       |            |        |
@@ -76,7 +76,7 @@ https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 |                      |       |            |        |
 | tools.php            | x     | x          |        |
 |                      |       |            |        |
-| volume.php           |       |            |        |
+| volume.php           | x     |            |        |
 |                      |       |            |        |
 | wilks.php            | x     | s          |        |
 +----------------------+-------+------------+--------+

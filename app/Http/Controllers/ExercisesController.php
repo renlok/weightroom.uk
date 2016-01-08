@@ -101,19 +101,16 @@ class ExercisesController extends Controller
         return view('exercise.volume');
     }
 
-    public function getViewExercise($exercise_name)
+    public function getViewExercise($exercise_name, $range = 0, $type = 'all', $force_pr_type = null)
     {
         $exercise = Exercise::getexercise($exercise_name, Auth::user()->user_id);
-        $current_prs = Exercise_record::getexerciseprs(Auth::user()->user_id, Carbon::now()->toDateString(), $exercise_name, $exercise->is_time)->get();
-        $last_pr = 0;
-        $filtered_prs = $current_prs->reverse()->map(function ($item, $key) use (&$last_pr) {
-            $value = ($item > $last_pr) ? $item : $last_pr . '*';
-            $last_pr = $value;
-            return $value;
-        })->reverse()->toArray();
-        $current_prs = $current_prs->toArray();
+        $current_prs = Exercise_record::getexerciseprs(Auth::user()->user_id, Carbon::now()->toDateString(), $exercise_name, $exercise->is_time, true)->get();
+        $filtered_prs = Exercise_record::filterPrs($current_prs);
+        $current_prs = $current_prs->groupBy('pr_reps')->toArray();
         $prs = Exercise_record::getexerciseprsall(Auth::user()->user_id, Carbon::now()->toDateString(), $exercise_name, $exercise->is_time)->get()->groupBy('pr_reps');
-        return view('exercise.view', compact('exercise_name', 'current_prs', 'filtered_prs', 'prs'));
+        // be in format [1 => ['log_weight' => ??, 'log_date' => ??]]
+
+        return view('exercise.view', compact('exercise_name', 'current_prs', 'filtered_prs', 'prs', 'range'));
     }
 
     public function getCompareForm()

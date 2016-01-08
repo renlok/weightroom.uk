@@ -288,7 +288,7 @@ class Parser
                         ]);
 		}
         // values that must be updated later
-        $log_warmup_volume = $log_warmup_reps = $log_warmup_sets = $log_total_volume = $log_failed_volume = $log_total_reps = $log_total_sets = 0;
+        $log_warmup_volume = $log_warmup_reps = $log_warmup_sets = $log_total_volume = $log_failed_volume = $log_failed_sets = $log_total_reps = $log_total_sets = 0;
 		// todays log then update weight
 		if ($log_date == date("Y-m-d"))
 		{
@@ -310,7 +310,7 @@ class Parser
 			// set exercise name
 			$exercise_name = trim($item['name']);
 			// reset totals
-			$total_volume = $total_reps = $total_sets = 0;
+			$total_volume = $failed_volume = $total_reps = $total_sets = 0;
             $logex_warmup_volume = $logex_warmup_reps = $logex_warmup_sets = 0;
             // get exercise information
             $exercise = Exercise::getexercise($exercise_name, $this->user->user_id)->first();
@@ -382,7 +382,11 @@ class Parser
 				$absolute_weight = ($is_bw == false) ? $set['W'] : ($set['W'] + $user_weight);
                 $item_volume = ($absolute_weight * $set['R'] * $set['S']);
 				$total_volume += $item_volume;
-                $log_failed_volume += ($set['R'] == 0) ? ($absolute_weight * $set['S']) : 0;
+                if ($set['R'] == 0)
+                {
+                    $failed_volume += ($absolute_weight * $set['S']);
+                    $failed_sets += $set['S'];
+                }
                 // deal the time PRs
 				$absolute_weight = floatval(($is_time == true) ? $set['T'] : $absolute_weight);
 				$total_reps += ($set['R'] * $set['S']);
@@ -463,6 +467,8 @@ class Parser
                     'logex_volume' => $total_volume,
                     'logex_reps' => $total_reps,
                     'logex_sets' => $total_sets,
+                    'logex_failed_volume' => $failed_volume,
+                    'logex_failed_sets' => $failed_sets,
                     'logex_warmup_volume' => $logex_warmup_volume,
                     'logex_warmup_reps' => $logex_warmup_reps,
                     'logex_warmup_sets' => $logex_warmup_sets,
@@ -470,15 +476,18 @@ class Parser
             $log_total_volume += $total_volume;
             $log_total_reps += $total_reps;
             $log_total_sets += $total_sets;
+            $log_failed_volume += $failed_volume;
+            $log_failed_sets += $failed_sets;
 		}
         // insert total volumes
         DB::table('logs')
             ->where('log_id', $log_id)
             ->update([
                 'log_total_volume' => $log_total_volume,
-                'log_failed_volume' => $log_failed_volume,
                 'log_total_reps' => $log_total_reps,
                 'log_total_sets' => $log_total_sets,
+                'log_failed_volume' => $log_failed_volume,
+                'log_failed_sets' => $log_failed_sets,
                 'log_warmup_volume' => $log_warmup_volume,
                 'log_warmup_reps' => $log_warmup_reps,
                 'log_warmup_sets' => $log_warmup_sets,

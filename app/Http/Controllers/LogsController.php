@@ -32,6 +32,7 @@ class LogsController extends Controller
         if ($user->logs != null)
         {
             $log = $user->logs()->where('log_date', $date)->first();
+            $log->average_intensity = $log->log_exercises()->sum('average_intensity');
         }
         else
         {
@@ -116,7 +117,8 @@ class LogsController extends Controller
     public function delete($date)
     {
         DB::table('logs')->where('log_date', $date)->where('user_id', Auth::user()->user_id)->delete();
-        return redirect('viewLog', ['date' => $date]);
+        return redirect()
+                ->route('viewLog', ['date' => $date]);
     }
 
     public function getAjaxcal($date, $user_name)
@@ -134,8 +136,14 @@ class LogsController extends Controller
         return view('log.search');
     }
 
-    public function volume()
+    public function getVolume($from_date = 0, $to_date = 0)
     {
         return view('log.volume');
+    }
+
+    public function postVolume($from_date = 0, $to_date = 0)
+    {
+        return redirect()
+                ->route('totalVolume', ['date' => $date]);
     }
 }
