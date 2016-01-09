@@ -8,7 +8,7 @@ use App\Http\Controllers\Controller;
 use Auth;
 use App\User;
 use App\Exercise;
-use App\Invite_code;
+use App\User_follow;
 
 class UserController extends Controller
 {
@@ -20,16 +20,23 @@ class UserController extends Controller
 
     public function follow($user_name, $date)
     {
-        $invite_code = new Invite_code();
-        //$invite_code->user_id = Auth::user()->user_id;
-        $invite_code->follow_user_id = User::where('user_name', $user_name)->firstOrFail()->user_id;
-        Auth::user()->invite_codes()->save($invite_code);
+        // add follower
+        $user_id = User::where('user_name', $user_name)->firstOrFail()->user_id;
+        User_follow::insert([
+            'user_id' => Auth::user()->user_id,
+            'follow_user_id' => $user_id
+        ]);
+        DB::table('notifications')->insert([
+            'user_id' => $user_id,
+            'notification_type' => 'follow',
+            'notification_value' => Auth::user()->user_name
+        ]);
         return redirect('viewLog', ['user_name' => $user_name, 'date' => $date]);
     }
 
     public function unfollow($user_name, $date)
     {
-        Invite_code::where('user_id', Auth::user()->user_id)
+        User_follow::where('user_id', Auth::user()->user_id)
                     ->where('follow_user_id', User::where('user_name', $user_name)->firstOrFail()->user_id)
                     ->delete();
         return redirect('viewLog', ['user_name' => $user_name, 'date' => $date]);

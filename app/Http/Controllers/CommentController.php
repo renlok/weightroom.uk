@@ -13,13 +13,20 @@ class CommentController extends Controller
 {
 	public function store($log_id, Request $request)
 	{
+		$log = Log::find($log_id)->get();
 		Comments::insert([
 			'parent_id' => $request->input('parent_id'),
 			'comment' => $request->input('comment'),
 			'commentable_id' => $log_id,
 			'user_id' => Auth::user()->user_id
 		]);
-		$date = Log::find($log_id)->value('log_date');
+
+		DB::table('notifications')->insert([
+            'user_id' => $log->user_id,
+            'notification_type' => 'comment',
+            'notification_value' => Auth::user()->user_name
+        ]);
+		$date = $log->log_date;
 		return redirect()
                 ->route('viewLog', ['date' => $date])
                 ->with('commenting', true);
