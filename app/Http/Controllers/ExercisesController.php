@@ -81,7 +81,7 @@ class ExercisesController extends Controller
             $log_exercises = $log_exercises->where('log_date', '<=', $to_date);
 		}
         // get log_exercises
-        $log_exercises = $log_exercises->get();
+        $log_exercises = $log_exercises->orderBy('log_date', 'desc')->get();
         // set scales
         $max_volume = $log_exercises->max('price');
         $max_reps = $log_exercises->max('price');
@@ -98,6 +98,7 @@ class ExercisesController extends Controller
 
     public function volume($exercise_name)
     {
+        // TODO
         return view('exercise.volume');
     }
 

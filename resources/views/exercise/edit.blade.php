@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'Edit Exercise')
+@section('title', 'Edit Exercise: ' . $exercise_name)
 
 @section('content')
 @include('errors.simple')

@@ -40,7 +40,7 @@ Route::group(['prefix' => 'user', 'middleware' => 'auth'], function () {
 
 // Log controller
 Route::group(['prefix' => 'log', 'middleware' => 'auth'], function () {
-    Route::get('{user_name?}', 'LogsController@index')->name('viewUser');
+    Route::get('{user_name}', 'LogsController@viewUser')->name('viewUser');
     // ajax
     Route::get('{date}/cal/{user_name}', 'LogsController@getAjaxcal')->name('ajaxCal');
     // view log
@@ -56,10 +56,12 @@ Route::group(['prefix' => 'log', 'middleware' => 'auth'], function () {
         Route::post('{date}/new', 'LogsController@postNew');
     });
     Route::get('{date}/delete', 'LogsController@delete')->name('deleteLog');
-    Route::get('search', 'LogsController@search')->name('searchLog');
+    // search logs
+    Route::get('search', 'LogsController@getSearch')->name('searchLog');
+    Route::post('search', 'LogsController@postSearch');
     // total volume
     Route::get('volume/{from_date?}/{to_date?}', 'LogsController@getVolume')->name('totalVolume');
-    Route::post('volume/{from_date?}/{to_date?}', 'LogsController@postVolume');
+    Route::post('volume', 'LogsController@postVolume');
 });
 
 // Exercise Controller

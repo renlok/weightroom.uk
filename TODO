@@ -1,6 +1,5 @@
 - build blades with ideal data format then modify back end to work with blades
 
-- Add variables to titles make them unique
 - rewrite PRs
 - Test route patterns for date & id
 - deal with assets better with elixier
@@ -48,9 +47,9 @@ https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 |                      |       |            |        |
 | exercise.php list    | x     | x          |        |
 |                      |       |            |        |
-| exercise.php prs     | x     |            |        |
+| exercise.php prs     | x     | s          |        |
 |                      |       |            |        |
-| history.php          | s     |            |        |
+| history.php          | x     | x          |        |
 |                      |       |            |        |
 | invites.php          | x     | x          | x      |
 |                      |       |            |        |
@@ -66,9 +65,9 @@ https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 |                      |       |            |        |
 | register.php         | x     | x          |        |
 |                      |       |            |        |
-| search.php           |       |            |        |
+| search.php           | x     | x          |        |
 |                      |       |            |        |
-| search_log.php       |       |            |        |
+| search_log.php       | x     | x          |        |
 |                      |       |            |        |
 | settings.php         | x     | x          |        |
 |                      |       |            |        |
@@ -76,7 +75,7 @@ https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 |                      |       |            |        |
 | tools.php            | x     | x          |        |
 |                      |       |            |        |
-| volume.php           | x     |            |        |
+| volume.php           | x     | x          |        |
 |                      |       |            |        |
 | wilks.php            | x     | s          |        |
 +----------------------+-------+------------+--------+

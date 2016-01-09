@@ -29,16 +29,16 @@
 <h2>Volume graph</h2>
 
 <h3>View a range of dates</h3>
-<form class="form-inline" method="post" action="{{ url("volume/$from_date/$to_date") }}">
+<form class="form-inline" method="post" action="{{ url('log/volume') }}">
   <div class="form-group">
     <label for="from_date">From</label>
-    <input type="text" class="form-control" id="from_date" name="from" value="{{ $from_date }}">
+    <input type="text" class="form-control" id="from_date" name="from_date" value="{{ $from_date }}">
   </div>
   <div class="form-group">
     <label for="to_date">Until</label>
-    <input type="text" class="form-control" id="to_date" name="to" value="{{ $to_date }}">
+    <input type="text" class="form-control" id="to_date" name="to_date" value="{{ $to_date }}">
   </div>
-  <input type="hidden" name="page" value="volume">
+  {{ csrf_field() }}
   <button type="submit" class="btn btn-default">Update</button>
 </form>
 
@@ -57,14 +57,14 @@
     	date		: moment('{{ $from_date }}','YYYY-MM-DD').format(),
     	format  	: 'Y-m-d',
     	calendars	: 1,
-    	first_day	: {{ $user->user_weekstart }},
+    	first_day	: {{ Auth::user()->user_weekstart }},
     	hide_on_select	: true
     });
     $('#to_date').pickmeup({
     	date		: moment('{{ $to_date }}','YYYY-MM-DD').format(),
     	format  	: 'Y-m-d',
     	calendars	: 1,
-    	first_day	: {{ $user->user_weekstart }},
+    	first_day	: {{ Auth::user()->user_weekstart }},
     	hide_on_select	: true
     });
 
@@ -72,8 +72,8 @@
 		var HistoryChartData = [];
 @foreach ($graphs as $graph_name => $graph_data)
 		var dataset = [];
-	@foreach ($graph_data as $data)
-		dataset.push({x: moment('{{ $data->log_date->toDateString() }}','YYYY-MM-DD').format(), y: {{ $data->log_weight }}, shape:'circle'});
+	@foreach ($graph_data as $log_date => $log_weight)
+		dataset.push({x: moment('{{ $log_date }}','YYYY-MM-DD').format(), y: {{ $log_weight }}, shape:'circle'});
 	@endforeach
 		prHistoryChartData.push({
 			values: dataset,
@@ -89,20 +89,20 @@
 		chart.tooltipContent(function(key, y, e, graph)
 		{
 			//console.log(key);
-			var units = '{{ $user->user_unit }}';
+			var units = '{{ Auth::user()->user_unit }}';
 			var point_value = key.point.y;
 			if (key.point.color == '#b84a68')
 				var tool_type = 'Volume';
 			if (key.point.color == '#a6bf50')
 			{
 				var tool_type = 'Total reps';
-				point_value = Math.round(point_value / {{ $rep_scale }});
+				point_value = Math.round(point_value / {{ $scales['rep_scale'] }});
 				units = '';
 			}
 			if (key.point.color == '#56c5a6')
 			{
 				var tool_type = 'Total sets';
-				point_value = Math.round(point_value / {{ $set_scale }});
+				point_value = Math.round(point_value / {{ $scales['set_scale'] }});
 				units = '';
 			}
 			return '<pre>' + tool_type + ': ' + point_value + units + '</pre>';

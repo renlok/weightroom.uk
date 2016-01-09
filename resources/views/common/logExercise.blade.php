@@ -1,4 +1,8 @@
+@if ($view_type == 'log')
 <h3><a href="{{ route('viewExercise', ['exercise_name' => $log_exercise->exercise->exercise_name]) }}">{{ $log_exercise->exercise->exercise_name }}</a></h3>
+@elseif ($view_type == 'search')
+<p><h3>{{ $log_exercise->log_date->toDateString() }}</h3><a href="{{ route('viewLog', ['date' => $log_exercise->log_date->toDateString()]) }}">View Log</a></p>
+@endif
 <p class="logrow">
     Volume: <span class="heavy">{{ $log_exercise->logex_volume }}</span>{{ $user->user_unit }} - Reps: <span class="heavy">{{ $log_exercise->logex_reps }}</span> - Sets: <span class="heavy">{{ $log_exercise->logex_sets }}</span>
 @if (Auth::user()->user_showintensity != 'h')

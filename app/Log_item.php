@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Extend\Format;
+use DB;
 
 class Log_item extends Model
 {

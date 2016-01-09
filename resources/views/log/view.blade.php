@@ -108,7 +108,7 @@
 	</div>
 	@endif
 	@foreach ($log->log_exercises as $log_exercise)
-		@include('common.logExercise')
+		@include('common.logExercise', ['view_type' => 'log'])
 	@endforeach
 	@include('common.commentTree', ['comments' => $log->comments])
 @endif

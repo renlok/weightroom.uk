@@ -9,6 +9,7 @@ use App\Http\Requests\LogRequest;
 use App\Http\Controllers\Controller;
 use App\User;
 use App\Log;
+use App\Log_exercise;
 use App\Exercise;
 use Auth;
 use App\Extend\PRs;
@@ -17,9 +18,9 @@ use Carbon\Carbon;
 
 class LogsController extends Controller
 {
-    public function index($user_name = '')
+    public function viewUser($user_name)
     {
-        return $this->view();
+        return $this->view(Carbon::now()->toDateString, $user_name)
     }
 
     public function view($date, $user_name = '')
@@ -131,19 +132,64 @@ class LogsController extends Controller
         return response()->json(['dates' => $log_dates, 'cals' => $date]);
     }
 
-    public function search()
+    public function postSearch(Request $request)
     {
-        return view('log.search');
+        return redirect()
+                ->route('searchLog')
+                ->withInput();
+    }
+
+    public function getSearch()
+    {
+        $query = DB::table('log_items')
+                    ->join('exercises', 'exercises.exercise_id' '=' 'log_items.exercise_id')
+                    ->where('log_items.user_id', Auth::user()->user_id)
+                    ->where('log_items.logitem_weight', Request::old('weightoperator'), $request->input('weight'))
+                    ->where('exercises.exercise_name', Request::old('exercise'));
+        if (Request::old('reps') != 'any' && Request::old('reps') != '')
+    	{
+    		$query = $query->where('log_items.logitem_reps', Request::old('reps'));
+    	}
+        $query = $query->orderBy('log_exercises.log_date', 'desc')
+                        ->groupBy('logex_id');
+        if (Request::old('show') > 0)
+    	{
+    		$query = $query->take(Request::old('show'));
+    	}
+        $query = $query->lists('logex_id');
+        $log_exercises = Log_exercise::whereIn('logex_id', $query)->get();
+        $exercises = Exercise::listexercises(false)->get();
+        return view('log.search', compact('exercises', 'log_exercises'));
     }
 
     public function getVolume($from_date = 0, $to_date = 0)
     {
-        return view('log.volume');
+        $query = DB::table('logs')
+                    ->where('user_id', Auth::user()->user_id);
+        if ($from_date != 0)
+        {
+            $query = $query->where('log_date', '>=', $from_date);
+        }
+        if ($to_date != 0)
+        {
+            $query = $query->where('log_date', '<=', $to_date);
+        }
+        $max_volume = $query->max('log_total_volume');
+        $scales = [
+            'rep_scale' => floor($max_volume / $query->max('log_total_reps')),
+            'set_scale' => floor($max_volume / $query->max('log_total_sets')),
+        ];
+        $graphs = [
+            'Volume' => $query->lists('log_total_volume', 'log_date'),
+            'Total reps' => $query->lists('log_total_volume', 'log_date'),
+            'Total sets' => $query->lists('log_total_volume', 'log_date'),
+        ];
+        return view('log.volume', compact('from_date', 'to_date', 'scales', 'graphs'));
     }
 
-    public function postVolume($from_date = 0, $to_date = 0)
+    public function postVolume(Request $request)
     {
         return redirect()
-                ->route('totalVolume', ['date' => $date]);
+                ->route('totalVolume', ['to_date' => $request->input('to_date'), 'from_date' => $request->input('from_date')]);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use Illuminate\Http\Request;
 use App\Http\Requests\UpdateUserSettingsRequest;
 use App\Http\Controllers\Controller;
 use Auth;
@@ -11,9 +12,10 @@ use App\Invite_code;
 
 class UserController extends Controller
 {
-    public function search()
+    public function search(Request $request)
     {
-        return view('user.search');
+		$users = User::userlike($request->input('username'));
+        return view('user.search', compact('users'));
     }
 
     public function follow($user_name, $date)

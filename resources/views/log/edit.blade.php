@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', ucfirst($type) . ' Log')
+@section('title', ucfirst($type) . ' Log: ' . $date)
 
 @section('headerstyle')
 <style>

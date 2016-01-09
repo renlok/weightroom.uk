@@ -27,44 +27,23 @@
 </div>
 
 <div class="panel-group margintb" id="workouthistory" role="tablist" aria-multiselectable="true">
-<!-- BEGIN items -->
+@foreach ($log_exercises as $log_exercise)
   <div class="panel panel-default">
-    <div class="panel-heading" role="tab" id="heading{items.LOG_DATE}">
+    <div class="panel-heading" role="tab" id="heading{{ $log_exercise->log_date->toDateString() }}">
       <h4 class="panel-title">
-        <a class="collapsed" data-toggle="collapse" data-parent="#workouthistory" href="#collapse{items.LOG_DATE}" aria-expanded="false" aria-controls="collapse{items.LOG_DATE}">
-          {items.LOG_DATE}
+        <a class="collapsed" data-toggle="collapse" data-parent="#workouthistory" href="#collapse{{ $log_exercise->log_date->toDateString() }}" aria-expanded="false" aria-controls="collapse{{ $log_exercise->log_date->toDateString() }}">
+          {{ $log_exercise->log_date->toDateString() }}
         </a>
       </h4>
     </div>
-    <div id="collapse{items.LOG_DATE}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{items.LOG_DATE}">
+    <div id="collapse{{ $log_exercise->log_date->toDateString() }}" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading{{ $log_exercise->log_date->toDateString() }}">
       <div class="panel-body">
-        <p class="logrow">Volume: <span class="heavy">{items.VOLUME}</span>{WEIGHT_UNIT} - Reps: <span class="heavy">{items.REPS}</span> - Sets: <span class="heavy">{items.SETS}</span> - Avg. Intensity: <span class="heavy">{items.AVG_INT} <!-- IF AVG_INTENSITY_TYPE eq 0 -->%<!-- ELSEIF AVG_INTENSITY_TYPE eq 1 -->{WEIGHT_UNIT}<!-- ENDIF --></span></p>
-		<table class="table">
-		<tbody>
-		<!-- BEGIN sets -->
-			<tr<!-- IF items.sets.IS_PR --> class="alert alert-success"<!-- ENDIF --><!-- IF items.sets.REPS eq 0 --> class="alert alert-danger"<!-- ENDIF -->>
-				<td class="tdpr">
-					<!-- IF items.sets.IS_PR --><span class="glyphicon glyphicon-star" aria-hidden="true"></span><!-- ELSE -->&nbsp;<!-- ENDIF -->
-				</td>
-				<td class="logrow">
-					<!-- IF items.sets.REPS eq 0 --><del><!-- ENDIF --><span class="heavy">{items.sets.WEIGHT}</span><!-- IF items.sets.SHOW_UNIT -->{WEIGHT_UNIT}<!-- ENDIF --> x <span class="heavy">{items.sets.REPS}</span> x <span class="heavy">{items.sets.SETS}</span><!-- IF items.sets.REPS eq 0 --></del><!-- ELSEIF items.sets.REPS gt 1 && items.sets.SHOW_UNIT --> <small class="leftspace"><i>&#8776; {items.sets.EST1RM} {WEIGHT_UNIT}</i></small><!-- ENDIF --><!-- IF items.sets.RPES ne NULL --> @ {items.sets.RPES}<!-- ENDIF -->
-					<!-- IF items.sets.COMMENT ne '' --><div class="well well-sm">{items.sets.COMMENT}</div><!-- ENDIF -->
-				</td>
-				<td class="tdpr2">
-					<!-- IF items.sets.IS_PR --><span class="heavy">{items.sets.REPS} RM</span><!-- ELSE -->&nbsp;<!-- ENDIF -->
-				</td>
-			</tr>
-		<!-- END sets -->
-			<tr>
-				<td colspan="3">{items.COMMENT}</td>
-			</tr>
-		</tbody>
-		</table>
-			<small><a href="?do=view&page=log&date={items.LOG_DATE}">View log</a></small>
+        @include('common.logExercise', ['view_type' => 'history'])
+		<small><a href="{{ route('viewLog', ['date' => $log_exercise->log_date->toDateString()]) }}">View log</a></small>
       </div>
     </div>
   </div>
-<!-- END items -->
+@endforeach
 </div>
 @endsection
 

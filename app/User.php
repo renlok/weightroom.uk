@@ -55,6 +55,13 @@ class User extends Model implements AuthenticatableContract,
         return $this->user_id;
     }
 
+    public function scopeUserlike($query, $username)
+    {
+        return $query->where('user_id', $username)
+                    ->where('user_name', 'LIKE', '%'.$username.'%')
+                    ->lists('user_name');
+    }
+
     /**
      * a user can many logs
      *
