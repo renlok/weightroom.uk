@@ -72,29 +72,37 @@ class ExercisesController extends Controller
     {
         $exercise = Exercise::where('exercise_name', $exercise_name)
                     ->where('user_id', Auth::user()->user_id)->firstOrFail();
-        $log_exercises = $exercise->log_exercises();
+        $query = $exercise->log_exercises();
         if (!empty($from_date))
 		{
-            $log_exercises = $log_exercises->where('log_date', '>=', $from_date);
+            $query = $query->where('log_date', '>=', $from_date);
 		}
 		if (!empty($to_date))
 		{
-            $log_exercises = $log_exercises->where('log_date', '<=', $to_date);
+            $query = $query->where('log_date', '<=', $to_date);
 		}
         // get log_exercises
-        $log_exercises = $log_exercises->orderBy('log_date', 'desc')->get();
+        $query = $query->orderBy('log_date', 'desc');
+        $log_exercises = [
+            'Volume' => $query->lists('logex_volume', 'log_date'),
+            'Total reps' => $query->lists('logex_reps', 'log_date'),
+            'Total sets' => $query->lists('logex_sets', 'log_date'),
+            '1RM' => $query->lists('logex_1rm', 'log_date'),
+        ];
+        $query = $query->get();
         // set scales
-        $max_volume = $log_exercises->max('logex_volume');
-        $max_reps = $log_exercises->max('logex_reps');
-        $max_sets = $log_exercises->max('logex_sets');
+        $max_volume = $query->max('logex_volume');
+        $max_reps = $query->max('logex_reps');
+        $max_sets = $query->max('logex_sets');
         $max_rm = Exercise_record::getexercisemaxpr(Auth::user()->user_id, $exercise->exercise_id, $exercise->is_time);;
         $scales = [
-            'reps' => floor($max_volume / $max_reps),
-            'sets' => floor($max_volume / $max_sets),
-            'rm' => floor($max_volume / $max_rm),
+            'Volume' => 1,
+            'Total reps' => floor($max_volume / $max_reps),
+            'Total sets' => floor($max_volume / $max_sets),
+            '1RM' => floor($max_volume / $max_rm),
             'ai' => floor($max_volume / 100)
         ];
-        return view('exercise.history', compact('exercise_name', 'log_exercises', 'scales'));
+        return view('exercise.history', compact('exercise_name', 'log_exercises', 'scales', 'query'));
     }
 
     public function volume($exercise_name)
@@ -103,13 +111,13 @@ class ExercisesController extends Controller
         return view('exercise.volume');
     }
 
-    public function getViewExercise($exercise_name, $range = 0, $type = 'prs', $force_pr_type = null)
+    public function getViewExercise($exercise_name, $type = 'prs', $range = 0, $force_pr_type = null)
     {
         $exercise = Exercise::getexercise($exercise_name, Auth::user()->user_id)->firstOrFail();
         $query = Exercise_record::getexerciseprs(Auth::user()->user_id, Carbon::now()->toDateString(), $exercise_name, $exercise->is_time, true)->get();
         $current_prs = $query->groupBy('pr_reps')->toArray();
         $filtered_prs = Exercise_record::filterPrs($query);
-        $prs = Exercise_record::getexerciseprsall(Auth::user()->user_id, Carbon::now()->toDateString(), $exercise_name, $exercise->is_time)->get()->groupBy('pr_reps');
+        $prs = Exercise_record::getexerciseprsall(Auth::user()->user_id, $range, $exercise_name, $exercise->is_time, Auth::user()->user_showreps)->get()->groupBy('pr_reps');
         // be in format [1 => ['log_weight' => ??, 'log_date' => ??]]
 
         return view('exercise.view', compact('exercise_name', 'current_prs', 'filtered_prs', 'prs', 'range', 'type'));

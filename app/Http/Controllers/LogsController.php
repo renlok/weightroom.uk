@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
+use Auth;
+use DB;
+use App\Exercise;
+use App\Log;
+use App\Log_exercise;
+use App\User;
+use App\Extend\PRs;
+use App\Extend\Parser;
 use App\Http\Requests;
 use App\Http\Requests\LogRequest;
 use App\Http\Controllers\Controller;
-use App\User;
-use App\Log;
-use App\Log_exercise;
-use App\Exercise;
-use Auth;
-use App\Extend\PRs;
-use App\Extend\Parser;
+use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 class LogsController extends Controller
@@ -185,6 +185,7 @@ class LogsController extends Controller
             'rep_scale' => floor($max_volume / $query->max('log_total_reps')),
             'set_scale' => floor($max_volume / $query->max('log_total_sets')),
         ];
+        $query = $query->orderBy('log_date', 'asc');;
         $graphs = [
             'Volume' => $query->lists('log_total_volume', 'log_date'),
             'Total reps' => $query->lists('log_total_volume', 'log_date'),

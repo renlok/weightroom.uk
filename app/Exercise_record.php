@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use DB;
+use Carbon\Carbon;
 
 class Exercise_record extends Model
 {
@@ -34,15 +35,22 @@ class Exercise_record extends Model
         return $query;
     }
 
-    public function scopeGetexerciseprsall($query, $user_id, $log_date, $exercise_name, $is_time = false)
+    public function scopeGetexerciseprsall($query, $user_id, $range, $exercise_name, $is_time = false, $show_reps = [1,2,3,4,5,6,7,8,9,10])
     {
         $query = $query->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
                 ->select('pr_reps', 'pr_value', 'log_date')
                 ->where('exercise_records.user_id', $user_id)
                 ->where('exercises.exercise_name', $exercise_name)
                 ->where('exercises.is_time', $is_time)
-                ->where('log_date', '<=', $log_date)
-                ->orderBy('log_date', 'desc');
+                ->whereIn('pr_reps', $show_reps);
+        if ($range > 0)
+        {
+            $query = $query->where('log_date', '>=', Carbon::now()->subMonths($range)->toDateString());
+        }
+        $query = $query->groupBy('pr_reps')
+                ->groupBy('log_date')
+                ->orderBy('pr_reps', 'desc')
+                ->orderBy('log_date', 'asc');
         return $query;
     }
 
@@ -64,8 +72,12 @@ class Exercise_record extends Model
             {
                 $item->pr_value = $last_pr . '*';
             }
-            $last_pr = $item->pr_value;
+            else
+            {
+                $item->pr_value = (float)$item->pr_value;
+            }
+            $last_pr = (float)$item->pr_value;
             return $item;
-        })->reverse()->groupBy('pr_reps')->toArray()
+        })->reverse()->groupBy('pr_reps')->toArray();
     }
 }

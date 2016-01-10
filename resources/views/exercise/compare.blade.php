@@ -69,7 +69,7 @@
         @foreach ($records as $exercises)
             var dataset = [];
             @foreach ($exercises as $exercise_record)
-                dataset.push({x: new Date($date), y: $weight, shape:'circle'});
+                dataset.push({x: moment('{{ $date }}','YYYY-MM-DD').toDate(), y: $weight, shape:'circle'});
             @endforeach
             prHistoryChartData.push({
                 values: dataset,

@@ -9,27 +9,27 @@
 
 <p>Range:
 @if($range != 0)
-	<a href=" {{ route($type . 'Graph', ['range' => 0]) }} ">All</a>
+	<a href=" {{ route(strtolower($type) . 'Graph', ['range' => 0]) }} ">All</a>
 @else
 	All
 @endif |
 @if($range != 12)
-	<a href=" {{ route($type . 'Graph', ['range' => 12]) }} ">1 year</a>
+	<a href=" {{ route(strtolower($type) . 'Graph', ['range' => 12]) }} ">1 year</a>
 @else
 	1 year
 @endif |
 @if($range != 6)
-	<a href=" {{ route($type . 'Graph', ['range' => 6]) }} ">6 months</a>
+	<a href=" {{ route(strtolower($type) . 'Graph', ['range' => 6]) }} ">6 months</a>
 @else
 	6 months
 @endif |
 @if($range != 0)
-	<a href=" {{ route($type . 'Graph', ['range' => 3]) }} ">3 months</a>
+	<a href=" {{ route(strtolower($type) . 'Graph', ['range' => 3]) }} ">3 months</a>
 @else
 	3 months
 @endif |
 @if($range != 0)
-	<a href=" {{ route($type . 'Graph', ['range' => 1]) }} ">1 month</a>
+	<a href=" {{ route(strtolower($type) . 'Graph', ['range' => 1]) }} ">1 month</a>
 @else
 	1 month
 @endif </p>
@@ -52,7 +52,7 @@
 @foreach ($graphs as $graph_name => $graph_data)
 		var dataset = [];
 	@foreach ($graph_data as $data)
-		dataset.push({x: moment('{{ $data->log_date->toDateString() }}','YYYY-MM-DD').format(), y: {{ $data->log_weight }}, shape:'circle'});
+		dataset.push({x: moment('{{ $data->log_date->toDateString() }}','YYYY-MM-DD').toDate(), y: {{ $data->log_weight }}, shape:'circle'});
 	@endforeach
 		prHistoryChartData.push({
 			values: dataset,

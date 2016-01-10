@@ -73,9 +73,9 @@
 @foreach ($graphs as $graph_name => $graph_data)
 		var dataset = [];
 	@foreach ($graph_data as $log_date => $log_weight)
-		dataset.push({x: moment('{{ $log_date }}','YYYY-MM-DD').format(), y: {{ $log_weight }}, shape:'circle'});
+		dataset.push({x: moment('{{ $log_date }}','YYYY-MM-DD').toDate(), y: {{ $log_weight }}, shape:'circle'});
 	@endforeach
-		prHistoryChartData.push({
+		HistoryChartData.push({
 			values: dataset,
 			key: '{{ $graph_name }}'
 		});

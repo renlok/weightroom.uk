@@ -53,7 +53,24 @@
 <script>
     function HistoryData() {
 		var HistoryChartData = [];
-		{GRAPH_DATA}
+@foreach ($log_exercises as $graph_name => $graph_data)
+		var dataset = [];
+	@foreach ($graph_data as $log_date => $log_weight)
+		dataset.push({x: moment('{{ $log_date }}','YYYY-MM-DD').toDate(), y: {{ $log_weight * $scales[$graph_name] }}, shape:'circle'});
+	@endforeach
+		prHistoryChartData.push({
+			values: dataset,
+			key: '{{ $graph_name }}'
+		});
+@endforeach
+		var dataset = [];
+	@foreach ($query as $log_exercise)
+		dataset.push({x: moment('{{ $log_exercise->log_date->toDateString() }}','YYYY-MM-DD').toDate(), y: {{ $log_exercise->average_intensity * $scales['ai'] }}, shape:'circle'});
+	@endforeach
+		prHistoryChartData.push({
+			values: dataset,
+			key: 'Average Intensity'
+		});
 		return HistoryChartData;
     }
 
@@ -63,31 +80,31 @@
 		chart.tooltipContent(function(key, y, e, graph)
 		{
 			//console.log(key);
-			var units = '{{ $user->user_unit }}';
+			var units = '{{ Auth::user()->user_unit }}';
 			var point_value = key.point.y;
 			if (key.point.color == '#b84a68')
 				var tool_type = 'Volume';
 			if (key.point.color == '#a6bf50')
 			{
 				var tool_type = 'Total reps';
-				point_value = Math.round(point_value / {{ $rep_scale }});
+				point_value = Math.round(point_value / {{ $scales['Total reps'] }});
 				units = '';
 			}
 			if (key.point.color == '#56c5a6')
 			{
 				var tool_type = 'Total sets';
-				point_value = Math.round(point_value / {{ $set_scale }});
+				point_value = Math.round(point_value / {{ $scales['Total sets'] }});
 				units = '';
 			}
 			if (key.point.color == '#765dcb')
 			{
 				var tool_type = '1RM';
-				point_value = (point_value / {{ $rm_scale }}).toFixed(2);
+				point_value = (point_value / {{ $scales['1RM'] }}).toFixed(2);
 			}
 			if (key.point.color == '#907fcc')
 			{
 				var tool_type = 'Average Intensity';
-				point_value = Math.round(point_value / {{ $ai_scale }});
+				point_value = Math.round(point_value / {{ $scales['ai'] }});
 				units = '%';
 			}
 			return '<pre>' + tool_type + ': ' + point_value + units + '</pre>';
