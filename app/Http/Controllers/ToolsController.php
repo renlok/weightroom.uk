@@ -10,7 +10,7 @@ use Auth;
 use App\User;
 use App\Log;
 use App\Exercise_record;
-use App\Entend\Graph;
+use App\Extend\Graph;
 
 class ToolsController extends Controller
 {
@@ -22,7 +22,7 @@ class ToolsController extends Controller
     public function bodyweight($range = 0)
     {
         $graphs = [];
-        $graphs['Bodyweight'] = Log::getbodyweight(Auth::user()->user_id)->get();
+        $graphs['Bodyweight'] = Log::getbodyweight(Auth::user()->user_id)->get()->toArray();
         return view('tools.bodyweight', compact('range', 'graphs'));
     }
 
@@ -43,10 +43,11 @@ class ToolsController extends Controller
         $wilks_bodyweight = $graphs['Bodyweight']->groupBy(function ($item, $key) {
             return $item['log_date']->toDateString();
         })->toArray();
+        $graphs['Bodyweight'] = $graphs['Bodyweight']->unique('log_weight')->toArray();
         $wilks_data = array_merge_recursive($wilks_exercises, $wilks_bodyweight);
         // map
         $temp = [];
-        $graphs['Wilks'] = array_map(function($key, $item) use (&$temp){
+        $graphs['Wilks'] = array_filter(array_map(function($key, $item) use (&$temp){
             foreach ($item as $exercise)
             {
                 if (isset($exercise['exercise_name']))
@@ -66,7 +67,7 @@ class ToolsController extends Controller
                 $temp = [];
                 return $wilks;
             }
-        }, array_keys($wilks_data), $wilks_data);
+        }, array_keys($wilks_data), $wilks_data));
         return view('tools.wilks', compact('range', 'graphs'));
     }
 
@@ -87,10 +88,11 @@ class ToolsController extends Controller
         $wilks_bodyweight = $graphs['Bodyweight']->groupBy(function ($item, $key) {
             return $item['log_date']->toDateString();
         })->toArray();
+        $graphs['Bodyweight'] = $graphs['Bodyweight']->unique('log_weight')->toArray();
         $wilks_data = array_merge_recursive($wilks_exercises, $wilks_bodyweight);
         // map
         $temp = [];
-        $graphs['Sinclair'] = array_map(function($key, $item) use (&$temp){
+        $graphs['Sinclair'] = array_filter(array_map(function($key, $item) use (&$temp){
             foreach ($item as $exercise)
             {
                 if (isset($exercise['exercise_name']))
@@ -110,7 +112,7 @@ class ToolsController extends Controller
                 $temp = [];
                 return $wilks;
             }
-        }, array_keys($wilks_data), $wilks_data);
+        }, array_keys($wilks_data), $wilks_data));
         return view('tools.sinclair', compact('range', 'graphs'));
     }
 

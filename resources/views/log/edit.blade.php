@@ -165,7 +165,7 @@ $('#openhelp').click(function() {
 	$('#formattinghelp').slideToggle('fast');
 	return false;
 });
-var $ELIST = {!! $exercises !!};
+var $ELIST = [{!! $exercises !!}];
 function getHints(cm) {
 
     var cur = cm.getCursor(),

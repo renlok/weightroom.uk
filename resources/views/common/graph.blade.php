@@ -23,12 +23,12 @@
 @else
 	6 months
 @endif |
-@if($range != 0)
+@if($range != 3)
 	<a href=" {{ route(strtolower($type) . 'Graph', ['range' => 3]) }} ">3 months</a>
 @else
 	3 months
 @endif |
-@if($range != 0)
+@if($range != 1)
 	<a href=" {{ route(strtolower($type) . 'Graph', ['range' => 1]) }} ">1 month</a>
 @else
 	1 month
@@ -52,7 +52,7 @@
 @foreach ($graphs as $graph_name => $graph_data)
 		var dataset = [];
 	@foreach ($graph_data as $data)
-		dataset.push({x: moment('{{ $data->log_date->toDateString() }}','YYYY-MM-DD').toDate(), y: {{ $data->log_weight }}, shape:'circle'});
+		dataset.push({x: moment('{{ $data['log_date'] }}','YYYY-MM-DD').toDate(), y: {{ $data['log_weight'] }}, shape:'circle'});
 	@endforeach
 		prHistoryChartData.push({
 			values: dataset,
