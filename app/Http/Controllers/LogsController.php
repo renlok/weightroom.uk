@@ -20,7 +20,7 @@ class LogsController extends Controller
 {
     public function viewUser($user_name)
     {
-        return $this->view(Carbon::now()->toDateString, $user_name)
+        return $this->view(Carbon::now()->toDateString, $user_name);
     }
 
     public function view($date, $user_name = '')
@@ -30,14 +30,12 @@ class LogsController extends Controller
             $user_name = Auth::user()->user_name;
         }
         $user = User::where('user_name', $user_name)->firstOrFail();
-        if ($user->logs != null)
+        $log = $user->logs()->where('log_date', $date)->first();
+        if ($log != null)
         {
-            $log = $user->logs()->where('log_date', $date)->first();
-            $log->average_intensity = $log->log_exercises()->sum('average_intensity');
-        }
-        else
-        {
-            $log = null;
+            //TODO fix this
+            //$log->average_intensity = $log->log_exercises()->sum('average_intensity');
+            $log->average_intensity = '';
         }
         if ($user->invite_code == null)
         {
@@ -71,7 +69,11 @@ class LogsController extends Controller
         $exercises = '';
         foreach ($exercise_list as $exercise)
         {
-            $exercises[$exercise['exercise_name']] = $exercise['COUNT'];
+            if ($exercises != '')
+            {
+                $exercises .= ',';
+            }
+            $exercises .= "[\"{$exercise['exercise_name']}\", {$exercise['COUNT']}]";
         }
         return view('log.edit', compact('date', 'log', 'user', 'type', 'exercises'));
     }
@@ -90,16 +92,20 @@ class LogsController extends Controller
     public function getNew($date)
     {
         $user = User::find(Auth::user()->user_id)->firstOrFail();
-        $log = collect([
+        $log = [
             'log_text' => '',
             'log_weight' => Log::getlastbodyweight(Auth::user()->user_id, $date)->value('log_weight'),
-        ]);
+        ];
         $type = 'new';
         $exercise_list = Exercise::listexercises(true)->get();
         $exercises = '';
         foreach ($exercise_list as $exercise)
         {
-            $exercises[$exercise['exercise_name']] = $exercise['COUNT'];
+            if ($exercises != '')
+            {
+                $exercises .= ',';
+            }
+            $exercises .= "[\"{$exercise['exercise_name']}\", {$exercise['COUNT']}]";
         }
         return view('log.edit', compact('date', 'log', 'user', 'type', 'exercises'));
     }
@@ -142,7 +148,7 @@ class LogsController extends Controller
     public function getSearch()
     {
         $query = DB::table('log_items')
-                    ->join('exercises', 'exercises.exercise_id' '=' 'log_items.exercise_id')
+                    ->join('exercises', 'exercises.exercise_id', '=', 'log_items.exercise_id')
                     ->where('log_items.user_id', Auth::user()->user_id)
                     ->where('log_items.logitem_weight', Request::old('weightoperator'), $request->input('weight'))
                     ->where('exercises.exercise_name', Request::old('exercise'));

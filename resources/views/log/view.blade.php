@@ -96,7 +96,7 @@
 	<p class="logrow">
 		Volume: <span class="heavy">{{ $log->log_total_volume + ($log->log_failed_volume * $user->user_volumeincfails) }}</span>{{ $user->user_unit }} - Reps: <span class="heavy">{{ $log->log_total_reps }}</span> - Sets: <span class="heavy">{{ $log->log_total_reps }}</span>
 	@if (Auth::user()->user_showintensity != 'h')
-		- Avg. Intensity: <span class="heavy">{{ $log->$log->average_intensity }}</span>
+		- Avg. Intensity: <span class="heavy">{{ $log->average_intensity }}</span>
 	@endif
 	</p>
 	<p class="logrow marginl"><small>Bodyweight: <span class="heavy">{{ $log->log_weight }}</span>{{ $user->user_unit }}</small></p>

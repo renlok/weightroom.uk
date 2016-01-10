@@ -50,6 +50,6 @@ class Log_exercise extends Model
      */
     public function getAverageIntensityAttribute()
     {
-        $this->attributes['average_intensity'] = Log_control::average_intensity($this->attributes['user_id'], $this->attributes['exercise_id'], $this->attributes['logex_id']);
+        return $this->attributes['average_intensity'] = Log_control::average_intensity($this->attributes['user_id'], $this->attributes['exercise_id'], $this->attributes['logex_id']);
     }
 }

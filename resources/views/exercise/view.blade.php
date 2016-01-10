@@ -3,7 +3,7 @@
 @section('title', $exercise_name)
 
 @section('headerstyle')
-<link href="{{ asset(css/nv.d3.css) }}" rel="stylesheet">
+<link href="{{ asset('css/nv.d3.css') }}" rel="stylesheet">
 <style>
 #prHistoryChart .nv-lineChart circle.nv-point {
   fill-opacity: 2;
@@ -48,12 +48,12 @@
 <tbody>
   <tr>
 @for ($i = 1; $i <= 10; $i++)
-    <td>{{ (isset($filtered_prs[$i])) ? $filtered_prs[$i]['pr_value'] : '-' }}</td>
+    <td>{{ (isset($filtered_prs[$i])) ? $filtered_prs[$i][0]['pr_value'] : '-' }}</td>
 @endfor
   </tr>
   <tr>
 @for ($i = 1; $i <= 10; $i++)
-    <td>{{ (isset($current_prs[$i])) ? '<a href="' . route('viewLog', ['date' => $current_prs[$i]['log_date']]) . '">' . $current_prs[$i]['pr_value'] . '</a>' : '-' }}</td>
+    <td>{!! (isset($current_prs[$i])) ? '<a href="' . route('viewLog', ['date' => $current_prs[$i][0]['log_date']]) . '">' . $current_prs[$i][0]['pr_value'] . '</a>' : '-' !!}</td>
 @endfor
   </tr>
 </tbody>
@@ -104,7 +104,8 @@
 
 @section('endjs')
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-<script src="{{ asset(js/nv.d3.js) }}"></script>
+<script src="http://momentjs.com/downloads/moment.js"></script>
+<script src="{{ asset('js/nv.d3.js') }}"></script>
 
 <script>
     function prHistoryData() {
@@ -112,7 +113,7 @@
 @foreach ($prs as $rep_name => $graph_data)
 		var dataset = [];
 	@foreach ($graph_data as $data)
-		dataset.push({x: moment('{{ $data->log_date->toDateString() }}','YYYY-MM-DD').format(), y: {{ $data->log_weight }}, shape:'circle'});
+		dataset.push({x: moment('{{ $data->log_date->toDateString() }}','YYYY-MM-DD').format(), y: {{ $data->pr_value }}, shape:'circle'});
 	@endforeach
 		prHistoryChartData.push({
 			values: dataset,

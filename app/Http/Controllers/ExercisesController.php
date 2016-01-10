@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Auth;
 use DB;
 use Validator;
 use App\Http\Requests;
@@ -83,10 +84,10 @@ class ExercisesController extends Controller
         // get log_exercises
         $log_exercises = $log_exercises->orderBy('log_date', 'desc')->get();
         // set scales
-        $max_volume = $log_exercises->max('price');
-        $max_reps = $log_exercises->max('price');
-        $max_sets = $log_exercises->max('price');
-        $max_rm = $log_exercises->max('price');
+        $max_volume = $log_exercises->max('logex_volume');
+        $max_reps = $log_exercises->max('logex_reps');
+        $max_sets = $log_exercises->max('logex_sets');
+        $max_rm = Exercise_record::getexercisemaxpr(Auth::user()->user_id, $exercise->exercise_id, $exercise->is_time);;
         $scales = [
             'reps' => floor($max_volume / $max_reps),
             'sets' => floor($max_volume / $max_sets),
@@ -102,16 +103,16 @@ class ExercisesController extends Controller
         return view('exercise.volume');
     }
 
-    public function getViewExercise($exercise_name, $range = 0, $type = 'all', $force_pr_type = null)
+    public function getViewExercise($exercise_name, $range = 0, $type = 'prs', $force_pr_type = null)
     {
-        $exercise = Exercise::getexercise($exercise_name, Auth::user()->user_id);
-        $current_prs = Exercise_record::getexerciseprs(Auth::user()->user_id, Carbon::now()->toDateString(), $exercise_name, $exercise->is_time, true)->get();
-        $filtered_prs = Exercise_record::filterPrs($current_prs);
-        $current_prs = $current_prs->groupBy('pr_reps')->toArray();
+        $exercise = Exercise::getexercise($exercise_name, Auth::user()->user_id)->firstOrFail();
+        $query = Exercise_record::getexerciseprs(Auth::user()->user_id, Carbon::now()->toDateString(), $exercise_name, $exercise->is_time, true)->get();
+        $current_prs = $query->groupBy('pr_reps')->toArray();
+        $filtered_prs = Exercise_record::filterPrs($query);
         $prs = Exercise_record::getexerciseprsall(Auth::user()->user_id, Carbon::now()->toDateString(), $exercise_name, $exercise->is_time)->get()->groupBy('pr_reps');
         // be in format [1 => ['log_weight' => ??, 'log_date' => ??]]
 
-        return view('exercise.view', compact('exercise_name', 'current_prs', 'filtered_prs', 'prs', 'range'));
+        return view('exercise.view', compact('exercise_name', 'current_prs', 'filtered_prs', 'prs', 'range', 'type'));
     }
 
     public function getCompareForm()

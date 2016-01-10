@@ -14,7 +14,10 @@ $tables = [
     'users' => 'users'
 ];
 $renamed = [
-    'exercise_records' => ['pr_weight' => 'pr_value'],
+    'exercise_records' => [
+        'pr_weight' => 'pr_value',
+        'pr_date' => 'log_date'
+    ],
     'exercises' => [],
     'invite_codes' => ['code_expire' => 'code_expires'],
     'log_comments' => [
@@ -25,7 +28,7 @@ $renamed = [
     ],
     'log_exercises' => ['logex_date' => 'log_date'],
     'log_items' => [
-        'logitem_rpes' => 'logitem_pre'.
+        'logitem_rpes' => 'logitem_pre',
         'logitem_date' => 'log_date'
     ],
     'logs' => [],
@@ -33,9 +36,14 @@ $renamed = [
     'user_follows' => ['follow_date' => ''],
     'users' => [
         'user_unit' => '',
+        'user_hash' => '',
         'user_gender' => '',
         'user_showreps' => '',
-        'user_showintensity' => ''
+        'user_showintensity' => '',
+        'user_viewintensityabs' => '',
+        'user_lastlogin' => '',
+        'user_joined' => 'created_at',
+        'user_pass' => 'user_password'
     ]
 ];
 
@@ -49,18 +57,23 @@ foreach ($tables as $old_name => $table)
         $values = $colomns = '';
         foreach ($keys as $key)
         {
-            if ($values != '')
-            {
-                $values .= ',';
-                $colomns .= ',';
-            }
             if (isset($renamed[$old_name][$key]) && $renamed[$old_name][$key] != '')
             {
+                if ($values != '')
+                {
+                    $values .= ',';
+                    $colomns .= ',';
+                }
                 $values .= '"' . str_replace('"', '\"', $row[$key]) . '"';
                 $colomns .= "`" . $renamed[$old_name][$key] . "`";
             }
             elseif (!isset($renamed[$old_name][$key]))
             {
+                if ($values != '')
+                {
+                    $values .= ',';
+                    $colomns .= ',';
+                }
                 $values .= '"' . str_replace('"', '\"', $row[$key]) . '"';
                 $colomns .= "`" . $key . "`";
             }
@@ -71,7 +84,7 @@ foreach ($tables as $old_name => $table)
 }
 
 // calculate is_est1rm
-$query = "SELECT * FROM exercise_records ORDER BY user_id, exercise_id, pr_reps, log_date ASC";
+$query = "SELECT * FROM exercise_records ORDER BY user_id, exercise_id, pr_reps, pr_date ASC";
 $user_id = $exercise_id = $pr_reps = $max = 0;
 $result = $db->query($query);
 while ($row = $result->fetch_assoc())
@@ -100,12 +113,12 @@ while ($row = $result->fetch_assoc())
     echo "UPDATE logs SET log_total_volume = {$row['logex_volume']}, log_total_reps = {$row['logex_reps']}, log_total_sets = {$row['logex_sets']} WHERE log_id = {$row['log_id']};\n";
 }
 
-// get failed volume
-$query = "SELECT SUM(logitem_weight*logitem_sets) as failedvolume, log_id FROM `log_items` WHERE logitem_reps = 0 GROUP BY log_id";
+// get failed volume logs
+$query = "SELECT SUM(logitem_weight*logitem_sets) as failedvolume, SUM(logitem_sets) as failedsets, log_id FROM `log_items` WHERE logitem_reps = 0 GROUP BY log_id";
 $result = $db->query($query);
 while ($row = $result->fetch_assoc())
 {
-    echo "UPDATE logs SET log_failed_volume = {$row['failedvolume']} WHERE log_id = {$row['log_id']};\n";
+    echo "UPDATE logs SET log_failed_volume = {$row['failedvolume']}, log_failed_sets = {$row['failedsets']} WHERE log_id = {$row['log_id']};\n";
 }
 
 // get logex_id
@@ -116,5 +129,13 @@ $result = $db->query($query);
 while ($row = $result->fetch_assoc())
 {
     echo "UPDATE log_items SET logex_id = {$row['logex_id']} WHERE exercise_id = {$row['exercise_id']} AND log_id = {$row['log_id']};\n";
+}
+
+// get failed volume log_exercises
+$query = "SELECT SUM(logitem_weight*logitem_sets) as failedvolume, SUM(logitem_sets) as failedsets, exercise_id, log_id FROM `log_items` WHERE logitem_reps = 0 GROUP BY exercise_id, log_id";
+$result = $db->query($query);
+while ($row = $result->fetch_assoc())
+{
+    echo "UPDATE log_exercises SET logex_failed_volume = {$row['failedvolume']}, logex_failed_sets = {$row['failedsets']} WHERE exercise_id = {$row['exercise_id']} AND log_id = {$row['log_id']};\n";
 }
 $db->close();

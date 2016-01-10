@@ -20,7 +20,7 @@ class Exercise_record extends Model
         $query = $query->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
                 ->where('exercise_records.user_id', $user_id)
                 ->where('exercises.exercise_name', $exercise_name)
-                ->where('is_time', $is_time)
+                ->where('exercises.is_time', $is_time)
                 ->where('log_date', '<=', $log_date)
                 ->groupBy('pr_reps');
         if ($return_date)
@@ -37,10 +37,10 @@ class Exercise_record extends Model
     public function scopeGetexerciseprsall($query, $user_id, $log_date, $exercise_name, $is_time = false)
     {
         $query = $query->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
-                ->select('pr_reps', DB::raw('MAX(pr_value) as pr_value'), DB::raw('MAX(log_date) as log_date'))
+                ->select('pr_reps', 'pr_value', 'log_date')
                 ->where('exercise_records.user_id', $user_id)
                 ->where('exercises.exercise_name', $exercise_name)
-                ->where('is_time', $is_time)
+                ->where('exercises.is_time', $is_time)
                 ->where('log_date', '<=', $log_date)
                 ->orderBy('log_date', 'desc');
         return $query;
@@ -60,7 +60,8 @@ class Exercise_record extends Model
     {
         $last_pr = 0;
         return $collection->reverse()->map(function ($item, $key) use (&$last_pr) {
-            if ($item->pr_value <= $last_pr)
+            if ($item->pr_value < $last_pr)
+            {
                 $item->pr_value = $last_pr . '*';
             }
             $last_pr = $item->pr_value;

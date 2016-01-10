@@ -51,7 +51,7 @@
 <form action="{{ url('log/' . $date . '/' . $type) }}" method="post">
 <div class="form-group">
     <label for="log">Log Data:</label>
-	<textarea rows="30" cols="50" name="log" id="log" class="form-control">{{ $log->log_text }}</textarea>
+	<textarea rows="30" cols="50" name="log" id="log" class="form-control">{{ $log['log_text'] }}</textarea>
 	<a href="#formattinghelp" id="openhelp">Formatting help</a>
 	<pre id="formattinghelp" class="cm-s-default"></pre>
 	<textarea id='formattinghelptext' style="display:none;">
@@ -88,7 +88,7 @@ you can also have the same exercise multiple times
 </div>
 <label for="weight">Bodyweight:</label>
 <div class="input-group">
-	<input type="text" class="form-control" placeholder="User's Weight" aria-describedby="basic-addon2" name="weight" value="{{ $log->log_weight }}">
+	<input type="text" class="form-control" placeholder="User's Weight" aria-describedby="basic-addon2" name="weight" value="{{ $log['log_weight'] }}">
 	<span class="input-group-addon" id="basic-addon2">{{ $user->user_unit }}</span>
 </div>
 <div class="input-group margintb">

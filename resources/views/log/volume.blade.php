@@ -3,8 +3,8 @@
 @section('title', 'Volume')
 
 @section('headerstyle')
-<link href="{{ asset(css/pickmeup.css) }}" rel="stylesheet">
-<link href="{{ asset(css/nv.d3.css) }}" rel="stylesheet">
+<link href="{{ asset('css/pickmeup.css') }}" rel="stylesheet">
+<link href="{{ asset('css/nv.d3.css') }}" rel="stylesheet">
 <style>
 .leftspace {
 	margin-left: 10px;
@@ -51,7 +51,7 @@
 <script src="http://nazar-pc.github.io/PickMeUp/js/jquery.pickmeup.js"></script>
 <script src="http://momentjs.com/downloads/moment.js"></script>
 <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
-<script src="{{ asset(js/nv.d3.js) }}"></script>
+<script src="{{ asset('js/nv.d3.js') }}"></script>
 <script>
     $('#from_date').pickmeup({
     	date		: moment('{{ $from_date }}','YYYY-MM-DD').format(),

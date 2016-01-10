@@ -3,14 +3,13 @@
 namespace App\Extend;
 
 use Auth;
+use DB;
 use App\Exercise;
 use App\Exercise_record;
 
 class Log_control {
-    public static function correct_totals($user_id, $exercise_id, $logex_id)
+    public static function correct_totals($user_id, $exercise_id, $logex_id, $current_1rm)
     {
-        $exercise_is_time = Exercise::find($exercise_id)->value('is_time');
-        $current_1rm = Exercise_record::getexercisemaxpr($user_id, $this->attributes['exercise_id'], $exercise_is_time);
         $log_exercise = DB::table('log_exercises')
                             ->select('logex_volume', 'logex_reps', 'logex_sets', 'logex_failed_volume', 'logex_failed_sets', 'logex_warmup_volume', 'logex_warmup_reps', 'logex_warmup_sets')
                             ->where('logex_id', $logex_id)
@@ -21,7 +20,7 @@ class Log_control {
                         ->select(DB::raw('SUM(logitem_weight*logitem_reps*logitem_sets) as logitem_weight, SUM(logitem_reps*logitem_sets) as logitem_reps, SUM(logitem_sets) as logitem_sets'))
                         ->where('logex_id', $logex_id)
                         ->where('logitem_weight', '<', $current_1rm * (Auth::user()->user_limitintensity/100))
-                        ->get();
+                        ->first();
 			$log_exercise->logex_volume -= $items->logitem_weight;
             $log_exercise->logex_reps -= $items->logitem_reps;
             $log_exercise->logex_sets -= $items->logitem_sets;
@@ -46,14 +45,16 @@ class Log_control {
 
     public static function average_intensity($user_id, $exercise_id, $logex_id)
     {
-        $log_exercise = Log_control::correct_totals($user_id, $exercise_id, $logex_id);
+        $exercise_is_time = Exercise::find($exercise_id)->value('is_time');
+        $current_1rm = Exercise_record::getexercisemaxpr($user_id, $exercise_id, $exercise_is_time);
+        $log_exercise = Log_control::correct_totals($user_id, $exercise_id, $logex_id, $current_1rm);
 
 		if (Auth::user()->user_showintensity == 'p')
 		{
 			if ($current_1rm > 0 && $log_exercise->logex_reps > 0)
 			{
 				// the current 1rm has been set
-				$average_intensity = (($log_exercise->logex_volume / $log_exercise->logex_reps) / $current_1rm) * 100 . '%';
+				$average_intensity = round((($log_exercise->logex_volume / $log_exercise->logex_reps) / $current_1rm) * 100) . '%';
 			}
 			else
 			{
@@ -63,8 +64,8 @@ class Log_control {
 		}
 		else
 		{
-			$average_intensity = (($log_exercise->logex_reps > 0) ? ($log_exercise->logex_volume / $log_exercise->logex_reps) : 0) . ' ' . Auth::user()->user_unit;
+			$average_intensity = (($log_exercise->logex_reps > 0) ? round($log_exercise->logex_volume / $log_exercise->logex_reps), 1) : 0) . ' ' . Auth::user()->user_unit;
 		}
-		return round($average_intensity, 1);
+		return $average_intensity;
     }
 }
