@@ -30,12 +30,12 @@ Route::post('password/reset', 'Auth\PasswordController@postReset');
 
 // User controller
 Route::group(['prefix' => 'user', 'middleware' => 'auth'], function () {
-    Route::post('search', 'userController@search')->name('userSearch');
-    Route::get('settings', 'userController@getSettings')->name('userSettings');
-    Route::post('settings', 'userController@postSettings');
+    Route::post('search', 'UserController@search')->name('userSearch');
+    Route::get('settings', 'UserController@getSettings')->name('userSettings');
+    Route::post('settings', 'UserController@postSettings');
     // follow/unfollow routes
-    Route::get('follow/{user_name}/{date?}', 'userController@follow')->name('followUser');
-    Route::get('unfollow/{user_name}/{date?}', 'userController@unfollow')->name('unfollowUser');
+    Route::get('follow/{user_name}/{date?}', 'UserController@follow')->name('followUser');
+    Route::get('unfollow/{user_name}/{date?}', 'UserController@unfollow')->name('unfollowUser');
 });
 
 // Log controller
