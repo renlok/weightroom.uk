@@ -310,7 +310,7 @@ class Parser
 			// set exercise name
 			$exercise_name = trim($item['name']);
 			// reset totals
-			$total_volume = $failed_volume = $total_reps = $total_sets = 0;
+			$total_volume = $failed_volume = $failed_sets = $total_reps = $total_sets = 0;
             $logex_warmup_volume = $logex_warmup_reps = $logex_warmup_sets = 0;
             // get exercise information
             $exercise = Exercise::getexercise($exercise_name, $this->user->user_id)->first();
@@ -340,8 +340,8 @@ class Parser
                 'logex_order' => $i
             ]);
             $prs = [];
-            $prs['T'] = Exercise_record::getexerciseprs($this->user->user_id, $log_date, $exercise_name, true)->get()->toArray();
-            $prs['W'] = Exercise_record::getexerciseprs($this->user->user_id, $log_date, $exercise_name, false)->get()->toArray();
+            $prs['T'] = Exercise_record::getexerciseprs($this->user->user_id, $log_date, $exercise_name, true)->toArray();
+            $prs['W'] = Exercise_record::getexerciseprs($this->user->user_id, $log_date, $exercise_name, false)->toArray();
 			$max_estimate_rm = 0;
 			for ($j = 0, $count_j = count($item['data']); $j < $count_j; $j++)
 			{
@@ -366,8 +366,8 @@ class Parser
 					$is_time = true;
 					$set['W'] = 0;
 				}
-				$set['R'] = (isset($set['R'])) ? $set['R'] : 1;
-				$set['S'] = (isset($set['S'])) ? $set['S'] : 1;
+				$set['R'] = (isset($set['R'])) ? intval($set['R']) : 1;
+				$set['S'] = (isset($set['S'])) ? intval($set['S']) : 1;
 				$set['C'] = (isset($set['C'])) ? $set['C'] : '';
                 $is_warmup = false;
                 // check if the comment is a special tag
@@ -684,17 +684,17 @@ class Parser
 		{
 			// update is_pr flag
             DB::table('log_items')
-                ->where('log_id', $set['log_id'])
+                ->where('log_id', $set->log_id)
                 ->update(['is_pr' => 1]);
             // get old est 1rm data
             $old_1rm = DB::table('exercise_records')
                         ->where('user_id', $user_id)
-                        ->where('log_date', '<', $set['log_date'])
+                        ->where('log_date', '<', $set->log_date)
                         ->where('exercise_id', $exercise_id)
                         ->where('is_time', $is_time)
                         ->orderBy('log_date', 'desc')
                         ->value('pr_1rm');
-            $new_1rm = $this->generate_rm ($set['logitem_abs_weight'], $set_reps);
+            $new_1rm = $this->generate_rm ($set->logitem_abs_weight, $set_reps);
             $is_est1rm = ($old_1rm < $new_1rm) ? true : false;
 			// insert pr data
             DB::table('exercise_records')
@@ -702,7 +702,7 @@ class Parser
                     'exercise_id' => $exercise_id,
                     'user_id' => $user_id,
                     'log_date' => $log_date,
-                    'pr_value' => $set['logitem_abs_weight'],
+                    'pr_value' => $set->logitem_abs_weight,
                     'pr_reps' => $set_reps,
                     'pr_1rm' => $new_1rm,
                     'is_est1rm' => $is_est1rm,

@@ -64,7 +64,7 @@ class Log_control {
 		}
 		else
 		{
-			$average_intensity = (($log_exercise->logex_reps > 0) ? round($log_exercise->logex_volume / $log_exercise->logex_reps), 1) : 0) . ' ' . Auth::user()->user_unit;
+			$average_intensity = (($log_exercise->logex_reps > 0) ? round(($log_exercise->logex_volume / $log_exercise->logex_reps), 1) : 0) . ' ' . Auth::user()->user_unit;
 		}
 		return $average_intensity;
     }

@@ -19,6 +19,7 @@ class Exercise_record extends Model
     public function scopeGetexerciseprs($query, $user_id, $log_date, $exercise_name, $is_time = false, $return_date = false)
     {
         $query = $query->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
+                ->select(DB::raw('MAX(pr_value) as pr_value'), 'pr_reps')
                 ->where('exercise_records.user_id', $user_id)
                 ->where('exercises.exercise_name', $exercise_name)
                 ->where('exercises.is_time', $is_time)
@@ -26,11 +27,11 @@ class Exercise_record extends Model
                 ->groupBy('pr_reps');
         if ($return_date)
         {
-            $query = $query->select('pr_reps', DB::raw('MAX(pr_value) as pr_value'), DB::raw('MAX(log_date) as log_date'));
+            $query = $query->addSelect(DB::raw('MAX(log_date) as log_date'));
         }
         else
         {
-            $query = $query->lists(DB::raw('MAX(pr_value) as pr_value'), 'pr_reps');
+            $query = $query->lists('pr_value', 'pr_reps');
         }
         return $query;
     }
