@@ -9,6 +9,7 @@ use Auth;
 use App\User;
 use App\Exercise;
 use App\User_follow;
+use App\Notification;
 
 class UserController extends Controller
 {
@@ -22,11 +23,11 @@ class UserController extends Controller
     {
         // add follower
         $user_id = User::where('user_name', $user_name)->firstOrFail()->user_id;
-        User_follow::insert([
+        User_follow::create([
             'user_id' => Auth::user()->user_id,
             'follow_user_id' => $user_id
         ]);
-        DB::table('notifications')->insert([
+        Notification::create([
             'user_id' => $user_id,
             'notification_type' => 'follow',
             'notification_value' => Auth::user()->user_name

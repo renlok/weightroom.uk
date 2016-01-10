@@ -5,6 +5,8 @@ namespace App\Extend;
 use Auth;
 use DB;
 use App\Log;
+use App\Log_item;
+use App\Log_exercise;
 use App\User;
 use App\Exercise;
 use App\Exercise_record;
@@ -278,14 +280,14 @@ class Parser
                 ->where('user_id', $this->user->user_id)
                 ->delete();
 			// add a new entry
-            $log_id = DB::table('logs')
-                        ->insertGetId([
-                            'log_text' => $this->log_text,
-                            'log_comment' => $this->replace_video_urls($this->log_data['comment']),
-                            'log_weight' => $user_weight,
-                            'log_date' => $log_date,
-                            'user_id' => $this->user->user_id
-                        ]);
+            $log = Log::create([
+                'log_text' => $this->log_text,
+                'log_comment' => $this->replace_video_urls($this->log_data['comment']),
+                'log_weight' => $user_weight,
+                'log_date' => $log_date,
+                'user_id' => $this->user->user_id
+            ]);
+            $log_id = $log->log_id;
 		}
         // values that must be updated later
         $log_warmup_volume = $log_warmup_reps = $log_warmup_sets = $log_total_volume = $log_failed_volume = $log_failed_sets = $log_total_reps = $log_total_sets = 0;
@@ -318,10 +320,11 @@ class Parser
             if ($exercise == null)
             {
                 $exercise_is_new = true;
-                $exercise_id = Exercise::insertGetId([
+                $exercise = Exercise::create([
                     'exercise_name' => $exercise_name,
                     'user_id' => $this->user->user_id
                 ]);
+                $exercise_id = $exercise->exercise_id
                 $exercise_is_time = false; // assume this for now
             }
             else
@@ -331,7 +334,7 @@ class Parser
                 $exercise_is_time = $exercise->is_time;
             }
             // insert log_exercise
-            $log_exercises_id = DB::table('log_exercises')->insertGetId([
+            $log_exercise = Log_exercise::create([
                 'log_date' => $log_date,
                 'log_id' => $log_id,
                 'user_id' => $this->user->user_id,
@@ -339,6 +342,7 @@ class Parser
                 'logex_comment' => $this->replace_video_urls($item['comment']),
                 'logex_order' => $i
             ]);
+            $log_exercises_id = $log_exercise->logex_id;
             $prs = [];
             $prs['T'] = Exercise_record::getexerciseprs($this->user->user_id, $log_date, $exercise_name, true)->toArray();
             $prs['W'] = Exercise_record::getexerciseprs($this->user->user_id, $log_date, $exercise_name, false)->toArray();
@@ -452,7 +456,7 @@ class Parser
 					$log_item_data['logitem_pre'] = NULL;
 				else
 					$log_item_data['logitem_pre'] = $set['P'];
-                DB::table('log_items')->insert($log_item_data);
+                Log_item::create($log_item_data);
 			}
             // if new exercise set if it a time based exercise
             if ($exercise_is_new && $exercise_is_time == 1)
@@ -628,17 +632,16 @@ class Parser
         }
 
 		// insert new entry
-        DB::table('exercise_records')
-            ->insert([
-                'exercise_id' => $exercise_id,
-                'user_id' => $user_id,
-                'log_date' => $log_date,
-                'pr_value' => $set_weight,
-                'pr_reps' => $set_reps,
-                'pr_1rm' => $new_1rm,
-                'is_est1rm' => $is_est1rm,
-                'is_time' => $is_time
-            ]);
+        Exercise_record::create([
+            'exercise_id' => $exercise_id,
+            'user_id' => $user_id,
+            'log_date' => $log_date,
+            'pr_value' => $set_weight,
+            'pr_reps' => $set_reps,
+            'pr_1rm' => $new_1rm,
+            'is_est1rm' => $is_est1rm,
+            'is_time' => $is_time
+        ]);
 
         DB::table('log_items')
             ->where('user_id', $user_id)
@@ -697,17 +700,16 @@ class Parser
             $new_1rm = $this->generate_rm ($set->logitem_abs_weight, $set_reps);
             $is_est1rm = ($old_1rm < $new_1rm) ? true : false;
 			// insert pr data
-            DB::table('exercise_records')
-                ->insert([
-                    'exercise_id' => $exercise_id,
-                    'user_id' => $user_id,
-                    'log_date' => $log_date,
-                    'pr_value' => $set->logitem_abs_weight,
-                    'pr_reps' => $set_reps,
-                    'pr_1rm' => $new_1rm,
-                    'is_est1rm' => $is_est1rm,
-                    'is_time' => $is_time
-                ]);
+            Exercise_record::create([
+                'exercise_id' => $exercise_id,
+                'user_id' => $user_id,
+                'log_date' => $log_date,
+                'pr_value' => $set->logitem_abs_weight,
+                'pr_reps' => $set_reps,
+                'pr_1rm' => $new_1rm,
+                'is_est1rm' => $is_est1rm,
+                'is_time' => $is_time
+            ]);
 		}
 	}
 

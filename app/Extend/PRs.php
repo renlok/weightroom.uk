@@ -3,6 +3,7 @@
 namespace App\Extend;
 
 use DB;
+use App\Exercise_record;
 
 class PRs {
     //TODO rewirte all of this
@@ -83,13 +84,14 @@ class PRs {
                 DB::table('log_items')
                     ->where('logitem_id', $log_item['logitem_id'])
                     ->update(['is_pr' => 1]);
-                DB::table('exercise_records')->insert(
-                    ['exercise_id' => $exercise_id,
+                Exercise_record::create([
+                    'exercise_id' => $exercise_id,
                     'user_id' => $log_item['user_id'],
                     'log_date' => $log_item['log_date'],
                     'pr_value' => $log_item['logitem_abs_weight'],
                     'pr_reps' => $log_item['logitem_reps'],
-                    'is_time' => $log_item['is_time']]);
+                    'is_time' => $log_item['is_time']
+                ]);
 			}
 		}
 	}

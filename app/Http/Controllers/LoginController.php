@@ -32,7 +32,8 @@ class LoginController extends Controller
 			// Authentication passed...
 			return redirect()->intended('dashboard');
 		}
-		else {
+		else
+		{
 			return redirect('login')
 				->withInput()
 				->with('error', 'Email/password wrong, or account not activated.');
