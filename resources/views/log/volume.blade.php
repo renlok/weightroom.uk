@@ -70,15 +70,21 @@
 
     function HistoryData() {
 		var HistoryChartData = [];
-@foreach ($graphs as $graph_name => $graph_data)
-		var dataset = [];
-	@foreach ($graph_data as $log_date => $log_weight)
-		dataset.push({x: moment('{{ $log_date }}','YYYY-MM-DD').toDate(), y: {{ $log_weight }}, shape:'circle'});
+@foreach ($graph_names as $graph_name => $table_name)
+		var dataset{{ $table_name }} = [];
+@endforeach
+@foreach ($graph_data as $graph)
+	@foreach ($graph as $item)
+		@foreach ($graph_names as $graph_name => $table_name)
+			dataset{{ $table_name }}.push({x: moment('{{ $item->log_date->toDateString() }}','YYYY-MM-DD').toDate(), y: {{ $item->$table_name }}, shape:'circle'});
+		@endforeach
 	@endforeach
+	@foreach ($graph_names as $graph_name => $table_name)
 		HistoryChartData.push({
-			values: dataset,
+			values: dataset{{ $table_name }},
 			key: '{{ $graph_name }}'
 		});
+	@endforeach
 @endforeach
 		return HistoryChartData;
     }

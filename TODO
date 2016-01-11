@@ -25,6 +25,7 @@ https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 - Make use of progressive reduction (http://goodui.org/#66)
 - Reword things to make *You* the subject (http://goodui.org/#67)
 - Explain each form field (http://goodui.org/#68)
+- add account (soft) delete option
 
 - On users first log if they define most entires as a unit other than their default ask them if they want to change their default
 - Make sucsess messages automatically close after a few seconds

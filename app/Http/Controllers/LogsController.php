@@ -185,13 +185,13 @@ class LogsController extends Controller
             'rep_scale' => floor($max_volume / $query->max('log_total_reps')),
             'set_scale' => floor($max_volume / $query->max('log_total_sets')),
         ];
-        $query = $query->orderBy('log_date', 'asc');;
-        $graphs = [
-            'Volume' => $query->lists('log_total_volume', 'log_date'),
-            'Total reps' => $query->lists('log_total_volume', 'log_date'),
-            'Total sets' => $query->lists('log_total_volume', 'log_date'),
+        $graph_data = $query->orderBy('log_date', 'asc')->get();
+        $graph_names = [
+            'log_total_volume' => 'Volume',
+            'log_total_volume' => 'Total reps',
+            'log_total_volume' => 'Total sets',
         ];
-        return view('log.volume', compact('from_date', 'to_date', 'scales', 'graphs'));
+        return view('log.volume', compact('from_date', 'to_date', 'scales', 'graph_names', 'graph_data'));
     }
 
     public function postVolume(Request $request)

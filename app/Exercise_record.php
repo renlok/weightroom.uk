@@ -50,7 +50,7 @@ class Exercise_record extends Model
         }
         $query = $query->groupBy('pr_reps')
                 ->groupBy('log_date')
-                ->orderBy('pr_reps', 'desc')
+                ->orderBy('pr_reps', 'asc')
                 ->orderBy('log_date', 'asc');
         return $query;
     }
