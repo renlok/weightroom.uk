@@ -46,14 +46,8 @@ class UserController extends Controller
     public function getSettings()
     {
         $user = Auth::user();
-        $showreps = [];
-        for ($i = 1; $i <= 10; $i++)
-        {
-        	$showreps[$i] = (isset($user->user_showreps[$i])) ? ' checked' : '';
-        }
         $exercises = Exercise::listexercises(false)->get();
-        $settings_updated = false;
-        return view('user.settings', compact('user', 'showreps', 'exercises', 'settings_updated'));
+        return view('user.settings', compact('user', 'exercises'));
     }
 
     public function postSettings(UpdateUserSettingsRequest $request)

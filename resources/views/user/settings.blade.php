@@ -51,9 +51,9 @@
   		<label for="showreps">Rep max. to show</label>
   		<p><small><i>These is the rep ranges which will show on the graphs in the exercise PR page</i></small></p>
   	</div>
-@for ($i = 0; $i < 10; $i++)
+@for ($i = 1; $i <= 10; $i++)
     <label class="checkbox-inline">
-      <input type="checkbox" name="showreps[]" id="inlineCheckbox{{ $i }}" value="{{ $i }}"{{ $showreps[$i] }}> {{ $i }} RM
+      <input type="checkbox" name="showreps[]" id="inlineCheckbox{{ $i }}" value="{{ $i }}"{{ in_array($i, $user->user_showreps) ? 'checked' : '' }}> {{ $i }} RM
     </label>
 @endfor
   </div>

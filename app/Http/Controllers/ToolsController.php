@@ -22,7 +22,7 @@ class ToolsController extends Controller
     public function bodyweight($range = 0)
     {
         $graphs = [];
-        $graphs['Bodyweight'] = Log::getbodyweight(Auth::user()->user_id)->unique('log_weight')->get()->toArray();
+        $graphs['Bodyweight'] = Log::getbodyweight(Auth::user()->user_id)->get()->unique('log_weight')->toArray();
         return view('tools.bodyweight', compact('range', 'graphs'));
     }
 
@@ -65,7 +65,7 @@ class ToolsController extends Controller
                 unset($temp['bodyweight']);
                 $wilks = Graph::calculate_wilks (array_sum($temp), $bw, Auth::user()->user_gender);
                 $temp = [];
-                return ['log_weight' => $wilks, 'log_date' => $item['log_date']];
+                return ['log_weight' => $wilks, 'log_date' => $item[0]['log_date']];
             }
         }, array_keys($wilks_data), $wilks_data));
         return view('tools.wilks', compact('range', 'graphs'));
@@ -77,19 +77,19 @@ class ToolsController extends Controller
                                 ->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
                                 ->where('exercise_records.user_id', Auth::user()->user_id)
                                 ->where('is_est1rm', 1)
-                                ->whereIn('log_items.exercise_id', [Auth::user()->user_snatchid, Auth::user()->user_cleanjerkid])
+                                ->whereIn('exercise_records.exercise_id', [Auth::user()->user_snatchid, Auth::user()->user_cleanjerkid])
                                 ->orderBy('log_date', 'asc');
         $graphs = $graph_data->get()->groupBy('exercise_name')->toArray();
         $graphs['Bodyweight'] = Log::getbodyweight(Auth::user()->user_id)->get();
-        // build a useful array for wilks data
-        $wilks_exercises = $graph_data->get()->groupBy(function ($item, $key) {
+        // build a useful array for sinclair data
+        $sinclair_exercises = $graph_data->get()->groupBy(function ($item, $key) {
             return $item['log_date']->toDateString();
         })->toArray();
-        $wilks_bodyweight = $graphs['Bodyweight']->groupBy(function ($item, $key) {
+        $sinclair_bodyweight = $graphs['Bodyweight']->groupBy(function ($item, $key) {
             return $item['log_date']->toDateString();
         })->toArray();
         $graphs['Bodyweight'] = $graphs['Bodyweight']->unique('log_weight')->toArray();
-        $wilks_data = array_merge_recursive($wilks_exercises, $wilks_bodyweight);
+        $sinclair_data = array_merge_recursive($sinclair_exercises, $sinclair_bodyweight);
         // map
         $temp = [];
         $graphs['Sinclair'] = array_filter(array_map(function($key, $item) use (&$temp){
@@ -108,11 +108,11 @@ class ToolsController extends Controller
             {
                 $bw = $temp['bodyweight'];
                 unset($temp['bodyweight']);
-                $wilks = Graph::calculate_sinclair (array_sum($temp), $bw, Auth::user()->user_gender);
+                $sinclair = Graph::calculate_sinclair (array_sum($temp), $bw, Auth::user()->user_gender);
                 $temp = [];
-                return ['log_weight' => $wilks, 'log_date' => $item['log_date']];
+                return ['log_weight' => $sinclair, 'log_date' => $item[0]['log_date']];
             }
-        }, array_keys($wilks_data), $wilks_data));
+        }, array_keys($sinclair_data), $sinclair_data));
         return view('tools.sinclair', compact('range', 'graphs'));
     }
 
