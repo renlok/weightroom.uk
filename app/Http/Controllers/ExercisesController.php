@@ -66,7 +66,7 @@ class ExercisesController extends Controller
             ->update(['logs.log_update_text' => 1]);
         return redirect()
             ->route('viewExercise', ['exercise_name' => $exercise_name])
-            ->with('flash_message' => "$exercise_name shall be known as $new_name");
+            ->with(['flash_message' => "$exercise_name shall be known as $new_name"]);
     }
 
     public function history($exercise_name, $from_date = '', $to_date = '')
@@ -82,26 +82,24 @@ class ExercisesController extends Controller
 		{
             $query = $query->where('log_date', '<=', $to_date);
 		}
-        // get log_exercises
-        $query = $query->orderBy('log_date', 'desc');
-        $log_exercises = [
-            'Volume' => $query->lists('logex_volume', 'log_date'),
-            'Total reps' => $query->lists('logex_reps', 'log_date'),
-            'Total sets' => $query->lists('logex_sets', 'log_date'),
-            '1RM' => $query->lists('logex_1rm', 'log_date'),
-        ];
-        $query = $query->get();
         // set scales
         $max_volume = $query->max('logex_volume');
         $max_reps = $query->max('logex_reps');
         $max_sets = $query->max('logex_sets');
-        $max_rm = Exercise_record::getexercisemaxpr(Auth::user()->user_id, $exercise->exercise_id, $exercise->is_time);;
+        $max_rm = Exercise_record::getexercisemaxpr(Auth::user()->user_id, $exercise->exercise_id, $exercise->is_time);
         $scales = [
-            'Volume' => 1,
-            'Total reps' => floor($max_volume / $max_reps),
-            'Total sets' => floor($max_volume / $max_sets),
-            '1RM' => floor($max_volume / $max_rm),
-            'ai' => floor($max_volume / 100)
+            'logex_volume' => 1,
+            'logex_reps' => floor($max_volume / $max_reps),
+            'logex_sets' => floor($max_volume / $max_sets),
+            'logex_1rm' => floor($max_volume / $max_rm),
+        ];
+        // get log_exercises
+        $log_exercises = $query->orderBy('log_date', 'desc')->get();
+        $graph_names = [
+            'logex_volume' => 'Volume',
+            'logex_reps' => 'Total reps',
+            'logex_sets' => 'Total sets',
+            'logex_1rm' => '1RM',
         ];
         return view('exercise.history', compact('exercise_name', 'log_exercises', 'scales', 'query'));
     }

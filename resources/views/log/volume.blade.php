@@ -75,14 +75,14 @@
 @endforeach
 @foreach ($graph_data as $item)
 		@foreach ($graph_names as $table_name => $graph_name)
-			dataset{{ $table_name }}.push({x: moment('{{ $item->log_date }}','YYYY-MM-DD').toDate(), y: {{ $item->$table_name }}, shape:'circle'});
+			dataset{{ $table_name }}.push({x: moment('{{ $item->log_date }}','YYYY-MM-DD').toDate(), y: {{ $item->$table_name * $scales[$table_name] }}, shape:'circle'});
 		@endforeach
-	@foreach ($graph_names as $table_name => $graph_name)
+@endforeach
+@foreach ($graph_names as $table_name => $graph_name)
 		HistoryChartData.push({
 			values: dataset{{ $table_name }},
 			key: '{{ $graph_name }}'
 		});
-	@endforeach
 @endforeach
 		return HistoryChartData;
     }
@@ -100,13 +100,13 @@
 			if (key.point.color == '#a6bf50')
 			{
 				var tool_type = 'Total reps';
-				point_value = Math.round(point_value / {{ $scales['rep_scale'] }});
+				point_value = Math.round(point_value / {{ $scales['log_total_reps'] }});
 				units = '';
 			}
 			if (key.point.color == '#56c5a6')
 			{
 				var tool_type = 'Total sets';
-				point_value = Math.round(point_value / {{ $scales['set_scale'] }});
+				point_value = Math.round(point_value / {{ $scales['log_total_sets'] }});
 				units = '';
 			}
 			return '<pre>' + tool_type + ': ' + point_value + units + '</pre>';

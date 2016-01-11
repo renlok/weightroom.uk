@@ -182,8 +182,9 @@ class LogsController extends Controller
         }
         $max_volume = $query->max('log_total_volume');
         $scales = [
-            'rep_scale' => floor($max_volume / $query->max('log_total_reps')),
-            'set_scale' => floor($max_volume / $query->max('log_total_sets')),
+            'log_total_volume' => 1,
+            'log_total_reps' => floor($max_volume / $query->max('log_total_reps')),
+            'log_total_sets' => floor($max_volume / $query->max('log_total_sets')),
         ];
         $graph_data = $query->orderBy('log_date', 'asc')->get();
         $graph_names = [

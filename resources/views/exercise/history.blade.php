@@ -53,24 +53,20 @@
 <script>
     function HistoryData() {
 		var HistoryChartData = [];
-@foreach ($log_exercises as $graph_name => $graph_data)
-		var dataset = [];
-	@foreach ($graph_data as $log_date => $log_weight)
-		dataset.push({x: moment('{{ $log_date }}','YYYY-MM-DD').toDate(), y: {{ $log_weight * $scales[$graph_name] }}, shape:'circle'});
-	@endforeach
-		prHistoryChartData.push({
-			values: dataset,
+@foreach ($graph_names as $table_name => $graph_name)
+		var dataset{{ $table_name }} = [];
+@endforeach
+@foreach ($graph_data as $item)
+		@foreach ($graph_names as $table_name => $graph_name)
+			dataset{{ $table_name }}.push({x: moment('{{ $item->log_date }}','YYYY-MM-DD').toDate(), y: {{ $item->$table_name * $scales[$table_name] }}, shape:'circle'});
+		@endforeach
+@endforeach
+@foreach ($graph_names as $table_name => $graph_name)
+		HistoryChartData.push({
+			values: dataset{{ $table_name }},
 			key: '{{ $graph_name }}'
 		});
 @endforeach
-		var dataset = [];
-	@foreach ($query as $log_exercise)
-		dataset.push({x: moment('{{ $log_exercise->log_date->toDateString() }}','YYYY-MM-DD').toDate(), y: {{ $log_exercise->average_intensity * $scales['ai'] }}, shape:'circle'});
-	@endforeach
-		prHistoryChartData.push({
-			values: dataset,
-			key: 'Average Intensity'
-		});
 		return HistoryChartData;
     }
 
