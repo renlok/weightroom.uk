@@ -124,13 +124,13 @@ class ExercisesController extends Controller
 
     public function getCompareForm()
     {
-        $exercises = Exercise::listexercises(false)->get();
+        $exercises = Exercise::listexercises(true)->get();
         return view('exercise.compareform', compact('exercises'));
     }
 
     public function getCompare($reps = '', $exercise1 = '', $exercise2 = '', $exercise3 = '', $exercise4 = '', $exercise5 = '')
     {
-        $exercises = Exercise::listexercises(false)->get();
+        $exercises = Exercise::listexercises(true)->get();
         $records = DB::table('exercise_records')
             ->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
             ->select('pr_value', 'pr_reps', 'log_date', 'exercise_name', 'pr_1rm')
@@ -181,6 +181,6 @@ class ExercisesController extends Controller
             $route_data['exercise5'] = $exercises[4];
         }
         return redirect()
-            ->route('ExercisesController', $route_data);
+            ->route('compareExercises', $route_data);
     }
 }

@@ -22,7 +22,7 @@ class ToolsController extends Controller
     public function bodyweight($range = 0)
     {
         $graphs = [];
-        $graphs['Bodyweight'] = Log::getbodyweight(Auth::user()->user_id)->get()->toArray();
+        $graphs['Bodyweight'] = Log::getbodyweight(Auth::user()->user_id)->unique('log_weight')->get()->toArray();
         return view('tools.bodyweight', compact('range', 'graphs'));
     }
 
@@ -65,7 +65,7 @@ class ToolsController extends Controller
                 unset($temp['bodyweight']);
                 $wilks = Graph::calculate_wilks (array_sum($temp), $bw, Auth::user()->user_gender);
                 $temp = [];
-                return $wilks;
+                return ['log_weight' => $wilks, 'log_date' => $item['log_date']];
             }
         }, array_keys($wilks_data), $wilks_data));
         return view('tools.wilks', compact('range', 'graphs'));
@@ -110,7 +110,7 @@ class ToolsController extends Controller
                 unset($temp['bodyweight']);
                 $wilks = Graph::calculate_sinclair (array_sum($temp), $bw, Auth::user()->user_gender);
                 $temp = [];
-                return $wilks;
+                return ['log_weight' => $wilks, 'log_date' => $item['log_date']];
             }
         }, array_keys($wilks_data), $wilks_data));
         return view('tools.sinclair', compact('range', 'graphs'));
