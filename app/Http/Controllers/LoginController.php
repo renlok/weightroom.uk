@@ -36,7 +36,10 @@ class LoginController extends Controller
 		{
 			return redirect('login')
 				->withInput()
-				->with('error', 'Email/password wrong, or account not activated.');
+				->with(
+					'flash_message', 'Email/password wrong, or account not activated.',
+					'flash_message_type' => 'error'
+				);
 		}
 	}
 
@@ -61,7 +64,10 @@ class LoginController extends Controller
 		{
 			return redirect('register')
 				->withInput()
-				->with('error', 'Invalid invite code');
+				->with(
+					'flash_message', 'Invalid invite code.',
+					'flash_message_type' => 'error'
+				);
 		}
 
 		User::create([

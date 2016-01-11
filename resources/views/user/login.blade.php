@@ -4,7 +4,7 @@
 
 @section('content')
 @include('errors.validation')
-@include('errors.simple')
+@include('common.flash')
 <form class="form-horizontal" action="{{ route('login') }}" method="post">
   <div class="form-group">
     <label for="username" class="col-sm-2 control-label">Username</label>

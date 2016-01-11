@@ -58,8 +58,6 @@ class UserController extends Controller
 
     public function postSettings(UpdateUserSettingsRequest $request)
     {
-        $settings_updated = true;
-
         //build temporary new data
         $user = User::find(Auth::user()->user_id);
         $user->user_unit = $request->input('weightunit');
@@ -75,17 +73,10 @@ class UserController extends Controller
         $user->user_weekstart = $request->input('weekstart');
         $user->user_viewintensityabs = $request->input('viewintensityabs');
         $user->user_limitintensity = $request->input('limitintensity');
-        $errors = [];
         $user->save();
-
-        $showreps = [];
-        for ($i = 1; $i <= 10; $i++)
-        {
-        	$showreps[$i] = (isset($user->user_showreps[$i])) ? ' checked' : '';
-        }
-        $exercises = Exercise::listexercises(false)->get();
-        $settings_updated = false;
-
-        return view('user.settings', compact('user', 'errors', 'showreps', 'exercises', 'settings_updated'));
+        return redirect()
+                ->route('userSettings')
+                ->withInput()
+                ->with('flash_message', 'Settings updated.');
     }
 }

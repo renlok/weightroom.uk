@@ -65,7 +65,8 @@ class ExercisesController extends Controller
             ->where('log_exercises.exercise_id', $final_id)
             ->update(['logs.log_update_text' => 1]);
         return redirect()
-            ->route('viewExercise', ['exercise_name' => $exercise_name]);
+            ->route('viewExercise', ['exercise_name' => $exercise_name])
+            ->with('flash_message' => "$exercise_name shall be known as $new_name");
     }
 
     public function history($exercise_name, $from_date = '', $to_date = '')

@@ -4,12 +4,8 @@
 
 @section('content')
 <h2>Edit user settings</h2>
-@include('errors.simple')
-@if ($settings_updated)
-  <div class="alert bg-success" role="alert">
-	Settings updated
-  </div>
-@endif
+@include('errors.validation')
+@include('common.flash')
 <form class="form-horizontal" action="{{ url('user/settings') }}" method="post">
   <div class="form-group">
     <div>

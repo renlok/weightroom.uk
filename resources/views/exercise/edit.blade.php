@@ -3,7 +3,6 @@
 @section('title', 'Edit Exercise: ' . $exercise_name)
 
 @section('content')
-@include('errors.simple')
 <h2>Rename: {{ $exercise_name }}</h2>
 <form class="form-horizontal" action="{{ route('editExercise', ['exercise_name' => $exercise_name]) }}" method="post">
   <div class="form-group">

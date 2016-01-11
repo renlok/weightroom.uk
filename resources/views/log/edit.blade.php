@@ -44,7 +44,6 @@
 @endsection
 
 @section('content')
-@include('errors.simple')
 <h2>Log workout for {{ $date }} <button class="btn btn-default glyphicon glyphicon-calendar" aria-hidden="true" id="track_date"></button></h2>
 <small><a href="{{ route('viewLog', ['date' => $date]) }}">&larr; Back to log</a></small>
 
