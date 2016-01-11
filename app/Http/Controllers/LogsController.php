@@ -188,8 +188,8 @@ class LogsController extends Controller
         $graph_data = $query->orderBy('log_date', 'asc')->get();
         $graph_names = [
             'log_total_volume' => 'Volume',
-            'log_total_volume' => 'Total reps',
-            'log_total_volume' => 'Total sets',
+            'log_total_reps' => 'Total reps',
+            'log_total_sets' => 'Total sets',
         ];
         return view('log.volume', compact('from_date', 'to_date', 'scales', 'graph_names', 'graph_data'));
     }
