@@ -111,7 +111,7 @@
 		@include('common.logExercise', ['view_type' => 'log'])
 	@endforeach
 	<a name="comments"></a>
-	@include('common.commentTree', ['comments' => $log->comments])
+	@include('common.commentTree', ['comments' => $log->comments()->withTrashed()->get()])
 @endif
 @endsection
 

@@ -3,11 +3,9 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Log extends Model
 {
-    use SoftDeletes;
     protected $primaryKey = 'log_id';
     protected $dates = ['log_date'];
     protected $dateFormat = 'Y-m-d';
@@ -66,6 +64,6 @@ class Log extends Model
      */
     public function comments()
     {
-        return $this->morphMany('App\Comment', 'commentable')->withTrashed();
+        return $this->morphMany('App\Comment', 'commentable');
     }
 }
