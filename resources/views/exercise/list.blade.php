@@ -17,5 +17,5 @@
 @endforelse
 </ul>
 
-{!! $exercises->links() !!}
+{!! $exercises->render() !!}
 @endsection

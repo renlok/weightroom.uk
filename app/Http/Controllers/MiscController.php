@@ -31,7 +31,6 @@ class MiscController extends Controller
 
     public function dashLogs()
     {
-        User_follow::where('user_id', Auth::user()->user_id)->user()->logs()->get();
         return view('dash');
     }
 
