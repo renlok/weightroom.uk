@@ -107,10 +107,10 @@
 		</div>
 	</div>
 	@endif
-	<a name="comments"></a>
 	@foreach ($log->log_exercises as $log_exercise)
 		@include('common.logExercise', ['view_type' => 'log'])
 	@endforeach
+	<a name="comments"></a>
 	@include('common.commentTree', ['comments' => $log->comments])
 @endif
 @endsection
@@ -133,13 +133,21 @@ $(document).ready(function(){
 	@endif
 	});
 	$('.reply').click(function() {
-		var parent_id = $(this).attr('id');
 		var element = $(this).parent().parent().find(".comment-reply-box").first();
 		if ( element.is( ":hidden" ) ) {
 			element.slideDown("slow");
 		} else {
 			element.slideUp("slow");
 		}
+		return false;
+	});
+	$('.delete').click(function() {
+		var comment_id = $(this).attr('c-id');
+		var element = $('c' + comment_id).text('[Deleted]');
+		$.ajax({
+            url: "{{ route('deleteComment', ['comment_id' => :cid]) }}".replace(':cid', comment_id),
+            cache: false
+        });
 		return false;
 	});
 	if ($( window ).width() < 500)

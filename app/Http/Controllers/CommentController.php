@@ -9,6 +9,7 @@ use Auth;
 use App\Comment;
 use App\Log;
 use App\Notification;
+use Carbon;
 
 class CommentController extends Controller
 {
@@ -20,6 +21,7 @@ class CommentController extends Controller
 			'comment' => $request->input('comment'),
 			'commentable_id' => $log_id,
 			'commentable_type' => 'App\Log',
+			'comment_date' => Carbon::now(),
 			'user_id' => Auth::user()->user_id
 		]);
 		Notification::create([
@@ -31,5 +33,18 @@ class CommentController extends Controller
 		return redirect()
                 ->route('viewLog', ['date' => $log->log_date->toDateString()])
                 ->with('commenting', true);
+	}
+
+	public function delete($comment_id)
+	{
+		$comment = Comment::where('comment_id', $comment_id)->get();
+		if ($comment->user_id == Auth::user()->user_id)
+		{
+			Comment::where('comment_id', $comment_id)->delete();
+		}
+		else
+		{
+			return abort(403, 'Unauthorized action.');
+		}
 	}
 }

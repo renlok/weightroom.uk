@@ -115,6 +115,7 @@ Route::resource('blog', 'BlogController', ['names' => [
     'create' => 'photo.build'
 ]]);
 
-Route::group(['middleware' => 'auth'], function () {
-    Route::post('comment/{log_id}', 'CommentController@store')->name('saveComment');
+Route::group(['prefix' => 'comment', 'middleware' => 'auth'], function () {
+    Route::post('{comment_id}/delete', 'CommentController@delete')->name('deleteComment');
+    Route::post('{log_id}', 'CommentController@store')->name('saveComment');
 });

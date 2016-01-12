@@ -58,7 +58,7 @@
 				</ul>
 			</li>
             @if ($header_notifications_count > 0)
-            <li class="dropdown">
+            <li class="dropdown" id="notification_bubble">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="badge">{{ $header_notifications_count }}</span></a>
                 <ul class="dropdown-menu">
                 @foreach ($header_notifications as $note)
@@ -127,6 +127,7 @@
             cache: false
         });
     });
+    $('#notification_bubble').hide();
 @endif
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
