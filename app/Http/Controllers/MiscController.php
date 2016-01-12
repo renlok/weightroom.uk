@@ -28,13 +28,13 @@ class MiscController extends Controller
 
     public function dash()
     {
-        $logs = Log::whereIn('user_id', User_follow::where('user_id', Auth::user()->user_id)->lists('follow_user_id'))->orderBy('log_date', 'desc')->get();
+        $logs = Log::whereIn('user_id', User_follow::where('user_id', Auth::user()->user_id)->lists('follow_user_id'))->orderBy('log_date', 'desc')->paginate(50);
         return view('dash', compact('logs'));
     }
 
     public function dashAll()
     {
-        $logs = Log::orderBy('log_date', 'desc')->get();
+        $logs = Log::orderBy('log_date', 'desc')->paginate(50);
         return view('dash', compact('logs'));
     }
 }

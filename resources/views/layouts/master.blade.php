@@ -59,17 +59,17 @@
 			</li>
             @if ($header_notifications_count > 0)
             <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span><span class="badge">{{ $header_notifications_count }}</span></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="badge">{{ $header_notifications_count }}</span></a>
                 <ul class="dropdown-menu">
                 @foreach ($header_notifications as $note)
                     @if ($note->notification_type == 'comment')
-                        <li role="presentation"><a href="{{ route('viewLog', ['date' => $note->notification_from]) }}#comments">$note->notification_value commented on your log</a></li>
+                        <li role="presentation"><a href="{{ route('viewLog', ['date' => $note->notification_from]) }}#comments">{{$note->notification_value}} commented on your log</a></li>
                     @endif
                     @if ($note->notification_type == 'follow')
-                        <li role="presentation"><a href="{{ route('viewUser', ['user_name' => $note->notification_value]) }}">$note->notification_value started following you</a></li>
+                        <li role="presentation"><a href="{{ route('viewUser', ['user_name' => $note->notification_value]) }}">{{$note->notification_value}} started following you</a></li>
                     @endif
-                        <li role="presentation"><a href="#" id="clear_notes">Clear All</a></li>
                 @endforeach
+                    <li role="presentation"><a href="#" id="clear_notes">Clear All</a></li>
                 </ul>
             </li>
             @endif

@@ -26,4 +26,6 @@
 @endforelse
 </tbody>
 </table>
+
+{!! $logs->render() !!}
 @endsection
