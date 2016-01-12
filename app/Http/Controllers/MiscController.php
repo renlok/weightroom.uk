@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use User_follow;
+use App\Log;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -26,16 +26,13 @@ class MiscController extends Controller
 
     public function dash()
     {
-        return view('dash');
-    }
-
-    public function dashLogs()
-    {
-        return view('dash');
+        $logs = Log::whereIn('user_id', User_follow::where('user_id', Auth::user()->user_id))->get();
+        return view('dash', compact('logs'));
     }
 
     public function dashAll()
     {
+        $logs = Log:all();
         return view('dash');
     }
 }

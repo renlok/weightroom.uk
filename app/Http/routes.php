@@ -96,7 +96,6 @@ Route::group(['prefix' => 'tools', 'middleware' => 'auth'], function () {
 //Route::get('/', 'MiscController@index');
 Route::group(['middleware' => 'auth'], function () {
     Route::get('dashboard', 'MiscController@dash')->name('dashboard');
-    Route::get('dashboard/logs', 'MiscController@dashLogs')->name('dashboardLogs');
     Route::get('dashboard/all', 'MiscController@dashAll')->name('dashboardAll');
 });
 
