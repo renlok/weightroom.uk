@@ -145,7 +145,7 @@ $(document).ready(function(){
 		var comment_id = $(this).attr('c-id');
 		var element = $('c' + comment_id).text('[Deleted]');
 		$.ajax({
-            url: "{{ route('deleteComment', ['comment_id' => :cid]) }}".replace(':cid', comment_id),
+            url: "{{ route('deleteComment', ['comment_id' => ':cid']) }}".replace(':cid', comment_id),
             cache: false
         });
 		return false;
