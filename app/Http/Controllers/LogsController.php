@@ -145,25 +145,32 @@ class LogsController extends Controller
                 ->withInput();
     }
 
-    public function getSearch()
+    public function getSearch(Request $request)
     {
-        $query = DB::table('log_items')
-                    ->join('exercises', 'exercises.exercise_id', '=', 'log_items.exercise_id')
-                    ->where('log_items.user_id', Auth::user()->user_id)
-                    ->where('log_items.logitem_weight', Request::old('weightoperator'), $request->input('weight'))
-                    ->where('exercises.exercise_name', Request::old('exercise'));
-        if (Request::old('reps') != 'any' && Request::old('reps') != '')
-    	{
-    		$query = $query->where('log_items.logitem_reps', Request::old('reps'));
-    	}
-        $query = $query->orderBy('log_exercises.log_date', 'desc')
-                        ->groupBy('logex_id');
-        if (Request::old('show') > 0)
-    	{
-    		$query = $query->take(Request::old('show'));
-    	}
-        $query = $query->lists('logex_id');
-        $log_exercises = Log_exercise::whereIn('logex_id', $query)->get();
+        if ($request->old('exercise') != null)
+        {
+            $query = DB::table('log_items')
+                        ->join('exercises', 'exercises.exercise_id', '=', 'log_items.exercise_id')
+                        ->where('log_items.user_id', Auth::user()->user_id)
+                        ->where('log_items.logitem_weight', $request->old('weightoperator'), $request->old('weight'))
+                        ->where('exercises.exercise_name', $request->old('exercise'));
+            if ($request->old('reps') != 'any' && $request->old('reps') != '')
+        	{
+        		$query = $query->where('log_items.logitem_reps', $request->old('reps'));
+        	}
+            $query = $query->orderBy('log_exercises.log_date', 'desc')
+                            ->groupBy('logex_id');
+            if ($request->old('show') > 0)
+        	{
+        		$query = $query->take($request->old('show'));
+        	}
+            $query = $query->lists('logex_id');
+            $log_exercises = Log_exercise::whereIn('logex_id', $query)->get();
+        }
+        else
+        {
+            $log_exercises = [];
+        }
         $exercises = Exercise::listexercises(false)->get();
         return view('log.search', compact('exercises', 'log_exercises'));
     }

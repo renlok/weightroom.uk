@@ -6,7 +6,7 @@
 <h2>Search logs</h2>
 <p>Find logs that meet the following criteria:</p>
 
-<form class="form-horizontal" action="{{ url('log/search') }}" method="get">
+<form class="form-horizontal" action="{{ url('log/search') }}" method="post">
   <div class="form-group">
     <label for="show" class="col-sm-2 control-label">Show</label>
     <div class="col-sm-10">
@@ -45,7 +45,7 @@
         <option value="<"{{ ('=' == old('weightoperator')) ? ' selected="selected"' : '' }}>&lt;</option>
       </select>
       <input type="text" class="form-control" name="weight" id="weight" placeholder="Weight" value="{{ old('weight') }}">
-	  <div class="input-group-addon">{{ Auth()::user()->user_unit }}</div>
+	  <div class="input-group-addon">{{ Auth::user()->user_unit }}</div>
 	</div>
     </div>
   </div>
@@ -57,7 +57,7 @@
   </div>
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
-      <input type="hidden" name="page" value="search_log">
+      {!! csrf_field() !!}
       <button type="submit" class="btn btn-default">Search</button>
     </div>
   </div>
