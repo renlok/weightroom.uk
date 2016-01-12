@@ -25,12 +25,11 @@ class CommentController extends Controller
 		Notification::create([
             'user_id' => $log->user_id,
             'notification_type' => 'comment',
-			'notification_from' => $log->log_date,
+			'notification_from' => $log->log_date->toDateString(),
             'notification_value' => Auth::user()->user_name
         ]);
-		$date = $log->log_date;
 		return redirect()
-                ->route('viewLog', ['date' => $date->toDateString()])
+                ->route('viewLog', ['date' => $log->log_date->toDateString()])
                 ->with('commenting', true);
 	}
 }

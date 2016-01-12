@@ -14,7 +14,7 @@
 @forelse ($logs as $log)
 	<tr>
 		<td class="logrow">
-			<a href="{{ route('viewUser', ['user_name' => $log->user()->user_name]) }}">{{ $log->user()->user_name }}</a> posted a log {{ $log->log_date->diffForHumans() }}. <a href="{{ route('viewLog', ['date' => $log->log_date->toDateString(), 'user_name' => $log->user()->user_name]) }}">View log</a>
+			<a href="{{ route('viewUser', ['user_name' => $log->user->user_name]) }}">{{ $log->user->user_name }}</a> posted a log {{ $log->log_date->diffForHumans() }}. <a href="{{ route('viewLog', ['date' => $log->log_date->toDateString(), 'user_name' => $log->user->user_name]) }}">View log</a>
 		</td>
 	</tr>
 @empty

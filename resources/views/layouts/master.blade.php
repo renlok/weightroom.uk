@@ -72,8 +72,6 @@
                 @endforeach
                 </ul>
             </li>
-            @else
-            <li role="presentation"><span class="badge">0</span></li>
             @endif
 	  @endif
 		</ul>
