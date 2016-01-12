@@ -27,7 +27,7 @@ class CreateLogsTable extends Migration
             $table->integer('log_warmup_sets'); // NEW colomn
             $table->text('log_comment');
             $table->double('log_weight', 7, 2);
-            $table->boolean('log_update_text');
+            $table->boolean('log_update_text')->default('0');
             $table->timestamps();
         });
     }

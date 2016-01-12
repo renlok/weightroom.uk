@@ -16,4 +16,6 @@
 	</li>
 @endforelse
 </ul>
+
+{!! $exercises->links() !!}
 @endsection

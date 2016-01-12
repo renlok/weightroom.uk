@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateExercisesTable extends Migration
+class CreateUserFollowsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,13 +12,11 @@ class CreateExercisesTable extends Migration
      */
     public function up()
     {
-        Schema::create('exercises', function (Blueprint $table) {
-            $table->increments('exercise_id');
-	        $table->string('exercise_name');
+        Schema::create('user_goals', function (Blueprint $table) {
+            $table->increments('goal_id');
             $table->integer('user_id')->unsigned()->index();
-            $table->boolean('is_time')->default('0');
-            $table->boolean('is_endurance')->default('0'); // NEW colomn
-            $table->boolean('exercise_update_prs')->default('0');
+            $table->integer('exercise_id')->unsigned()->index();
+            $table->integer('goal_value')->unsigned()->index();
             $table->timestamps();
         });
     }
@@ -30,6 +28,6 @@ class CreateExercisesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('exercises');
+        Schema::drop('user_follows');
     }
 }

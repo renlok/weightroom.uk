@@ -29,11 +29,11 @@ class CreateLogItemsTable extends Migration
             $table->text('logitem_comment');
             $table->smallInteger('logitem_order');
             $table->smallInteger('logex_order');
-            $table->boolean('is_bw');
-            $table->boolean('is_time');
-            $table->boolean('is_pr');
-            $table->boolean('is_warmup');
-            $table->enum('options', ['w']); // NEW colomn, set array
+            $table->boolean('is_bw')->default('0');
+            $table->boolean('is_time')->default('0');
+            $table->boolean('is_pr')->default('0');
+            $table->boolean('is_warmup')->default('0');
+            $table->boolean('is_endurance')->default('0'); // NEW colomn
             $table->timestamps();
         });
     }

@@ -19,7 +19,7 @@ class ExercisesController extends Controller
 {
     public function getList()
     {
-        $exercises = Exercise::listexercises(true)->get();
+        $exercises = Exercise::listexercises(true)->paginate(50);
         return view('exercise.list', compact('exercises'));
     }
 

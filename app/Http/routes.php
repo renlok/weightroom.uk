@@ -71,12 +71,13 @@ Route::group(['prefix' => 'exercise', 'middleware' => 'auth'], function () {
     Route::get('list', 'ExercisesController@getList')->name('listExercises');
     Route::get('{exercise_name}/view/{type?}/{range?}/{force_pr_type?}/', 'ExercisesController@getViewExercise')->name('viewExercise');
     // edit exercise routes
-    // can automatically pull the exercise with (App\Exercise $user)
     Route::get('{exercise_name}/edit', 'ExercisesController@getEdit')->name('editExercise');
     Route::post('{exercise_name}/edit', 'ExercisesController@postEdit');
-    Route::get('{exercise_name}/history', 'ExercisesController@history')->name('exerciseHistory');
-    Route::get('{exercise_name}/history/{from_date}/{to_date}', 'ExercisesController@history')->name('exerciseHistoryRange');
-    Route::get('{exercise_name}/volume/{from_date?}/{to_date?}', 'ExercisesController@volume')->name('volume');
+    // history
+    Route::get('{exercise_name}/history/{from_date?}/{to_date?}', 'ExercisesController@history')->name('exerciseHistory');
+    // volume
+    Route::get('{exercise_name}/volume', 'ExercisesController@volume')->name('volume');
+    // compare
     Route::get('compare', 'ExercisesController@getCompareForm')->name('compareExercisesForm');
     Route::get('compare/{reps}/{exercise1}/{exercise2?}/{exercise3?}/{exercise4?}/{exercise5?}', 'ExercisesController@getCompare')->name('compareExercises');
     Route::post('compare', 'ExercisesController@postCompare');
@@ -95,6 +96,8 @@ Route::group(['prefix' => 'tools', 'middleware' => 'auth'], function () {
 //Route::get('/', 'MiscController@index');
 Route::group(['middleware' => 'auth'], function () {
     Route::get('dashboard', 'MiscController@dash')->name('dashboard');
+    Route::get('dashboard/logs', 'MiscController@dashLogs')->name('dashboardLogs');
+    Route::get('dashboard/all', 'MiscController@dashAll')->name('dashboardAll');
 });
 
 Route::get('demo', 'MiscController@demo')->name('demo');

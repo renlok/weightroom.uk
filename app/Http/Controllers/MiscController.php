@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-
+use User_follow;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 
 class MiscController extends Controller
 {
@@ -14,14 +14,14 @@ class MiscController extends Controller
         return view('landing');
     }
 
-    public function ajax()
-    {
-        //
-    }
-
     public function demo()
     {
         return view('demo');
+    }
+
+    public function privacyPolicy()
+    {
+        return view('help.privacypolicy');
     }
 
     public function dash()
@@ -29,8 +29,14 @@ class MiscController extends Controller
         return view('dash');
     }
 
-    public function privacyPolicy()
+    public function dashLogs()
     {
-        return view('help.privacypolicy');
+        User_follow::where('user_id', Auth::user()->user_id)->user()->logs()->get();
+        return view('dash');
+    }
+
+    public function dashAll()
+    {
+        return view('dash');
     }
 }

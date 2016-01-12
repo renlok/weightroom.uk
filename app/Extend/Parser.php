@@ -325,13 +325,14 @@ class Parser
                     'user_id' => $this->user->user_id
                 ]);
                 $exercise_id = $exercise->exercise_id;
-                $exercise_is_time = false; // assume this for now
+                $exercise_is_endurance = $exercise_is_time = false; // assume this for now
             }
             else
             {
                 $exercise_is_new = false;
                 $exercise_id = $exercise->exercise_id;
                 $exercise_is_time = $exercise->is_time;
+                $exercise_is_endurance = $exercise->is_endurance;
             }
             // insert log_exercise
             $log_exercise = Log_exercise::create([
@@ -374,6 +375,7 @@ class Parser
 				$set['S'] = (isset($set['S'])) ? intval($set['S']) : 1;
 				$set['C'] = (isset($set['C'])) ? $set['C'] : '';
                 $is_warmup = false;
+                $is_endurance = false;
                 // check if the comment is a special tag
                 if($options = $this->special_tags($set['C']) != 0)
                 {
@@ -381,6 +383,10 @@ class Parser
                     if ($options == 'w')
                     {
                         $is_warmup = true;
+                    }
+                    elseif ($options == 'e')
+                    {
+                        $is_endurance = true;
                     }
                 }
 				$absolute_weight = ($is_bw == false) ? $set['W'] : ($set['W'] + $user_weight);
@@ -423,6 +429,7 @@ class Parser
                 if ($exercise_is_new)
                 {
                     $exercise_is_time = $is_time;
+                    $exercise_is_endurance = $is_endurance;
                 }
 				$estimate_rm = $this->generate_rm ($absolute_weight, $set['R']);
 				// get estimate 1rm
@@ -448,6 +455,7 @@ class Parser
                     'is_bw' => $is_bw,
                     'is_time' => $is_time,
                     'is_warmup' => $is_warmup,
+                    'is_endurance' => $is_endurance,
                     'options' => $options,
                     'logitem_order' => $j,
                     'logex_order' => $i,
@@ -459,9 +467,21 @@ class Parser
                 Log_item::create($log_item_data);
 			}
             // if new exercise set if it a time based exercise
-            if ($exercise_is_new && $exercise_is_time == 1)
+            if ($exercise_is_new)
             {
-                DB::table('exercises')->where('exercise_id', $exercise_id)->update(['is_time' => 1]);
+                $update_exercises = [];
+                if ($exercise_is_time)
+                {
+                    $update_exercises['is_time'] = 1;
+                }
+                if ($exercise_is_endurance)
+                {
+                    $update_exercises['is_endurance'] = 1;
+                }
+                if (count($update_exercises) > 0)
+                {
+                    DB::table('exercises')->where('exercise_id', $exercise_id)->update($update_exercises);
+                }
             }
 			// insert into log_exercises
             DB::table('log_exercises')
@@ -751,11 +771,11 @@ class Parser
             'W' => array(
                 ('0.0'),
                 ('0'),
-                ('BW'),
-                ('BW+0.0'),
-                ('BW+0'),
-                ('BW-0.0'),
-                ('BW-0'),
+                ('bw'),
+                ('bw+0.0'),
+                ('bw+0'),
+                ('bw-0.0'),
+                ('bw-0'),
             ),
             'R' => array(('0')),
             'S' => array(('0')),
@@ -949,6 +969,10 @@ class Parser
 		if ($string == 'w' || $string == 'warmup' || $string == 'warm-up' || $string == 'warm up' || $string == 'wu')
 		{
 			return 'w';
+		}
+        elseif ($string == 'e' || $string == 'endurance')
+		{
+			return 'e';
 		}
 		return 0;
 	}
