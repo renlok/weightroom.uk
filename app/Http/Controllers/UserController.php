@@ -73,4 +73,12 @@ class UserController extends Controller
                 ->withInput()
                 ->with('flash_message', 'Settings updated.');
     }
+
+    public function clearNotifications()
+    {
+        Notification::where('user_id', Auth::user()->user_id)->delete();
+        return redirect()
+                ->back()
+                ->with('flash_message', 'Notifications cleared.');
+    }
 }

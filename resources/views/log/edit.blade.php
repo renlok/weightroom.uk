@@ -99,14 +99,14 @@ you can also have the same exercise multiple times
 
 @section('endjs')
 <link href="{{ asset('css/pickmeup.css') }}" rel="stylesheet">
-<script src="http://nazar-pc.github.io/PickMeUp/js/jquery.pickmeup.js"></script>
-<script src="http://momentjs.com/downloads/moment.js"></script>
-<script src="http://codemirror.net/lib/codemirror.js"></script>
-<link rel="stylesheet" href="http://codemirror.net/lib/codemirror.css">
-<link rel="stylesheet" href="http://codemirror.net/addon/hint/show-hint.css">
-<script src="http://codemirror.net/addon/mode/overlay.js"></script>
-<script src="http://codemirror.net/addon/hint/show-hint.js"></script>
-<script src="http://codemirror.net/addon/runmode/runmode.js"></script>
+<script src="//nazar-pc.github.io/PickMeUp/js/jquery.pickmeup.js"></script>
+<script src="//momentjs.com/downloads/moment.js"></script>
+<script src="//codemirror.net/lib/codemirror.js"></script>
+<link rel="stylesheet" href="//codemirror.net/lib/codemirror.css">
+<link rel="stylesheet" href="//codemirror.net/addon/hint/show-hint.css">
+<script src="//codemirror.net/addon/mode/overlay.js"></script>
+<script src="//codemirror.net/addon/hint/show-hint.js"></script>
+<script src="//codemirror.net/addon/runmode/runmode.js"></script>
 <script>
 var arDates = [];
 var calMonths = [];

@@ -15,8 +15,8 @@
 	<link href="css/coming-sssoon.css" rel="stylesheet" />
 
     <!--     Fonts     -->
-    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
-    <link href='http://fonts.googleapis.com/css?family=Grand+Hotel' rel='stylesheet' type='text/css'>
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
+    <link href='//fonts.googleapis.com/css?family=Grand+Hotel' rel='stylesheet' type='text/css'>
 
 </head>
 
@@ -88,12 +88,12 @@
     </div>
     <div class="footer">
       <div class="container">
-             Theme by <a href="http://www.creative-tim.com">Creative Tim</a>.
+             Theme by <a href="//www.creative-tim.com">Creative Tim</a>.
       </div>
     </div>
  </div>
 
 </body>
-	<script src="http://code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
-	<script src="http://getbootstrap.com/dist/js/bootstrap.min.js" charset="utf-8"></script>
+	<script src="//code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
+	<script src="//getbootstrap.com/dist/js/bootstrap.min.js" charset="utf-8"></script>
 </html>

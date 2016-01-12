@@ -36,6 +36,7 @@ Route::group(['prefix' => 'user', 'middleware' => 'auth'], function () {
     // follow/unfollow routes
     Route::get('follow/{user_name}/{date?}', 'UserController@follow')->name('followUser');
     Route::get('unfollow/{user_name}/{date?}', 'UserController@unfollow')->name('unfollowUser');
+    Route::get('notifications/clear', 'UserController@clearNotifications')->name('clearNotifications');
 });
 
 // Log controller

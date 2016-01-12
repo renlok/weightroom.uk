@@ -16,8 +16,10 @@ class CreateNotificationsTable extends Migration
             $table->increments('notification_id');
             $table->integer('user_id')->unsigned()->index();
             $table->string('notification_type');
+            $table->string('notification_from');
             $table->string('notification_value');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

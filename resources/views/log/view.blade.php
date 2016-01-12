@@ -107,6 +107,7 @@
 		</div>
 	</div>
 	@endif
+	<a name="comments"></a>
 	@foreach ($log->log_exercises as $log_exercise)
 		@include('common.logExercise', ['view_type' => 'log'])
 	@endforeach
@@ -117,7 +118,7 @@
 @section('endjs')
 <link href="{{ asset('css/pickmeup.css') }}" rel="stylesheet">
 <script src="{{ asset('js/jquery.pickmeup.js') }}"></script>
-<script src="http://momentjs.com/downloads/moment.js"></script>
+<script src="//momentjs.com/downloads/moment.js"></script>
 <script src="{{ asset('js/jCollapsible.js') }}"></script>
 
 <script>

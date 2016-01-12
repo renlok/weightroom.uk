@@ -1,4 +1,4 @@
-<p>This Privacy Policy governs the manner in which The weightroom.uk collects, uses, maintains and discloses information collected from users (each, a "User") of the <a href="http://weightroom.uk/">http://weightroom.uk/</a> website ("Site").</p>
+<p>This Privacy Policy governs the manner in which The weightroom.uk collects, uses, maintains and discloses information collected from users (each, a "User") of the <a href="//weightroom.uk/">http://weightroom.uk/</a> website ("Site").</p>
 
 <h3>Personal identification information</h3>
 <p>We may collect personal identification information from Users in a variety of ways, including, but not limited to, when Users visit our site, register on the site, and in connection with other activities, services, features or resources we make available on our Site.Users may be asked for, as appropriate, email address. We will collect personal identification information from Users only if they voluntarily submit such information to us. Users can always refuse to supply personally identification information, except that it may prevent them from engaging in certain Site related activities.</p>
@@ -27,7 +27,7 @@
 <p>We may share or sell information with third parties for marketing or other purposes.</p>
 
 <h3>Sharing your personal information</h3>
-<p>This Privacy Policy governs the manner in which The weightroom.uk collects, uses, maintains and discloses information collected from users (each, a "User") of the <a href="http://weightroom.uk/">http://weightroom.uk/</a> website ("Site").</p>
+<p>This Privacy Policy governs the manner in which The weightroom.uk collects, uses, maintains and discloses information collected from users (each, a "User") of the <a href="//weightroom.uk/">//weightroom.uk/</a> website ("Site").</p>
 
 <h3>Personal identification information</h3>
 <p>We may collect personal identification information from Users in a variety of ways, including, but not limited to, when Users visit our site, register on the site, and in connection with other activities, services, features or resources we make available on our Site.Users may be asked for, as appropriate, email address. We will collect personal identification information from Users only if they voluntarily submit such information to us. Users can always refuse to supply personally identification information, except that it may prevent them from engaging in certain Site related activities.</p>

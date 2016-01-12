@@ -3,11 +3,15 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Notification extends Model
 {
+    use SoftDeletes;
+
     protected $primaryKey = 'notification_id';
     protected $guarded = ['notification_id'];
+    protected $dates = ['deleted_at'];
 
     /**
      * Notifications belongs to a single user

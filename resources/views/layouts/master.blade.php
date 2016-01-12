@@ -5,17 +5,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title') | Weight Room - Track dem gains</title>
-	<!-- <base href="http://weightroom.uk/"> -->
-	<link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
-	<meta http-equiv="Content-Language" content="en">
-	<meta name="description" content="The ultimate weightlifting and powerlifting workout tracker. Track each of your workouts with beautiful logging and analysis tools">
-	<meta name="keywords" content="workout tracker, workout journal, training journal, weight training, strength training, powerlifting, weightlifting, strongman">
+  	<!-- <base href="//weightroom.uk/"> -->
+  	<link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+  	<meta http-equiv="Content-Language" content="en">
+  	<meta name="description" content="The ultimate weightlifting and powerlifting workout tracker. Track each of your workouts with beautiful logging and analysis tools">
+  	<meta name="keywords" content="workout tracker, workout journal, training journal, weight training, strength training, powerlifting, weightlifting, strongman">
 
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ asset('css/tracker.css') }}">
-	<script src="http://code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
-	<script src="http://getbootstrap.com/dist/js/bootstrap.min.js" charset="utf-8"></script>
+  	<script src="//code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
+  	<script src="//getbootstrap.com/dist/js/bootstrap.min.js" charset="utf-8"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -51,12 +51,30 @@
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> <span class="caret"></span></a>
 				<ul class="dropdown-menu">
 					<li role="presentation"><a href="{{ route('invites') }}">Invite codes</a></li>
-					<li role="presentation"><a href="http://we-link.co.uk/projects/public/weightroom" target="_blank">Submit a bug</a></li>
-					<li role="presentation"><a href="http://weightroom.uk/blog/" target="_blank">Blog</a></li>
+					<li role="presentation"><a href="//we-link.co.uk/projects/public/weightroom" target="_blank">Submit a bug</a></li>
+					<li role="presentation"><a href="//weightroom.uk/blog/" target="_blank">Blog</a></li>
 					<li role="presentation"><a href="{{ route('userSettings') }}">Settings</a></li>
 					<li role="presentation"><a href="{{ route('logout') }}">Logout</a></li>
 				</ul>
 			</li>
+            @if ($header_notifications_count > 0)
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span><span class="badge">{{ $header_notifications_count }}</span></a>
+                <ul class="dropdown-menu">
+                @foreach ($header_notifications as $note)
+                    @if ($note->notification_type == 'comment')
+                        <li role="presentation"><a href="{{ route('viewLog', ['date' => $note->notification_from]) }}#comments">$note->notification_value commented on your log</a></li>
+                    @endif
+                    @if ($note->notification_type == 'follow')
+                        <li role="presentation"><a href="{{ route('viewUser', ['user_name' => $note->notification_value]) }}">$note->notification_value started following you</a></li>
+                    @endif
+                        <li role="presentation"><a href="#" id="clear_notes">Clear All</a></li>
+                @endforeach
+                </ul>
+            </li>
+            @else
+            <li role="presentation"><span class="badge">0</span></li>
+            @endif
 	  @endif
 		</ul>
 	</div>
@@ -103,6 +121,14 @@
 <script>
 @if (Session::has('flash_message'))
     $('div.alert').not('.alert-important').delay(3000).slideUp(300);
+@endif
+@if ($header_notifications_count > 0)
+    $('#clear_notes').click(function(){
+        $.ajax({
+            url: "{{ route('clearNotifications') }}",
+            cache: false
+        });
+    });
 @endif
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

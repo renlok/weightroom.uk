@@ -36,10 +36,10 @@
 @endsection
 
 @section('endjs')
-<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <link href="{{ asset('css/nv.d3.css') }}" rel="stylesheet">
 <script src="{{ asset('js/nv.d3.js') }}"></script>
-<script src="http://momentjs.com/downloads/moment.js"></script>
+<script src="//momentjs.com/downloads/moment.js"></script>
 
 <style>
 #prHistoryChart .nv-lineChart circle.nv-point {
