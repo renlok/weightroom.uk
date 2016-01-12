@@ -60,14 +60,21 @@ class Exercise_record extends Model
         $query = $query->where('user_id', $user_id)
                 ->where('exercise_id', $exercise_id)
                 ->where('is_time', $exercise_is_time)
-                ->orderBy('pr_value', 'desc')
-                ->value('pr_value');
-        // no prs have been set
-        if (!is_string($query))
+                ->orderBy('pr_value', 'desc');
+        return $query;
+    }
+
+    public static function exercisemaxpr($user_id, $exercise_id, $exercise_is_time)
+    {
+        $maxpr = Exercise_record::getexercisemaxpr($user_id, $exercise_id, $exercise_is_time);
+        if ($maxpr->get() != null)
+        {
+            return $maxpr->value('pr_value');
+        }
+        else
         {
             return 0;
         }
-        return $query;
     }
 
     public static function filterPrs($collection)

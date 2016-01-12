@@ -87,7 +87,7 @@ class ExercisesController extends Controller
         $max_volume = $query->max('logex_volume');
         $max_reps = $query->max('logex_reps');
         $max_sets = $query->max('logex_sets');
-        $max_rm = Exercise_record::getexercisemaxpr($user->user_id, $exercise->exercise_id, $exercise->is_time);
+        $max_rm = Exercise_record::exercisemaxpr($user->user_id, $exercise->exercise_id, $exercise->is_time);
         $scales = [
             'logex_volume' => 1,
             'logex_reps' => floor($max_volume / $max_reps),

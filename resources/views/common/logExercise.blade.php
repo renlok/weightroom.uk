@@ -29,7 +29,7 @@
             @if (($log_item->is_time && $log_item->logitem_sets > 1) || !$log_item->is_time)
                 x <span class="heavy">{{ $log_item->logitem_sets }}</span>
             @endif
-            @if ($log_item->logitem_reps)
+            @if ($log_item->logitem_reps && !$log_item->is_time)
                 <small class="leftspace"><i>&#8776; {{ $log_item->logitem_1rm }} {{ ($log_item->show_unit) ? $user->user_unit : ''}}</i></small>
             @endif
             @if ($log_item->logitem_pre != NULL)

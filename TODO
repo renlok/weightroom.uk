@@ -7,7 +7,6 @@
 BUGS:
 parser:
  - BW exercises not working
- - if comment starts with characters included in unit it breaks (ie mins-> in)
 
 figure out how to do the rest
 https://laracasts.com/series/laravel-5-fundamentals/episodes/7
