@@ -62,6 +62,11 @@ class Exercise_record extends Model
                 ->where('is_time', $exercise_is_time)
                 ->orderBy('pr_value', 'desc')
                 ->value('pr_value');
+        // no prs have been set
+        if (!is_string($query))
+        {
+            return 0;
+        }
         return $query;
     }
 

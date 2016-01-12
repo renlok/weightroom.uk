@@ -4,6 +4,11 @@
 - Test route patterns for date & id
 - deal with assets better with elixier
 
+BUGS:
+parser:
+ - BW exercises not working
+ - if comment starts with characters included in unit it breaks (ie mins-> in)
+
 figure out how to do the rest
 https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 
@@ -28,7 +33,6 @@ https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 - add account (soft) delete option
 
 - On users first log if they define most entires as a unit other than their default ask them if they want to change their default
-- Make sucsess messages automatically close after a few seconds
 - fix getViewExercise -> $current_prs & $filtered_prs why the extra array?
 - add errors to login page
 
@@ -38,7 +42,7 @@ https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 |                      |       |            |        |
 | ajax.php             | x     | x          | x      |
 |                      |       |            |        |
-| bodyweight.php       | x     | s          |        |
+| bodyweight.php       | x     | x          |        |
 |                      |       |            |        |
 | dash.php             | s     |            |        |
 |                      |       |            |        |
@@ -74,13 +78,13 @@ https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 |                      |       |            |        |
 | settings.php         | x     | x          |        |
 |                      |       |            |        |
-| sinclair.php         | x     | s          |        |
+| sinclair.php         | x     | x          |        |
 |                      |       |            |        |
 | tools.php            | x     | x          |        |
 |                      |       |            |        |
 | volume.php           | x     | x          |        |
 |                      |       |            |        |
-| wilks.php            | x     | s          |        |
+| wilks.php            | x     | x          |        |
 +----------------------+-------+------------+--------+
 
 new files

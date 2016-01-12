@@ -147,18 +147,19 @@ class LogsController extends Controller
 
     public function getSearch(Request $request)
     {
+        $user = Auth::user();
         if ($request->old('exercise') != null)
         {
             $query = DB::table('log_items')
                         ->join('exercises', 'exercises.exercise_id', '=', 'log_items.exercise_id')
-                        ->where('log_items.user_id', Auth::user()->user_id)
+                        ->where('log_items.user_id', $user->user_id)
                         ->where('log_items.logitem_weight', $request->old('weightoperator'), $request->old('weight'))
                         ->where('exercises.exercise_name', $request->old('exercise'));
             if ($request->old('reps') != 'any' && $request->old('reps') != '')
         	{
         		$query = $query->where('log_items.logitem_reps', $request->old('reps'));
         	}
-            $query = $query->orderBy('log_exercises.log_date', 'desc')
+            $query = $query->orderBy('log_items.log_date', 'desc')
                             ->groupBy('logex_id');
             if ($request->old('show') > 0)
         	{
@@ -172,7 +173,7 @@ class LogsController extends Controller
             $log_exercises = [];
         }
         $exercises = Exercise::listexercises(false)->get();
-        return view('log.search', compact('exercises', 'log_exercises'));
+        return view('log.search', compact('exercises', 'log_exercises', 'user'));
     }
 
     public function getVolume($from_date = 0, $to_date = 0)

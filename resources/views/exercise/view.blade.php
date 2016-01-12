@@ -21,6 +21,9 @@
     PRs
 @endif
 </small></h2>
+
+@include('common.flash')
+
 <h3>Viewing:
 @if ($range == 0)
     All
@@ -29,8 +32,6 @@
 @endif
 </h3>
 <small><a href="{{ route('listExercises') }}">&larr; Back to list</a></small> | <small><a href="{{ route('editExercise', ['exercise_name' => $exercise_name]) }}">Edit exercise</a></small> | <small><a href="{{ route('exerciseHistory', ['exercise_name' => $exercise_name]) }}">View history</a></small>
-
-@include('common.flash')
 
 <table width="100%" class="table">
 <thead>

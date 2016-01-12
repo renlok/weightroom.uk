@@ -76,7 +76,7 @@
 		chart.tooltipContent(function(key, y, e, graph)
 		{
 			//console.log(key);
-			var units = '{{ Auth::user()->user_unit }}';
+			var units = '{{ $user->user_unit }}';
 			var point_value = key.point.y;
 			if (key.point.color == '#b84a68')
 				var tool_type = 'Volume';

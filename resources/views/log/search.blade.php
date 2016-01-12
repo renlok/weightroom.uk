@@ -39,13 +39,13 @@
     <div class="input-group">
       <select class="form-control" name="weightoperator" id="weightoperator">
         <option value="="{{ ('=' == old('weightoperator')) ? ' selected="selected"' : '' }}>=</option>
-        <option value=">="{{ ('=' == old('weightoperator')) ? ' selected="selected"' : '' }}>&gt;=</option>
-        <option value="<="{{ ('=' == old('weightoperator')) ? ' selected="selected"' : '' }}>&lt;=</option>
-        <option value=">"{{ ('=' == old('weightoperator')) ? ' selected="selected"' : '' }}>&gt;</option>
-        <option value="<"{{ ('=' == old('weightoperator')) ? ' selected="selected"' : '' }}>&lt;</option>
+        <option value=">="{{ ('>=' == old('weightoperator')) ? ' selected="selected"' : '' }}>&gt;=</option>
+        <option value="<="{{ ('<=' == old('weightoperator')) ? ' selected="selected"' : '' }}>&lt;=</option>
+        <option value=">"{{ ('>' == old('weightoperator')) ? ' selected="selected"' : '' }}>&gt;</option>
+        <option value="<"{{ ('<' == old('weightoperator')) ? ' selected="selected"' : '' }}>&lt;</option>
       </select>
       <input type="text" class="form-control" name="weight" id="weight" placeholder="Weight" value="{{ old('weight') }}">
-	  <div class="input-group-addon">{{ Auth::user()->user_unit }}</div>
+	  <div class="input-group-addon">{{ $user->user_unit }}</div>
 	</div>
     </div>
   </div>

@@ -34,7 +34,7 @@ class ExercisesController extends Controller
         $exercise_old = Exercise::where('exercise_name', $exercise_name)->first();
         $exercise_new = Exercise::where('exercise_name', $new_name)->first();
         // new name already exists
-        if($exercise_new->count() > 0)
+        if($exercise_new != null)
     	{
             $final_id = $exercise_new->$exercise_id;
             // remove the old exercise and merge it with an exsisting one
@@ -53,7 +53,7 @@ class ExercisesController extends Controller
     	}
     	else
     	{
-            $final_id = $exercise_old->$exercise_id;
+            $final_id = $exercise_old->exercise_id;
     		// rename the exercise
             $exercise_old->exercise_name = $new_name;
             $exercise_old->save();
@@ -65,14 +65,15 @@ class ExercisesController extends Controller
             ->where('log_exercises.exercise_id', $final_id)
             ->update(['logs.log_update_text' => 1]);
         return redirect()
-            ->route('viewExercise', ['exercise_name' => $exercise_name])
-            ->with(['flash_message' => "$exercise_name shall be known as $new_name"]);
+            ->route('viewExercise', ['exercise_name' => $new_name])
+            ->with(['flash_message' => "$exercise_name shall be now known as $new_name"]);
     }
 
     public function history($exercise_name, $from_date = '', $to_date = '')
     {
+        $user = Auth::user();
         $exercise = Exercise::where('exercise_name', $exercise_name)
-                    ->where('user_id', Auth::user()->user_id)->firstOrFail();
+                    ->where('user_id', $user->user_id)->firstOrFail();
         $query = $exercise->log_exercises();
         if (!empty($from_date))
 		{
@@ -86,7 +87,7 @@ class ExercisesController extends Controller
         $max_volume = $query->max('logex_volume');
         $max_reps = $query->max('logex_reps');
         $max_sets = $query->max('logex_sets');
-        $max_rm = Exercise_record::getexercisemaxpr(Auth::user()->user_id, $exercise->exercise_id, $exercise->is_time);
+        $max_rm = Exercise_record::getexercisemaxpr($user->user_id, $exercise->exercise_id, $exercise->is_time);
         $scales = [
             'logex_volume' => 1,
             'logex_reps' => floor($max_volume / $max_reps),
@@ -101,7 +102,7 @@ class ExercisesController extends Controller
             'logex_sets' => 'Total sets',
             'logex_1rm' => '1RM',
         ];
-        return view('exercise.history', compact('exercise_name', 'log_exercises', 'scales', 'query'));
+        return view('exercise.history', compact('exercise_name', 'log_exercises', 'scales', 'user'));
     }
 
     public function volume($exercise_name)

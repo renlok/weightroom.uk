@@ -114,7 +114,7 @@ class Parser
             }
             $format_chr = $this->format_character($chr);
             // check character is in format and empty accepted_chars counts as allowing anything
-            if (count($this->accepted_chars) == 0 || in_array($format_chr, $this->accepted_chars))
+            if (count($this->accepted_chars) == 0 || (in_array($format_chr, $this->accepted_chars) && $this->check_keeps_format($format_chr)))
             {
                 $this->build_accepted_char ();
                 $this->build_accepted_chars ($format_chr);
@@ -324,7 +324,7 @@ class Parser
                     'exercise_name' => $exercise_name,
                     'user_id' => $this->user->user_id
                 ]);
-                $exercise_id = $exercise->exercise_id
+                $exercise_id = $exercise->exercise_id;
                 $exercise_is_time = false; // assume this for now
             }
             else
@@ -857,6 +857,7 @@ class Parser
         }
     }
 
+    // check end chunk is valid
     private function format_check($format_dump)
     {
         // the block is a comment so skip the check
@@ -871,6 +872,34 @@ class Parser
             {
                 //foreach ($val as $format_string)
                 if ($format_string == $format_dump)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    // check if next character keeps chunk valid
+    private function check_keeps_format($format_chr)
+    {
+        // the block is a comment so skip the check
+        if (isset($this->format_type['C']))
+        {
+            return true;
+        }
+        // nothing significcant has been added
+        if (isset($this->format_dump[strlen($this->format_dump) - 1]) && $this->format_dump[strlen($this->format_dump) - 1] == '0')
+        {
+            return true;
+        }
+        // check if the current format_dump matches a vlid format type
+        $format_string = $this->format_dump . $format_chr;
+        foreach ($this->format_type as $sub_type)
+        {
+            foreach($sub_type as $format)
+            {
+                if(stristr($format, $format_string) !== false)
                 {
                     return true;
                 }
@@ -902,6 +931,7 @@ class Parser
 			$end = $this->strposa($block, array_keys($this->units[$block_type]));
 			if ($end !== false)
 			{
+                // TODO: fix trim(substr($block, $end)), $block set incorrectly
 				$block = array(trim(substr($block, 0, $end)), $this->units[$block_type][trim(substr($block, $end))]);
 			}
 			else
