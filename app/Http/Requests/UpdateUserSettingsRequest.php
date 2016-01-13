@@ -13,11 +13,10 @@ class UpdateUserSettingsRequest extends Request
     public function rules()
     {
         return [
-            'gender' => 'required|unique:posts|max:255',
+            'gender' => 'required|in:m,f',
             'bodyweight' => 'required|numeric',
             'weightunit' => 'required|in:kg,lb',
             'weekstart' => 'required|boolean',
-            'showreps.*' => 'required',
             'squat' => 'required|exists:exercises,exercise_id,user_id,'.Auth::user()->user_id,
             'bench' => 'required|exists:exercises,exercise_id,user_id,'.Auth::user()->user_id,
             'deadlift' => 'required|exists:exercises,exercise_id,user_id,'.Auth::user()->user_id,

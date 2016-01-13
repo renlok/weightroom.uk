@@ -170,7 +170,7 @@ $(document).ready(function(){
 				window.location.href = url.replace(':date', e);
 			},
 			calendars	: calendar_count,
-			first_day	: {{ $user->user_weekstart }},
+			first_day	: {{ empty($user->user_weekstart) ? 0 : $user->user_weekstart }},
 			render: function(date) {
 				var d = moment(date);
 				var m = d.format('YYYY-MM');

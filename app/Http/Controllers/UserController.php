@@ -55,7 +55,7 @@ class UserController extends Controller
         //build temporary new data
         $user = User::find(Auth::user()->user_id);
         $user->user_unit = $request->input('weightunit');
-        $user->user_showreps = $request->input('showreps.*');
+        $user->user_showreps = $request->input('showreps');
         $user->user_squatid = $request->input('squat');
         $user->user_deadliftid = $request->input('deadlift');
         $user->user_benchid = $request->input('bench');
@@ -65,7 +65,7 @@ class UserController extends Controller
         $user->user_gender = $request->input('gender');
         $user->user_volumeincfails = $request->input('volumeincfails');
         $user->user_weekstart = $request->input('weekstart');
-        $user->user_viewintensityabs = $request->input('viewintensityabs');
+        $user->user_showintensity = $request->input('viewintensityabs');
         $user->user_limitintensity = $request->input('limitintensity');
         $user->save();
         return redirect()

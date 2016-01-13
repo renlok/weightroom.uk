@@ -50,7 +50,7 @@
 <div class="row padding">
   <div class="col-md-4">
     <a href="{{ route('wilksGraph') }}">Wilks Graph</a>
-    <<p>View how your Wilks score has improved over time</p>
+    <p>View how your Wilks score has improved over time</p>
   </div>
   <div class="col-md-4">
 	&nbsp;
