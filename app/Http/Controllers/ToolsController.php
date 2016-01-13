@@ -123,4 +123,9 @@ class ToolsController extends Controller
         //$codes = Invite_code::valid(Auth::user()->user_id)->get();
         return view('tools.invites', compact('codes'));
     }
+
+    public function idealWLRatios()
+    {
+        return view('tools.idealWLRatios');
+    }
 }

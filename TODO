@@ -1,5 +1,3 @@
-- build blades with ideal data format then modify back end to work with blades
-
 - rewrite PRs
 - Test route patterns for date & id
 - deal with assets better with elixier
@@ -39,17 +37,17 @@ https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 |                      |       |            |        |
 | bodyweight.php       | x     | x          |        |
 |                      |       |            |        |
-| dash.php             | s     |            |        |
+| dash.php             | x     | x          |        |
 |                      |       |            |        |
 | demo.php             | x     | x          |        | Update demo with new screens
 |                      |       |            |        |
 | edit_exercise.php    | x     | x          |        |
 |                      |       |            |        |
-| exercise.php compare | s     | s          |        |
+| exercise.php compare | x     | x          |        |
 |                      |       |            |        |
 | exercise.php list    | x     | x          |        |
 |                      |       |            |        |
-| exercise.php prs     | x     | s          |        |
+| exercise.php prs     | x     | x          |        |
 |                      |       |            |        |
 | history.php          | x     | x          |        |
 |                      |       |            |        |

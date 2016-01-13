@@ -24,17 +24,33 @@
 	<p>View how your bodyweight has changed</p>
   </div>
   <div class="col-md-4">
-	<a href="{{ route('wilksGraph') }}">Wilks Graph</a>
-	<p>View how your Wilks score has improved over time</p>
+	&nbsp;
   </div>
-  <div class="col-md-4">
-	<a href="{{ route('sinclairGraph') }}">Sinclair Graph</a>
-	<p>View how your Sinclair score has improved over time</p>
-  </div>
-</div>
-<div class="row padding">
   <div class="col-md-4">
 	&nbsp;
+  </div>
+</div>
+<h2>Weightlifting</h2>
+<small>noun: The sport of weightlifting, a sport involving the snatch and the clean and jerk.</small>
+<div class="row padding">
+  <div class="col-md-4">
+    <a href="{{ route('sinclairGraph') }}">Sinclair Graph</a>
+    <p>View how your Sinclair score has improved over time</p>
+  </div>
+  <div class="col-md-4">
+	<a href="{{ route('wlratios') }}">Weightlifting Ratio Calculator</a>
+    <p>Calculate what your other lifts should be based off your current maxes</p>
+  </div>
+  <div class="col-md-4">
+	&nbsp;
+  </div>
+</div>
+<h2>Powerlifting</h2>
+<small><em>"I pick things up and put them down"</en></small>
+<div class="row padding">
+  <div class="col-md-4">
+    <a href="{{ route('wilksGraph') }}">Wilks Graph</a>
+    <<p>View how your Wilks score has improved over time</p>
   </div>
   <div class="col-md-4">
 	&nbsp;

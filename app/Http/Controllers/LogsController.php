@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Auth;
 use DB;
+use App\Comment;
 use App\Exercise;
 use App\Log;
 use App\Log_exercise;

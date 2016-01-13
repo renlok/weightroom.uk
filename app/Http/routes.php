@@ -88,9 +88,12 @@ Route::group(['prefix' => 'exercise', 'middleware' => 'auth'], function () {
 Route::group(['prefix' => 'tools', 'middleware' => 'auth'], function () {
     Route::get('/', 'ToolsController@index')->name('tools');
     Route::get('bodyweight/{range?}', 'ToolsController@bodyweight')->name('bodyweightGraph');
-    Route::get('wilks/{range?}', 'ToolsController@wilks')->name('wilksGraph');
-    Route::get('sinclair/{range?}', 'ToolsController@sinclair')->name('sinclairGraph');
     Route::get('invites', 'ToolsController@invites')->name('invites');
+    // PL tools
+    Route::get('wilks/{range?}', 'ToolsController@wilks')->name('wilksGraph');
+    // WL tools
+    Route::get('sinclair/{range?}', 'ToolsController@sinclair')->name('sinclairGraph');
+    Route::get('wlratios', 'ToolsController@idealWLRatios')->name('wlratios');
 });
 
 // Misc
