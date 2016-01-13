@@ -63,10 +63,10 @@
                 <ul class="dropdown-menu">
                 @foreach ($header_notifications as $note)
                     @if ($note->notification_type == 'comment')
-                        <li role="presentation"><a href="{{ route('viewLog', ['date' => $note->notification_from]) }}#comments">{{$note->notification_value}} commented on your log</a></li>
+                        <li role="presentation"><a href="{{ route('viewLog', ['date' => $note->notification_from->log_date]) }}#comments">{{$note->notification_value}} commented on your log</a></li>
                     @endif
                     @if ($note->notification_type == 'reply')
-                        <li role="presentation"><a href="{{ route('viewLog', ['date' => $note->notification_from]) }}#comments">{{$note->notification_value}} replied to your comment</a></li>
+                        <li role="presentation"><a href="{{ route('viewLog', ['date' => $note->notification_from->log_date, 'user_name' => $note->notification_from->user_name]) }}#comments">{{$note->notification_value}} replied to your comment</a></li>
                     @endif
                     @if ($note->notification_type == 'follow')
                         <li role="presentation"><a href="{{ route('viewUser', ['user_name' => $note->notification_value]) }}">{{$note->notification_value}} started following you</a></li>

@@ -21,20 +21,22 @@ class CommentController extends Controller
 			Notification::create([
 	            'user_id' => $log->user_id,
 	            'notification_type' => 'comment',
-				'notification_from' => $log->log_date->toDateString(),
+				'notification_from' => ['log_date' => $log->log_date->toDateString()],
 	            'notification_value' => Auth::user()->user_name
 	        ]);
 		}
 		else
 		{
 			$parent_comment = Comment::join('logs', 'logs.log_id', '=', 'comments.commentable_id')
-							->select('logs.log_date', 'comments.user_id')
+							->join('users', 'logs.user_id', '=', 'users.user_id')
+							->select('logs.log_date', 'comments.user_id', 'users.user_name')
 							->where('comment_id', $request->input('parent_id'))
+							->withTrashed()
 							->firstOrFail();
 			Notification::create([
 	            'user_id' => $parent_comment->user_id,
 	            'notification_type' => 'reply',
-				'notification_from' => $parent_comment->log_date->toDateString(),
+				'notification_from' => ['log_date' => $parent_comment->log_date, 'user_name' => $parent_comment->user_name],
 	            'notification_value' => Auth::user()->user_name
 	        ]);
 		}
@@ -47,7 +49,7 @@ class CommentController extends Controller
 			'user_id' => Auth::user()->user_id
 		]);
 		return redirect()
-                ->route('viewLog', ['date' => $log->log_date->toDateString()])
+                ->route('viewLog', ['date' => $log->log_date->toDateString(), 'user_name' => $log->user->user_name])
                 ->with('commenting', true);
 	}
 

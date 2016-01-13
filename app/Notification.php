@@ -12,6 +12,9 @@ class Notification extends Model
     protected $primaryKey = 'notification_id';
     protected $guarded = ['notification_id'];
     protected $dates = ['deleted_at'];
+    protected $casts = [
+        'notification_from' => 'array',
+    ];
 
     /**
      * Notifications belongs to a single user
