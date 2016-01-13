@@ -109,7 +109,7 @@ Route::get('demo', 'MiscController@demo')->name('demo');
 Route::get('help/privacypolicy', 'MiscController@privacyPolicy')->name('privacyPolicy');
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('landing');
 })->name('home');
 
 // check routes with artisan routes:list

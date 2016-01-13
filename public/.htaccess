@@ -1,3 +1,6 @@
+# Use PHP5.6 as default
+AddHandler application/x-httpd-php55 .php
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews

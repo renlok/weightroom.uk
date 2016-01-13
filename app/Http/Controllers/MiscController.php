@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 
 class MiscController extends Controller
 {
-    public function index()
+    public function landing()
     {
         return view('landing');
     }
