@@ -57,7 +57,7 @@ class User extends Model implements AuthenticatableContract,
 
     public function setUserShowrepsAttribute($value)
     {
-        $this->attributes['user_showreps'] = array_map('intval', $value);
+        $this->attributes['user_showreps'] = '[' . implode(',', array_map('intval', $value)) . ']';
     }
 
     public function scopeUserlike($query, $username)

@@ -31,7 +31,7 @@ class CreateUsersTable extends Migration
             $table->boolean('user_volumeincfails')->default('0');
             $table->boolean('user_weekstart')->default('0');
             $table->smallInteger('user_limitintensity')->default('0');
-            $table->boolean('user_limitintensitywarmup')->default('0');
+            $table->boolean('user_limitintensitywarmup')->default('0'); // NEW VALUE
             $table->enum('user_showintensity', ['h', 'p', 'a'])->default('p'); // h = hide, p = percent, a = absolute CHANGE NAME/VALUE
             $table->boolean('user_beta')->default('0');
             $table->boolean('user_admin')->default('0');
