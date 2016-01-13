@@ -111,7 +111,7 @@
 		@include('common.logExercise', ['view_type' => 'log'])
 	@endforeach
 	<a name="comments"></a>
-	@include('common.commentTree', ['comments' => $log->comments()->withTrashed()->get()])
+	@include('common.commentTree', ['comments' => $comments])
 @endif
 @endsection
 
@@ -143,9 +143,11 @@ $(document).ready(function(){
 	});
 	$('.delete').click(function() {
 		var comment_id = $(this).attr('c-id');
-		var element = $('c' + comment_id).text('[Deleted]');
+		var element = $('#c' + comment_id).text('[Deleted]');
 		$.ajax({
             url: "{{ route('deleteComment', ['comment_id' => ':cid']) }}".replace(':cid', comment_id),
+			type: 'GET',
+			dataType: 'json',
             cache: false
         });
 		return false;

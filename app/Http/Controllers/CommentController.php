@@ -15,7 +15,29 @@ class CommentController extends Controller
 {
 	public function store($log_id, Request $request)
 	{
-		$log = Log::where('log_id', $log_id)->first();
+		$log = Log::where('log_id', $log_id)->firstOrFail();
+		if ($request->input('parent_id') == 0)
+		{
+			Notification::create([
+	            'user_id' => $log->user_id,
+	            'notification_type' => 'comment',
+				'notification_from' => $log->log_date->toDateString(),
+	            'notification_value' => Auth::user()->user_name
+	        ]);
+		}
+		else
+		{
+			$parent_comment = Comment::join('logs', 'logs.log_id', '=', 'comments.commentable_id')
+							->select('logs.log_date', 'comments.user_id')
+							->where('comment_id', $request->input('parent_id'))
+							->firstOrFail();
+			Notification::create([
+	            'user_id' => $parent_comment->user_id,
+	            'notification_type' => 'reply',
+				'notification_from' => $parent_comment->log_date->toDateString(),
+	            'notification_value' => Auth::user()->user_name
+	        ]);
+		}
 		Comment::create([
 			'parent_id' => $request->input('parent_id'),
 			'comment' => $request->input('comment'),
@@ -24,12 +46,6 @@ class CommentController extends Controller
 			'comment_date' => Carbon::now(),
 			'user_id' => Auth::user()->user_id
 		]);
-		Notification::create([
-            'user_id' => $log->user_id,
-            'notification_type' => 'comment',
-			'notification_from' => $log->log_date->toDateString(),
-            'notification_value' => Auth::user()->user_name
-        ]);
 		return redirect()
                 ->route('viewLog', ['date' => $log->log_date->toDateString()])
                 ->with('commenting', true);
@@ -37,10 +53,11 @@ class CommentController extends Controller
 
 	public function delete($comment_id)
 	{
-		$comment = Comment::where('comment_id', $comment_id)->get();
+		$comment = Comment::where('comment_id', $comment_id)->firstOrFail();
 		if ($comment->user_id == Auth::user()->user_id)
 		{
 			Comment::where('comment_id', $comment_id)->delete();
+			return 0;
 		}
 		else
 		{

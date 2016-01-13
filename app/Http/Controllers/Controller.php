@@ -24,6 +24,7 @@ abstract class Controller extends BaseController
         }
         else
         {
+            View::share('header_notifications', []);
             View::share('header_notifications_count', 0);
         }
     }

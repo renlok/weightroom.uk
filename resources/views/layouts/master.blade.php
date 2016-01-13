@@ -65,6 +65,9 @@
                     @if ($note->notification_type == 'comment')
                         <li role="presentation"><a href="{{ route('viewLog', ['date' => $note->notification_from]) }}#comments">{{$note->notification_value}} commented on your log</a></li>
                     @endif
+                    @if ($note->notification_type == 'reply')
+                        <li role="presentation"><a href="{{ route('viewLog', ['date' => $note->notification_from]) }}#comments">{{$note->notification_value}} replied to your comment</a></li>
+                    @endif
                     @if ($note->notification_type == 'follow')
                         <li role="presentation"><a href="{{ route('viewUser', ['user_name' => $note->notification_value]) }}">{{$note->notification_value}} started following you</a></li>
                     @endif

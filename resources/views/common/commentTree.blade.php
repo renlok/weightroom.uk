@@ -16,7 +16,7 @@
 		<div class="comment-reply-box" style="display:none;">
 			@include('common.commentForm', ['parent_id' => $comment->comment_id])
 		</div>
-		@include('common.commentChild', ['children_comments' => $comment->children()->withTrashed()->get()])
+		@include('common.commentChild', ['children_comments' => $comment->children()])
 	</div>
 </li>
 @endforeach

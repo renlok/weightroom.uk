@@ -119,6 +119,6 @@ Route::resource('blog', 'BlogController', ['names' => [
 ]]);
 
 Route::group(['prefix' => 'comment', 'middleware' => 'auth'], function () {
-    Route::post('{comment_id}/delete', 'CommentController@delete')->name('deleteComment');
+    Route::get('{comment_id}/delete', 'CommentController@delete')->name('deleteComment');
     Route::post('{log_id}', 'CommentController@store')->name('saveComment');
 });

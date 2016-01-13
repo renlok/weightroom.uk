@@ -28,11 +28,12 @@
   </div>
   <div class="form-group">
     <label for="liftrm">Lift 1RM:</label>
-    <input type="text" class="form-control" id="liftrm" placeholder="Password">
+    <input type="text" class="form-control" id="liftrm" placeholder="Weight">
   </div>
   <button type="button" class="btn btn-default" id="calculate">Calculate</button>
 </form>
 <div id="wlratios" style="display:none;">
+    <h2>Estimated Max Lifts:</h2>
 	<p>Total: <span id="wlt"></span></p>
 	<p>Snatch: <span id="wls"></span></p>
 	<p>Clean and Jerk: <span id="wlcnj"></span></p>
@@ -49,11 +50,11 @@
 @section('endjs')
 <script>
 $('#calculate').click(function(){
-	if ($(this).is(":hidden") == true)
+	if ($('#wlratios').is(":hidden") == true)
 	{
-		$(this).show();
+		$('#wlratios').show();
 	}
-	var bmlift = $('#benchmarklift').find(":selected").attr('id');
+	var bmlift = $('#benchmarklift option:selected').attr('value');
 	var liftrm = $('#liftrm').val();
 	var ratio = {};
 	ratio.wlt = 1.39;
@@ -68,15 +69,15 @@ $('#calculate').click(function(){
 	// get squat value
 	var squat = liftrm/ratio[bmlift];
 	// set all values
-	$('#wlt').text(squat*ratio.wlt);
-	$('#wls').text(squat*ratio.wls);
-	$('#wlcnj').text(squat*ratio.wlcnj);
-	$('#wlps').text(squat*ratio.wlps);
-	$('#wlpc').text(squat*ratio.wlpc);
-	$('#wlpj').text(squat*ratio.wlpj);
-	$('#wlfs').text(squat*ratio.wlfs);
-	$('#wlbs').text(squat);
-	$('#wlp').text(squat*ratio.wlp);
+	$('#wlt').text(Math.round(squat*ratio.wlt));
+	$('#wls').text(Math.round(squat*ratio.wls));
+	$('#wlcnj').text(Math.round(squat*ratio.wlcnj));
+	$('#wlps').text(Math.round(squat*ratio.wlps));
+	$('#wlpc').text(Math.round(squat*ratio.wlpc));
+	$('#wlpj').text(Math.round(squat*ratio.wlpj));
+	$('#wlfs').text(Math.round(squat*ratio.wlfs));
+	$('#wlbs').text(Math.round(squat));
+	$('#wlp').text(Math.round(squat*ratio.wlp));
 });
 </script>
 @endsection

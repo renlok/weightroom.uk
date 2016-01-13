@@ -51,7 +51,8 @@ class LogsController extends Controller
             $commenting = false;
         }
         $carbon_date = Carbon::createFromFormat('Y-m-d', $date);
-        return view('log.view', compact('date', 'carbon_date', 'user', 'log', 'is_following', 'commenting'));
+        $comments = Comment::where('commentable_id', $log->log_id)->where('commentable_type', 'App\Log')->orderBy('comment_date', 'asc')->withTrashed()->get();
+        return view('log.view', compact('date', 'carbon_date', 'user', 'log', 'comments', 'is_following', 'commenting'));
     }
 
     public function getEdit($date)
