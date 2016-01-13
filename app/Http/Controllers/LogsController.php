@@ -34,9 +34,29 @@ class LogsController extends Controller
         $log = $user->logs()->where('log_date', $date)->first();
         if ($log != null)
         {
-            //TODO fix this
-            //$log->average_intensity = $log->log_exercises()->sum('average_intensity');
-            $log->average_intensity = '';
+            if (Auth::user()->user_showintensity == 'h')
+            {
+                $log->average_intensity = 0;
+                $count = 0;
+                foreach ($log->log_exercises()->get() as $log_exercises)
+                {
+                    $log->average_intensity += $log_exercises->average_intensity_raw;
+                    $count++;
+                }
+                if (Auth::user()->user_showintensity == 'p')
+                {
+                    $ai_suffix = '%';
+                }
+                else
+                {
+                    $ai_suffix = ' ' . Auth::user()->user_unit;
+                }
+                $log->average_intensity = round($log->average_intensity/$count) . $ai_suffix;
+            }
+            else
+            {
+                $log->average_intensity = '';
+            }
             $comments = Comment::where('commentable_id', $log->log_id)->where('commentable_type', 'App\Log')->where('parent_id', 0)->orderBy('comment_date', 'asc')->withTrashed()->get();
         }
         else

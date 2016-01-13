@@ -43,7 +43,7 @@ class Log_control {
         return $log_exercise;
     }
 
-    public static function average_intensity($user_id, $exercise_id, $logex_id)
+    public static function average_intensity($user_id, $exercise_id, $logex_id, $raw = false)
     {
         $exercise_is_time = Exercise::find($exercise_id)->value('is_time');
         $current_1rm = Exercise_record::exercisemaxpr($user_id, $exercise_id, $exercise_is_time);
@@ -54,7 +54,7 @@ class Log_control {
 			if ($current_1rm > 0 && $log_exercise->logex_reps > 0)
 			{
 				// the current 1rm has been set
-				$average_intensity = round((($log_exercise->logex_volume / $log_exercise->logex_reps) / $current_1rm) * 100) . '%';
+				$average_intensity = round((($log_exercise->logex_volume / $log_exercise->logex_reps) / $current_1rm) * 100) . (($raw) ? '' : '%');
 			}
 			else
 			{
@@ -64,7 +64,7 @@ class Log_control {
 		}
 		else
 		{
-			$average_intensity = (($log_exercise->logex_reps > 0) ? round(($log_exercise->logex_volume / $log_exercise->logex_reps), 1) : 0) . ' ' . Auth::user()->user_unit;
+			$average_intensity = (($log_exercise->logex_reps > 0) ? round(($log_exercise->logex_volume / $log_exercise->logex_reps), 1) : 0) . (($raw) ? '' : ' ' . Auth::user()->user_unit);
 		}
 		return $average_intensity;
     }
