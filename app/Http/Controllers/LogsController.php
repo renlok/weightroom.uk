@@ -34,7 +34,7 @@ class LogsController extends Controller
         $log = $user->logs()->where('log_date', $date)->first();
         if ($log != null)
         {
-            if (Auth::user()->user_showintensity == 'h')
+            if (Auth::user()->user_showintensity != 'h')
             {
                 $log->average_intensity = 0;
                 $count = 0;
