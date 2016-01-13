@@ -6,7 +6,7 @@
 <h1>Tools</h1>
 <div class="row padding">
   <div class="col-md-4">
-	<a href="{{ route('totalVolume') }}">Total volume graph</a>
+	<a href="{{ route('totalVolume') }}">Total Volume Graph</a>
 	<p>View the total volume of the weight you have lifted in the past</p>
   </div>
   <div class="col-md-4">
@@ -14,13 +14,13 @@
 	<p>See how your PRs of different exercises have changed over time</p>
   </div>
   <div class="col-md-4">
-	<a href="{{ route('searchLog') }}">Search logs</a>
+	<a href="{{ route('searchLog') }}">Search Logs</a>
 	<p>Search your log records and find the last time you did something</p>
   </div>
 </div>
 <div class="row padding">
   <div class="col-md-4">
-	<a href="{{ route('bodyweightGraph') }}">Bodyweight graph</a>
+	<a href="{{ route('bodyweightGraph') }}">Bodyweight Graph</a>
 	<p>View how your bodyweight has changed</p>
   </div>
   <div class="col-md-4">
@@ -46,7 +46,7 @@
   </div>
 </div>
 <h2>Powerlifting</h2>
-<small><em>"I pick things up and put them down"</en></small>
+<small><em>"I pick things up and put them down"</em></small>
 <div class="row padding">
   <div class="col-md-4">
     <a href="{{ route('wilksGraph') }}">Wilks Graph</a>

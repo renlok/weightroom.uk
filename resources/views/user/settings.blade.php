@@ -2,6 +2,15 @@
 
 @section('title', 'Settings')
 
+@section('headerstyle')
+<style>
+.form-horizontal .form-group {
+    margin-right: 15px;
+    margin-left: 15px;
+}
+</style>
+@endsection
+
 @section('content')
 <h2>Edit user settings</h2>
 @include('errors.validation')

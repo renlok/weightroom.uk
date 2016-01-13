@@ -65,7 +65,7 @@
 		<div class="col-md-3 col-md-push-9">
 			<div class="user-info">
 				<h4>{{ $user->user_name }} @include('common.userBadges')</h4>
-				<p><small>Member since: {{ $user->user_joined }}</small></p>
+				<p><small>Member since: {{ $user->created_at->toDateString() }}</small></p>
 @if ($user->user_id != Auth::user()->user_id)
 	@if ($is_following)
 				<p class="btn btn-default"><a href="{{ route('unfollowUser', ['user' => $user->user_name, 'date' => $date]) }}">Unfollow <img src="{{ asset('img/user_delete.png') }}"></a></p>
