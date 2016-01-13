@@ -37,6 +37,11 @@ class LogsController extends Controller
             //TODO fix this
             //$log->average_intensity = $log->log_exercises()->sum('average_intensity');
             $log->average_intensity = '';
+            $comments = Comment::where('commentable_id', $log->log_id)->where('commentable_type', 'App\Log')->orderBy('comment_date', 'asc')->withTrashed()->get();
+        }
+        else
+        {
+            $comments = null;
         }
         if ($user->invite_code == null)
         {
@@ -51,7 +56,6 @@ class LogsController extends Controller
             $commenting = false;
         }
         $carbon_date = Carbon::createFromFormat('Y-m-d', $date);
-        $comments = Comment::where('commentable_id', $log->log_id)->where('commentable_type', 'App\Log')->orderBy('comment_date', 'asc')->withTrashed()->get();
         return view('log.view', compact('date', 'carbon_date', 'user', 'log', 'comments', 'is_following', 'commenting'));
     }
 
