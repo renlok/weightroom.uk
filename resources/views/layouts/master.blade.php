@@ -63,10 +63,10 @@
                 <ul class="dropdown-menu">
                 @foreach ($header_notifications as $note)
                     @if ($note->notification_type == 'comment')
-                        <li role="presentation"><a href="{{ route('viewLog', ['date' => $note->notification_from->log_date]) }}#comments">{{$note->notification_value}} commented on your log</a></li>
+                        <li role="presentation"><a href="{{ route('viewLog', ['date' => $note->notification_from['log_date']]) }}#comments">{{$note->notification_value}} commented on your log</a></li>
                     @endif
                     @if ($note->notification_type == 'reply')
-                        <li role="presentation"><a href="{{ route('viewLog', ['date' => $note->notification_from->log_date, 'user_name' => $note->notification_from->user_name]) }}#comments">{{$note->notification_value}} replied to your comment</a></li>
+                        <li role="presentation"><a href="{{ route('viewLog', ['date' => $note->notification_from['log_date'], 'user_name' => $note->notification_from['user_name']]) }}#comments">{{$note->notification_value}} replied to your comment</a></li>
                     @endif
                     @if ($note->notification_type == 'follow')
                         <li role="presentation"><a href="{{ route('viewUser', ['user_name' => $note->notification_value]) }}">{{$note->notification_value}} started following you</a></li>
@@ -113,7 +113,7 @@
 
 <footer class="footer">
   <div class="container">
-	<p class="text-muted">2015 &#169; weightroom.uk.<span class="hidden-xs"> Use of this site constitutes acceptance of the site's <a href="{{ route('privacyPolicy') }}">Privacy Policy and Terms of Use</a>.</span></p>
+	<p class="text-muted">2015 &#169; weightroom.uk.<span class="hidden-xs"> Use of this site constitutes acceptance of the site's <a href="{{ route('privacyPolicy') }}" target="_blank">Privacy Policy and Terms of Use</a>.</span></p>
   </div>
 </footer>
 
@@ -129,8 +129,8 @@
             url: "{{ route('clearNotifications') }}",
             cache: false
         });
+        $('#notification_bubble').hide();
     });
-    $('#notification_bubble').hide();
 @endif
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

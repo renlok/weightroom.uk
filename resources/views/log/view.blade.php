@@ -110,7 +110,6 @@
 	@foreach ($log->log_exercises as $log_exercise)
 		@include('common.logExercise', ['view_type' => 'log'])
 	@endforeach
-	<a name="comments"></a>
 	@include('common.commentTree', ['comments' => $comments])
 @endif
 @endsection

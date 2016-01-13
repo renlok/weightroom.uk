@@ -37,7 +37,7 @@ class LogsController extends Controller
             //TODO fix this
             //$log->average_intensity = $log->log_exercises()->sum('average_intensity');
             $log->average_intensity = '';
-            $comments = Comment::where('commentable_id', $log->log_id)->where('commentable_type', 'App\Log')->orderBy('comment_date', 'asc')->withTrashed()->get();
+            $comments = Comment::where('commentable_id', $log->log_id)->where('commentable_type', 'App\Log')->where('parent_id', 0)->orderBy('comment_date', 'asc')->withTrashed()->get();
         }
         else
         {
