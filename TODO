@@ -55,7 +55,7 @@ https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 |                      |       |            |        |
 | landing.php          | x     | x          |        |
 |                      |       |            |        |
-| log.php view         | s     | x          |        |
+| log.php view         | x     | x          |        |
 |                      |       |            |        |
 | log.php edit         | x     | x          |        |
 |                      |       |            |        |

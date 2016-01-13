@@ -102,7 +102,7 @@ class ExercisesController extends Controller
             'logex_sets' => 'Total sets',
             'logex_1rm' => '1RM',
         ];
-        return view('exercise.history', compact('exercise_name', 'log_exercises', 'scales', 'user'));
+        return view('exercise.history', compact('exercise_name', 'graph_names', 'log_exercises', 'scales', 'user'));
     }
 
     public function volume($exercise_name)

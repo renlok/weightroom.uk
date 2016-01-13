@@ -50,13 +50,14 @@
 @section('endjs')
 <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
 <script src="{{ asset('js/nv.d3.js') }}"></script>
+<script src="//momentjs.com/downloads/moment.js"></script>
 <script>
     function HistoryData() {
 		var HistoryChartData = [];
 @foreach ($graph_names as $table_name => $graph_name)
 		var dataset{{ $table_name }} = [];
 @endforeach
-@foreach ($graph_data as $item)
+@foreach ($log_exercises as $item)
 		@foreach ($graph_names as $table_name => $graph_name)
 			dataset{{ $table_name }}.push({x: moment('{{ $item->log_date }}','YYYY-MM-DD').toDate(), y: {{ $item->$table_name * $scales[$table_name] }}, shape:'circle'});
 		@endforeach
@@ -64,7 +65,16 @@
 @foreach ($graph_names as $table_name => $graph_name)
 		HistoryChartData.push({
 			values: dataset{{ $table_name }},
-			key: '{{ $graph_name }}'
+			key: '{{ $graph_name }}',
+	@if ($table_name == 'logex_reps')
+			color: '#a6bf50'
+	@elseif ($table_name == 'logex_sets')
+			color: '#56c5a6'
+	@elseif ($table_name == 'logex_1rm')
+			color: '#765dcb'
+	@else
+			color: '#b84a68'
+	@endif
 		});
 @endforeach
 		return HistoryChartData;
@@ -83,25 +93,19 @@
 			if (key.point.color == '#a6bf50')
 			{
 				var tool_type = 'Total reps';
-				point_value = Math.round(point_value / {{ $scales['Total reps'] }});
+				point_value = Math.round(point_value / {{ $scales['logex_reps'] }});
 				units = '';
 			}
 			if (key.point.color == '#56c5a6')
 			{
 				var tool_type = 'Total sets';
-				point_value = Math.round(point_value / {{ $scales['Total sets'] }});
+				point_value = Math.round(point_value / {{ $scales['logex_sets'] }});
 				units = '';
 			}
 			if (key.point.color == '#765dcb')
 			{
 				var tool_type = '1RM';
-				point_value = (point_value / {{ $scales['1RM'] }}).toFixed(2);
-			}
-			if (key.point.color == '#907fcc')
-			{
-				var tool_type = 'Average Intensity';
-				point_value = Math.round(point_value / {{ $scales['ai'] }});
-				units = '%';
+				point_value = (point_value / {{ $scales['logex_1rm'] }}).toFixed(2);
 			}
 			return '<pre>' + tool_type + ': ' + point_value + units + '</pre>';
 		})
