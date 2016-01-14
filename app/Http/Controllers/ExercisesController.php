@@ -31,8 +31,8 @@ class ExercisesController extends Controller
     public function postEdit($exercise_name, Request $request)
     {
         $new_name = $request->input('exercisenew');
-        $exercise_old = Exercise::where('exercise_name', $exercise_name)->first();
-        $exercise_new = Exercise::where('exercise_name', $new_name)->first();
+        $exercise_old = Exercise::where('exercise_name', $exercise_name)->where('user_id', Auth::user()->user_id)->firstOrFail();
+        $exercise_new = Exercise::where('exercise_name', $new_name)->where('user_id', Auth::user()->user_id)->first();
         // new name already exists
         if($exercise_new != null)
     	{
