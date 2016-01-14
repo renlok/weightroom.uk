@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests;
+use Illuminate\Http\Request;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Http\Controllers\Controller;
@@ -50,9 +51,10 @@ class LoginController extends Controller
 		return redirect('/');
 	}
 
-	public function getRegister()
+	public function getRegister(Request $request)
 	{
-	  return view('user.register');
+		$invcode = $request->input('invcode', (isset($request->old('invcode')) ? : $request->old('invcode') : ''));
+		return view('user.register', compact('invcode'));
 	}
 
 	public function postRegister(RegisterRequest $request)

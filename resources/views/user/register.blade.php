@@ -33,7 +33,7 @@
   <div class="form-group">
     <label for="invcode" class="col-sm-2 control-label">Invite Code</label>
     <div class="col-sm-10">
-      <input type="text" class="form-control" id="invcode" name="invcode" placeholder="Invite Code" value="{{ old('invcode') }}">
+      <input type="text" class="form-control" id="invcode" name="invcode" placeholder="Invite Code" value="{{ $invcode }}">
     </div>
   </div>
   <div class="form-group">
