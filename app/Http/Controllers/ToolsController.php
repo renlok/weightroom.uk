@@ -11,6 +11,7 @@ use App\User;
 use App\Log;
 use App\Exercise_record;
 use App\Extend\Graph;
+use Carbon;
 
 class ToolsController extends Controller
 {
@@ -21,19 +22,25 @@ class ToolsController extends Controller
 
     public function bodyweight($range = 0)
     {
+        $from_date = ($range > 0) ? Carbon::now()->subMonths($range)->toDateString() : 0;
         $graphs = [];
-        $graphs['Bodyweight'] = Log::getbodyweight(Auth::user()->user_id)->get()->unique('log_weight')->toArray();
+        $graphs['Bodyweight'] = Log::getbodyweight(Auth::user()->user_id, $from_date)->get()->unique('log_weight')->toArray();
         return view('tools.bodyweight', compact('range', 'graphs'));
     }
 
     public function wilks($range = 0)
     {
+        $from_date = ($range > 0) ? Carbon::now()->subMonths($range)->toDateString() : 0;
         $graph_data = Exercise_record::select('log_date', 'exercise_name', 'pr_1rm as log_weight')
                                 ->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
                                 ->where('exercise_records.user_id', Auth::user()->user_id)
                                 ->where('is_est1rm', 1)
-                                ->whereIn('exercise_records.exercise_id', [Auth::user()->user_squatid, Auth::user()->user_deadliftid, Auth::user()->user_benchid])
-                                ->orderBy('log_date', 'asc');
+                                ->whereIn('exercise_records.exercise_id', [Auth::user()->user_squatid, Auth::user()->user_deadliftid, Auth::user()->user_benchid]);
+        if ($from_date != 0)
+        {
+            $graph_data = $graph_data->where('log_date', '>=', $from_date);
+        }
+        $graph_data = $graph_data->orderBy('log_date', 'asc');
         $graphs = $graph_data->get()->groupBy('exercise_name')->toArray();
         $graphs['Bodyweight'] = Log::getbodyweight(Auth::user()->user_id)->get();
         // build a useful array for wilks data
@@ -73,12 +80,17 @@ class ToolsController extends Controller
 
     public function sinclair($range = 0)
     {
+        $from_date = ($range > 0) ? Carbon::now()->subMonths($range)->toDateString() : 0;
         $graph_data = Exercise_record::select('log_date', 'exercise_name', 'pr_1rm as log_weight')
                                 ->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
                                 ->where('exercise_records.user_id', Auth::user()->user_id)
                                 ->where('is_est1rm', 1)
-                                ->whereIn('exercise_records.exercise_id', [Auth::user()->user_snatchid, Auth::user()->user_cleanjerkid])
-                                ->orderBy('log_date', 'asc');
+                                ->whereIn('exercise_records.exercise_id', [Auth::user()->user_snatchid, Auth::user()->user_cleanjerkid]);
+        if ($from_date != 0)
+        {
+            $graph_data = $graph_data->where('log_date', '>=', $from_date);
+        }
+        $graph_data = $graph_data->orderBy('log_date', 'asc');
         $graphs = $graph_data->get()->groupBy('exercise_name')->toArray();
         $graphs['Bodyweight'] = Log::getbodyweight(Auth::user()->user_id)->get();
         // build a useful array for sinclair data

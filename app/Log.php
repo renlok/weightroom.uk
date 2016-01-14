@@ -14,12 +14,17 @@ class Log extends Model
     ];
     protected $guarded = ['log_id'];
 
-    public function scopeGetbodyweight($query, $user_id)
+    public function scopeGetbodyweight($query, $user_id, $from_date = 0)
     {
-        return $query->select('log_date', 'log_weight')
-                    ->where('user_id', $user_id)
-                    ->where('log_weight', '!=', 0)
-                    ->orderBy('log_date', 'asc');
+        $query = $query->select('log_date', 'log_weight')
+                        ->where('user_id', $user_id)
+                        ->where('log_weight', '!=', 0);
+        if ($from_date != 0)
+        {
+            $query = $query->where('log_date', '>=', $from_date);
+        }
+        $query = $query->orderBy('log_date', 'asc');
+        return $query;
     }
 
     public function scopeGetlastbodyweight($query, $user_id, $date)
