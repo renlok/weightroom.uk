@@ -5,12 +5,16 @@ html {
 body {
 	/* Margin bottom by footer height */
 	margin-bottom: 80px;
+	font-family: 'Open Sans', sans-serif !important;
 }
 #header {
 	padding: 15px;
+	border-bottom: #CCCCCC solid 1px;
+	margin-bottom: 10px;
 }
 #body-div {
 	padding-left: 25px;
+	max-width: 1200px;
 }
 .footer {
 	position: absolute;

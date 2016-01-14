@@ -128,6 +128,10 @@
 
     nv.addGraph(function() {
 		var width = $(document).width() - 50;
+        if (width > 1150)
+        {
+            width = 1150;
+        }
 		var height = Math.round(width/2);
         var chart = nv.models.lineChart()
 						.margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
@@ -158,6 +162,10 @@
         nv.utils.windowResize(resizeChart);
         function resizeChart() {
 			var width = $(document).width() - 50;
+            if (width > 1150)
+            {
+                width = 1150;
+            }
 			var height = Math.round(width/2);
 			d3.select('#prHistoryChart')
 				.attr('style', "width: " + width + "px; height: " + height + "px;" );

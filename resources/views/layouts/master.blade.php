@@ -12,10 +12,11 @@
   	<meta name="keywords" content="workout tracker, workout journal, training journal, weight training, strength training, powerlifting, weightlifting, strongman">
 
     <!-- Bootstrap -->
+    <link href='//fonts.googleapis.com/css?family=Open+Sans&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ asset('css/tracker.css') }}">
-  	<script src="//code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
-  	<script src="//getbootstrap.com/dist/js/bootstrap.min.js" charset="utf-8"></script>
+    <script src="//code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
+    <script src="//getbootstrap.com/dist/js/bootstrap.min.js" charset="utf-8"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -46,7 +47,7 @@
 		  <li role="presentation" class="hidden-xs {{ Request::is('log/*/view*') ? 'active' : '' }}"><a href="{{ route('viewLog', ['date' => Carbon\Carbon::now()->format('Y-m-d')]) }}">View Log</a></li>
 		  <li role="presentation" class="hidden-xs {{ Request::is('exercise/*') ? 'active' : '' }}"><a href="{{ route('listExercises') }}">Exercise List</a></li>
 		  <li role="presentation" class="hidden-xs {{ Request::is('tools*') ? 'active' : '' }}"><a href="{{ route('tools') }}">Tools</a></li>
-		  <li role="presentation" class="{{ Request::is('user/search') ? 'active' : '' }}"><a href="#" data-toggle="modal" data-target="#searchUsers"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></a></li>
+          <li role="presentation" class="{{ Request::is('user/search') ? 'active' : '' }}"><a href="#" data-toggle="modal" data-target="#searchUsers"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></a></li>
 		  <li class="dropdown {{ Request::is('user/settings') ? 'active' : '' }}">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> <span class="caret"></span></a>
 				<ul class="dropdown-menu">

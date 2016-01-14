@@ -81,7 +81,14 @@
 @foreach ($graph_names as $table_name => $graph_name)
 		HistoryChartData.push({
 			values: dataset{{ $table_name }},
-			key: '{{ $graph_name }}'
+			key: '{{ $graph_name }}',
+	@if ($table_name == 'log_total_reps')
+			color: '#a6bf50'
+	@elseif ($table_name == 'log_total_sets')
+			color: '#56c5a6'
+	@else
+			color: '#b84a68'
+	@endif
 		});
 @endforeach
 		return HistoryChartData;

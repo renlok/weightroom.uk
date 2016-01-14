@@ -4,6 +4,10 @@
 
 @section('headerstyle')
 <style>
+#editaddbutton {
+	padding: 20px 0 0 0 ;
+	margin: 0;
+}
 .pmu-not-in-month.cal_log_date{
 	background-color:#7F4C00;
 }
@@ -86,9 +90,9 @@
 
 @if ($user->user_id == Auth::user()->user_id)
 	@if ($log != null)
-<p class="margintb"><a href="{{ route('editLog', ['date' => $date]) }}" class="btn btn-default">Edit Log</a></p>
+<p id="editaddbutton"><a href="{{ route('editLog', ['date' => $date]) }}" class="btn btn-default">Edit Log</a></p>
 	@else
-<p class="margintb"><a href="{{ route('newLog', ['date' => $date]) }}" class="btn btn-default">Add Log</a></p>
+<p id="editaddbutton"><a href="{{ route('newLog', ['date' => $date]) }}" class="btn btn-default">Add Log</a></p>
 	@endif
 @endif
 @if ($log != null)
@@ -160,33 +164,31 @@ $(document).ready(function(){
 	var arDates = [];
 	var calMonths = [];
 
-	$(function () {
-		$('.date').pickmeup({
-			date		: moment('{{ $date }}','YYYY-MM-DD').format(),
-			flat		: true,
-			format  	: 'Y-m-d',
-			change		: function(e){
-				var url = '{{ route("viewLog", ["date" => ":date", "user_name" => $user->user_name]) }}';
-				window.location.href = url.replace(':date', e);
-			},
-			calendars	: calendar_count,
-			first_day	: {{ empty($user->user_weekstart) ? 0 : $user->user_weekstart }},
-			render: function(date) {
-				var d = moment(date);
-				var m = d.format('YYYY-MM');
-				if ($.inArray(m, calMonths) == -1)
-				{
-					calMonths.push(m);
-					loadlogdata(m);
-				}
-				if ($.inArray(d.format('YYYY-MM-DD'), arDates) != -1)
-				{
-					return {
-						class_name: 'cal_log_date'
-					}
+	$('.date').pickmeup({
+		date		: moment('{{ $date }}','YYYY-MM-DD').format(),
+		flat		: true,
+		format  	: 'Y-m-d',
+		change		: function(e){
+			var url = '{{ route("viewLog", ["date" => ":date", "user_name" => $user->user_name]) }}';
+			window.location.href = url.replace(':date', e);
+		},
+		calendars	: calendar_count,
+		first_day	: {{ empty($user->user_weekstart) ? 0 : $user->user_weekstart }},
+		render: function(date) {
+			var d = moment(date);
+			var m = d.format('YYYY-MM');
+			if ($.inArray(m, calMonths) == -1)
+			{
+				calMonths.push(m);
+				loadlogdata(m);
+			}
+			if ($.inArray(d.format('YYYY-MM-DD'), arDates) != -1)
+			{
+				return {
+					class_name: 'cal_log_date'
 				}
 			}
-		});
+		}
 	});
 
 	function loadlogdata(date)
