@@ -26,7 +26,8 @@ class Log extends Model
     {
         return $query->where('user_id', $user_id)
                     ->where('log_weight', '!=', 0)
-                    ->where('log_date', $date);
+                    ->where('log_date', '<=', $date)
+                    ->orderBy('log_date', 'desc');
     }
 
     public function scopeGetlog($query, $date, $user)
