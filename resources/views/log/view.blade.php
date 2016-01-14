@@ -81,7 +81,11 @@
 		</div>
 		<div class="col-md-9 col-md-pull-3">
 			<div class="calender-cont" style="max-width: 640px;">
-				<p class="hidden-xs"><- <a href="{{ route('viewLog', ['date' => $carbon_date->subDay()->toDateString(),'user_name' => $user->user_name]) }}">{{ $carbon_date->toDateString() }}</a> | <strong>{{ $carbon_date->addDay()->toDateString() }}</strong> | <a href="{{ route('viewLog', ['date' => $carbon_date->addDay()->toDateString(),'user' => $user->user_name]) }}">{{ $carbon_date->toDateString() }}</a> -></p>
+				<div class="btn-group margintb" role="group" aria-label="Change Date">
+					<a class="btn btn-default" role="button" href="{{ route('viewLog', ['date' => $carbon_date->subDay()->toDateString(),'user_name' => $user->user_name]) }}"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>{{ $carbon_date->toDateString() }}</a>
+					<button type="button" class="btn btn-default"><strong>{{ $carbon_date->addDay()->toDateString() }}</strong></button>
+					<a class="btn btn-default" role="button" href="{{ route('viewLog', ['date' => $carbon_date->addDay()->toDateString(),'user' => $user->user_name]) }}">{{ $carbon_date->toDateString() }}<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
+				</div>
 				<div class="date"></div>
 			</div>
 		</div>

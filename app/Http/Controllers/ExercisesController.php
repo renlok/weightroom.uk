@@ -12,6 +12,7 @@ use App\Exercise;
 use App\Exercise_record;
 use App\Logs;
 use App\Log_exercise;
+use App\Log_item;
 use App\Extend\PRs;
 use Carbon\Carbon;
 
@@ -117,8 +118,15 @@ class ExercisesController extends Controller
         $query = Exercise_record::getexerciseprs(Auth::user()->user_id, Carbon::now()->toDateString(), $exercise_name, $exercise->is_time, true)->get();
         $current_prs = $query->groupBy('pr_reps')->toArray();
         $filtered_prs = Exercise_record::filterPrs($query);
-        $prs = Exercise_record::getexerciseprsall(Auth::user()->user_id, $range, $exercise_name, $exercise->is_time, Auth::user()->user_showreps)->get()->groupBy('pr_reps');
-        // be in format [1 => ['log_weight' => ??, 'log_date' => ??]]
+        if ($type == 'prs')
+        {
+            $prs = Exercise_record::getexerciseprsall(Auth::user()->user_id, $range, $exercise_name, $exercise->is_time, Auth::user()->user_showreps)->get()->groupBy('pr_reps');
+            // be in format [1 => ['log_weight' => ??, 'log_date' => ??]]
+        }
+        else
+        {
+            $prs = Log_item::getexercisemaxes(Auth::user()->user_id, $range, $exercise_name, $exercise->is_time, Auth::user()->user_showreps, $type)->get()->groupBy('logitem_reps');
+        }
 
         return view('exercise.view', compact('exercise_name', 'current_prs', 'filtered_prs', 'prs', 'range', 'type'));
     }

@@ -96,11 +96,14 @@
 @unless ($type == 'monthly')
     <a href=" {{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => 'monthly']) }} ">View monthly maxes</a>
 @endunless
+@if ($type == 'prs')
+    |
+@endif
 @unless ($type == 'weekly')
     <a href=" {{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => 'weekly']) }} ">View weekly maxes</a>
 @endunless
 @unless ($type != 'monthly' && $type != 'weekly')
-    <a href=" {{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => 'prs']) }} ">View Prs</a>
+    | <a href=" {{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => 'prs']) }} ">View Prs</a>
 @endunless
 </p>
 @endsection

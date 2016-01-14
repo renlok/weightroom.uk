@@ -5,8 +5,6 @@
 figure out how to do the rest
 https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 
-- Make typography of the site less crappy looking
-- make undo for edit Exercise (http://goodui.org/#8)
 - add delete log (with undo function)
 - simplyfy signup page (http://goodui.org/#13)
 - split user settings page (hide advanced options)
@@ -24,6 +22,11 @@ https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 - Reword things to make *You* the subject (http://goodui.org/#67)
 - Explain each form field (http://goodui.org/#68)
 - add account (soft) delete option
+- on view log if there is no log, show something
+- if no logs posted when viewing BW, W or S graphs show a link to track
+- if viewing W or S graph if user options not set show link to options page
+- give a description of each page so any pleb would understand what the page is for
+- add Performance page (similar to TSRs one)
 
 - On users first log if they define most entires as a unit other than their default ask them if they want to change their default
 - fix getViewExercise -> $current_prs & $filtered_prs why the extra array?

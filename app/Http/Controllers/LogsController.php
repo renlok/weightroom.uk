@@ -21,7 +21,7 @@ class LogsController extends Controller
 {
     public function viewUser($user_name)
     {
-        return $this->view(Carbon::now()->toDateString, $user_name);
+        return $this->view(Carbon::now()->toDateString(), $user_name);
     }
 
     public function view($date, $user_name = '')
