@@ -17,9 +17,9 @@ class Log_control {
         if (Auth::user()->user_limitintensity > 0)
 		{
             $items = DB::table('log_items')
-                        ->select(DB::raw('SUM(logitem_weight*logitem_reps*logitem_sets) as logitem_weight, SUM(logitem_reps*logitem_sets) as logitem_reps, SUM(logitem_sets) as logitem_sets'))
+                        ->select(DB::raw('SUM(logitem_abs_weight*logitem_reps*logitem_sets) as logitem_weight, SUM(logitem_reps*logitem_sets) as logitem_reps, SUM(logitem_sets) as logitem_sets'))
                         ->where('logex_id', $logex_id)
-                        ->where('logitem_weight', '<', $current_1rm * (Auth::user()->user_limitintensity/100))
+                        ->where('logitem_abs_weight', '<', $current_1rm * (Auth::user()->user_limitintensity/100))
                         ->first();
 			$log_exercise->logex_volume -= $items->logitem_weight;
             $log_exercise->logex_reps -= $items->logitem_reps;
