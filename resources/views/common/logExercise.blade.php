@@ -23,7 +23,7 @@
             @endif
         </td>
         <td class="logrow">
-            {{ ($log_item->logitem_reps == 0) ? '<del>' : ''}}
+            {!! ($log_item->logitem_reps == 0) ? '<del>' : '' !!}
             <span class="heavy">{{ $log_item->display_value }}</span>{{ ($log_item->show_unit) ? $user->user_unit : ''}}
             @if (($log_item->is_time && $log_item->logitem_reps > 1) || !$log_item->is_time)
                 x <span class="heavy">{{ $log_item->logitem_reps }}</span>
@@ -37,7 +37,7 @@
             @if ($log_item->logitem_pre != NULL)
                 <span class="leftspace">@ {{ $log_item->logitem_pre }}</span>
             @endif
-            {{ ($log_item->logitem_reps == 0) ? '</del>' : ''}}
+            {!! ($log_item->logitem_reps == 0) ? '</del>' : '' !!}
             @if ($log_item->logitem_comment != '')
                 <div class="well well-sm">{{ $log_item->logitem_comment }}</div>
             @endif
