@@ -62,9 +62,9 @@ class User extends Model implements AuthenticatableContract,
 
     public function scopeUserlike($query, $username)
     {
-        return $query->orWhere(function ($query) use ($username) {
+        return $query->where(function ($query) use ($username) {
                             $query->where('user_id', $username)
-                            ->where('user_name', 'LIKE', '%'.$username.'%');
+                            ->orWhere('user_name', 'LIKE', '%'.$username.'%');
                         })
                         ->lists('user_name');
     }
