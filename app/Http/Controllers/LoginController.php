@@ -53,7 +53,7 @@ class LoginController extends Controller
 
 	public function getRegister(Request $request)
 	{
-		$invcode = $request->input('invcode', (isset($request->old('invcode')) ? : $request->old('invcode') : ''));
+		$invcode = $request->input('invcode', (($request->old('invcode') != null) ? $request->old('invcode') : ''));
 		return view('user.register', compact('invcode'));
 	}
 
