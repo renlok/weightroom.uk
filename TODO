@@ -27,6 +27,8 @@ https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 - if viewing W or S graph if user options not set show link to options page
 - give a description of each page so any pleb would understand what the page is for
 - add Performance page (similar to TSRs one)
+- Add list of users you follow
+- add tags to exercises
 
 - On users first log if they define most entires as a unit other than their default ask them if they want to change their default
 - fix getViewExercise -> $current_prs & $filtered_prs why the extra array?

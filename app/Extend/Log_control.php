@@ -68,4 +68,18 @@ class Log_control {
 		}
 		return $average_intensity;
     }
+
+    // data in format [date => data]
+    public static function calculate_moving_average($data, $n = 7)
+    {
+        $data_cleaned = $data->values()->all();
+        $return_data = [];
+        $start = floor($n/2);
+        $return_data[0] = array_sum(array_splice($data_cleaned, $n));
+        for ($i = $middle, $j = 1, $count = count($data_cleaned); $i < $n; $i++, $j++)
+        {
+            $return_data[$j] = $return_data[$j - 1] + $data_cleaned[$i]/$n - $data_cleaned[$i - $n]/$n;
+        }
+        return $return_data;
+    }
 }
