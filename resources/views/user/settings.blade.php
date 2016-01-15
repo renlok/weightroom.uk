@@ -150,6 +150,17 @@
   </div>
   <div class="form-group">
     <div>
+		<label for="limitintensity">Remove warmup sets from average intensity calculation</label>
+	</div>
+    <label class="radio-inline">
+	  <input type="radio" id="limitintensitywarmup" name="limitintensitywarmup" value="1" {{ $user->user_limitintensitywarmup == '1' ? 'checked' : '' }}> enable
+	</label>
+	<label class="radio-inline">
+	  <input type="radio" id="limitintensitywarmup" name="limitintensitywarmup" value="0" {{ $user->user_limitintensitywarmup == '0' ? 'checked' : '' }}> disable
+	</label>
+  </div>
+  <div class="form-group">
+    <div>
 		<label for="limitintensity">Limit what is included in average intensity calculation</label>
 		<p><small><i>If you track your warmups it is sometimes a good idea to ignore values lower than x% from the average intensity so they do not artificially bring the number down</i></small></p>
 	</div>

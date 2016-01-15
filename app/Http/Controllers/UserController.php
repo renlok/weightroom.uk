@@ -67,6 +67,7 @@ class UserController extends Controller
         $user->user_weekstart = $request->input('weekstart');
         $user->user_showintensity = $request->input('viewintensityabs');
         $user->user_limitintensity = $request->input('limitintensity');
+        $user->user_limitintensitywarmup = $request->input('limitintensitywarmup');
         $user->save();
         return redirect()
                 ->route('userSettings')
