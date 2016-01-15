@@ -21,7 +21,17 @@ class LogsController extends Controller
 {
     public function viewUser($user_name)
     {
-        return $this->view(Carbon::now()->toDateString(), $user_name);
+        $user = User::where('user_name', $user_name)->firstOrFail();
+        $last_log = $user->logs()->orderBy('log_date', 'desc')->first();
+        if ($last_log != null)
+        {
+            $date = $last_log->log_date->toDateString();
+        }
+        else
+        {
+            $date = Carbon::now()->toDateString();
+        }
+        return $this->view($date, $user_name);
     }
 
     public function view($date, $user_name = '')
