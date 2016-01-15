@@ -72,4 +72,15 @@ class Format {
     		return round($weight, 2);
     	}
     }
+
+    public static function replace_video_urls($comment)
+	{
+		return preg_replace(
+			"/\s*[a-zA-Z\/\/:\.]*youtu(be.com\/watch\?v=|.be\/)([a-zA-Z0-9\-_]+)([a-zA-Z0-9\/\*\-\_\?\&\;\%\=\.]*)/im",
+			"<iframe width=\"420\" height=\"315\" src=\"//www.youtube.com/embed/$2\" frameborder=\"0\" allowfullscreen></iframe>",
+			$comment
+		);
+		//$width = '640';
+		//$height = '385';
+	}
 }

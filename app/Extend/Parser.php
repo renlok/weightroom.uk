@@ -73,7 +73,7 @@ class Parser
 			{
 				if (!empty($this->log_data['comment']))
 				{
-					$this->log_data['comment'] .= '<br>';
+					$this->log_data['comment'] .= "\n";
 				}
 				$this->log_data['comment'] .= $line;
 				continue; // end this loop
@@ -268,7 +268,7 @@ class Parser
                 ->where('user_id', $this->user->user_id)
                 ->update([
                     'log_text' => $this->log_text,
-                    'log_comment' => $this->replace_video_urls($this->log_data['comment']),
+                    'log_comment' => $this->log_data['comment'],
                     'log_weight' => $user_weight
                 ]);
 		}
@@ -282,7 +282,7 @@ class Parser
 			// add a new entry
             $log = Log::create([
                 'log_text' => $this->log_text,
-                'log_comment' => $this->replace_video_urls($this->log_data['comment']),
+                'log_comment' => $this->log_data['comment'],
                 'log_weight' => $user_weight,
                 'log_date' => $log_date,
                 'user_id' => $this->user->user_id
@@ -340,7 +340,7 @@ class Parser
                 'log_id' => $log_id,
                 'user_id' => $this->user->user_id,
                 'exercise_id' => $exercise_id,
-                'logex_comment' => $this->replace_video_urls($item['comment']),
+                'logex_comment' => $item['comment'],
                 'logex_order' => $i
             ]);
             $log_exercises_id = $log_exercise->logex_id;
@@ -561,17 +561,6 @@ class Parser
 				return Format::correct_weight($input[0], $input[1], 'kg');
 			}
 		}
-	}
-
-	private function replace_video_urls($comment)
-	{
-		return preg_replace(
-			"/\s*[a-zA-Z\/\/:\.]*youtu(be.com\/watch\?v=|.be\/)([a-zA-Z0-9\-_]+)([a-zA-Z0-9\/\*\-\_\?\&\;\%\=\.]*)/im",
-			"<iframe width=\"420\" height=\"315\" src=\"//www.youtube.com/embed/$2\" frameborder=\"0\" allowfullscreen></iframe>",
-			$comment
-		);
-		//$width = '640';
-		//$height = '385';
 	}
 
 	private function update_user_weights($user_id, $log_date, $user_weight)

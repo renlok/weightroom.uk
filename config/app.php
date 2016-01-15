@@ -27,7 +27,7 @@ return [
     |
     */
 
-    'url' => 'http://localhost',
+    'url' => 'http://weightroom.uk',
 
     /*
     |--------------------------------------------------------------------------
@@ -193,6 +193,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View'      => Illuminate\Support\Facades\View::class,
         'Carbon'    => 'Carbon\Carbon',
+        'Format' => 'App\Extend\Format'
 
     ],
 

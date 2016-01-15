@@ -111,7 +111,7 @@
 	@if ($log->log_comment != '')
 	<div class="panel panel-default">
 		<div class="panel-body">
-			{{ $log->log_comment }}
+			{!! Format::replace_video_urls(nl2br(e($log->log_comment))) !!}
 		</div>
 	</div>
 	@endif

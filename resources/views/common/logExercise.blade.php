@@ -52,7 +52,7 @@
     </tr>
 @endforeach
     <tr>
-        <td colspan="3">{{ $log_exercise->logex_comment }}</td>
+        <td colspan="3">{!! Format::replace_video_urls(nl2br(e($log_exercise->logex_comment))) !!}</td>
     </tr>
 </tbody>
 </table>

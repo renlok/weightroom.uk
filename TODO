@@ -29,61 +29,13 @@ https://laracasts.com/series/laravel-5-fundamentals/episodes/7
 - add Performance page (similar to TSRs one)
 - Add list of users you follow
 - add tags to exercises
+- add a page that you are taken too before you post your first log that gives simple tutorial
 
 - On users first log if they define most entires as a unit other than their default ask them if they want to change their default
 - fix getViewExercise -> $current_prs & $filtered_prs why the extra array?
 - add errors to login page
 
-+----------------------+-------+------------+--------+
-|         PAGE         | BLADE | CONTROLLER | TESTED |
-+----------------------+-------+------------+--------+
-|                      |       |            |        |
-| ajax.php             | x     | x          | x      |
-|                      |       |            |        |
-| bodyweight.php       | x     | x          |        |
-|                      |       |            |        |
-| dash.php             | x     | x          |        |
-|                      |       |            |        |
-| demo.php             | x     | x          |        | Update demo with new screens
-|                      |       |            |        |
-| edit_exercise.php    | x     | x          |        |
-|                      |       |            |        |
-| exercise.php compare | x     | x          |        |
-|                      |       |            |        |
-| exercise.php list    | x     | x          |        |
-|                      |       |            |        |
-| exercise.php prs     | x     | x          |        |
-|                      |       |            |        |
-| history.php          | x     | x          |        |
-|                      |       |            |        |
-| invites.php          | x     | x          | x      |
-|                      |       |            |        |
-| landing.php          | x     | x          |        |
-|                      |       |            |        |
-| log.php view         | x     | x          |        |
-|                      |       |            |        |
-| log.php edit         | x     | x          |        |
-|                      |       |            |        |
-| login.php            | x     | x          |        |
-|                      |       |            |        |
-| logout.php           | x     | x          |        |
-|                      |       |            |        |
-| register.php         | x     | x          |        |
-|                      |       |            |        |
-| search.php           | x     | x          |        |
-|                      |       |            |        |
-| search_log.php       | x     | x          |        |
-|                      |       |            |        |
-| settings.php         | x     | x          |        |
-|                      |       |            |        |
-| sinclair.php         | x     | x          |        |
-|                      |       |            |        |
-| tools.php            | x     | x          |        |
-|                      |       |            |        |
-| volume.php           | x     | x          |        |
-|                      |       |            |        |
-| wilks.php            | x     | x          |        |
-+----------------------+-------+------------+--------+
+- update demo
 
 new files
 remember password
