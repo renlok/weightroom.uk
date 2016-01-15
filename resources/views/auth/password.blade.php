@@ -5,7 +5,7 @@
 
 @section('content')
 @include('errors.validation')
-<form class="form-horizontal" method="POST" action="{{ route('password/email') }}">
+<form class="form-horizontal" method="POST" action="{{ route('emailPassword') }}">
     {!! csrf_field() !!}
 
     <div>
