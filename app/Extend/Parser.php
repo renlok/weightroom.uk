@@ -456,7 +456,6 @@ class Parser
                     'is_time' => $is_time,
                     'is_warmup' => $is_warmup,
                     'is_endurance' => $is_endurance,
-                    'options' => $options,
                     'logitem_order' => $j,
                     'logex_order' => $i,
                 ];

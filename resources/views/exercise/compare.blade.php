@@ -3,6 +3,7 @@
 @section('title', 'Compare Exercises')
 
 @section('headerstyle')
+<link href="{{ asset('css/nv.d3.css') }}" rel="stylesheet">
 <style>
 #prHistoryChart .nv-lineChart circle.nv-point {
   fill-opacity: 2;
@@ -40,7 +41,7 @@
 
 @section('endjs')
 <script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
-<link href="{{ asset('css/nv.d3.css') }}" rel="stylesheet">
+<script src="//momentjs.com/downloads/moment.js"></script>
 <script src="{{ asset('js/nv.d3.js') }}"></script>
 <script>
 	$( document ).ready(function() {
@@ -67,17 +68,22 @@
 
     function prHistoryData() {
 		var prHistoryChartData = [];
-        @foreach ($records as $exercises)
-            var dataset = [];
-            @foreach ($exercises as $exercise_record)
-                dataset.push({x: moment('{{ $date }}','YYYY-MM-DD').toDate(), y: $weight, shape:'circle'});
-            @endforeach
-            prHistoryChartData.push({
-                values: dataset,
-                key: '{$rep}{$type_string}'
-            });
-        @endforeach
-		{GRAPH_DATA}
+@foreach ($exercise_names as $table_name => $graph_name)
+		var dataset{{ $table_name }} = [];
+@endforeach
+@foreach ($records as $item)
+	@foreach ($exercise_names as $table_name => $graph_name)
+        @if ($item->exercise_name == $graph_name)
+        dataset{{ $table_name }}.push({x: moment('{{ $item->log_date }}','YYYY-MM-DD').toDate(), y: {{ $item->pr_value }}, shape:'circle'});
+        @endif
+	@endforeach
+@endforeach
+@foreach ($exercise_names as $table_name => $graph_name)
+		prHistoryChartData.push({
+			values: dataset{{ $table_name }},
+			key: '{{ $graph_name }}'
+		});
+@endforeach
 		return prHistoryChartData;
     }
 

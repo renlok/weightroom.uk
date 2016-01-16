@@ -140,11 +140,12 @@ class ExercisesController extends Controller
     public function getCompare($reps = '', $exercise1 = '', $exercise2 = '', $exercise3 = '', $exercise4 = '', $exercise5 = '')
     {
         $exercises = Exercise::listexercises(true)->get();
+        $exercise_names = array_map('strtolower', array_filter([$exercise1, $exercise2, $exercise3, $exercise4, $exercise5]));
         $records = DB::table('exercise_records')
             ->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
-            ->select('pr_value', 'pr_reps', 'log_date', 'exercise_name', 'pr_1rm')
-            ->where('user_id', Auth::user()->user_id)
-            ->whereIn('exercise_name', [$exercise1, $exercise2, $exercise3, $exercise4, $exercise5]);
+            ->select(DB::raw('MAX(pr_value) as pr_value'), 'pr_reps', 'log_date', 'exercise_name', DB::raw('MAX(pr_1rm) as pr_1rm'))
+            ->where('exercise_records.user_id', Auth::user()->user_id)
+            ->whereIn('exercise_name', $exercise_names);
         if ($reps > 0)
         {
             $records = $records->where('pr_reps', $reps);
@@ -153,10 +154,8 @@ class ExercisesController extends Controller
         {
             $records = $records->where('is_est1rm', 1);
         }
-        $records = $records->orderBy('log_date', 'asc');
-        // group them
-        $records = $records->groupBy('exercise_name');
-        return view('exercise.compare', compact('exercises', 'records', 'exercise1', 'exercise2', 'exercise3', 'exercise4', 'exercise5', 'error'));
+        $records = $records->groupBy(DB::raw('log_date, exercise_name'))->orderBy('log_date', 'asc')->get();
+        return view('exercise.compare', compact('exercises', 'records', 'exercise1', 'exercise2', 'exercise3', 'exercise4', 'exercise5', 'exercise_names'));
     }
 
     public function postCompare(Request $request)
