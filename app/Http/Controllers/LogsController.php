@@ -220,9 +220,17 @@ class LogsController extends Controller
         {
             $query = $query->where('log_date', '>=', $from_date);
         }
+        else
+        {
+            $from_date = Log::where('user_id', Auth::user()->user_id)->orderBy('log_date', 'asc')->value('log_date')->toDateString();
+        }
         if ($to_date != 0)
         {
             $query = $query->where('log_date', '<=', $to_date);
+        }
+        else
+        {
+            $to_date = Carbon::now()->toDateString();
         }
         $max_volume = $query->max('log_total_volume');
         $scales = [

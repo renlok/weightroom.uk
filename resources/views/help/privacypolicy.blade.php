@@ -1,4 +1,4 @@
-<p>This Privacy Policy governs the manner in which The weightroom.uk collects, uses, maintains and discloses information collected from users (each, a "User") of the <a href="//weightroom.uk/">http://weightroom.uk/</a> website ("Site").</p>
+<p>This Privacy Policy governs the manner in which The WeightRoom.uk collects, uses, maintains and discloses information collected from users (each, a "User") of the <a href="//weightroom.uk/">http://weightroom.uk/</a> website ("Site").</p>
 
 <h3>Personal identification information</h3>
 <p>We may collect personal identification information from Users in a variety of ways, including, but not limited to, when Users visit our site, register on the site, and in connection with other activities, services, features or resources we make available on our Site.Users may be asked for, as appropriate, email address. We will collect personal identification information from Users only if they voluntarily submit such information to us. Users can always refuse to supply personally identification information, except that it may prevent them from engaging in certain Site related activities.</p>
@@ -10,7 +10,7 @@
 <p>Our Site may use "cookies" to enhance User experience. User's web browser places cookies on their hard drive for record-keeping purposes and sometimes to track information about them. User may choose to set their web browser to refuse cookies, or to alert you when cookies are being sent. If they do so, note that some parts of the Site may not function properly.</p>
 
 <h3>How we use collected information</h3>
-<p>The weightroom.uk may collect and use Users personal information for the following purposes:</p>
+<p>The WeightRoom.uk may collect and use Users personal information for the following purposes:</p>
 <ul>
   <li>
     <i>To run and operate our Site</i><br/>
@@ -27,7 +27,7 @@
 <p>We may share or sell information with third parties for marketing or other purposes.</p>
 
 <h3>Sharing your personal information</h3>
-<p>This Privacy Policy governs the manner in which The weightroom.uk collects, uses, maintains and discloses information collected from users (each, a "User") of the <a href="//weightroom.uk/">//weightroom.uk/</a> website ("Site").</p>
+<p>This Privacy Policy governs the manner in which The WeightRoom.uk collects, uses, maintains and discloses information collected from users (each, a "User") of the <a href="//weightroom.uk/">//weightroom.uk/</a> website ("Site").</p>
 
 <h3>Personal identification information</h3>
 <p>We may collect personal identification information from Users in a variety of ways, including, but not limited to, when Users visit our site, register on the site, and in connection with other activities, services, features or resources we make available on our Site.Users may be asked for, as appropriate, email address. We will collect personal identification information from Users only if they voluntarily submit such information to us. Users can always refuse to supply personally identification information, except that it may prevent them from engaging in certain Site related activities.</p>
@@ -39,7 +39,7 @@
 <p>Our Site may use "cookies" to enhance User experience. User's web browser places cookies on their hard drive for record-keeping purposes and sometimes to track information about them. User may choose to set their web browser to refuse cookies, or to alert you when cookies are being sent. If they do so, note that some parts of the Site may not function properly.</p>
 
 <h3>How we use collected information</h3>
-<p>The weightroom.uk may collect and use Users personal information for the following purposes:</p>
+<p>The WeightRoom.uk may collect and use Users personal information for the following purposes:</p>
 <ul>
   <li>
     <i>To run and operate our Site</i><br/>
@@ -56,7 +56,7 @@
 <p>We may share or sell information with third parties for marketing or other purposes.</p>
 
 <h3>Changes to this privacy policy</h3>
-<p>The weightroom.uk has the discretion to update this privacy policy at any time. When we do, we will post a notification on the main page of our Site, revise the updated date at the bottom of this page. We encourage Users to frequently check this page for any changes to stay informed about how we are helping to protect the personal information we collect. You acknowledge and agree that it is your responsibility to review this privacy policy periodically and become aware of modifications.</p>
+<p>The WeightRoom.uk has the discretion to update this privacy policy at any time. When we do, we will post a notification on the main page of our Site, revise the updated date at the bottom of this page. We encourage Users to frequently check this page for any changes to stay informed about how we are helping to protect the personal information we collect. You acknowledge and agree that it is your responsibility to review this privacy policy periodically and become aware of modifications.</p>
 
 <h3>Your acceptance of these terms</h3>
 <p>By using this Site, you signify your acceptance of this policy. If you do not agree to this policy, please do not use our Site. Your continued use of the Site following the posting of changes to this policy will be deemed your acceptance of those changes.</p>

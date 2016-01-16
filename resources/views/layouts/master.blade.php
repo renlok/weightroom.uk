@@ -4,8 +4,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title') | Weight Room - Track dem gains</title>
-  	<!-- <base href="//weightroom.uk/"> -->
+    <title>@yield('title') | WeightRoom - Track dem gains</title>
+  	<base href="//weightroom.uk/">
   	<link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
   	<meta http-equiv="Content-Language" content="en">
   	<meta name="description" content="The ultimate weightlifting and powerlifting workout tracker. Track each of your workouts with beautiful logging and analysis tools">
@@ -34,7 +34,7 @@
 		  <li role="presentation" class="{{ Request::is('register') ? 'active' : '' }}"><a href="{{ route('register') }}">Register</a></li>
 		  <li role="presentation" class="{{ Request::is('demo') ? 'active' : '' }}"><a href="{{ route('demo') }}">What is this?</a></li>
 	  @else
-		  <li role="presentation" class="{{ Request::is('dashboard') ? 'active' : '' }}"><a href="{{ route('dashboard') }}" class="hidden-xs">Home</a><a href="?" class="visible-xs"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
+		  <li role="presentation" class="{{ Request::is('dashboard*') ? 'active' : '' }}"><a href="{{ route('dashboard') }}" class="hidden-xs">Home</a><a href="?" class="visible-xs"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
 		  <li role="presentation" class="{{ (Request::is('log/*/new') || Request::is('log/*/edit')) ? 'active' : '' }}"><a href="{{ route('newLog', ['date' => Carbon\Carbon::now()->format('Y-m-d')]) }}">Track</a></li>
 			<li class="dropdown visible-xs">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span> <span class="caret"></span></a>

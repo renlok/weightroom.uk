@@ -9,6 +9,7 @@
 @endsection
 
 @section('content')
+<h2>Weightlifting Ratios Calculator</h2>
 <p>This tool calculates the ideal maxes for the different weightlifting exercises.</p>
 <p>As these are ideal values they should be taken with a pinch of salt, but they can give you an idea of your weaknesses.</p>
 <form>

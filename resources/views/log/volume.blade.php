@@ -27,6 +27,7 @@
 
 @section('content')
 <h2>Volume graph</h2>
+<p>Shows how your total volume, reps and sets have varied over time.</p>
 
 <h3>View a range of dates</h3>
 <form class="form-inline" method="post" action="{{ url('log/volume') }}">

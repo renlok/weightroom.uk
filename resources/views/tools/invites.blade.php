@@ -1,9 +1,10 @@
 @extends('layouts.master')
 
-@section('title', 'Weightroom Invite Codes')
+@section('title', 'Invite Codes')
 
 @section('content')
-<p>Invite your lifting buddies to weightroom.uk and admire each others sweet lifts</p>
+<h2>Invite Codes</h2>
+<p>Invite your lifting buddies to WeightRoom.uk and admire each others sweet lifts</p>
 <table class="table">
   <tbody>
 	<tr>
@@ -21,11 +22,10 @@
 	</tr>
 @empty
 	<tr>
-	  <td colspan="3">You have no remaining invite codes</td>
+	  <td colspan="4">You have no remaining invite codes</td>
 	</tr>
 @endforelse
 
   </tbody>
-<!-- END invites -->
 </table>
 @endsection

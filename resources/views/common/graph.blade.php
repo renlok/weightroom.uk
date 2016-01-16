@@ -56,7 +56,10 @@
 	@endforeach
 		prHistoryChartData.push({
 			values: dataset,
-			key: '{{ $graph_name }}'
+			key: '{{ $graph_name }}',
+    @if ($graph_name == 'Wilks' || $graph_name == 'Sinclair')
+            color: '#2CA02C'
+    @endif
 		});
 @endforeach
 		return prHistoryChartData;
