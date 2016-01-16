@@ -31,7 +31,7 @@
   </div>
 </div>
 <h2>Weightlifting</h2>
-<small>noun: The sport of weightlifting, a sport involving the snatch and the clean and jerk.</small>
+<small>Like gymnastics with heavy weights.</small>
 <div class="row padding">
   <div class="col-md-4">
     <a href="{{ route('sinclairGraph') }}">Sinclair Graph</a>
