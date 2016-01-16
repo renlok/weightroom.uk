@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Auth;
 use DB;
+use Validator;
 use App\Comment;
 use App\Exercise;
 use App\Log;
@@ -11,6 +12,7 @@ use App\Log_exercise;
 use App\User;
 use App\Extend\PRs;
 use App\Extend\Parser;
+use App\Extend\Log_control;
 use App\Http\Requests;
 use App\Http\Requests\LogRequest;
 use App\Http\Controllers\Controller;
@@ -212,7 +214,7 @@ class LogsController extends Controller
         return view('log.search', compact('exercises', 'log_exercises', 'user'));
     }
 
-    public function getVolume($from_date = 0, $to_date = 0)
+    public function getVolume($from_date = 0, $to_date = 0, $n = 0)
     {
         $query = DB::table('logs')
                     ->where('user_id', Auth::user()->user_id);
@@ -244,12 +246,34 @@ class LogsController extends Controller
             'log_total_reps' => 'Total reps',
             'log_total_sets' => 'Total sets',
         ];
-        return view('log.volume', compact('from_date', 'to_date', 'scales', 'graph_names', 'graph_data'));
+        if ($n > 0)
+        {
+            $graph_data = Log_control::calculate_moving_average($graph_data, array_keys($graph_names), $n);
+        }
+        return view('log.volume', compact('from_date', 'to_date', 'n', 'scales', 'graph_names', 'graph_data'));
     }
 
     public function postVolume(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'to_date' => 'required|date_format:Y-m-d',
+            'from_date' => 'required|date_format:Y-m-d',
+            'n' => 'required|in:0,3,5,7',
+        ]);
+
+        if ($validator->fails())
+        {
+            return redirect()
+                    ->route('totalVolume')
+                    ->withErrors($validator)
+                    ->withInput();
+        }
+
         return redirect()
-                ->route('totalVolume', ['to_date' => $request->input('to_date'), 'from_date' => $request->input('from_date')]);
+                ->route('totalVolume', [
+                    'to_date' => $request->input('to_date'),
+                    'from_date' => $request->input('from_date'),
+                    'n' => $request->input('n')
+                ]);
     }
 }

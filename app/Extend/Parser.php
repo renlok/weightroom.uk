@@ -268,7 +268,7 @@ class Parser
                 ->where('user_id', $this->user->user_id)
                 ->update([
                     'log_text' => $this->log_text,
-                    'log_comment' => $this->log_data['comment'],
+                    'log_comment' => trim($this->log_data['comment']),
                     'log_weight' => $user_weight
                 ]);
 		}
@@ -282,7 +282,7 @@ class Parser
 			// add a new entry
             $log = Log::create([
                 'log_text' => $this->log_text,
-                'log_comment' => $this->log_data['comment'],
+                'log_comment' => trim($this->log_data['comment']),
                 'log_weight' => $user_weight,
                 'log_date' => $log_date,
                 'user_id' => $this->user->user_id
@@ -340,7 +340,7 @@ class Parser
                 'log_id' => $log_id,
                 'user_id' => $this->user->user_id,
                 'exercise_id' => $exercise_id,
-                'logex_comment' => $item['comment'],
+                'logex_comment' => trim($item['comment']),
                 'logex_order' => $i
             ]);
             $log_exercises_id = $log_exercise->logex_id;
@@ -449,7 +449,7 @@ class Parser
                     'logitem_time' => $set['T'],
                     'logitem_reps' => $set['R'],
                     'logitem_sets' => $set['S'],
-                    'logitem_comment' => $set['C'],
+                    'logitem_comment' => trim($set['C']),
                     'logitem_1rm' => $estimate_rm,
                     'is_pr' => $is_pr,
                     'is_bw' => $is_bw,

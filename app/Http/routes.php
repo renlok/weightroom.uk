@@ -62,7 +62,7 @@ Route::group(['prefix' => 'log', 'middleware' => 'auth'], function () {
     Route::get('search', 'LogsController@getSearch')->name('searchLog');
     Route::post('search', 'LogsController@postSearch');
     // total volume
-    Route::get('volume/{from_date?}/{to_date?}', 'LogsController@getVolume')->name('totalVolume');
+    Route::get('volume/{from_date?}/{to_date?}/{n?}', 'LogsController@getVolume')->name('totalVolume');
     Route::post('volume', 'LogsController@postVolume');
     Route::get('{user_name}', 'LogsController@viewUser')->name('viewUser');
 });

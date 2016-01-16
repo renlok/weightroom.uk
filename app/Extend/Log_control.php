@@ -69,17 +69,47 @@ class Log_control {
 		return $average_intensity;
     }
 
-    // data in format [date => data]
-    public static function calculate_moving_average($data, $n = 7)
+    public static function calculate_moving_average($data, $data_keys, $n = 7)
     {
-        $data_cleaned = $data->values()->all();
+        $data_cleaned = $data;
         $return_data = [];
         $start = floor($n/2);
-        $return_data[0] = array_sum(array_splice($data_cleaned, $n));
-        for ($i = $middle, $j = 1, $count = count($data_cleaned); $i < $n; $i++, $j++)
+        $is_object = (is_object($data_cleaned[$start])) ? true : false;
+        $return_data[0] = Log_control::array_sum_assoc(array_slice($data_cleaned, 0, $n), $data_keys, $n);
+        $return_data[0]['log_date'] = ($is_object) ? $data_cleaned[$start]->log_date : $data_cleaned[$start]['log_date'];
+        for ($i = $start + 1, $j = 1, $count = count($data_cleaned); $i < ($count - $start); $i++, $j++)
         {
-            $return_data[$j] = $return_data[$j - 1] + $data_cleaned[$i]/$n - $data_cleaned[$i - $n]/$n;
+            foreach ($data_keys as $key)
+            {
+                $return_data[$j][$key] = round($return_data[$j - 1][$key]
+                                                + (($is_object) ? $data_cleaned[$i + $start]->$key : $data_cleaned[$i + $start][$key])/$n
+                                                - (($is_object) ? $data_cleaned[$i - ($start + 1)]->$key : $data_cleaned[$i - ($start + 1)][$key])/$n);
+            }
+            $return_data[$j]['log_date'] = ($is_object) ? $data_cleaned[$i]->log_date : $data_cleaned[$i]['log_date'];
         }
         return $return_data;
+    }
+
+    private static function array_sum_assoc($array, $keys, $n)
+    {
+        $return_array = [];
+        // set each to 0
+        foreach ($keys as $key)
+        {
+            $return_array[$key] = 0;
+        }
+        // sum each value
+        foreach ($array as $value)
+        {
+            foreach ($keys as $key)
+            {
+                $return_array[$key] += (is_object($value)) ? $value->$key : $value[$key];
+            }
+        }
+        foreach ($keys as $key)
+        {
+            $return_array[$key] = round($return_array[$key]/$n);
+        }
+        return $return_array;
     }
 }

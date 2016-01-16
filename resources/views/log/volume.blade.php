@@ -28,8 +28,10 @@
 @section('content')
 <h2>Volume graph</h2>
 <p>Shows how your total volume, reps and sets have varied over time.</p>
+<p>The <a href="https://en.wikipedia.org/wiki/Moving_average#Simple_moving_average">moving average</a> option can be used to better see trends and remove noise.</p>
 
 <h3>View a range of dates</h3>
+@include('errors.validation')
 <form class="form-inline" method="post" action="{{ url('log/volume') }}">
   <div class="form-group">
     <label for="from_date">From</label>
@@ -38,6 +40,15 @@
   <div class="form-group">
     <label for="to_date">Until</label>
     <input type="text" class="form-control" id="to_date" name="to_date" value="{{ $to_date }}">
+  </div>
+  <div class="form-group">
+    <label for="n">Moving Average</label>
+	<select class="form-control" id="n" name="n">
+	  <option value="0" {{ $n == 0 ? 'selected' : '' }}>Disable</option>
+	  <option value="3" {{ $n == 3 ? 'selected' : '' }}>3</option>
+	  <option value="5" {{ $n == 5 ? 'selected' : '' }}>5</option>
+	  <option value="7" {{ $n == 7 ? 'selected' : '' }}>7</option>
+	</select>
   </div>
   {{ csrf_field() }}
   <button type="submit" class="btn btn-default">Update</button>
@@ -76,7 +87,7 @@
 @endforeach
 @foreach ($graph_data as $item)
 		@foreach ($graph_names as $table_name => $graph_name)
-			dataset{{ $table_name }}.push({x: moment('{{ $item->log_date }}','YYYY-MM-DD').toDate(), y: {{ $item->$table_name * $scales[$table_name] }}, shape:'circle'});
+			dataset{{ $table_name }}.push({x: moment('{{ (is_object($item)) ? $item->log_date : $item['log_date'] }}','YYYY-MM-DD').toDate(), y: {{ ((is_object($item)) ? $item->$table_name : $item[$table_name]) * $scales[$table_name] }}, shape:'circle'});
 		@endforeach
 @endforeach
 @foreach ($graph_names as $table_name => $graph_name)
