@@ -18,7 +18,7 @@
 <table class="table">
 <tbody>
 @foreach ($log_exercise->log_items as $log_item)
-    <tr class="{{ $log_item->is_pr ? 'alert alert-success' : ''}}{{ ($log_item->logitem_reps == 0) ? 'alert alert-danger' : ''}}">
+    <tr class="{{ $log_item->is_pr ? 'alert alert-success' : ''}}{{ ($log_item->logitem_reps == 0) ? 'alert alert-danger' : ''}} {{ (($log_item->is_warmup) ? 'warmup' : '') }}">
         <td class="tdpr">
             @if($log_item->is_pr)
                 <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
@@ -49,6 +49,8 @@
         <td class="tdpr2">
             @if($log_item->is_pr)
                 <span class="heavy">{{ $log_item->logitem_reps }} RM</span>
+            @elseif ($log_item->is_warmup)
+            	<small><em>warmup</em></small>
             @else
                 &nbsp;
             @endif

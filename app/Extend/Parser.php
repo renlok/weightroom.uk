@@ -377,7 +377,8 @@ class Parser
                 $is_warmup = false;
                 $is_endurance = false;
                 // check if the comment is a special tag
-                if($options = $this->special_tags($set['C']) != 0)
+                $options = $this->special_tags($set['C']);
+                if($options != 0 || is_string($options))
                 {
                     $set['C'] = '';
                     if ($options == 'w')
@@ -952,7 +953,11 @@ class Parser
 
 	private function special_tags($string)
 	{
-		$string = strtolower($string);
+        if (empty($string))
+        {
+            return 0;
+        }
+		$string = trim(strtolower($string));
 		// line is warmup
 		if ($string == 'w' || $string == 'warmup' || $string == 'warm-up' || $string == 'warm up' || $string == 'wu')
 		{
