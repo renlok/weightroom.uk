@@ -8,6 +8,9 @@
 	padding: 20px 0 0 0 ;
 	margin: 0;
 }
+h3.exercise {
+	color:#337ab7;
+}
 .pmu-not-in-month.cal_log_date{
 	background-color:#7F4C00;
 }
