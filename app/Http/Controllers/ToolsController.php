@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Auth;
+use DB;
 use App\User;
 use App\Log;
 use App\Exercise_record;
@@ -131,7 +132,12 @@ class ToolsController extends Controller
     public function invites()
     {
         $user = User::find(Auth::user()->user_id);
-        $codes = $user->invite_codes->toArray();
+        $codes = $user->invite_codes->all();
+        $open_codes = DB::table('invite_codes')->where('user_id', 0)->get();
+        foreach ($open_codes as $open_code)
+        {
+            $codes[] = $open_code;
+        }
         //$codes = Invite_code::valid(Auth::user()->user_id)->get();
         return view('tools.invites', compact('codes'));
     }

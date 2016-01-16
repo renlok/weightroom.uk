@@ -8,7 +8,6 @@ use Carbon\Carbon;
 class Invite_code extends Model
 {
     protected $primaryKey = 'code_id';
-    protected $dates = ['code_expires'];
 
     public function scopeValid($query, $user_id)
     {
