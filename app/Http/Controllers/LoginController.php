@@ -76,6 +76,7 @@ class LoginController extends Controller
 		User::create([
 			'user_name' => $input['user_name'],
 			'user_email' => $input['user_email'],
+			'email' => $input['user_email'],
 			'user_password' => bcrypt($input['password']),
 		]);
 

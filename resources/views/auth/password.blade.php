@@ -5,15 +5,14 @@
 
 @section('content')
 @include('errors.validation')
-<form class="form-horizontal" method="POST" action="{{ route('emailPassword') }}">
+@include('common.flash')
+<form class="form-horizontal" method="POST" action="{{ url('password/email') }}">
     {!! csrf_field() !!}
-
-    <div>
-        Email
+    <div class="form-group">
+        <label>Email</label>
         <input class="form-control" type="email" name="email" value="{{ old('email') }}">
     </div>
-
-    <div>
+    <div class="form-group">
         <button class="btn btn-default" type="submit">
             Send Password Reset Link
         </button>

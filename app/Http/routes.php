@@ -15,7 +15,6 @@ Route::group(['middleware' => 'guest'], function () {
     // Authentication routes...
     Route::get('login', 'LoginController@getLogin')->name('login');
     Route::post('login', 'LoginController@postLogin');
-    Route::get('logout', 'LoginController@getLogout')->name('logout');
 
     // Registration routes...
     Route::get('register', 'LoginController@getRegister')->name('register');
@@ -29,6 +28,7 @@ Route::group(['middleware' => 'guest'], function () {
     Route::get('password/reset/{token}', 'Auth\PasswordController@getReset')->name('passwordReset');
     Route::post('password/reset', 'Auth\PasswordController@postReset');
 });
+Route::get('logout', 'LoginController@getLogout')->name('logout');
 
 // User controller
 Route::group(['prefix' => 'user', 'middleware' => 'auth'], function () {
