@@ -49,6 +49,7 @@
 <script>
     function prHistoryData() {
 		var prHistoryChartData = [];
+<?php $i = 0; ?>
 @foreach ($graphs as $graph_name => $graph_data)
 		var dataset = [];
 	@foreach ($graph_data as $data)
@@ -56,11 +57,16 @@
 	@endforeach
 		prHistoryChartData.push({
 			values: dataset,
-			key: '{{ $graph_name }}',
+			key: '{{ ucwords($graph_name) }}',
     @if ($graph_name == 'Wilks' || $graph_name == 'Sinclair')
             color: '#2CA02C'
+    @elseif ($graph_name == 'Bodyweight')
+            color: '#1F77B4'
+    @elseif (isset($colours[$i]))
+            color: '{{ $colours[$i] }}'
     @endif
 		});
+    <?php $i++ ?>
 @endforeach
 		return prHistoryChartData;
     }
@@ -74,7 +80,8 @@
 		var height = Math.round(width/2);
         var chart = nv.models.lineChart();
 			chart.margin({left: 100});  //Adjust chart margins to give the x-axis some breathing room.
-			chart.showLegend(false);
+			chart.showLegend(true);
+            chart.legend.updateState(false);
 			chart.useInteractiveGuideline(true);  //We want nice looking tooltips and a guideline!
 			chart.duration(350);  //how fast do you want the lines to transition?
 			chart.showYAxis(true);        //Show the y-axis

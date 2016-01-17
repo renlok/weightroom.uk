@@ -53,12 +53,17 @@ class ToolsController extends Controller
         })->toArray();
         $graphs['Bodyweight'] = $graphs['Bodyweight']->unique('log_weight')->toArray();
         $wilks_data = array_merge_recursive($wilks_exercises, $wilks_bodyweight);
+        ksort($wilks_data);
         // map
         $temp = [];
         $graphs['Wilks'] = array_filter(array_map(function($key, $item) use (&$temp){
             foreach ($item as $exercise)
             {
-                if (isset($exercise['exercise_name']))
+                if (isset($exercise['exercise_name']) && !isset($temp[$exercise['exercise_name']]))
+                {
+                	$temp[$exercise['exercise_name']] = 0;
+                }
+                if (isset($exercise['exercise_name']) && $temp[$exercise['exercise_name']] < $exercise['log_weight'])
                 {
                     $temp[$exercise['exercise_name']] = $exercise['log_weight'];
                 }
@@ -72,11 +77,12 @@ class ToolsController extends Controller
                 $bw = $temp['bodyweight'];
                 unset($temp['bodyweight']);
                 $wilks = Graph::calculate_wilks (array_sum($temp), $bw, Auth::user()->user_gender);
-                $temp = [];
+                $temp['bodyweight'] = $bw;
                 return ['log_weight' => $wilks, 'log_date' => $item[0]['log_date']];
             }
         }, array_keys($wilks_data), $wilks_data));
-        return view('tools.wilks', compact('range', 'graphs'));
+        $colours = ['#C83737', '#C87937', '#A02C6E'];
+        return view('tools.wilks', compact('range', 'graphs', 'colours'));
     }
 
     public function sinclair($range = 0)
@@ -103,12 +109,17 @@ class ToolsController extends Controller
         })->toArray();
         $graphs['Bodyweight'] = $graphs['Bodyweight']->unique('log_weight')->toArray();
         $sinclair_data = array_merge_recursive($sinclair_exercises, $sinclair_bodyweight);
+        ksort($sinclair_data);
         // map
         $temp = [];
         $graphs['Sinclair'] = array_filter(array_map(function($key, $item) use (&$temp){
             foreach ($item as $exercise)
             {
-                if (isset($exercise['exercise_name']))
+                if (isset($exercise['exercise_name']) && !isset($temp[$exercise['exercise_name']]))
+                {
+                	$temp[$exercise['exercise_name']] = 0;
+                }
+                if (isset($exercise['exercise_name']) && $temp[$exercise['exercise_name']] < $exercise['log_weight'])
                 {
                     $temp[$exercise['exercise_name']] = $exercise['log_weight'];
                 }
@@ -122,11 +133,12 @@ class ToolsController extends Controller
                 $bw = $temp['bodyweight'];
                 unset($temp['bodyweight']);
                 $sinclair = Graph::calculate_sinclair (array_sum($temp), $bw, Auth::user()->user_gender);
-                $temp = [];
+                $temp['bodyweight'] = $bw;
                 return ['log_weight' => $sinclair, 'log_date' => $item[0]['log_date']];
             }
         }, array_keys($sinclair_data), $sinclair_data));
-        return view('tools.sinclair', compact('range', 'graphs'));
+        $colours = ['#C85E37', '#B2315A'];
+        return view('tools.sinclair', compact('range', 'graphs', 'colours'));
     }
 
     public function invites()
