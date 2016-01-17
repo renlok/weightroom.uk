@@ -59,7 +59,7 @@
 @endforeach
 @foreach ($log_exercises as $item)
 		@foreach ($graph_names as $table_name => $graph_name)
-			dataset{{ $table_name }}.push({x: moment('{{ $item->log_date }}','YYYY-MM-DD').toDate(), y: {{ $item->$table_name * $scales[$table_name] }}, shape:'circle'});
+			dataset{{ $table_name }}.push({x: moment('{{ $item->log_date }}','YYYY-MM-DD').toDate(), y: {{ Format::correct_weight(($item->$table_name)) * $scales[$table_name] }}, shape:'circle'});
 		@endforeach
 @endforeach
 @foreach ($graph_names as $table_name => $graph_name)
