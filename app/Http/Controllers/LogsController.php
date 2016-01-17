@@ -75,14 +75,7 @@ class LogsController extends Controller
         {
             $comments = null;
         }
-        if ($user->invite_code == null)
-        {
-            $is_following = 0;
-        }
-        else
-        {
-            $is_following = $user->invite_code->where('follow_user_id', $user->user_id)->count();
-        }
+        $is_following = (DB::table('user_follows')->where('user_id', Auth::user()->user_id)->where('follow_user_id', $user->user_id)->first() == null) ? false : true;
         if (!isset($commenting))
         {
             $commenting = false;
