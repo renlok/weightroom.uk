@@ -55,6 +55,24 @@ class Exercise_record extends Model
         return $query;
     }
 
+    public function scopeGetest1rmall($query, $user_id, $range, $exercise_name, $is_time = false, $show_reps = [1,2,3,4,5,6,7,8,9,10])
+    {
+        $query = $query->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
+                ->select(DB::raw('MAX(pr_1rm) as pr_value'), 'log_date')
+                ->where('exercise_records.user_id', $user_id)
+                ->where('exercises.exercise_name', $exercise_name)
+                ->where('exercises.is_time', $is_time)
+                ->where('is_est1rm', 1)
+                ->whereIn('pr_reps', $show_reps);
+        if ($range > 0)
+        {
+            $query = $query->where('log_date', '>=', Carbon::now()->subMonths($range)->toDateString());
+        }
+        $query = $query->groupBy('log_date')
+                ->orderBy('log_date', 'asc');
+        return $query;
+    }
+
     public function scopeGetexercisemaxpr($query, $user_id, $exercise_id, $exercise_is_time)
     {
         $query = $query->where('user_id', $user_id)

@@ -121,6 +121,7 @@ class ExercisesController extends Controller
         if ($type == 'prs')
         {
             $prs = Exercise_record::getexerciseprsall(Auth::user()->user_id, $range, $exercise_name, $exercise->is_time, Auth::user()->user_showreps)->get()->groupBy('pr_reps');
+            $prs['Approx. 1'] = Exercise_record::getest1rmall(Auth::user()->user_id, $range, $exercise_name, $exercise->is_time, Auth::user()->user_showreps)->get();
             // be in format [1 => ['log_weight' => ??, 'log_date' => ??]]
         }
         else

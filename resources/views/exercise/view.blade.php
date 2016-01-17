@@ -123,7 +123,7 @@
 	@endforeach
 		prHistoryChartData.push({
 			values: dataset,
-			key: '{{ $rep_name }}'
+			key: '{{ $rep_name }} rep max'
 		});
 @endforeach
 		return prHistoryChartData;
