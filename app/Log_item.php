@@ -67,7 +67,7 @@ class Log_item extends Model
     		}
     		elseif ($this->attributes['is_bw'] == 0)
     		{
-    			return $this->attributes['logitem_weight'];
+    			return Format::correct_weight($this->attributes['logitem_weight']);
     		}
     		else
     		{
@@ -75,11 +75,11 @@ class Log_item extends Model
     			{
     				if ($this->attributes['logitem_weight'] < 0)
     				{
-    					return 'BW - ' . abs($this->attributes['logitem_weight']);
+    					return 'BW - ' . Format::correct_weight(abs($this->attributes['logitem_weight']));
     				}
     				else
     				{
-    					return 'BW + ' . $this->attributes['logitem_weight'];
+    					return 'BW + ' . Format::correct_weight($this->attributes['logitem_weight']);
     				}
     			}
     			else

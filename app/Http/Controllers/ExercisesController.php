@@ -14,6 +14,7 @@ use App\Logs;
 use App\Log_exercise;
 use App\Log_item;
 use App\Extend\PRs;
+use App\Extend\Format;
 use Carbon\Carbon;
 
 class ExercisesController extends Controller
@@ -85,7 +86,7 @@ class ExercisesController extends Controller
             $query = $query->where('log_date', '<=', $to_date);
 		}
         // set scales
-        $max_volume = $query->max('logex_volume');
+        $max_volume = Format::correct_weight($query->max('logex_volume'));
         $max_reps = $query->max('logex_reps');
         $max_sets = $query->max('logex_sets');
         $max_rm = Exercise_record::exercisemaxpr($user->user_id, $exercise->exercise_id, $exercise->is_time);

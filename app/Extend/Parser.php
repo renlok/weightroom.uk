@@ -1020,13 +1020,13 @@ class Parser
     				// get user units
     				if ($set['is_bw'] == 0)
     				{
-    					$setvalue = $set['logitem_weight'] . ' ' . $user->user_unit;
+    					$setvalue = Format::correct_weight($set['logitem_weight'], 'kg', $user->user_unit) . ' ' . $user->user_unit;
     				}
     				else
     				{
     					if ($set['logitem_weight'] != 0)
     					{
-    						$setvalue = 'BW' . $set['logitem_weight'] . ' ' . $user->user_unit;
+    						$setvalue = 'BW' . Format::correct_weight($set['logitem_weight'], 'kg', $user->user_unit) . ' ' . $user->user_unit;
     					}
     					else
     					{
@@ -1100,7 +1100,7 @@ class Parser
 		}
 		else
 		{
-			$weight = floatval($weight_input);
+			$weight = Format:correct_weight(floatval($weight_input), Auth::user()->user_unit, 'kg');
 		}
         return $weight;
     }

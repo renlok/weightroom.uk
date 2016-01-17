@@ -2,6 +2,8 @@
 
 namespace App\Extend;
 
+use Auth;
+
 class Format {
     public static function format_time($time)
     {
@@ -53,23 +55,24 @@ class Format {
     	}
     }
 
-    public static function correct_weight($weight, $unit_used, $unit_want) // $unit_used = kg/lb $unit_want = kg/lb
+    public static function correct_weight($weight, $unit_used = 'kg', $unit_want = 0) // $unit_used = kg/lb $unit_want = kg/lb
     {
+        $unit_want = ($unit_want == 0) ? Auth::user()->user_unit : $unit_want;
     	if (($unit_used == 'kg' && $unit_want == 'kg') || ($unit_used == 'lb' && $unit_want == 'lb'))
     	{
-    		return round($weight, 2);
+    		return round($weight * 8) / 8;
     	}
     	elseif ($unit_used == 'kg' && $unit_want == 'lb')
     	{
-    		return round(($weight * 2.20462), 2); // convert to lb
+    		return round(($weight * 2.20462) * 8) / 8; // convert to lb
     	}
     	elseif ($unit_used == 'lb' && $unit_want == 'kg')
     	{
-    		return round(($weight * 0.453592), 2); // convert to kg
+    		return round(($weight * 0.453592) * 8) / 8; // convert to kg
     	}
     	else
     	{
-    		return round($weight, 2);
+    		return round($weight * 8) / 8;
     	}
     }
 

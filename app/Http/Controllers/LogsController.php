@@ -13,6 +13,7 @@ use App\User;
 use App\Extend\PRs;
 use App\Extend\Parser;
 use App\Extend\Log_control;
+use App\Extend\Format;
 use App\Http\Requests;
 use App\Http\Requests\LogRequest;
 use App\Http\Controllers\Controller;
@@ -61,6 +62,8 @@ class LogsController extends Controller
                 }
                 else
                 {
+                    // correct format
+                    $log->average_intensity = Format::correct_weight($log->average_intensity, 'kg', Auth::user()->user_unit);
                     $ai_suffix = ' ' . Auth::user()->user_unit;
                 }
                 $log->average_intensity = round($log->average_intensity/$count) . $ai_suffix;
@@ -184,7 +187,7 @@ class LogsController extends Controller
             $query = DB::table('log_items')
                         ->join('exercises', 'exercises.exercise_id', '=', 'log_items.exercise_id')
                         ->where('log_items.user_id', $user->user_id)
-                        ->where('log_items.logitem_weight', $request->old('weightoperator'), $request->old('weight'))
+                        ->where('log_items.logitem_weight', $request->old('weightoperator'), Format::correct_weight($request->old('weight'), $user->user_unit, 'kg'))
                         ->where('exercises.exercise_name', $request->old('exercise'));
             if ($request->old('reps') != 'any' && $request->old('reps') != '')
         	{
@@ -227,7 +230,7 @@ class LogsController extends Controller
         {
             $to_date = Carbon::now()->toDateString();
         }
-        $max_volume = $query->max('log_total_volume');
+        $max_volume = Format::correct_weight($query->max('log_total_volume'));
         $scales = [
             'log_total_volume' => 1,
             'log_total_reps' => floor($max_volume / $query->max('log_total_reps')),
