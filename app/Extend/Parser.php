@@ -1100,7 +1100,7 @@ class Parser
 		}
 		else
 		{
-			$weight = Format:correct_weight(floatval($weight_input), Auth::user()->user_unit, 'kg');
+			$weight = Format::correct_weight(floatval($weight_input), Auth::user()->user_unit, 'kg');
 		}
         return $weight;
     }
