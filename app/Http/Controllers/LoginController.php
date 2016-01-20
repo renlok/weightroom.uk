@@ -40,7 +40,7 @@ class LoginController extends Controller
 				->withInput()
 				->with([
 					'flash_message' => 'Email/password wrong, or account not activated.',
-					'flash_message_type' => 'error'
+					'flash_message_type' => 'danger'
 				]);
 		}
 	}
@@ -69,7 +69,7 @@ class LoginController extends Controller
 				->withInput()
 				->with([
 					'flash_message' => 'Invalid invite code.',
-					'flash_message_type' => 'error'
+					'flash_message_type' => 'danger'
 				]);
 		}
 

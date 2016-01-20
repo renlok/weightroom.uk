@@ -122,7 +122,7 @@ class LogsController extends Controller
                 ->route('viewLog', ['date' => $date])
                 ->with([
                     'new_prs' => $new_prs,
-                    'flash_message', 'Workout saved.'
+                    'flash_message' => 'Workout saved.'
                 ]);
     }
 
@@ -157,15 +157,31 @@ class LogsController extends Controller
                 ->route('viewLog', ['date' => $date])
                 ->with([
                     'new_prs' => $new_prs,
-                    'flash_message', 'Workout saved.'
+                    'flash_message' => 'Workout saved.'
                 ]);
     }
 
     public function delete($date)
     {
+        $exercise_ids = DB::table('log_exercises')
+                            ->where('log_date', $date)
+                            ->where('user_id', Auth::user()->user_id)
+                            ->distinct()
+                            ->lists('exercise_id');
+        DB::table('log_items')->where('log_date', $date)->where('user_id', Auth::user()->user_id)->delete();
+        DB::table('log_exercises')->where('log_date', $date)->where('user_id', Auth::user()->user_id)->delete();
+        DB::table('exercise_records')->where('log_date', $date)->where('user_id', Auth::user()->user_id)->delete();
         DB::table('logs')->where('log_date', $date)->where('user_id', Auth::user()->user_id)->delete();
+        foreach ($exercise_ids as $exercise_id)
+        {
+            PRs::rebuildExercisePRs($exercise_id);
+        }
         return redirect()
-                ->route('viewLog', ['date' => $date]);
+                ->route('viewLog', ['date' => $date])
+                ->with([
+                    'flash_message' => 'Workout deleted.',
+                    'flash_message_type' => 'danger'
+                ]);
     }
 
     public function getAjaxcal($date, $user_name)

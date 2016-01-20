@@ -52,7 +52,7 @@ class PRs {
 		}
 	}
 
-	public function rebuildExercisePRs($exercise_id)
+	public static function rebuildExercisePRs($exercise_id)
 	{
 		// delete existing records
         DB::table('exercise_records')
@@ -71,32 +71,32 @@ class PRs {
         $pr_value = array(1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0, 7 => 0, 8 => 0, 9 => 0, 10 => 0);
 		foreach ($log_items as $log_item)
 		{
-			if ($log_item['logitem_reps'] <= 10 && $log_item['logitem_reps'] > 0
-             && (($pr_time[$log_item['logitem_reps']] < $log_item['logitem_abs_weight'] && $log_item['is_time'] == 1)
-             || ($pr_value[$log_item['logitem_reps']] < $log_item['logitem_abs_weight'] && $log_item['is_time'] == 0)))
+			if ($log_item->logitem_reps <= 10 && $log_item->logitem_reps > 0
+             && (($pr_time[$log_item->logitem_reps] < $log_item->logitem_abs_weight && $log_item->is_time == 1)
+             || ($pr_value[$log_item->logitem_reps] < $log_item->logitem_abs_weight && $log_item->is_time == 0)))
 			{
-                if ($log_item['is_time'])
+                if ($log_item->is_time)
                 {
-                    $pr_time[$log_item['logitem_reps']] = $log_item['logitem_abs_weight'];
+                    $pr_time[$log_item->logitem_reps] = $log_item->logitem_abs_weight;
                 } else {
-                    $pr_value[$log_item['logitem_reps']] = $log_item['logitem_abs_weight'];
+                    $pr_value[$log_item->logitem_reps] = $log_item->logitem_abs_weight;
                 }
                 DB::table('log_items')
-                    ->where('logitem_id', $log_item['logitem_id'])
+                    ->where('logitem_id', $log_item->logitem_id)
                     ->update(['is_pr' => 1]);
                 Exercise_record::create([
                     'exercise_id' => $exercise_id,
-                    'user_id' => $log_item['user_id'],
-                    'log_date' => $log_item['log_date'],
-                    'pr_value' => $log_item['logitem_abs_weight'],
-                    'pr_reps' => $log_item['logitem_reps'],
-                    'is_time' => $log_item['is_time']
+                    'user_id' => $log_item->user_id,
+                    'log_date' => $log_item->log_date,
+                    'pr_value' => $log_item->logitem_abs_weight,
+                    'pr_reps' => $log_item->logitem_reps,
+                    'is_time' => $log_item->is_time
                 ]);
 			}
 		}
 	}
 
-    public function get_prs ($user_id, $log_date, $exercise_name, $return_date = false)
+    public static function get_prs ($user_id, $log_date, $exercise_name, $return_date = false)
 	{
 		// load all preceeding prs
         $records = DB::table('exercise_records')

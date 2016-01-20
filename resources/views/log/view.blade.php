@@ -98,7 +98,19 @@ h3.exercise {
 
 @if ($user->user_id == Auth::user()->user_id)
 	@if ($log != null)
-<p id="editaddbutton"><a href="{{ route('editLog', ['date' => $date]) }}" class="btn btn-default">Edit Log</a></p>
+<p id="editaddbutton">
+	<a href="{{ route('editLog', ['date' => $date]) }}" class="btn btn-default">Edit Log</a>
+	<button type="button" class="btn btn-danger deleteLink pull-right">Delete Log</button>
+</p>
+<div class="alert alert-danger margintb collapse" role="alert" id="deleteWarning" aria-expanded="false">
+	<button type="button" class="close deleteLink"><span aria-hidden="true">&times;</span></button>
+	<h4>You sure?</h4>
+	<p>You are about to delete your workout entry for <strong>{{ $date }}</strong> this cannot be undone</p>
+	<p>
+		<a href="{{ route('deleteLog', ['date' => $date]) }}" class="btn btn-danger">Yeah delete it</a>
+		<button type="button" class="btn btn-default deleteLink">Nah leave it be</button>
+	</p>
+</div>
 	@else
 <p id="editaddbutton"><a href="{{ route('newLog', ['date' => $date]) }}" class="btn btn-default">Add Log</a></p>
 	@endif
@@ -142,6 +154,9 @@ $(document).ready(function(){
 	@if ($commenting)
 		, defaulthide:false
 	@endif
+	});
+	$('.deleteLink').click(function() {
+		$('#deleteWarning').collapse('toggle');
 	});
 	$('.reply').click(function() {
 		var element = $(this).parent().parent().find(".comment-reply-box").first();
