@@ -120,7 +120,10 @@ class LogsController extends Controller
 		$new_prs = $parser->store_log_data ($date, $weight, false);
         return redirect()
                 ->route('viewLog', ['date' => $date])
-                ->with('new_prs', $new_prs);
+                ->with([
+                    'new_prs' => $new_prs,
+                    'flash_message', 'Workout saved.'
+                ]);
     }
 
     public function getNew($date)
@@ -152,7 +155,10 @@ class LogsController extends Controller
 		$new_prs = $parser->store_log_data ($date, $weight, true);
         return redirect()
                 ->route('viewLog', ['date' => $date])
-                ->with('new_prs', $new_prs);
+                ->with([
+                    'new_prs' => $new_prs,
+                    'flash_message', 'Workout saved.'
+                ]);
     }
 
     public function delete($date)

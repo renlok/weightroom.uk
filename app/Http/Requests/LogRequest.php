@@ -12,7 +12,7 @@ class LogRequest extends Request
     public function rules()
     {
         return [
-			'log' => 'required',
+			'log' => '',
 			'weight' => 'numeric',
         ];
     }

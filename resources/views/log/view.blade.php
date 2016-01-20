@@ -67,6 +67,7 @@ h3.exercise {
 	@endforeach
 </div>
 @endif
+@include('common.flash')
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-md-3 col-md-push-9">

@@ -2,9 +2,6 @@
 - Test route patterns for date & id
 - deal with assets better with elixier
 
-figure out how to do the rest
-https://laracasts.com/series/laravel-5-fundamentals/episodes/7
-
 - add delete log (with undo function)
 - simplyfy signup page (http://goodui.org/#13)
 - split user settings page (hide advanced options)
@@ -44,6 +41,7 @@ https://laracasts.com/series/laravel-5-fundamentals/episodes/7
     total volume
     total reps
 
-new files
-remember password
-blog
+- Make a decent landing page:
+    https://www.reddit.com/r/startups/comments/22zw5g/ask_rstartups_what_are_some_glaring_flaws_in_my/
+
+- add blog
