@@ -2,7 +2,6 @@
 - Test route patterns for date & id
 - deal with assets better with elixier
 
-- add delete log (with undo function)
 - simplyfy signup page (http://goodui.org/#13)
 - split user settings page (hide advanced options)
 - change the demo, show the user how it works (logger) (http://goodui.org/#22)

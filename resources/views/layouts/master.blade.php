@@ -30,32 +30,32 @@
 	<div class="container-fluid" id="header">
 	  <ul class="nav nav-pills">
 	  @if (!Auth::check())
-		  <li role="presentation" class="{{ Request::is('login') ? 'active' : '' }}"><a href="{{ route('login') }}">Login</a></li>
-		  <li role="presentation" class="{{ Request::is('register') ? 'active' : '' }}"><a href="{{ route('register') }}">Register</a></li>
-		  <li role="presentation" class="{{ Request::is('demo') ? 'active' : '' }}"><a href="{{ route('demo') }}">What is this?</a></li>
+		  <li role="presentation" class="{{ Request::is('login') ? 'active' : '' }}"><a href="{{ route('login') }}">{{ trans('master.login') }}</a></li>
+		  <li role="presentation" class="{{ Request::is('register') ? 'active' : '' }}"><a href="{{ route('register') }}">{{ trans('master.register') }}</a></li>
+		  <li role="presentation" class="{{ Request::is('demo') ? 'active' : '' }}"><a href="{{ route('demo') }}">{{ trans('master.demo') }}</a></li>
 	  @else
-		  <li role="presentation" class="{{ Request::is('dashboard*') ? 'active' : '' }}"><a href="{{ route('dashboard') }}" class="hidden-xs">Home</a><a href="?" class="visible-xs"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
-		  <li role="presentation" class="{{ (Request::is('log/*/new') || Request::is('log/*/edit')) ? 'active' : '' }}"><a href="{{ route('newLog', ['date' => Carbon\Carbon::now()->format('Y-m-d')]) }}">Track</a></li>
+		  <li role="presentation" class="{{ Request::is('dashboard*') ? 'active' : '' }}"><a href="{{ route('dashboard') }}" class="hidden-xs">{{ trans('master.home') }}</a><a href="?" class="visible-xs"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
+		  <li role="presentation" class="{{ (Request::is('log/*/new') || Request::is('log/*/edit')) ? 'active' : '' }}"><a href="{{ route('newLog', ['date' => Carbon\Carbon::now()->format('Y-m-d')]) }}">{{ trans('master.track') }}</a></li>
 			<li class="dropdown visible-xs">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span> <span class="caret"></span></a>
 				<ul class="dropdown-menu">
-					<li role="presentation" class="{{ (Request::is('log/*') && !(Request::is('log/*/new') || Request::is('log/*/edit') || Request::is('log/log/volume*'))) ? 'active' : '' }}"><a href="{{ route('viewLog', ['date' => Carbon\Carbon::now()->format('Y-m-d')]) }}">View Log</a></li>
-					<li role="presentation" class="{{ Request::is('exercise/*') ? 'active' : '' }}"><a href="{{ route('listExercises') }}">Exercise List</a></li>
-					<li role="presentation" class="{{ (Request::is('tools*') || Request::is('log/volume*')) ? 'active' : '' }}"><a href="{{ route('tools') }}">Tools</a></li>
+					<li role="presentation" class="{{ (Request::is('log/*') && !(Request::is('log/*/new') || Request::is('log/*/edit') || Request::is('log/volume*'))) ? 'active' : '' }}"><a href="{{ route('viewLog', ['date' => Carbon\Carbon::now()->format('Y-m-d')]) }}">{{ trans('master.viewLog') }}</a></li>
+					<li role="presentation" class="{{ Request::is('exercise/*') ? 'active' : '' }}"><a href="{{ route('listExercises') }}">{{ trans('master.exerciseList') }}</a></li>
+					<li role="presentation" class="{{ (Request::is('tools*') || Request::is('log/volume*')) ? 'active' : '' }}"><a href="{{ route('tools') }}">{{ trans('master.tools') }}</a></li>
 				</ul>
 			</li>
-		  <li role="presentation" class="hidden-xs {{ (Request::is('log/*') && !(Request::is('log/*/new') || Request::is('log/*/edit') || Request::is('log/log/volume*'))) ? 'active' : '' }}"><a href="{{ route('viewLog', ['date' => Carbon\Carbon::now()->format('Y-m-d')]) }}">View Log</a></li>
-		  <li role="presentation" class="hidden-xs {{ Request::is('exercise/*') ? 'active' : '' }}"><a href="{{ route('listExercises') }}">Exercise List</a></li>
-		  <li role="presentation" class="hidden-xs {{ (Request::is('tools*') || Request::is('log/volume*')) ? 'active' : '' }}"><a href="{{ route('tools') }}">Tools</a></li>
+		  <li role="presentation" class="hidden-xs {{ (Request::is('log/*') && !(Request::is('log/*/new') || Request::is('log/*/edit') || Request::is('log/volume*'))) ? 'active' : '' }}"><a href="{{ route('viewLog', ['date' => Carbon\Carbon::now()->format('Y-m-d')]) }}">{{ trans('master.viewLog') }}</a></li>
+		  <li role="presentation" class="hidden-xs {{ Request::is('exercise/*') ? 'active' : '' }}"><a href="{{ route('listExercises') }}">{{ trans('master.exerciseList') }}</a></li>
+		  <li role="presentation" class="hidden-xs {{ (Request::is('tools*') || Request::is('log/volume*')) ? 'active' : '' }}"><a href="{{ route('tools') }}">{{ trans('master.tools') }}</a></li>
           <li role="presentation" class="{{ Request::is('user/search') ? 'active' : '' }}"><a href="#" data-toggle="modal" data-target="#searchUsers"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></a></li>
 		  <li class="dropdown {{ Request::is('user/settings') ? 'active' : '' }}">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> <span class="caret"></span></a>
 				<ul class="dropdown-menu">
-					<li role="presentation"><a href="{{ route('invites') }}">Invite codes</a></li>
-					<li role="presentation"><a href="//we-link.co.uk/projects/public/weightroom" target="_blank">Submit a bug</a></li>
-					<li role="presentation"><a href="//weightroom.uk/blog/" target="_blank">Blog</a></li>
-					<li role="presentation"><a href="{{ route('userSettings') }}">Settings</a></li>
-					<li role="presentation"><a href="{{ route('logout') }}">Logout</a></li>
+					<li role="presentation"><a href="{{ route('invites') }}">{{ trans('master.inviteCodes') }}</a></li>
+					<li role="presentation"><a href="//we-link.co.uk/projects/public/weightroom" target="_blank">{{ trans('master.bugs') }}</a></li>
+					<li role="presentation"><a href="//weightroom.uk/blog/" target="_blank">{{ trans('master.blog') }}</a></li>
+					<li role="presentation"><a href="{{ route('userSettings') }}">{{ trans('master.settings') }}</a></li>
+					<li role="presentation"><a href="{{ route('logout') }}">{{ trans('master.logout') }}</a></li>
 				</ul>
 			</li>
             @if ($header_notifications_count > 0)
@@ -64,16 +64,16 @@
                 <ul class="dropdown-menu">
                 @foreach ($header_notifications as $note)
                     @if ($note->notification_type == 'comment')
-                        <li role="presentation"><a href="{{ route('viewLog', ['date' => $note->notification_from['log_date']]) }}#comments">{{$note->notification_value}} commented on your log</a></li>
+                        <li role="presentation"><a href="{{ route('viewLog', ['date' => $note->notification_from['log_date']]) }}#comments">{{ trans('notifications.logComment', ['username' => $note->notification_value]) }}</a></li>
                     @endif
                     @if ($note->notification_type == 'reply')
-                        <li role="presentation"><a href="{{ route('viewLog', ['date' => $note->notification_from['log_date'], 'user_name' => $note->notification_from['user_name']]) }}#comments">{{$note->notification_value}} replied to your comment</a></li>
+                        <li role="presentation"><a href="{{ route('viewLog', ['date' => $note->notification_from['log_date'], 'user_name' => $note->notification_from['user_name']]) }}#comments">{{ trans('notifications.commentReply', ['username' => $note->notification_value]) }}</a></li>
                     @endif
                     @if ($note->notification_type == 'follow')
-                        <li role="presentation"><a href="{{ route('viewUser', ['user_name' => $note->notification_value]) }}">{{$note->notification_value}} started following you</a></li>
+                        <li role="presentation"><a href="{{ route('viewUser', ['user_name' => $note->notification_value]) }}">{{ trans('notifications.follower', ['username' => $note->notification_value]) }}</a></li>
                     @endif
                 @endforeach
-                    <li role="presentation"><a href="#" id="clear_notes">Clear All</a></li>
+                    <li role="presentation"><a href="#" id="clear_notes">{{ trans('notifications.clearAll') }}</a></li>
                 </ul>
             </li>
             @endif
