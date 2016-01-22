@@ -51,8 +51,12 @@ class User extends Model implements AuthenticatableContract,
         return $this->user_password;
     }
 
-    public function getAuthIdentifierName () {
+    public function getAuthIdentifier () {
         return $this->user_id;
+    }
+
+    public function getAuthIdentifierName () {
+        return 'user_id';
     }
 
     public function setUserShowrepsAttribute($value)
