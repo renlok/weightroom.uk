@@ -62,29 +62,30 @@ class ImportController extends Controller
 			]
 		];
 		$colomn_names = [
-			'log_date',
-			'exercise_name',
-			'logex_order',
-			'logitem_order',
-			'logitem_comment',
-			'logitem_reps',
-			'logitem_weight',
-			'logitem_pre',
-			'logitem_time',
+			'log_date:YYYY-MM-DD' => 'Date (YYYY-MM-DD)',
+			'log_date:DD/MM/YYYY' => 'Date (DD/MM/YYYY)',
+			'log_date:MM/DD/YYYY' => 'Date (MM/DD/YYYY)',
+			'log_date:other' => 'Date (Other format)',
+			'log_weight' => 'Bodyweight',
+			'exercise_name' => 'Exercise Name',
+			'logitem_weight:kg' => 'Weight (KG)',
+			'logitem_weight:lb' => 'Weight (LB)',
+			'logitem_time' => 'Time',
+			'logitem_reps' => 'Reps',
+			'logitem_sets' => 'Sets',
+			'logitem_comment' => 'Comment',
+			'logitem_pre' => 'RPE',
+			'logex_order' => 'Exercise Order',
+			'logitem_order' => 'Set Order',
 		];
 		if ($request->hasFile('csvfile')) {
 			if ($request->file('csvfile')->isValid()) {
 			    // do stuff
 				$csvfile = $request->file('csvfile');
-				Excel::load($csvfile, function($reader) {
-				    $results = $reader->get();
-					$headers = $reader->first()->keys()->toArray(); // returns array of headers
-					foreach ($results as $row)
-					{
-
-					}
-				});
-				return view('import.matchUpload', compact('colomn_names', 'headers'));
+				$reader = Excel::load($csvfile, function($reader){});
+				$first_row = $reader->first();
+				$file_headers = $reader->first()->keys()->toArray(); // returns array of headers
+				return view('import.matchUpload', compact('colomn_names', 'file_headers', 'first_row'));
 			}
 		}
     }

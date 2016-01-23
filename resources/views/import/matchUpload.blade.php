@@ -7,17 +7,35 @@
 
 @section('content')
 <form action="{{ url('import') }}" method="post">
-@foreach ($headers as $header)
-  <div class="form-group">
-    <label for="{{ $header }}">{{ $header }}</label>
-	<select class="form-control" name="{{ $header }}">
-	  <option value="">Ignore</option>
-	@foreach ($colomn_names as $colomn_name)
-	  <option value="{{ $colomn_name }}">{{ $colomn_name }}</option>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Colomn Name</th>
+      <th>Link to</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+@foreach ($file_headers as $file_header)
+    <tr>
+      <td>
+        <label for="{{ $file_header }}">{{ $file_header }}</label>
+      </td>
+      <td>
+    	  <select class="form-control" name="{{ $file_header }}">
+    	    <option value="">Ignore</option>
+	@foreach ($colomn_names as $colomn_name => $colomn_desc)
+          <option value="{{ $colomn_name }}">{{ $colomn_desc }}</option>
 	@endforeach
-	</select>
-  </div>
+        </select>
+      </td>
+      <td>
+        {{ $first_row->$file_header }}
+      </td>
+    </tr>
 @endforeach
+  </tbody>
+</table>
   {{ csrf_field() }}
   <button type="submit" class="btn btn-default">Submit</button>
 </form>
