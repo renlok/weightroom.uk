@@ -106,6 +106,7 @@ Route::group(['middleware' => 'auth'], function () {
 });
 
 Route::get('demo', 'MiscController@demo')->name('demo');
+Route::get('plans', 'MiscController@plans')->name('plans');
 
 // legal guff
 Route::get('help/privacypolicy', 'MiscController@privacyPolicy')->name('privacyPolicy');
@@ -124,3 +125,7 @@ Route::group(['prefix' => 'comment', 'middleware' => 'auth'], function () {
     Route::get('{comment_id}/delete', 'CommentController@delete')->name('deleteComment');
     Route::post('{log_id}', 'CommentController@store')->name('saveComment');
 });
+
+// import
+Route::get('import', 'ImportController@importForm')->name('import');
+Route::post('import', 'ImportController@import');
