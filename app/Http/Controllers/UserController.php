@@ -32,7 +32,8 @@ class UserController extends Controller
             'notification_type' => 'follow',
             'notification_value' => Auth::user()->user_name
         ]);
-        return redirect('viewLog', ['user_name' => $user_name, 'date' => $date]);
+        return redirect()
+                ->route('viewLog', ['user_name' => $user_name, 'date' => $date]);
     }
 
     public function unfollow($user_name, $date)
@@ -40,7 +41,8 @@ class UserController extends Controller
         User_follow::where('user_id', Auth::user()->user_id)
                     ->where('follow_user_id', User::where('user_name', $user_name)->firstOrFail()->user_id)
                     ->delete();
-        return redirect('viewLog', ['user_name' => $user_name, 'date' => $date]);
+        return redirect()
+                ->route('viewLog', ['user_name' => $user_name, 'date' => $date]);
     }
 
     public function getSettings()
