@@ -184,8 +184,8 @@ $(document).ready(function(){
 		$(".calender-cont").removeAttr('style');
 		calendar_count = 1;
 	}
-	var arDates = [];
-	var calMonths = [];
+	var arDates = {!! $calender['dates'] !!};
+	var calMonths = {!! $calender['cals'] !!};
 
 	$('.date').pickmeup({
 		date		: moment('{{ $date }}','YYYY-MM-DD').format(),
@@ -221,7 +221,7 @@ $(document).ready(function(){
 			url: url.replace(':date', date),
 			type: 'GET',
 			dataType: 'json',
-			cache: false
+			cache: true
 		}).done(function(o) {
 			$.merge(calMonths, o.cals);
 			$.merge(arDates, o.dates);

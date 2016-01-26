@@ -60,19 +60,19 @@ class Format {
         $unit_want = ($unit_want == 0) ? Auth::user()->user_unit : $unit_want;
     	if (($unit_used == 'kg' && $unit_want == 'kg') || ($unit_used == 'lb' && $unit_want == 'lb'))
     	{
-    		return round($weight * 8) / 8;
+    		return round($weight * 20) / 20;
     	}
     	elseif ($unit_used == 'kg' && $unit_want == 'lb')
     	{
-    		return round(($weight * 2.20462) * 8) / 8; // convert to lb
+    		return round(($weight * 2.20462) * 20) / 20; // convert to lb
     	}
     	elseif ($unit_used == 'lb' && $unit_want == 'kg')
     	{
-    		return round(($weight * 0.453592) * 8) / 8; // convert to kg
+    		return round(($weight * 0.453592) * 20) / 20; // convert to kg
     	}
     	else
     	{
-    		return round($weight * 8) / 8;
+    		return round($weight * 20) / 20;
     	}
     }
 

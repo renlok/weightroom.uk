@@ -84,7 +84,8 @@ class LogsController extends Controller
             $commenting = false;
         }
         $carbon_date = Carbon::createFromFormat('Y-m-d', $date);
-        return view('log.view', compact('date', 'carbon_date', 'user', 'log', 'comments', 'is_following', 'commenting'));
+        $calender = Log_control::preload_calender_data($date, $user->user_id);
+        return view('log.view', compact('date', 'carbon_date', 'user', 'log', 'comments', 'is_following', 'commenting', 'calender'));
     }
 
     public function getEdit($date)
@@ -109,7 +110,8 @@ class LogsController extends Controller
             }
             $exercises .= "[\"{$exercise['exercise_name']}\", {$exercise['COUNT']}]";
         }
-        return view('log.edit', compact('date', 'log', 'user', 'type', 'exercises'));
+        $calender = Log_control::preload_calender_data($date, $user->user_id);
+        return view('log.edit', compact('date', 'log', 'user', 'type', 'exercises', 'calender'));
     }
 
     public function postEdit($date, LogRequest $request)
@@ -144,7 +146,8 @@ class LogsController extends Controller
             }
             $exercises .= "[\"{$exercise['exercise_name']}\", {$exercise['COUNT']}]";
         }
-        return view('log.edit', compact('date', 'log', 'user', 'type', 'exercises'));
+        $calender = Log_control::preload_calender_data($date, $user->user_id);
+        return view('log.edit', compact('date', 'log', 'user', 'type', 'exercises', 'calender'));
     }
 
     public function postNew($date, LogRequest $request)

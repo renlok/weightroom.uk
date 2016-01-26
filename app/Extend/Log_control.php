@@ -3,9 +3,11 @@
 namespace App\Extend;
 
 use Auth;
+use Carbon;
 use DB;
 use App\Exercise;
 use App\Exercise_record;
+use App\Log;
 
 class Log_control {
     public static function correct_totals($user_id, $exercise_id, $logex_id, $current_1rm)
@@ -111,5 +113,18 @@ class Log_control {
             $return_array[$key] = round($return_array[$key]/$n);
         }
         return $return_array;
+    }
+
+    public static function preload_calender_data($date, $user_id)
+    {
+        $month = Carbon::createFromFormat('Y-m-d', $date)->format('Y-m');
+        $lastmonth = Carbon::createFromFormat('Y-m-d', $date)->subMonth();
+        $nextmonth = Carbon::createFromFormat('Y-m-d', $date)->addMonth();
+        $log_dates = Log::where('user_id', $user_id)
+                        ->whereBetween('log_date', [$lastmonth->startOfMonth()->toDateString(), $nextmonth->endOfMonth()->toDateString()])
+                        ->lists('log_date');
+        $cal_log_dates = json_encode($log_dates);
+        $cal_loaded = json_encode([$lastmonth->format('Y-m'), $month, $nextmonth->format('Y-m')]);
+        return ['dates' => $cal_log_dates, 'cals' => $cal_loaded];
     }
 }

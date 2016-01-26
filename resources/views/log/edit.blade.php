@@ -3,6 +3,9 @@
 @section('title', ucfirst($type) . ' Log: ' . $date)
 
 @section('headerstyle')
+<link href="{{ asset('css/pickmeup.css') }}" rel="stylesheet">
+<link rel="stylesheet" href="//codemirror.net/lib/codemirror.css">
+<link rel="stylesheet" href="//codemirror.net/addon/hint/show-hint.css">
 <style>
 .cm-ENAME { color:#3338B7;}
 .cm-W, .cm-WW { color:#337AB7;}
@@ -98,18 +101,15 @@ you can also have the same exercise multiple times
 @endsection
 
 @section('endjs')
-<link href="{{ asset('css/pickmeup.css') }}" rel="stylesheet">
 <script src="//nazar-pc.github.io/PickMeUp/js/jquery.pickmeup.js"></script>
 <script src="//momentjs.com/downloads/moment.js"></script>
 <script src="//codemirror.net/lib/codemirror.js"></script>
-<link rel="stylesheet" href="//codemirror.net/lib/codemirror.css">
-<link rel="stylesheet" href="//codemirror.net/addon/hint/show-hint.css">
 <script src="//codemirror.net/addon/mode/overlay.js"></script>
 <script src="//codemirror.net/addon/hint/show-hint.js"></script>
 <script src="//codemirror.net/addon/runmode/runmode.js"></script>
 <script>
-var arDates = [];
-var calMonths = [];
+var arDates = {!! $calender['dates'] !!};
+var calMonths = {!! $calender['cals'] !!};
 $('#track_date').pickmeup({
 	date		: moment('{{ $date }}','YYYY-MM-DD').format(),
 	format  	: 'Y-m-d',
@@ -143,7 +143,7 @@ function loadlogdata(date)
 		url: url.replace(':date', date),
 		type: 'GET',
 		dataType: 'json',
-		cache: false
+		cache: true
 	}).done(function(o) {
 		$.merge(calMonths, o.cals);
 		$.merge(arDates, o.dates);
@@ -209,9 +209,6 @@ function getHints(cm) {
     return o;
 }
 
-function sortEList(a, b) {
-    return b[1] - a[1];
-}
 $(document).ready(function(){
 	CodeMirror.registerHelper("hint", "logger", getHints);
 	CodeMirror.defineMode("logger", function(config, parserConfig) {
