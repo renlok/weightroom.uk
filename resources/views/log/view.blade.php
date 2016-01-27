@@ -50,9 +50,9 @@ h3.exercise {
 @endsection
 
 @section('content')
-@if (isset($new_prs) && count($new_prs) > 0)
+@if (Session::has('new_prs'))
 <div class="alert alert-info">
-	@foreach ($new_prs as $exercise => $types)
+	@foreach (session('new_prs') as $exercise => $types)
 		@foreach ($types as $type => $reps)
 			@foreach ($reps as $rep => $weights)
 				@foreach ($weights as $weight)
