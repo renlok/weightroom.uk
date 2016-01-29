@@ -81,16 +81,16 @@ class Parser
 			}
 			elseif (is_numeric($line[0]) || $line[0] == 'B')
 			{
-				$this->log_data['exercises'][$position]['data'] = array_merge($this->log_data['exercises'][$position]['data'], $this->parse_line ($line));
+                $this->parse_line ($line, $position);
 			}
 			else
 			{
-				$this->log_data['exercises'][$position]['comment'] .= $line;
+				$this->log_data['exercises'][$position]['comment'] .= $line . "\n";
 			}
         }
     }
 
-    private function parse_line ($line)
+    private function parse_line ($line, $position)
     {
         // build the initial startup data
         $this->current_blocks = array('W', 'T', 'C');
@@ -149,7 +149,6 @@ class Parser
 				$this->format_dump = '';
 				$this->chunk_dump = '';
                 // we are repeating the chunk
-				// TODO: count($this->current_blocks) == 1 && doesn't work with simple inputs can I get around this?
     			if ($this->current_blocks[0] != 'C' && $format_chr == ',')
     			{
     				$multiline++;
@@ -207,7 +206,8 @@ class Parser
                 $output_data[$multiline][$this->current_blocks[0]] = $this->chunk_dump;
             }
         }
-		// do something with $multiline_max
+
+		// clean up the given data
 		if ($multiline_max > 0)
 		{
 			// temporarly remove the comment
@@ -235,7 +235,18 @@ class Parser
 			$output_data[$multiline_max]['C'] = (isset($comment)) ? $comment : '';
 		}
 
-        return $output_data;
+        // check isn't just a comment
+        if (isset($output_data[$multiline_max]['C']) && !empty($output_data[$multiline_max]['C']) && count($output_data[$multiline_max]) == 1)
+        {
+            $this->log_data['exercises'][$position]['comment'] .= $output_data[$multiline_max]['C'] . "\n";
+            unset($output_data[$multiline_max]);
+        }
+
+        if (count($output_data) > 0)
+        {
+            // update log_data variable
+            $this->log_data['exercises'][$position]['data'] = array_merge($this->log_data['exercises'][$position]['data'], $output_data);
+        }
     }
 
 	public function store_log_data ($log_date, $user_weight, $is_new)
@@ -888,11 +899,6 @@ class Parser
     // check if next character keeps chunk valid
     private function check_keeps_format($format_chr)
     {
-        // the block is a comment so skip the check
-        if (isset($this->format_type['C']))
-        {
-            return true;
-        }
         // nothing significcant has been added
         if (isset($this->format_dump[strlen($this->format_dump) - 1]) && $this->format_dump[strlen($this->format_dump) - 1] == '0')
         {
