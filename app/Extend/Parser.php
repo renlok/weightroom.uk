@@ -131,55 +131,60 @@ class Parser
                 else
                 {
                     // the character is not a number so just add it to the format
-                    $this->format_dump .= $chr;
+                    $this->format_dump .= $format_chr;
                 }
                 $this->chunk_dump .= $chr;
             }
             else
             {
                 // check the previous chunk is valid
-                if (!$this->check_keeps_format($format_chr))
+                if ($this->format_check())
                 {
+    				// the current chunk has finshed do something
+    				$output_data[$multiline][$this->current_blocks[0]] = $this->clean_units(trim($this->chunk_dump), $this->current_blocks[0]);
+    				// reset the dumps
+    				$this->number_dump = '';
+    				$this->format_dump = '';
+    				$this->chunk_dump = '';
+                    // we are repeating the chunk
+        			if ($this->current_blocks[0] != 'C' && $format_chr == ',')
+        			{
+        				$multiline++;
+    					// new multiline_max?
+    					if ($multiline_max < $multiline)
+    					{
+    						$multiline_max = $multiline;
+    					}
+        			}
+        			else
+        			{
+        				// find the options for the next format
+        				if (in_array($format_chr, $this->next_values))
+        				{
+        					// find what block comes next
+        					$this->current_blocks = array_keys ($this->next_values, $chr);
+        					// reset $format_type + next values
+        					$this->build_next_formats ();
+        					// rebuild everything
+        					$this->build_accepted_char ();
+        					$this->build_accepted_chars ();
+        				}
+        				else
+        				{
+        					// assume it is a comment
+        					$this->accepted_chars = array();
+        					$this->accepted_char = array();
+                            $this->chunk_dump .= $chr;
+        				}
+        				$multiline = 0;
+        			}
+                }
+                else
+                {
+                    // the chuck is no longer valid assumes its a comment
+                    $this->chunk_dump .= $chr;
                     $this->current_blocks[0] = 'C';
                 }
-				// the current chunk has finshed do something
-				$output_data[$multiline][$this->current_blocks[0]] = $this->clean_units(trim($this->chunk_dump), $this->current_blocks[0]);
-				// reset the dumps
-				$this->number_dump = '';
-				$this->format_dump = '';
-				$this->chunk_dump = '';
-                // we are repeating the chunk
-    			if ($this->current_blocks[0] != 'C' && $format_chr == ',')
-    			{
-    				$multiline++;
-					// new multiline_max?
-					if ($multiline_max < $multiline)
-					{
-						$multiline_max = $multiline;
-					}
-    			}
-    			else
-    			{
-    				// find the options for the next format
-    				if (in_array($format_chr, $this->next_values))
-    				{
-    					// find what block comes next
-    					$this->current_blocks = array_keys ($this->next_values, $chr);
-    					// reset $format_type + next values
-    					$this->build_next_formats ();
-    					// rebuild everything
-    					$this->build_accepted_char ();
-    					$this->build_accepted_chars ();
-    				}
-    				else
-    				{
-    					// assume it is a comment
-    					$this->accepted_chars = array();
-    					$this->accepted_char = array();
-                        $this->chunk_dump .= $chr;
-    				}
-    				$multiline = 0;
-    			}
             }
         }
 		// add the last chunk to the data array
@@ -874,10 +879,10 @@ class Parser
     }
 
     // check end chunk is valid
-    private function format_check($format_dump)
+    private function format_check()
     {
         // the block is a comment so skip the check
-        if (isset($this->format_type['C']))
+        if ($this->current_blocks[0] == 'C')
         {
             return true;
         }
@@ -887,7 +892,7 @@ class Parser
             foreach ($sub_type as $key => $format_string)
             {
                 //foreach ($val as $format_string)
-                if ($format_string == $format_dump)
+                if ($format_string == $this->format_dump)
                 {
                     return true;
                 }
