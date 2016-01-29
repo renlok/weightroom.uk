@@ -3,7 +3,9 @@
 namespace App\Extend;
 
 use Auth;
+use Carbon;
 use DB;
+use Session;
 use App\Log;
 use App\Log_item;
 use App\Log_exercise;
@@ -11,7 +13,6 @@ use App\User;
 use App\Exercise;
 use App\Exercise_record;
 use App\Extend\Format;
-use Carbon\Carbon;
 
 class Parser
 {
@@ -137,53 +138,49 @@ class Parser
             else
             {
                 // check the previous chunk is valid
-                if ($this->format_check($this->format_dump))
+                if (!$this->check_keeps_format($format_chr))
                 {
-					// the current chunk has finshed do something
-					$output_data[$multiline][$this->current_blocks[0]] = $this->clean_units(trim($this->chunk_dump), $this->current_blocks[0]);
-					// reset the dumps
-					$this->number_dump = '';
-					$this->format_dump = '';
-					$this->chunk_dump = '';
-                    // we are repeating the chunk
-					// TODO: count($this->current_blocks) == 1 && doesn't work with simple inputs can I get around this?
-        			if ($this->current_blocks[0] != 'C' && $format_chr == ',')
-        			{
-        				$multiline++;
-						// new multiline_max?
-						if ($multiline_max < $multiline)
-						{
-							$multiline_max = $multiline;
-						}
-        			}
-        			else
-        			{
-        				// find the options for the next format
-        				if (in_array($format_chr, $this->next_values))
-        				{
-        					// find what block comes next
-        					$this->current_blocks = array_keys ($this->next_values, $chr);
-        					// reset $format_type + next values
-        					$this->build_next_formats ();
-        					// rebuild everything
-        					$this->build_accepted_char ();
-        					$this->build_accepted_chars ();
-        				}
-        				else
-        				{
-        					// assume it is a comment
-        					$this->accepted_chars = array();
-        					$this->accepted_char = array();
-                            $this->chunk_dump .= $chr;
-        				}
-        				$multiline = 0;
-        			}
+                    $this->current_blocks[0] = 'C';
                 }
-                else
-                {
-                  $this->flag_error('Format Error');
-                  break;
-                }
+				// the current chunk has finshed do something
+				$output_data[$multiline][$this->current_blocks[0]] = $this->clean_units(trim($this->chunk_dump), $this->current_blocks[0]);
+				// reset the dumps
+				$this->number_dump = '';
+				$this->format_dump = '';
+				$this->chunk_dump = '';
+                // we are repeating the chunk
+				// TODO: count($this->current_blocks) == 1 && doesn't work with simple inputs can I get around this?
+    			if ($this->current_blocks[0] != 'C' && $format_chr == ',')
+    			{
+    				$multiline++;
+					// new multiline_max?
+					if ($multiline_max < $multiline)
+					{
+						$multiline_max = $multiline;
+					}
+    			}
+    			else
+    			{
+    				// find the options for the next format
+    				if (in_array($format_chr, $this->next_values))
+    				{
+    					// find what block comes next
+    					$this->current_blocks = array_keys ($this->next_values, $chr);
+    					// reset $format_type + next values
+    					$this->build_next_formats ();
+    					// rebuild everything
+    					$this->build_accepted_char ();
+    					$this->build_accepted_chars ();
+    				}
+    				else
+    				{
+    					// assume it is a comment
+    					$this->accepted_chars = array();
+    					$this->accepted_char = array();
+                        $this->chunk_dump .= $chr;
+    				}
+    				$multiline = 0;
+    			}
             }
         }
 		// add the last chunk to the data array
@@ -782,12 +779,13 @@ class Parser
             'P' => '@',
             'C' => '',
         );
+        // comment can follow anything
         $this->format_follows = array(
-            'T' => array('R', 'P', 'C'),
-            'W' => array('R', 'P', 'C'),
-            'R' => array('S', 'P', 'C'),
-            'S' => array('P', 'C'),
-            'P' => array('C'),
+            'T' => array('R', 'P'),
+            'W' => array('R', 'P'),
+            'R' => array('S', 'P'),
+            'S' => array('P'),
+            'P' => array(''),
             'C' => array(''),
         );
     }
@@ -837,10 +835,8 @@ class Parser
                     unset($this->accepted_char[$key]);
                     unset($this->format_type[$key]);
                     unset($this->current_blocks[array_search ($key, $this->current_blocks)]);
-                    if (count($this->current_blocks) == 0)
-                    {
-                        $this->current_blocks = array('C');
-                    }
+                    // comments are always allowed
+                    $this->current_blocks[] = 'C';
                     // rebuild keys
                     $this->current_blocks = array_values($this->current_blocks);
                     $rebuild_accepted_chars = true;
