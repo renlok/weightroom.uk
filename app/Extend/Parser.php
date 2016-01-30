@@ -976,6 +976,21 @@ class Parser
 		{
 			return 'e';
 		}
+        $parts = explode('|', $string);
+        if (count($parts) > 1)
+        {
+            foreach ($parts as $part)
+            {
+                if ($part == 'w' || $part == 'warmup' || $part == 'warm-up' || $part == 'warm up' || $part == 'wu')
+        		{
+        			return 'w';
+        		}
+                elseif ($part == 'e' || $part == 'endurance')
+        		{
+        			return 'e';
+        		}
+            }
+        }
 		return 0;
 	}
 
