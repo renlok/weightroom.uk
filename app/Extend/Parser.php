@@ -358,8 +358,9 @@ class Parser
             ]);
             $log_exercises_id = $log_exercise->logex_id;
             $prs = [];
-            $prs['T'] = Exercise_record::getexerciseprs($this->user->user_id, $log_date, $exercise_name, true)->toArray();
-            $prs['W'] = Exercise_record::getexerciseprs($this->user->user_id, $log_date, $exercise_name, false)->toArray();
+            $prs['E'] = Exercise_record::getexerciseprs($this->user->user_id, $log_date, $exercise_name, true, true)->toArray();
+            $prs['T'] = Exercise_record::getexerciseprs($this->user->user_id, $log_date, $exercise_name, true, false)->toArray();
+            $prs['W'] = Exercise_record::getexerciseprs($this->user->user_id, $log_date, $exercise_name, false, false)->toArray();
 			$max_estimate_rm = 0;
 			for ($j = 0, $count_j = count($item['data']); $j < $count_j; $j++)
 			{
@@ -388,7 +389,7 @@ class Parser
 				$set['S'] = (isset($set['S'])) ? intval($set['S']) : 1;
 				$set['C'] = (isset($set['C'])) ? $set['C'] : '';
                 $is_warmup = false;
-                $is_endurance = false;
+                $is_endurance = $exercise_is_endurance;
                 // check if the comment is a special tag
                 $options = $this->special_tags($set['C']);
                 if($options != 0 || is_string($options))
@@ -426,12 +427,13 @@ class Parser
                 }
 				$is_pr = false;
 				// check its a pr
-                if ((($is_time && (!isset($prs['T'][$set['R']]) || floatval($prs['T'][$set['R']]) > floatval($absolute_weight))) || // set time PR
+                if ((($is_time && !$is_endurance && (!isset($prs['T'][$set['R']]) || floatval($prs['T'][$set['R']]) > floatval($absolute_weight))) || // set time PR
+                    ($is_time && $is_endurance && (!isset($prs['E'][$set['R']]) || floatval($prs['E'][$set['R']]) < floatval($absolute_weight))) || // set endurance PR
                     (!$is_time && (!isset($prs['W'][$set['R']]) || floatval($prs['W'][$set['R']]) < floatval($absolute_weight)))) && // set weight PR
                     $set['R'] != 0)
 				{
 					$is_pr = true;
-                    $pr_type = ($is_time == true) ? 'T' : 'W';
+                    $pr_type = ($is_time == true) ? (($is_endurance == true) ? 'E' : 'T') : 'W';
                     // the user has set a pr we need to add/update it in the database
                     $this->update_prs ($this->user->user_id, $log_date, $exercise_id, $absolute_weight, $set['R'], $is_time);
                     if (!isset($new_prs[$exercise_name]))

@@ -89,7 +89,7 @@ class ExercisesController extends Controller
         $max_volume = Format::correct_weight($query->max('logex_volume'));
         $max_reps = $query->max('logex_reps');
         $max_sets = $query->max('logex_sets');
-        $max_rm = Exercise_record::exercisemaxpr($user->user_id, $exercise->exercise_id, $exercise->is_time);
+        $max_rm = Exercise_record::exercisemaxpr($user->user_id, $exercise->exercise_id, $exercise->is_time, $exercise->is_endurance);
         $scales = [
             'logex_volume' => 1,
             'logex_reps' => floor($max_volume / $max_reps),
@@ -116,14 +116,17 @@ class ExercisesController extends Controller
     public function getViewExercise($exercise_name, $type = 'prs', $range = 0, $force_pr_type = null)
     {
         $exercise = Exercise::getexercise($exercise_name, Auth::user()->user_id)->firstOrFail();
-        $query = Exercise_record::getexerciseprs(Auth::user()->user_id, Carbon::now()->toDateString(), $exercise_name, $exercise->is_time, true)->get();
+        $query = Exercise_record::getexerciseprs(Auth::user()->user_id, Carbon::now()->toDateString(), $exercise_name, $exercise->is_time, $exercise->is_endurance, true)->get();
         $current_prs = $query->groupBy('pr_reps')->toArray();
         $filtered_prs = Exercise_record::filterPrs($query);
         if ($type == 'prs')
         {
-            $prs = Exercise_record::getexerciseprsall(Auth::user()->user_id, $range, $exercise_name, $exercise->is_time, Auth::user()->user_showreps)->get()->groupBy('pr_reps');
-            $prs['Approx. 1'] = Exercise_record::getest1rmall(Auth::user()->user_id, $range, $exercise_name, $exercise->is_time, Auth::user()->user_showreps)->get();
-            // be in format [1 => ['log_weight' => ??, 'log_date' => ??]]
+            $prs = Exercise_record::getexerciseprsall(Auth::user()->user_id, $range, $exercise_name, $exercise->is_time, $exercise->is_endurance, Auth::user()->user_showreps)->get()->groupBy('pr_reps');
+            if (!$exercise->is_time)
+            {
+                $prs['Approx. 1'] = Exercise_record::getest1rmall(Auth::user()->user_id, $range, $exercise_name, Auth::user()->user_showreps)->get();
+                // be in format [1 => ['log_weight' => ??, 'log_date' => ??]]
+            }
         }
         else
         {
