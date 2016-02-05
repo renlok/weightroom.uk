@@ -56,17 +56,20 @@ class LogsController extends Controller
                     $log->average_intensity += $log_exercises->average_intensity_raw;
                     $count++;
                 }
-                if (Auth::user()->user_showintensity == 'p')
+                if ($count > 0)
                 {
-                    $ai_suffix = '%';
+                    if (Auth::user()->user_showintensity == 'p')
+                    {
+                        $ai_suffix = '%';
+                    }
+                    else
+                    {
+                        // correct format
+                        $log->average_intensity = Format::correct_weight($log->average_intensity, 'kg', Auth::user()->user_unit);
+                        $ai_suffix = ' ' . Auth::user()->user_unit;
+                    }
+                    $log->average_intensity = round($log->average_intensity/$count) . $ai_suffix;
                 }
-                else
-                {
-                    // correct format
-                    $log->average_intensity = Format::correct_weight($log->average_intensity, 'kg', Auth::user()->user_unit);
-                    $ai_suffix = ' ' . Auth::user()->user_unit;
-                }
-                $log->average_intensity = round($log->average_intensity/$count) . $ai_suffix;
             }
             else
             {
