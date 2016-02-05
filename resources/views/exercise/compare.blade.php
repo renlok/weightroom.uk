@@ -40,8 +40,8 @@
 @endsection
 
 @section('endjs')
-<script src="//d3js.org/d3.v3.min.js" charset="utf-8"></script>
-<script src="//momentjs.com/downloads/moment.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.14/d3.min.js" charset="utf-8"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js" charset="utf-8"></script>
 <script src="{{ asset('js/nv.d3.js') }}"></script>
 <script>
 	$( document ).ready(function() {

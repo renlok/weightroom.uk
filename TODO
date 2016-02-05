@@ -1,4 +1,6 @@
 - add importer!!
+    http://tutsnare.com/upload-files-in-laravel/
+    http://www.maatwebsite.nl/laravel-excel/docs/import#results
 
 - rewrite PRs
 - Test route patterns for date & id

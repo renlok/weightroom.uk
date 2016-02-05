@@ -3,6 +3,7 @@
 @section('title', 'View Log: ' . $date)
 
 @section('headerstyle')
+<link href="{{ asset('css/pickmeup.css') }}" rel="stylesheet">
 <style>
 #editaddbutton {
 	padding: 20px 0 0 0 ;
@@ -139,9 +140,8 @@ h3.exercise {
 @endsection
 
 @section('endjs')
-<link href="{{ asset('css/pickmeup.css') }}" rel="stylesheet">
 <script src="{{ asset('js/jquery.pickmeup.js') }}"></script>
-<script src="//momentjs.com/downloads/moment.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js" charset="utf-8"></script>
 <script src="{{ asset('js/jCollapsible.js') }}"></script>
 
 <script>
