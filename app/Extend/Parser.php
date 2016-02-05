@@ -533,7 +533,10 @@ class Parser
             ]);
 
 		//return your new records :)
-		return $new_prs;
+        if (count($new_prs) > 0)
+        {
+            Session::flash('new_prs', $new_prs);
+        }
 	}
 
 	private function correct_units_for_database ($input, $type)
