@@ -392,16 +392,23 @@ class Parser
                 $is_endurance = $exercise_is_endurance;
                 // check if the comment is a special tag
                 $options = $this->special_tags($set['C']);
-                if($options != 0 || is_string($options))
+                if($options != 0 || is_array($options))
                 {
                     $set['C'] = '';
-                    if ($options == 'w')
+                    foreach ($options as $k => $v)
                     {
-                        $is_warmup = true;
-                    }
-                    elseif ($options == 'e')
-                    {
-                        $is_endurance = true;
+                        if ($v == 'w')
+                        {
+                            $is_warmup = true;
+                        }
+                        elseif ($v == 'e')
+                        {
+                            $is_endurance = true;
+                        }
+                        else
+                        {
+                            $set['C'] .= $v;
+                        }
                     }
                 }
 				$absolute_weight = ($is_bw == false) ? $set['W'] : ($set['W'] + $user_weight);
@@ -973,26 +980,32 @@ class Parser
 		// line is warmup
 		if ($string == 'w' || $string == 'warmup' || $string == 'warm-up' || $string == 'warm up' || $string == 'wu')
 		{
-			return 'w';
+			return ['w'];
 		}
         elseif ($string == 'e' || $string == 'endurance')
 		{
-			return 'e';
+			return ['e'];
 		}
         $parts = explode('|', $string);
         if (count($parts) > 1)
         {
+            $return = [];
             foreach ($parts as $part)
             {
                 if ($part == 'w' || $part == 'warmup' || $part == 'warm-up' || $part == 'warm up' || $part == 'wu')
         		{
-        			return 'w';
+        			$return[] = 'w';
         		}
                 elseif ($part == 'e' || $part == 'endurance')
         		{
-        			return 'e';
+                    $return[] = 'e';
         		}
+                else
+                {
+                    $return[] = $part;
+                }
             }
+            return $return;
         }
 		return 0;
 	}
