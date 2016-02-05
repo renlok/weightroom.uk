@@ -168,7 +168,7 @@ class ExercisesController extends Controller
         $validator = Validator::make($request->all(), [
             'reps' => 'required|between:0,10',
             'exercises.0' => 'required',
-            'exercises.*' => 'exists:exercises,exercise_id,user_id,'.Auth::user()->user_id
+            'exercises.*' => 'exists:exercises,exercise_name,user_id,'.Auth::user()->user_id
         ]);
         if ($validator->fails()) {
             return redirect('exercise/compare')
