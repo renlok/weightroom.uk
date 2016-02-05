@@ -22,6 +22,7 @@ class CreateExerciseRecordsTable extends Migration
             $table->double('pr_1rm', 20, 2);
             $table->boolean('is_est1rm'); // NEW COLOMN
             $table->boolean('is_time');
+            $table->boolean('is_endurance'); // NEW COLOMN
             $table->timestamps();
         });
     }
