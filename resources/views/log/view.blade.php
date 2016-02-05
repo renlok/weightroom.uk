@@ -118,19 +118,23 @@ h3.exercise {
 @endif
 @if ($log != null)
 	<h3>Workout summary</h3>
-	<p class="logrow">
-		Volume: <span class="heavy">{{ Format::correct_weight($log->log_total_volume + ($log->log_failed_volume * $user->user_volumeincfails)) }}</span>{{ Auth::user()->user_unit }} - Reps: <span class="heavy">{{ $log->log_total_reps }}</span> - Sets: <span class="heavy">{{ $log->log_total_reps }}</span>
-	@if (Auth::user()->user_showintensity != 'h')
-		- Avg. Intensity: <span class="heavy">{{ $log->average_intensity }}</span>
+	@if (($log->log_total_volume + ($log->log_failed_volume * $user->user_volumeincfails)) > 0)
+		<p class="logrow">
+			Volume: <span class="heavy">{{ Format::correct_weight($log->log_total_volume + ($log->log_failed_volume * $user->user_volumeincfails)) }}</span>{{ Auth::user()->user_unit }} - Reps: <span class="heavy">{{ $log->log_total_reps }}</span> - Sets: <span class="heavy">{{ $log->log_total_reps }}</span>
+		@if (Auth::user()->user_showintensity != 'h')
+			- Avg. Intensity: <span class="heavy">{{ $log->average_intensity }}</span>
+		@endif
+		</p>
 	@endif
-	</p>
-	<p class="logrow marginl"><small>Bodyweight: <span class="heavy">{{ Format::correct_weight($log->log_weight) }}</span>{{ Auth::user()->user_unit }}</small></p>
+	@if ($log->log_weight > 0)
+		<p class="logrow marginl"><small>Bodyweight: <span class="heavy">{{ Format::correct_weight($log->log_weight) }}</span>{{ Auth::user()->user_unit }}</small></p>
+	@endif
 	@if ($log->log_comment != '')
-	<div class="panel panel-default">
-		<div class="panel-body">
-			{!! Format::replace_video_urls(nl2br(e($log->log_comment))) !!}
+		<div class="panel panel-default">
+			<div class="panel-body">
+				{!! Format::replace_video_urls(nl2br(e($log->log_comment))) !!}
+			</div>
 		</div>
-	</div>
 	@endif
 	@foreach ($log->log_exercises as $log_exercise)
 		@include('common.logExercise', ['view_type' => 'log'])
