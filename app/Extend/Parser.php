@@ -42,6 +42,8 @@ class Parser
 
     public function __construct($log_text, $log_date, $user_weight)
     {
+        // load the user
+        $this->user = Auth::user();
         // build the initial startup data
         $this->log_text = $log_text;
         $this->log_date = $log_date;
@@ -55,8 +57,6 @@ class Parser
         $exercise = '';
         $position = -1; // a pointer for when exercise was done
         $this->log_data = array('comment' => '', 'exercises' => array()); // the output array
-        // get user
-        $this->user = Auth::user();
         // convert log_text to array
         $log_lines = explode("\n", $this->log_text);
         foreach ($log_lines as $line)
