@@ -9,7 +9,8 @@ use App\Exercise;
 use App\Exercise_record;
 use App\Log;
 
-class Log_control {
+class Log_control
+{
     public static function correct_totals($user_id, $exercise_id, $logex_id, $current_1rm)
     {
         $log_exercise = DB::table('log_exercises')
@@ -127,4 +128,56 @@ class Log_control {
         $cal_loaded = json_encode([$lastmonth->format('Y-m'), $month, $nextmonth->format('Y-m')]);
         return ['dates' => $cal_log_dates, 'cals' => $cal_loaded];
     }
+
+    public static function rebuild_log_text($user_id, $log_date)
+	{
+		// get the log data
+        $log_data = Log::getlog($log_date, $user_id)->firstOrFail();
+		$log_text = ''; // set that variable !!
+        $user = User::find($user_id);
+		foreach ($log_data->log_exercises as $log_items)
+		{
+			$log_text .= "#" . ucwords($log_items->exercise->exercise_name) . "\n"; // set exersice name
+			foreach ($log_items->log_items as $set)
+			{
+                if ($set['is_time'] == 1)
+                {
+                    $time = explode('.', $set['logitem_time']);
+                    $decimaltime = (isset($time[1]) && $time[1] > 0) ? '.' . $time[1] : '';
+                    $setvalue = Carbon::now()->timestamp($time[0])->toTimeString() . $decimaltime;
+                }
+                else
+                {
+    				// get user units
+    				if ($set['is_bw'] == 0)
+    				{
+    					$setvalue = Format::correct_weight($set['logitem_weight'], 'kg', $user->user_unit) . ' ' . $user->user_unit;
+    				}
+    				else
+    				{
+    					if ($set['logitem_weight'] != 0)
+    					{
+    						$setvalue = 'BW' . Format::correct_weight($set['logitem_weight'], 'kg', $user->user_unit) . ' ' . $user->user_unit;
+    					}
+    					else
+    					{
+    						$setvalue = 'BW';
+    					}
+    				}
+                }
+				$pre = (!empty($set['logitem_pre']) && $set['logitem_pre'] > 0) ? " @{$set['logitem_pre']}" : '';
+                $type_key = ($set['is_warmup']) ? ' warmup' : '';
+				$log_text .= "$setvalue x {$set['logitem_reps']} x {$set['logitem_sets']}$pre " . trim($set['logitem_comment']) . $type_key . "\n"; // add sets
+			}
+			if (strlen(trim($log_items['comment'])) > 0)
+				$log_text .= "\n" . trim($log_items['comment']) . "\n"; // set comment
+			$log_text .= "\n";
+		}
+		$log_text = rtrim($log_text);
+        // insert the new log text
+        Log::where('user_id', $user_id)
+            ->where('log_date', $log_date)
+            ->update(['log_text' => $log_text, 'log_update_text' => 0]);
+		return $log_text;
+	}
 }

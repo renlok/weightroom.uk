@@ -2,6 +2,8 @@
     http://tutsnare.com/upload-files-in-laravel/
     http://www.maatwebsite.nl/laravel-excel/docs/import#results
 
+- rewrite + fix Parser::update_prs
+
 - rewrite PRs
 - Test route patterns for date & id
 - deal with assets better with elixier

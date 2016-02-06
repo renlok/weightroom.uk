@@ -100,7 +100,7 @@ class LogsController extends Controller
                     ->firstOrFail();
         if ($log->log_update_text == 1)
 		{
-			$log->log_text = Parser::rebuild_log_text ($user->user_id, $date);
+			$log->log_text = Log_control::rebuild_log_text ($user->user_id, $date);
 		}
         $type = 'edit';
         $exercise_list = Exercise::listexercises(true)->get();
@@ -119,10 +119,9 @@ class LogsController extends Controller
 
     public function postEdit($date, LogRequest $request)
     {
-        $parser = new Parser;
-        $weight = $parser->get_input_weight($request->input('weight'), $date);
-        $parser->parse_text ($request->input('log'));
-		$parser->store_log_data ($date, $weight, false);
+        $parser = new Parser($request->input('log'), $date, $request->input('weight'));
+        $parser->parse_text ();
+		$parser->store_log_data (false);
         return redirect()
                 ->route('viewLog', ['date' => $date])
                 ->with([
@@ -154,10 +153,9 @@ class LogsController extends Controller
 
     public function postNew($date, LogRequest $request)
     {
-        $parser = new Parser;
-        $weight = $parser->get_input_weight($request->input('weight'), $date);
-        $parser->parse_text ($request->input('log'));
-		$parser->store_log_data ($date, $weight, true);
+        $parser = new Parser($request->input('log'), $date, $request->input('weight'));
+        $parser->parse_text ();
+		$parser->store_log_data (true);
         return redirect()
                 ->route('viewLog', ['date' => $date])
                 ->with([
