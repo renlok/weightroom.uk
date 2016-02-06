@@ -198,6 +198,22 @@ class LogsController extends Controller
 
     public function postSearch(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'show' => 'required|integer',
+            'exercise' => 'exists:exercises,exercise_name,user_id,'.Auth::user()->user_id,
+            'weightoperator' => 'required|in:=,>=,<=,<,>',
+            'weight' => 'required|numeric',
+            'orderby' => 'required|in:asc,desc',
+        ]);
+
+        if ($validator->fails())
+        {
+            return redirect()
+                    ->route('searchLog')
+                    ->withErrors($validator)
+                    ->withInput();
+        }
+
         return redirect()
                 ->route('searchLog')
                 ->withInput();
@@ -217,14 +233,13 @@ class LogsController extends Controller
         	{
         		$query = $query->where('log_items.logitem_reps', $request->old('reps'));
         	}
-            $query = $query->orderBy('log_items.log_date', 'desc')
-                            ->groupBy('logex_id');
+            $query = $query->groupBy('logex_id');
             if ($request->old('show') > 0)
         	{
         		$query = $query->take($request->old('show'));
         	}
             $query = $query->lists('logex_id');
-            $log_exercises = Log_exercise::whereIn('logex_id', $query)->get();
+            $log_exercises = Log_exercise::whereIn('logex_id', $query)->orderBy('log_date', $request->old('orderby'))->get();
         }
         else
         {

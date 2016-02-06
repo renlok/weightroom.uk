@@ -4,6 +4,7 @@
 
 @section('content')
 <h2>Search logs</h2>
+@include('errors.validation')
 <p>Find logs that meet the following criteria:</p>
 
 <form class="form-horizontal" action="{{ url('log/search') }}" method="post">
@@ -28,7 +29,7 @@
     <div class="col-sm-10">
     <select class="form-control" name="exercise" id="exercise">
     @foreach ($exercises as $exercise)
-        <option value="{{ $exercise->exercise_name }}"{{ ($exercise->exercise_name == old('exercises')) ? ' selected="selected"' : '' }}>{{ $exercise->exercise_name }}</option>
+        <option value="{{ $exercise->exercise_name }}"{{ ($exercise->exercise_name == old('exercise')) ? ' selected="selected"' : '' }}>{{ $exercise->exercise_name }}</option>
     @endforeach
 	</select>
     </div>
@@ -56,12 +57,29 @@
     </div>
   </div>
   <div class="form-group">
+    <label for="orderby" class="col-sm-2 control-label">Order by</label>
+    <div class="col-sm-10">
+        <select class="form-control" name="orderby" id="orderby">
+          <option value="asc"{{ ('asc' == old('orderby')) ? ' selected="selected"' : '' }}>Oldest first</option>
+          <option value="desc"{{ ('desc' == old('orderby')) ? ' selected="selected"' : '' }}>Newest first</option>
+        </select>
+    </div>
+  </div>
+  <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
       {!! csrf_field() !!}
       <button type="submit" class="btn btn-default">Search</button>
     </div>
   </div>
 </form>
+
+@if (count($log_exercises) > 0)
+    @if (old('show') > 0)
+        <h3>Showing {{ old('show') }} matching logs</h3>
+    @else
+        <h3>Search returned {{ count($log_exercises) }} results</h3>
+    @endif
+@endif
 
 @foreach ($log_exercises as $log_exercise)
     @include('common.logExercise', ['view_type' => 'search'])
