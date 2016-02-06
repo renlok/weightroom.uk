@@ -37,43 +37,55 @@ class Format {
     	}
     }
 
-    public static function correct_time($time, $unit_used, $unit_want) // $unit_used = s/m/h $unit_want = s/m/h
+    public static function correct_time($time, $unit_used, $unit_want, $round = 2) // $unit_used = s/m/h $unit_want = s/m/h
     {
     	$unit_used = ($unit_used == 's') ? 1 : (($unit_used == 'm') ? 2 : 3);
     	$unit_want = ($unit_want == 's') ? 1 : (($unit_want == 'm') ? 2 : 3);
     	if ($unit_used > $unit_want)
     	{
-    		return round(($time * pow (60,($unit_used - $unit_want))), 2);
+    		$value = ($time * pow (60,($unit_used - $unit_want)));
     	}
     	elseif ($unit_used < $unit_want)
     	{
-    		return round(($time / pow(60,($unit_want - $unit_used))), 2);
+    		$value =  ($time / pow(60,($unit_want - $unit_used)));
     	}
     	else
     	{
-    		return round($time, 2);
+    		$value =  $time;
     	}
+        if ($round > 0)
+        {
+            return round($value, $round);
+        }
+        else
+        {
+            return $value;
+        }
     }
 
-    public static function correct_weight($weight, $unit_used = 'kg', $unit_want = 0) // $unit_used = kg/lb $unit_want = kg/lb
+    public static function correct_weight($weight, $unit_used = 'kg', $unit_want = 'kg', $round = 20) // $unit_used = kg/lb $unit_want = kg/lb
     {
         $unit_want = ($unit_want == 0) ? Auth::user()->user_unit : $unit_want;
-    	if (($unit_used == 'kg' && $unit_want == 'kg') || ($unit_used == 'lb' && $unit_want == 'lb'))
+    	if ($unit_used == 'kg' && $unit_want == 'lb')
     	{
-    		return round($weight * 20) / 20;
-    	}
-    	elseif ($unit_used == 'kg' && $unit_want == 'lb')
-    	{
-    		return round(($weight * 2.20462) * 20) / 20; // convert to lb
+    		$value = ($weight * 2.20462); // convert to lb
     	}
     	elseif ($unit_used == 'lb' && $unit_want == 'kg')
     	{
-    		return round(($weight * 0.453592) * 20) / 20; // convert to kg
+    		$value = ($weight * 0.453592); // convert to kg
     	}
     	else
     	{
-    		return round($weight * 20) / 20;
+    		$value = $weight;
     	}
+        if ($round > 0)
+        {
+            return round($value * $round) / $round;
+        }
+        else
+        {
+            return $value;
+        }
     }
 
     public static function replace_video_urls($comment)

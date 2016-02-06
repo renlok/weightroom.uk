@@ -567,7 +567,7 @@ class Parser
 			}
 			else
 			{
-				return Format::correct_time($input[0], $input[1], 's');
+				return Format::correct_time($input[0], $input[1], 's', 0);
 			}
 		}
 		elseif ($type == 'W')
@@ -575,7 +575,7 @@ class Parser
 			// users default is lb
 			if ($this->user->user_unit == 'lb' && $input[1] == '')
 			{
-				return Format::correct_weight($input[0], 'lb', 'kg');
+				return Format::correct_weight($input[0], 'lb', 'kg', 0);
 			}
 			elseif ($this->user->user_unit == 'kg' && $input[1] == '')
 			{
@@ -583,7 +583,7 @@ class Parser
 			}
 			else
 			{
-				return Format::correct_weight($input[0], $input[1], 'kg');
+				return Format::correct_weight($input[0], $input[1], 'kg', 0);
 			}
 		}
 	}
