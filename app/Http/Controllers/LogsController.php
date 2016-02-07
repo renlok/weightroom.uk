@@ -43,7 +43,8 @@ class LogsController extends Controller
         {
             $user_name = Auth::user()->user_name;
         }
-        $user = User::where('user_name', $user_name)->firstOrFail();
+        $user = User::with('logs.log_exercises.log_items', 'logs.log_exercises.exercise')
+                ->where('user_name', $user_name)->firstOrFail();
         $log = $user->logs()->where('log_date', $date)->first();
         if ($log != null)
         {
