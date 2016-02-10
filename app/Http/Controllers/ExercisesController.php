@@ -139,7 +139,8 @@ class ExercisesController extends Controller
     public function getCompareForm()
     {
         $exercises = Exercise::listexercises(true)->get();
-        return view('exercise.compareform', compact('exercises'));
+        $exercise_names = [];
+        return view('exercise.compareform', compact('exercises', 'exercise_names'));
     }
 
     public function getCompare($reps = '', $exercise1 = '', $exercise2 = '', $exercise3 = '', $exercise4 = '', $exercise5 = '')

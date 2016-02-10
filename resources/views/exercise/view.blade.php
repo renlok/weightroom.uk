@@ -56,7 +56,7 @@
   </tr>
   <tr>
 @for ($i = 1; $i <= 10; $i++)
-    <td>{!! (isset($current_prs[$i])) ? '<a href="' . route('viewLog', ['date' => $current_prs[$i][0]['log_date']]) . '">' . $current_prs[$i][0]['pr_value'] . '</a>' : '-' !!}</td>
+    <td>{!! (isset($current_prs[$i])) ? '<a href="' . route('viewLog', ['date' => $current_prs[$i][0]['log_date']]) . '">' . floatval($current_prs[$i][0]['pr_value']) . '</a>' : '-' !!}</td>
 @endfor
   </tr>
 </tbody>
