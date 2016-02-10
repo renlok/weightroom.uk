@@ -40,7 +40,7 @@ class Exercise_record extends Model
     public function scopeGetexerciseprsall($query, $user_id, $range, $exercise_name, $is_time = false, $is_endurance = false, $show_reps = [1,2,3,4,5,6,7,8,9,10])
     {
         $query = $query->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
-                ->select('pr_reps', DB::raw('MAX(pr_1rm) as pr_value'), 'log_date')
+                ->select('pr_reps', DB::raw('MAX(pr_value) as pr_value'), 'log_date')
                 ->where('exercise_records.user_id', $user_id)
                 ->where('exercises.exercise_name', $exercise_name)
                 ->where('exercises.is_time', $is_time)
