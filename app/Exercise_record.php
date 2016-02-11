@@ -57,6 +57,19 @@ class Exercise_record extends Model
         return $query;
     }
 
+    public function scopeGetlastest1rm($query, $user_id, $exercise_name)
+    {
+        $query = $query->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
+                ->select('pr_1rm')
+                ->where('exercise_records.user_id', $user_id)
+                ->where('exercises.exercise_name', $exercise_name)
+                ->where('exercises.is_time', false)
+                ->where('is_est1rm', 1)
+                ->orderBy('pr_1rm', 'desc')
+                ->first();
+        return $query;
+    }
+
     public function scopeGetest1rmall($query, $user_id, $range, $exercise_name, $show_reps = [1,2,3,4,5,6,7,8,9,10])
     {
         $query = $query->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')

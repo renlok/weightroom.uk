@@ -12,6 +12,17 @@ class Log_exercise extends Model
     protected $dateFormat = 'Y-m-d';
     protected $guarded = ['logex_id'];
     protected $appends = ['average_intensity'];
+    // set defaults
+    protected $attributes = array(
+        'logex_reps' => 1,
+        'logex_sets' => 1,
+        'logex_volume' => 0,
+        'logex_failed_volume' => 0,
+        'logex_failed_sets' => 0,
+        'logex_warmup_volume' => 0,
+        'logex_warmup_reps' => 0,
+        'logex_warmup_sets' => 0,
+    );
 
     /**
      * a log exercise can have many log items

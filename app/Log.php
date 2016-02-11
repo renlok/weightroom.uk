@@ -13,6 +13,17 @@ class Log extends Model
         'log_update_text' => 'boolean',
     ];
     protected $guarded = ['log_id'];
+    // set defaults
+    protected $attributes = array(
+       'log_warmup_volume' => 0,
+       'log_warmup_reps' => 0,
+       'log_warmup_sets' => 0,
+       'log_total_volume' => 0,
+       'log_total_reps' => 0,
+       'log_total_sets' => 0
+       'log_failed_volume' => 0,
+       'log_failed_sets' => 0,
+    );
 
     public function scopeGetbodyweight($query, $user_id, $from_date = 0)
     {

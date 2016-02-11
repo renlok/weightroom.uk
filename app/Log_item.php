@@ -17,9 +17,20 @@ class Log_item extends Model
         'is_time' => 'boolean',
         'is_pr' => 'boolean',
         'is_warmup' => 'boolean',
+        'is_endurance' => 'boolean'
     ];
     protected $appends = ['display_value', 'show_unit'];
     protected $guarded = ['logitem_id'];
+    // set defaults
+    protected $attributes = array(
+        'logitem_reps' => 1,
+        'logitem_sets' => 1,
+        'is_pr' => false,
+        'is_bw' => false,
+        'is_time' => false,
+        'is_warmup' => false,
+        'is_endurance' => false
+    );
 
     public function scopeGetexercisemaxes($query, $user_id, $range, $exercise_name, $is_time = false, $show_reps = [1,2,3,4,5,6,7,8,9,10], $group_type = 'weekly')
     {
