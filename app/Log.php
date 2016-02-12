@@ -20,9 +20,9 @@ class Log extends Model
        'log_warmup_sets' => 0,
        'log_total_volume' => 0,
        'log_total_reps' => 0,
-       'log_total_sets' => 0
+       'log_total_sets' => 0,
        'log_failed_volume' => 0,
-       'log_failed_sets' => 0,
+       'log_failed_sets' => 0
     );
 
     public function scopeGetbodyweight($query, $user_id, $from_date = 0)

@@ -1077,7 +1077,7 @@ class Parser
 		return floor(($lomrm + $brzrm + $eplrm + $mayrm + $ocorm + $watrm + $lanrm) / 7);
 	}
 
-    public function getUserWeight()
+    public function getUserWeight ()
     {
         if (strlen($this->user_weight) == 0 || intval($this->user_weight) == 0)
 		{

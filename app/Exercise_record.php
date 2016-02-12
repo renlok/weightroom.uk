@@ -65,8 +65,7 @@ class Exercise_record extends Model
                 ->where('exercises.exercise_name', $exercise_name)
                 ->where('exercises.is_time', false)
                 ->where('is_est1rm', 1)
-                ->orderBy('pr_1rm', 'desc')
-                ->first();
+                ->orderBy('pr_1rm', 'desc');
         return $query;
     }
 
