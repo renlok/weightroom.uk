@@ -6,6 +6,31 @@ rewritten:
 */
 class Tester
 {
+	public function saveLogData ()
+	{
+		// save log
+		$this->log->save();
+		$log_id = $this->log->log_id;
+		unset($this->log);
+
+		// insert the log_exercises
+		for ($i = 0, $count = count($this->log_exercises); $i < $count; $i++)
+		{
+			// save exercise
+			$this->log_exercises[$i]->log_id = $log_id;
+			$this->log_exercises[$i]->save();
+			array_walk($this->log_items[$i], array($this, 'updateLogId'), $log_id);
+			$this->log_exercises[$i]->log_items()->saveMany($this->log_items[$i]);
+			unset($this->log_exercises[$i]);
+			unset($this->log_items[$i]);
+		}
+	}
+
+	private function updateLogId (&$log_item, $key, $log_id)
+	{
+		$log_item[$key]->log_id = $log_id;
+	}
+
 	public function formatLogData ($is_new)
 	{
 		if (!$is_new)
@@ -89,7 +114,7 @@ class Tester
 				$set = $this->cleanSetData ($set, $i, $j);
                 // check comment for special tags
 				$this->checkSpecialTags ($set['C'], $i, $j);
-				$this->setAbsoluteWeight($set, $i, $j);
+				$this->setAbsoluteWeight ($set, $i, $j);
 				// calculate volume data
 				$this->updateVolumes ($set, $i, $j);
 				// check its a pr
@@ -119,81 +144,20 @@ class Tester
 				{
 					$max_estimate_rm = $this->log_items[$i][$j]->logex_1rm;
 				}
-				// TODO: done to here!!!!!!!!
-	////////////////////////////////////////////////////////////////////////////////////////////////
-				// insert into log_items
-                $log_item_data = [
-                    'log_date' => $this->log_date,
-                    'log_id' => $log_id,
-                    'logex_id' => $log_exercises_id,
-                    'user_id' => $this->user->user_id,
-                    'exercise_id' => $this->exercises[$i]['id'],
-                    'logitem_weight' => $set['W'],
-                    'logitem_abs_weight' => $this->log_items[$i][$j]->logitem_abs_weight,
-                    'logitem_time' => $set['T'],
-                    'logitem_reps' => $set['R'],
-                    'logitem_sets' => $set['S'],
-                    'logitem_comment' => trim($set['C']),
-                    'logitem_1rm' => $estimate_rm,
-                    'is_pr' => $is_pr,
-                    'is_bw' => $is_bw,
-                    'is_time' => $is_time,
-                    'is_warmup' => $is_warmup,
-                    'is_endurance' => $is_endurance,
-                    'logitem_order' => $j,
-                    'logex_order' => $i,
-                ];
-				if (!isset($set['P']) || $set['P'] == NULL)
-					$log_item_data['logitem_pre'] = NULL;
-				else
-					$log_item_data['logitem_pre'] = $set['P'];
-                Log_item::create($log_item_data);
+				// fill in remaining values
+				$this->log_items[$i][$j]->log_date = $this->log_date;
+				$this->log_items[$i][$j]->user_id = $this->user->user_id;
+				$this->log_items[$i][$j]->exercise_id = $this->exercises[$i]['id'];
+				$this->log_items[$i][$j]->logitem_weight = $set['W'];
+				$this->log_items[$i][$j]->logitem_time = $set['T'];
+				$this->log_items[$i][$j]->logitem_reps = $set['R'];
+				$this->log_items[$i][$j]->logitem_sets = $set['S'];
+				$this->log_items[$i][$j]->logitem_order = $j;
+				$this->log_items[$i][$j]->logex_order = $i;
+				$this->log_items[$i][$j]->logitem_pre = (!isset($set['P']) || $set['P'] == NULL) ? NULL : $set['P'];
 			}
-            // if new exercise set if it a time based exercise
-            if ($this->exercises[$i]['new'])
-            {
-                $update_exercises = [];
-                if ($this->exercises[$i]['time'])
-                {
-                    $update_exercises['is_time'] = 1;
-                }
-                if ($this->exercises[$i]['endurance'])
-                {
-                    $update_exercises['is_endurance'] = 1;
-                }
-                if (count($update_exercises) > 0)
-                {
-                    DB::table('exercises')->where('exercise_id', $this->exercises[$i]['id'])->update($update_exercises);
-                }
-            }
-			// insert into log_exercises
-            DB::table('log_exercises')
-                ->where('logex_id', $log_exercises_id)
-                ->update([
-                    'logex_1rm' => $max_estimate_rm,
-                    'logex_volume' => $total_volume, // done
-                    'logex_reps' => $total_reps, // done
-                    'logex_sets' => $total_sets, // done
-                    'logex_failed_volume' => $failed_volume, // done
-                    'logex_failed_sets' => $failed_sets, // done
-                    'logex_warmup_volume' => $logex_warmup_volume, // done
-                    'logex_warmup_reps' => $logex_warmup_reps, // done
-                    'logex_warmup_sets' => $logex_warmup_sets, // done
-                ]);
+			$this->log_exercises[$i]->logex_1rm = $max_estimate_rm;
 		}
-        // insert total volumes
-        DB::table('logs')
-            ->where('log_id', $log_id)
-            ->update([
-                'log_total_volume' => $log_total_volume,
-                'log_total_reps' => $log_total_reps,
-                'log_total_sets' => $log_total_sets,
-                'log_failed_volume' => $log_failed_volume,
-                'log_failed_sets' => $log_failed_sets,
-                'log_warmup_volume' => $log_warmup_volume,
-                'log_warmup_reps' => $log_warmup_reps,
-                'log_warmup_sets' => $log_warmup_sets,
-            ]);
 
 		//return your new records :)
         if (count($new_prs) > 0)
@@ -264,13 +228,13 @@ class Tester
 	        		}
 	                else
 	                {
-	                    $this->log_items[$i][$j]->item_comment .= $part;
+	                    $this->log_items[$i][$j]->logitem_comment .= $part;
 	                }
 	            }
 	        }
 			else
 			{
-				$this->log_items[$i][$j]->item_comment = $string;
+				$this->log_items[$i][$j]->logitem_comment = $string;
 			}
 		}
 	}
@@ -377,5 +341,26 @@ class Tester
 			}
 		}
 		return false;
+	}
+
+	private function setExerciseDefaultTypes ()
+	{
+		// if new exercise set if it a time based exercise
+		if ($this->exercises[$i]['new'])
+		{
+			$update_exercises = [];
+			if ($this->exercises[$i]['time'])
+			{
+				$update_exercises['is_time'] = 1;
+			}
+			if ($this->exercises[$i]['endurance'])
+			{
+				$update_exercises['is_endurance'] = 1;
+			}
+			if (count($update_exercises) > 0)
+			{
+				DB::table('exercises')->where('exercise_id', $this->exercises[$i]['id'])->update($update_exercises);
+			}
+		}
 	}
 }
