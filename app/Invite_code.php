@@ -11,7 +11,7 @@ class Invite_code extends Model
 
     public function scopeValid($query, $user_id)
     {
-        return $query->where('code_expires', '<=', Carbon::now())
+        return $query->where('code_expires', '>=', Carbon::now())
                     ->where('code_uses', '>', 0)
                     ->orWhere(function ($query) {
                         global $user_id;
@@ -22,7 +22,7 @@ class Invite_code extends Model
 
     public function scopeIsvalid($query, $code)
     {
-        return $query->where('code_expires', '<=', Carbon::now())->where('code_uses', '>', 0)->where('code', '=', $code);
+        return $query->where('code_expires', '>=', Carbon::now()->format('Y-m-d'))->where('code_uses', '>', 0)->where('code', '=', $code);
     }
 
     /**

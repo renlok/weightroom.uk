@@ -63,7 +63,7 @@ class LoginController extends Controller
 
 		// is this a valid invite code?
 		$invite_code = Invite_code::isvalid($input['invcode'])->first();
-		if ($invite_code->isEmpty())
+		if ($invite_code == null)
 		{
 			return redirect('register')
 				->withInput()
