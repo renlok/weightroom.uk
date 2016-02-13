@@ -710,7 +710,7 @@ class Tester
 		if ($this->log_items[$i][$j]->is_endurance)
 		{
 			// endurance
-			if (isset($prs['E'][$set['R']]) &&
+			if (!isset($prs['E'][$set['R']]) ||
 				floatval($prs['E'][$set['R']]) < $this->log_items[$i][$j]->logitem_abs_weight)
 			{
 				return true;
@@ -719,7 +719,7 @@ class Tester
 		elseif ($this->log_items[$i][$j]->is_time)
 		{
 			// time
-			if (isset($prs['T'][$set['R']]) &&
+			if (!isset($prs['T'][$set['R']]) ||
 				floatval($prs['T'][$set['R']]) > $this->log_items[$i][$j]->logitem_abs_weight)
 			{
 				return true;
@@ -728,7 +728,7 @@ class Tester
 		else
 		{
 			// weight
-			if (isset($prs['W'][$set['R']]) &&
+			if (!isset($prs['W'][$set['R']]) ||
 				floatval($prs['W'][$set['R']]) < $this->log_items[$i][$j]->logitem_abs_weight)
 			{
 				return true;
@@ -899,7 +899,7 @@ class Tester
 	                'pr_1rm' => $new_1rm,
 	                'is_est1rm' => $is_est1rm,
 	                'is_time' => $is_time,
-					'is_endurance', $is_endurance
+					'is_endurance' => $is_endurance
 	            ]);
 			}
 		}
@@ -914,7 +914,7 @@ class Tester
             'pr_1rm' => $new_1rm,
             'is_est1rm' => $is_est1rm,
             'is_time' => $is_time,
-			'is_endurance', $is_endurance
+			'is_endurance' => $is_endurance
         ]);
 	}
 

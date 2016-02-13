@@ -121,8 +121,9 @@ class LogsController extends Controller
     public function postEdit($date, LogRequest $request)
     {
         $parser = new Parser($request->input('log'), $date, $request->input('weight'));
-        $parser->parse_text ();
-		$parser->store_log_data (false);
+        $parser->parseText ();
+        $parser->formatLogData (false);
+        $parser->saveLogData ();
         return redirect()
                 ->route('viewLog', ['date' => $date])
                 ->with([
@@ -155,8 +156,9 @@ class LogsController extends Controller
     public function postNew($date, LogRequest $request)
     {
         $parser = new Parser($request->input('log'), $date, $request->input('weight'));
-        $parser->parse_text ();
-		$parser->store_log_data (true);
+        $parser->parseText ();
+        $parser->formatLogData (true);
+        $parser->saveLogData ();
         return redirect()
                 ->route('viewLog', ['date' => $date])
                 ->with([
