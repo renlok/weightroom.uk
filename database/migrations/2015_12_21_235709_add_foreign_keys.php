@@ -12,6 +12,7 @@ class AddForeignKeys extends Migration
      */
     public function up()
     {
+        /*
         Schema::table('exercises', function ($table) {
             $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
         });
@@ -47,6 +48,7 @@ class AddForeignKeys extends Migration
             $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade');
             $table->foreign('follow_user_id')->references('user_id')->on('users');
         });
+        */
     }
 
     /**
@@ -56,6 +58,7 @@ class AddForeignKeys extends Migration
      */
     public function down()
     {
+        /*
         Schema::table('exercises', function ($table) {
             $table->dropForeign('exercises_user_id_foreign');
         });
@@ -92,5 +95,6 @@ class AddForeignKeys extends Migration
             $table->dropForeign('user_follows_user_id_foreign');
             $table->dropForeign('user_follows_follow_user_id_foreign');
         });
+        */
     }
 }

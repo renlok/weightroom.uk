@@ -438,7 +438,7 @@ class Tester
 				$this->log_items[$i][$j]->log_date = $this->log_date;
 				$this->log_items[$i][$j]->user_id = $this->user->user_id;
 				$this->log_items[$i][$j]->exercise_id = $this->exercises[$i]['id'];
-				$this->insertLogItemWeightTime ();
+				$this->insertLogItemWeightTime ($set, $i, $j);
 				$this->log_items[$i][$j]->logitem_reps = $set['R'];
 				$this->log_items[$i][$j]->logitem_sets = $set['S'];
 				$this->log_items[$i][$j]->logitem_order = $j;
@@ -455,7 +455,7 @@ class Tester
         }
 	}
 
-	private function insertLogItemWeightTime ()
+	private function insertLogItemWeightTime ($set, $i, $j)
 	{
 		if ($this->log_items[$i][$j]->is_time)
 		{
