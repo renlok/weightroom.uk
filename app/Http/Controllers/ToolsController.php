@@ -158,4 +158,9 @@ class ToolsController extends Controller
     {
         return view('tools.idealWLRatios');
     }
+
+    public function RPECalculator()
+    {
+        return view('tools.RPECalculator');
+    }
 }

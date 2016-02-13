@@ -96,6 +96,7 @@ Route::group(['prefix' => 'tools', 'middleware' => 'auth'], function () {
     // WL tools
     Route::get('sinclair/{range?}', 'ToolsController@sinclair')->name('sinclairGraph');
     Route::get('wlratios', 'ToolsController@idealWLRatios')->name('wlratios');
+    Route::get('rpeestimator', 'ToolsController@RPECalculator')->name('rpeestimator');
 });
 
 // Misc

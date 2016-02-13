@@ -53,7 +53,8 @@
     <p>View how your Wilks score has improved over time</p>
   </div>
   <div class="col-md-4">
-	&nbsp;
+	<a href="{{ route('rpeestimator') }}">RPE Max rep estimator</a>
+    <p>Estimate your potential max lift based of RPE values</p>
   </div>
   <div class="col-md-4">
 	&nbsp;
