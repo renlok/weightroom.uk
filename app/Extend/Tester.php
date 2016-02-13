@@ -313,12 +313,22 @@ class Tester
 
 	public function formatLogData ($is_new)
 	{
-		// TODO: check the format of this
-		$old_records = Exercise_record::select(DB::raw('MAX(pr_value) as pr_value'), 'pr_reps')
-									->where('log_date', $this->log_date)
-									->where('user_id', $this->user->user_id)
-									->groupBy('exercise_id')
-									->get();
+        // get old records if are any
+        $old_records_raw = Exercise_record::select(DB::raw('MAX(pr_value) as pr_value'), 'pr_reps', 'exercise_id')
+                                    ->where('log_date', $this->log_date)
+                                    ->where('user_id', $this->user->user_id)
+                                    ->groupBy('exercise_id')
+                                    ->groupBy('pr_reps')
+                                    ->get()
+                                    ->toArray();
+        $old_records = [];
+        if (count($old_records_raw) > 0)
+        {
+            foreach ($old_records_raw as $record)
+            {
+                $old_records[$record['exercise_id']][$record['pr_reps']] = $record['pr_value'];
+            }
+        }
 		Exercise_record::where('log_date', $this->log_date)->where('user_id', $this->user->user_id)->delete();
 
 		if (!$is_new)
@@ -838,10 +848,9 @@ class Tester
             ->update(['is_pr' => 0]);
 
 		// we are modifying a PR that was set today
-		// TODO: make sure only values that should are added
-		if (isset($old_records[$exercise_id]))
+		if (isset($old_records[$exercise_id][$set_reps]))
 		{
-			$old_pr_value = $old_records[$exercise_id]->pr_value;
+			$old_pr_value = $old_records[$exercise_id][$set_reps];
 			// add future prs if needed
 	        $sets = DB::table('log_items')
 	                    ->select('log_id', 'log_date', 'logitem_abs_weight')

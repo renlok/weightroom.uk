@@ -166,7 +166,8 @@ class Log_control
     				}
                 }
 				$pre = (!empty($set['logitem_pre']) && $set['logitem_pre'] > 0) ? " @{$set['logitem_pre']}" : '';
-                $type_key = ($set['is_warmup']) ? ' warmup' : '';
+                $type_key = ($set['is_warmup']) ? ' w|' : '';
+                $type_key .= ($set['is_endurance']) ? 'e' : '';
 				$log_text .= "$setvalue x {$set['logitem_reps']} x {$set['logitem_sets']}$pre " . trim($set['logitem_comment']) . $type_key . "\n"; // add sets
 			}
 			if (strlen(trim($log_items['comment'])) > 0)
