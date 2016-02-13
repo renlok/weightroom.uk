@@ -1171,7 +1171,7 @@ class Parser
         return $output_chr;
     }
 
-    public function generate_rm ($weight, $reps, $rm = 1)
+    public static function generate_rm ($weight, $reps, $rm = 1)
 	{
 		if ($reps == $rm)
 		{

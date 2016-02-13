@@ -6,50 +6,68 @@ use DB;
 use App\Exercise_record;
 
 class PRs {
-    //TODO rewirte all of this
-    public function fix_prs()
+    public static function rebuildPRsTable ()
 	{
-		global $db;
 		//prepare everything
-		$query = "TRUNCATE exercise_records";
-		$db->direct_query($query);
-		$query = "UPDATE log_items SET is_pr = 0";
-		$db->direct_query($query);
+		Exercise_record::truncate();
+		DB::table('log_items')->update(['is_pr' => 0]);
 		// load the exercises
-		$query = "SELECT exercise_id, user_id FROM exercises ORDER BY exercise_id ASC";
-		$db->direct_query($query);
-		$data = $db->fetchall();
-		foreach($data as $row)
+		$exercises = DB::table('exercises')
+						->select('exercise_id', 'user_id')
+						->orderBy('exercise_id', 'asc')
+						->get();
+		$pr_id_array = [];
+		$exercise_records = [];
+		foreach ($exercises as $exercise)
 		{
-			$query = "SELECT logitem_id, logitem_weight, logitem_reps, log_date FROM log_items WHERE exercise_id = :exercise_id ORDER BY log_date ASC";
-			$params = array(
-				array(':exercise_id', $row['exercise_id'], 'int')
-			);
-			$db->query($query, $params);
+			$items = DB::table('log_items')
+						->select('logitem_id', 'logitem_abs_weight', 'logitem_reps', 'log_date', 'is_time', 'is_endurance')
+						->where('exercise_id', $exercise->exercise_id)
+						->where('logitem_reps', '<=', 10)
+						->where('logitem_reps', '>', 0)
+						->orderBy('log_date', 'asc')
+						->get();
 			$pr = array(1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0, 7 => 0, 8 => 0, 9 => 0, 10 => 0);
-			while($ex_data = $db->fetch())
+            $est1rm = 0;
+			foreach ($items as $item)
 			{
-				if ($ex_data['logitem_reps'] <= 10 && $ex_data['logitem_reps'] > 0 && $pr[$ex_data['logitem_reps']] < $ex_data['logitem_weight'])
+				if ($pr[$item->logitem_reps] < $item->logitem_abs_weight)
 				{
-					$pr[$ex_data['logitem_reps']] = $ex_data['logitem_weight'];
-					$query = "UPDATE log_items SET is_pr = 1 WHERE logitem_id = :logitem_id";
-					$params = array(
-						array(':logitem_id', $ex_data['logitem_id'], 'int')
-					);
-					$db->query($query, $params);
-					$query = "INSERT INTO exercise_records (exercise_id, user_id, log_date, pr_value, pr_reps)
-							VALUES (:exercise_id, :user_id, :log_date, :pr_value, :pr_reps)";
-					$params = array(
-						array(':exercise_id', $row['exercise_id'], 'int'),
-						array(':user_id', $row['user_id'], 'int'),
-						array(':log_date', $ex_data['log_date'], 'str'),
-						array(':pr_value', $ex_data['logitem_weight'], 'float'),
-						array(':pr_reps', $ex_data['logitem_reps'], 'int')
-					);
-					$db->query($query, $params);
+					$pr[$item->logitem_reps] = $item->logitem_abs_weight;
+					$pr_id_array[] = $item->logitem_id;
+                    if (!$item->is_time)
+                    {
+                        $new1rm = Parser::generate_rm($item->logitem_abs_weight, $item->logitem_reps);
+                    }
+                    else
+                    {
+                        $new1rm = 0;
+                    }
+                    $is_est1rm = false;
+                    if ($est1rm < $new1rm)
+                    {
+                        $est1rm = $new1rm;
+                        $is_est1rm = true;
+                    }
+					$exercise_records[] = [
+						'exercise_id' => $exercise->exercise_id,
+						'user_id' => $exercise->user_id,
+						'log_date' => $item->log_date,
+						'pr_value' => $item->logitem_abs_weight,
+						'pr_reps' => $item->logitem_reps,
+                        'pr_1rm' => $new1rm,
+                        'is_est1rm' => $is_est1rm,
+                        'is_time' => $item->is_time,
+                        'is_endurance' => $item->is_endurance
+					];
 				}
 			}
 		}
+		Exercise_record::insert($exercise_records);
+		// update log_item is_pr flags
+		DB::table('log_items')
+			->whereIn('logitem_id', $pr_id_array)
+			->update(['is_pr' => 1]);
 	}
 
 	public static function rebuildExercisePRs($exercise_id)
