@@ -32,7 +32,7 @@ class ToolsController extends Controller
     public function wilks($range = 0)
     {
         $from_date = ($range > 0) ? Carbon::now()->subMonths($range)->toDateString() : 0;
-        $graph_data = Exercise_record::select('log_date', 'exercise_name', 'pr_1rm as log_weight')
+        $graph_data = Exercise_record::select('log_date', 'exercise_name', DB::raw('MAX(pr_1rm) as log_weight'))
                                 ->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
                                 ->where('exercise_records.user_id', Auth::user()->user_id)
                                 ->where('is_est1rm', 1)
@@ -41,7 +41,7 @@ class ToolsController extends Controller
         {
             $graph_data = $graph_data->where('log_date', '>=', $from_date);
         }
-        $graph_data = $graph_data->orderBy('log_date', 'asc');
+        $graph_data = $graph_data->groupBy('log_date')->orderBy('log_date', 'asc');
         $graphs = $graph_data->get()->groupBy('exercise_name')->toArray();
         $graphs['Bodyweight'] = Log::getbodyweight(Auth::user()->user_id)->get();
         // build a useful array for wilks data
@@ -88,7 +88,7 @@ class ToolsController extends Controller
     public function sinclair($range = 0)
     {
         $from_date = ($range > 0) ? Carbon::now()->subMonths($range)->toDateString() : 0;
-        $graph_data = Exercise_record::select('log_date', 'exercise_name', 'pr_1rm as log_weight')
+        $graph_data = Exercise_record::select('log_date', 'exercise_name', DB::raw('MAX(pr_1rm) as log_weight'))
                                 ->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
                                 ->where('exercise_records.user_id', Auth::user()->user_id)
                                 ->where('is_est1rm', 1)
@@ -97,7 +97,7 @@ class ToolsController extends Controller
         {
             $graph_data = $graph_data->where('log_date', '>=', $from_date);
         }
-        $graph_data = $graph_data->orderBy('log_date', 'asc');
+        $graph_data = $graph_data->groupBy('log_date')->orderBy('log_date', 'asc');
         $graphs = $graph_data->get()->groupBy('exercise_name')->toArray();
         $graphs['Bodyweight'] = Log::getbodyweight(Auth::user()->user_id)->get();
         // build a useful array for sinclair data

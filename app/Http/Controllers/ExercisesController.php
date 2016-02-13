@@ -147,9 +147,10 @@ class ExercisesController extends Controller
     {
         $exercises = Exercise::listexercises(true)->get();
         $exercise_names = array_map('strtolower', array_filter([$exercise1, $exercise2, $exercise3, $exercise4, $exercise5]));
+        $pr_value = ($reps > 0) ? 'pr_value' : 'pr_1rm';
         $records = DB::table('exercise_records')
             ->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
-            ->select(DB::raw('MAX(pr_value) as pr_value'), 'pr_reps', 'log_date', 'exercise_name', DB::raw('MAX(pr_1rm) as pr_1rm'))
+            ->select(DB::raw("MAX($pr_value) as pr_value"), 'pr_reps', 'log_date', 'exercise_name')
             ->where('exercise_records.user_id', Auth::user()->user_id)
             ->whereIn('exercise_name', $exercise_names);
         if ($reps > 0)
