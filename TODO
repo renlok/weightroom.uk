@@ -1,3 +1,9 @@
+- fixes for parser
+    move comment tag check before set cleaner function
+    add total time/total distance columns
+    add distance option (is_distance flags)
+    add exercise tags (like wxr) #Exercise Name #Tag
+
 - add importer!!
     http://tutsnare.com/upload-files-in-laravel/
     http://www.maatwebsite.nl/laravel-excel/docs/import#results
