@@ -34,6 +34,7 @@ class CreateLogItemsTable extends Migration
             $table->boolean('is_pr')->default('0');
             $table->boolean('is_warmup')->default('0');
             $table->boolean('is_endurance')->default('0'); // NEW colomn
+            $table->boolean('is_distance')->default('0'); // NEW colomn
             $table->timestamps();
         });
     }

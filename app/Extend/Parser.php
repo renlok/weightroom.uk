@@ -108,7 +108,7 @@ class Parser
     private function parseLine ($line, $position)
     {
         // build the initial startup data
-        $this->current_blocks = array('U', 'W', 'T', 'C');
+        $this->current_blocks = array('U', 'W', 'T', 'D', 'C');
         $this->build_next_formats ();
         $this->build_accepted_char ();
         $this->build_accepted_chars ();
@@ -372,12 +372,14 @@ class Parser
 				$this->exercises[$i]['new'] = true;
 				$this->exercises[$i]['time'] = false;
 				$this->exercises[$i]['endurance'] = false;
+				$this->exercises[$i]['distance'] = false;
             }
             else
             {
 	            $this->exercises[$i]['new'] = false;
                 $this->exercises[$i]['time'] = $exercise->is_time;
                 $this->exercises[$i]['endurance'] = $exercise->is_endurance;
+				$this->exercises[$i]['distance'] = $exercise->is_distance;
             }
 			$this->exercises[$i]['id'] = $exercise->exercise_id;
 			// insert log_exercise data
@@ -392,6 +394,7 @@ class Parser
             $prs['E'] = Exercise_record::getexerciseprs($this->user->user_id, $this->log_date, $exercise_name, true, true)->toArray();
             $prs['T'] = Exercise_record::getexerciseprs($this->user->user_id, $this->log_date, $exercise_name, true, false)->toArray();
             $prs['W'] = Exercise_record::getexerciseprs($this->user->user_id, $this->log_date, $exercise_name, false, false)->toArray();
+            $prs['D'] = Exercise_record::getexerciseprs($this->user->user_id, $this->log_date, $exercise_name, false, false, false, true)->toArray();
 
 			$max_estimate_rm = Exercise_record::getlastest1rm($this->user->user_id, $exercise_name)->value('pr_1rm');
 			for ($j = 0, $count_j = count($item['data']); $j < $count_j; $j++)
@@ -401,10 +404,12 @@ class Parser
 				// guess what these should be from exercise data
                 $this->log_items[$i][$j]->is_time = $this->exercises[$i]['time'];
                 $this->log_items[$i][$j]->is_endurance = $this->exercises[$i]['endurance'];
+                $this->log_items[$i][$j]->is_distance = $this->exercises[$i]['distance'];
+                // check comment for special tags
+				$set['C'] = (isset($set['C'])) ? $set['C'] : '';
+				$this->checkSpecialTags ($set['C'], $i, $j, $set);
 				// clean up set data
 				$set = $this->cleanSetData ($set, $i, $j);
-                // check comment for special tags
-				$this->checkSpecialTags ($set['C'], $i, $j, $set);
 				$this->setAbsoluteWeight ($set, $i, $j);
 				// calculate volume data
 				$this->updateVolumes ($set, $i, $j);
@@ -412,13 +417,14 @@ class Parser
                 if ($this->checkPR ($prs, $set, $i, $j))
 				{
 					$this->log_items[$i][$j]->is_pr = true;
-                    $pr_type = ($this->log_items[$i][$j]->is_time == true) ?
-								(($this->log_items[$i][$j]->is_endurance == true) ? 'E' : 'T') : 'W';
+                    $pr_type = ($this->log_items[$i][$j]->is_distance == true) ? 'D' :
+								($this->log_items[$i][$j]->is_endurance == true) ? 'E' :
+								($this->log_items[$i][$j]->is_time == true) ? 'T' : 'W';
                     // the user has set a pr we need to add/update it in the database
                     $this->updatePrs ($old_records, $set, $i, $j);
                     if (!isset($this->new_prs[$exercise_name]))
 					{
-                        $this->new_prs[$exercise_name] = array('W' => [], 'T' => [], 'E' => []);
+                        $this->new_prs[$exercise_name] = array('W' => [], 'T' => [], 'E' => [], 'D' => []);
 					}
                     $this->new_prs[$exercise_name][$pr_type][$set['R']][] = $this->log_items[$i][$j]->logitem_abs_weight;
                     $prs[$pr_type][$set['R']] = $this->log_items[$i][$j]->logitem_abs_weight;
@@ -444,6 +450,7 @@ class Parser
 				$this->log_items[$i][$j]->logitem_order = $j;
 				$this->log_items[$i][$j]->logex_order = $i;
 				$this->log_items[$i][$j]->logitem_pre = (!isset($set['P']) || $set['P'] == NULL) ? NULL : $set['P'];
+				$this->setExerciseDefaultTypes ($i);
 			}
 			$this->log_exercises[$i]->logex_1rm = $max_estimate_rm;
 		}
@@ -582,7 +589,6 @@ class Parser
 		}
 		$set['R'] = (isset($set['R'])) ? intval($set['R']) : 1;
 		$set['S'] = (isset($set['S'])) ? intval($set['S']) : 1;
-		$set['C'] = (isset($set['C'])) ? $set['C'] : '';
 		return $set;
 	}
 
@@ -603,6 +609,10 @@ class Parser
 			$this->log_items[$i][$j]->is_endurance = true;
 			$this->log_items[$i][$j]->is_time = true;
 		}
+		elseif ($this->isDistanceTag ($string))
+		{
+			$this->log_items[$i][$j]->is_distance = true;
+		}
 		else
 		{
 	        $parts = explode('|', $string);
@@ -620,6 +630,10 @@ class Parser
 	                    $this->log_items[$i][$j]->is_endurance = true;
 						$this->log_items[$i][$j]->is_time = true;
 	        		}
+					elseif ($this->isDistanceTag ($part))
+					{
+						$this->log_items[$i][$j]->is_distance = true;
+					}
 	                else
 	                {
 	                    $this->log_items[$i][$j]->logitem_comment .= $part;
@@ -651,6 +665,15 @@ class Parser
 		return false;
 	}
 
+	private function isDistanceTag ($part)
+	{
+		if ($part == 'd' || $part == 'distance')
+		{
+			return true;
+		}
+		return false;
+	}
+
 	private function setAbsoluteWeight ($set, $i, $j)
 	{
 		if ($this->log_items[$i][$j]->is_bw)
@@ -660,6 +683,10 @@ class Parser
 		elseif ($this->log_items[$i][$j]->is_time)
 		{
 			$this->log_items[$i][$j]->logitem_abs_weight = floatval($set['T']);
+		}
+		elseif ($this->log_items[$i][$j]->is_distance)
+		{
+			$this->log_items[$i][$j]->logitem_abs_weight = floatval($set['D']);
 		}
 		else
 		{
@@ -699,6 +726,18 @@ class Parser
 			$this->log->log_warmup_reps += ($set['R'] * $set['S']);
 			$this->log->log_warmup_sets += $set['S'];
 		}
+		
+		if ($this->log_items[$i][$j]->is_time)
+		{
+			$this->log_exercises[$i]->logex_time += $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
+			$this->log->log_total_time += $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
+		}
+		
+		if ($this->log_items[$i][$j]->is_distance)
+		{
+			$this->log_exercises[$i]->logex_distance += $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
+			$this->log->log_total_distance += $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
+		}
 	}
 
 	private function checkPR (&$prs, $set, $i, $j)
@@ -725,6 +764,15 @@ class Parser
 				return true;
 			}
 		}
+		elseif ($this->log_items[$i][$j]->is_distance)
+		{
+			// time
+			if (!isset($prs['D'][$set['R']]) ||
+				floatval($prs['D'][$set['R']]) > $this->log_items[$i][$j]->logitem_abs_weight)
+			{
+				return true;
+			}
+		}
 		else
 		{
 			// weight
@@ -737,7 +785,7 @@ class Parser
 		return false;
 	}
 
-	private function setExerciseDefaultTypes ()
+	private function setExerciseDefaultTypes ($i)
 	{
 		// if new exercise set if it a time based exercise
 		if ($this->exercises[$i]['new'])
@@ -750,6 +798,10 @@ class Parser
 			if ($this->exercises[$i]['endurance'])
 			{
 				$update_exercises['is_endurance'] = 1;
+			}
+			if ($this->exercises[$i]['distance'])
+			{
+				$update_exercises['is_distance'] = 1;
 			}
 			if (count($update_exercises) > 0)
 			{
@@ -765,6 +817,7 @@ class Parser
 		$set_reps = $set['R'];
 		$is_time = $this->log_items[$i][$j]->is_time;
 		$is_endurance = $this->log_items[$i][$j]->is_endurance;
+		$is_distance = $this->log_items[$i][$j]->is_distance;
 
 		// dont log reps over 10
 		if ($set_reps > 10 || $set_reps < 1)
@@ -803,6 +856,7 @@ class Parser
             })
             ->where('is_time', $is_time)
             ->where('is_endurance', $is_endurance)
+            ->where('is_distance', $is_distance)
             ->delete();
 
         if ($is_est1rm)
@@ -824,6 +878,7 @@ class Parser
                 })
                 ->where('is_time', $is_time)
                 ->where('is_endurance', $is_endurance)
+                ->where('is_distance', $is_distance)
                 ->update(['is_est1rm' => 0]);
         }
 
@@ -845,6 +900,7 @@ class Parser
             })
 			->where('is_time', $is_time)
 			->where('is_endurance', $is_endurance)
+			->where('is_distance', $is_distance)
             ->update(['is_pr' => 0]);
 
 		// we are modifying a PR that was set today
@@ -872,6 +928,7 @@ class Parser
 	                    })
 						->where('is_time', $is_time)
 						->where('is_endurance', $is_endurance)
+						->where('is_distance', $is_distance)
 	                    ->where('is_pr', 0)
 						->orderBy('log_date', 'asc')
 	                    ->get();
@@ -899,7 +956,8 @@ class Parser
 	                'pr_1rm' => $new_1rm,
 	                'is_est1rm' => $is_est1rm,
 	                'is_time' => $is_time,
-					'is_endurance' => $is_endurance
+					'is_endurance' => $is_endurance,
+					'is_distance' => $is_distance
 	            ]);
 			}
 		}
@@ -914,7 +972,8 @@ class Parser
             'pr_1rm' => $new_1rm,
             'is_est1rm' => $is_est1rm,
             'is_time' => $is_time,
-			'is_endurance' => $is_endurance
+			'is_endurance' => $is_endurance,
+			'is_distance' => $is_distance
         ]);
 	}
 
@@ -945,6 +1004,12 @@ class Parser
                 'lb' => 'lb',
                 'lbs' => 'lb',
             ),
+            'D' => array(
+                'm' => 'm',
+                'km' => 'km',
+                'mile' => 'mile',
+                'miles' => 'mile',
+            ),
         );
         $this->format_types_all = array(
 			'U' => array(('0')),
@@ -962,6 +1027,10 @@ class Parser
                 ('bw+0'),
                 ('bw-0.0'),
                 ('bw-0'),
+            ),
+            'D' => array(
+                ('0.0'),
+                ('0'),
             ),
             'R' => array(('0')),
             'S' => array(('0')),
@@ -984,6 +1053,7 @@ class Parser
             'U' => array('R', 'P'),
             'T' => array('R', 'P'),
             'W' => array('R', 'P'),
+            'D' => array('R', 'P'),
             'R' => array('S', 'P'),
             'S' => array('P'),
             'P' => array(''),

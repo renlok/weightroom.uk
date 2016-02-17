@@ -18,6 +18,7 @@ class CreateExercisesTable extends Migration
             $table->integer('user_id')->unsigned()->index();
             $table->boolean('is_time')->default('0');
             $table->boolean('is_endurance')->default('0'); // NEW colomn
+            $table->boolean('is_distance')->default('0'); // NEW colomn
             $table->boolean('exercise_update_prs')->default('0'); // NEW colomn
             $table->timestamps();
         });

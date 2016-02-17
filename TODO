@@ -1,5 +1,4 @@
 - fixes for parser
-    move comment tag check before set cleaner function
     add total time/total distance columns
     add distance option (is_distance flags)
     add exercise tags (like wxr) #Exercise Name #Tag

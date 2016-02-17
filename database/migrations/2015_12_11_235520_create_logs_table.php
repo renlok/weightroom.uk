@@ -25,6 +25,8 @@ class CreateLogsTable extends Migration
             $table->double('log_warmup_volume', 20, 2); // NEW colomn
             $table->integer('log_warmup_reps'); // NEW colomn
             $table->integer('log_warmup_sets'); // NEW colomn
+            $table->double('log_total_time', 20, 2); // NEW colomn
+            $table->double('log_total_distance', 20, 2); // NEW colomn
             $table->text('log_comment');
             $table->double('log_weight', 7, 2);
             $table->boolean('log_update_text')->default('0');

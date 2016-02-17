@@ -16,7 +16,7 @@ class Exercise_record extends Model
     ];
     protected $guarded = ['pr_id'];
 
-    public function scopeGetexerciseprs($query, $user_id, $log_date, $exercise_name, $is_time = false, $is_endurance = false, $return_date = false)
+    public function scopeGetexerciseprs($query, $user_id, $log_date, $exercise_name, $is_time = false, $is_endurance = false, $return_date = false, $is_distance = false)
     {
         $query = $query->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
                 ->select(DB::raw('MAX(pr_value) as pr_value'), 'pr_reps')
@@ -24,6 +24,7 @@ class Exercise_record extends Model
                 ->where('exercises.exercise_name', $exercise_name)
                 ->where('exercises.is_time', $is_time)
                 ->where('exercises.is_endurance', $is_endurance)
+                ->where('exercises.is_distance', $is_distance)
                 ->where('log_date', '<=', $log_date)
                 ->groupBy('pr_reps');
         if ($return_date)
@@ -64,6 +65,7 @@ class Exercise_record extends Model
                 ->where('exercise_records.user_id', $user_id)
                 ->where('exercises.exercise_name', $exercise_name)
                 ->where('exercises.is_time', false)
+				->where('exercises.is_distance', false)
                 ->where('is_est1rm', 1)
                 ->orderBy('pr_1rm', 'desc');
         return $query;
