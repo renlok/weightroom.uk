@@ -88,6 +88,39 @@ class Format {
         }
     }
 
+    public static function correct_distance($distance, $unit_used = 'm', $unit_want = 'm', $round = 2) // $unit_used = m/km/mile $unit_want = m/km/mile
+    {
+        if ($unit_used == 'km')
+        {
+            $distance = 1000 * $distance;
+            $unit_used = 'm';
+        }
+    	if ($unit_used == 'm' && $unit_want == 'mile')
+    	{
+    		$value = ($distance / 1609.344); // convert to mile
+    	}
+    	elseif ($unit_used == 'mile' && ($unit_want == 'm' || $unit_want == 'km'))
+    	{
+    		$value = ($distance * 1609.344); // convert to m
+    	}
+    	else
+    	{
+            if ($unit_want == 'km')
+            {
+                $distance = $distance / 1000;
+            }
+    		$value = $distance;
+    	}
+        if ($round > 0)
+        {
+            return round($value, $round);
+        }
+        else
+        {
+            return $value;
+        }
+    }
+
     public static function replace_video_urls($comment)
 	{
 		return preg_replace(

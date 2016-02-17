@@ -389,12 +389,7 @@ class Parser
 			$this->log_exercises[$i]->logex_comment = trim($item['comment']);
 			$this->log_exercises[$i]->logex_order = $i;
 
-            $prs = [];
-			// TODO: merge these into a single query
-            $prs['E'] = Exercise_record::getexerciseprs($this->user->user_id, $this->log_date, $exercise_name, true, true)->toArray();
-            $prs['T'] = Exercise_record::getexerciseprs($this->user->user_id, $this->log_date, $exercise_name, true, false)->toArray();
-            $prs['W'] = Exercise_record::getexerciseprs($this->user->user_id, $this->log_date, $exercise_name, false, false)->toArray();
-            $prs['D'] = Exercise_record::getexerciseprs($this->user->user_id, $this->log_date, $exercise_name, false, false, false, true)->toArray();
+            $prs = Exercise_record::exercisePrs($this->user->user_id, $this->log_date, $exercise_name);
 
 			$max_estimate_rm = Exercise_record::getlastest1rm($this->user->user_id, $exercise_name)->value('pr_1rm');
 			for ($j = 0, $count_j = count($item['data']); $j < $count_j; $j++)
@@ -464,29 +459,21 @@ class Parser
 
 	private function insertLogItemWeightTime ($set, $i, $j)
 	{
-		if ($this->log_items[$i][$j]->is_time)
+        $value = $set['W'] + $set['T'] + $set['D'];
+        $this->log_items[$i][$j]->logitem_time = 0;
+        $this->log_items[$i][$j]->logitem_weight = 0;
+        $this->log_items[$i][$j]->logitem_distance = 0;
+        if ($this->log_items[$i][$j]->is_time)
 		{
-			if ($this->log_items[$i][$j]->logitem_time == 0 && $this->log_items[$i][$j]->logitem_weight > 0)
-			{
-				$this->log_items[$i][$j]->logitem_time = $set['W'];
-			}
-			else
-			{
-				$this->log_items[$i][$j]->logitem_time = $set['T'];
-			}
-			$this->log_items[$i][$j]->logitem_weight = 0;
+			$this->log_items[$i][$j]->logitem_time = $value;
+		}
+		elseif ($this->log_items[$i][$j]->is_distance)
+		{
+			$this->log_items[$i][$j]->logitem_distance = $value;
 		}
 		else
 		{
-			if ($this->log_items[$i][$j]->logitem_time > 0 && $this->log_items[$i][$j]->logitem_weight == 0)
-			{
-				$this->log_items[$i][$j]->logitem_weight = $set['T'];
-			}
-			else
-			{
-				$this->log_items[$i][$j]->logitem_weight = $set['W'];
-			}
-			$this->log_items[$i][$j]->logitem_time = 0;
+			$this->log_items[$i][$j]->logitem_weight = $value;
 		}
 	}
 
@@ -528,6 +515,17 @@ class Parser
 			else
 			{
 				return Format::correct_weight($input[0], $input[1], 'kg', 0);
+			}
+		}
+		elseif ($type == 'D')
+		{
+			if ($input[1] == '')
+			{
+				return $input[0];
+			}
+			else
+			{
+				return Format::correct_distance($input[0], $input[1], 'm', 0);
 			}
 		}
 		else
@@ -726,13 +724,13 @@ class Parser
 			$this->log->log_warmup_reps += ($set['R'] * $set['S']);
 			$this->log->log_warmup_sets += $set['S'];
 		}
-		
+
 		if ($this->log_items[$i][$j]->is_time)
 		{
 			$this->log_exercises[$i]->logex_time += $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
 			$this->log->log_total_time += $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
 		}
-		
+
 		if ($this->log_items[$i][$j]->is_distance)
 		{
 			$this->log_exercises[$i]->logex_distance += $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];

@@ -16,15 +16,12 @@ class Exercise_record extends Model
     ];
     protected $guarded = ['pr_id'];
 
-    public function scopeGetexerciseprs($query, $user_id, $log_date, $exercise_name, $is_time = false, $is_endurance = false, $return_date = false, $is_distance = false)
+    public function scopeGetexerciseprs($query, $user_id, $log_date, $exercise_name, $return_date = false)
     {
         $query = $query->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
-                ->select(DB::raw('MAX(pr_value) as pr_value'), 'pr_reps')
+                ->select(DB::raw('MAX(pr_value) as pr_value'), 'pr_reps', 'exercise_records.is_time', 'exercise_records.is_endurance', 'exercise_records.is_distance')
                 ->where('exercise_records.user_id', $user_id)
                 ->where('exercises.exercise_name', $exercise_name)
-                ->where('exercises.is_time', $is_time)
-                ->where('exercises.is_endurance', $is_endurance)
-                ->where('exercises.is_distance', $is_distance)
                 ->where('log_date', '<=', $log_date)
                 ->groupBy('pr_reps');
         if ($return_date)
@@ -89,19 +86,20 @@ class Exercise_record extends Model
         return $query;
     }
 
-    public function scopeGetexercisemaxpr($query, $user_id, $exercise_id, $exercise_is_time, $exercise_is_endurance)
+    public function scopeGetexercisemaxpr($query, $user_id, $exercise_id, $exercise_is_time, $exercise_is_endurance, $exercise_is_distance)
     {
         $query = $query->where('user_id', $user_id)
                 ->where('exercise_id', $exercise_id)
                 ->where('is_time', $exercise_is_time)
                 ->where('is_endurance', $exercise_is_endurance)
+                ->where('is_distance', $exercise_is_distance)
                 ->orderBy('pr_value', 'desc');
         return $query;
     }
 
-    public static function exercisemaxpr($user_id, $exercise_id, $exercise_is_time, $exercise_is_endurance)
+    public static function exercisemaxpr($user_id, $exercise_id, $exercise_is_time, $exercise_is_endurance, $exercise_is_distance)
     {
-        $maxpr = Exercise_record::getexercisemaxpr($user_id, $exercise_id, $exercise_is_time, $exercise_is_endurance);
+        $maxpr = Exercise_record::getexercisemaxpr($user_id, $exercise_id, $exercise_is_time, $exercise_is_endurance, $exercise_is_distance);
         if ($maxpr->get() != null)
         {
             return $maxpr->value('pr_value');
@@ -109,6 +107,19 @@ class Exercise_record extends Model
         else
         {
             return 0;
+        }
+    }
+
+    public static function exercisePrs($user_id, $log_date, $exercise_name)
+    {
+        $prs = Exercise_record::getexerciseprs($user_id, $log_date, $exercise_name)->get();
+        $return_prs = array('W' => [], 'T' => [], 'E' => [], 'D' => []);
+        foreach ($prs as $pr)
+        {
+            $pr_type = ($pr->is_distance == true) ? 'D' :
+                        ($pr->is_endurance == true) ? 'E' :
+                        ($pr->is_time == true) ? 'T' : 'W';
+            $return_prs[$pr_type][$pr->pr_reps] = $pr->pr_value;
         }
     }
 
