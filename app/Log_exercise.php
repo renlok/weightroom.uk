@@ -22,6 +22,8 @@ class Log_exercise extends Model
         'logex_warmup_volume' => 0,
         'logex_warmup_reps' => 0,
         'logex_warmup_sets' => 0,
+        'logex_time' => 0,
+        'logex_distance' => 0
     );
 
     /**

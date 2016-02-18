@@ -17,9 +17,9 @@ class CreateExerciseRecordsTable extends Migration
             $table->integer('exercise_id')->unsigned()->index();
             $table->integer('user_id')->unsigned()->index();
             $table->date('log_date'); // CHANGED NAME
-            $table->double('pr_value', 20, 2); // CHANGED NAME
+            $table->double('pr_value', 25, 7); // CHANGED NAME
             $table->integer('pr_reps');
-            $table->double('pr_1rm', 20, 2);
+            $table->double('pr_1rm', 25, 7);
             $table->boolean('is_est1rm')->default('0'); // NEW COLOMN
             $table->boolean('is_time')->default('0');
             $table->boolean('is_endurance')->default('0'); // NEW COLOMN

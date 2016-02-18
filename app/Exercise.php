@@ -12,7 +12,8 @@ class Exercise extends Model
     protected $primaryKey = 'exercise_id';
     protected $casts = [
         'is_time' => 'boolean',
-        'is_endurance' => 'boolean'
+        'is_endurance' => 'boolean',
+        'is_distance' => 'boolean'
     ];
     protected $guarded = ['exercise_id'];
 

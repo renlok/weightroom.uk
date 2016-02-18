@@ -13,6 +13,8 @@ class Exercise_record extends Model
     protected $dateFormat = 'Y-m-d';
     protected $casts = [
         'is_time' => 'boolean',
+        'is_endurance' => 'boolean',
+        'is_distance' => 'boolean'
     ];
     protected $guarded = ['pr_id'];
 

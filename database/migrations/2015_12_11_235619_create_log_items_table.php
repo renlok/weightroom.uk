@@ -19,11 +19,11 @@ class CreateLogItemsTable extends Migration
             $table->integer('logex_id')->unsigned()->index(); // NEW colomn
             $table->integer('user_id')->unsigned()->index();
             $table->integer('exercise_id')->unsigned()->index();
-            $table->double('logitem_weight', 20, 2);
-            $table->double('logitem_time', 20, 2);
-            $table->double('logitem_distance', 20, 2); // NEW colomn
-            $table->double('logitem_abs_weight', 20, 2);
-            $table->double('logitem_1rm', 20, 2);
+            $table->double('logitem_weight', 25, 7);
+            $table->double('logitem_time', 25, 7);
+            $table->double('logitem_distance', 25, 7); // NEW colomn
+            $table->double('logitem_abs_weight', 25, 7);
+            $table->double('logitem_1rm', 25, 7);
             $table->integer('logitem_reps');
             $table->integer('logitem_sets');
             $table->double('logitem_pre', 3, 1)->nullable()->default(NULL); // CAHNGED NAME
