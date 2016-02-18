@@ -8,11 +8,21 @@
 <p><h3>{{ $log_exercise->log_date->toDateString() }}</h3><a href="{{ route('viewLog', ['date' => $log_exercise->log_date->toDateString()]) }}">View Log</a></p>
 @endif
 <p class="logrow">
-@if ($log_exercise->logex_volume > 0)
-    Volume: <span class="heavy">{{ Format::correct_weight($log_exercise->logex_volume) }}</span>{{ Auth::user()->user_unit }} - Reps: <span class="heavy">{{ $log_exercise->logex_reps }}</span> - Sets: <span class="heavy">{{ $log_exercise->logex_sets }}</span>
+@if ($log_exercise->logex_volume + ($log->logex_failed_volume * $user->user_volumeincfails) > 0)
+    Volume: <span class="heavy">{{ Format::correct_weight($log_exercise->logex_volume + ($log->logex_failed_volume * $user->user_volumeincfails)) }}</span>{{ Auth::user()->user_unit }} - Reps: <span class="heavy">{{ $log_exercise->logex_reps }}</span> - Sets: <span class="heavy">{{ $log_exercise->logex_sets }}</span>
     @if (Auth::user()->user_showintensity != 'h')
          - Avg. Intensity: <span class="heavy">{{ $log_exercise->average_intensity }}</span>
     @endif
+@endif
+@if ($log_exercise->logex_time > 0)
+    <p class="logrow">
+        Distance: <span class="heavy">{{ Format::correct_time($log_exercise->logex_time, 's', 'h') }}</span>km</span>
+    </p>
+@endif
+@if($log_exercise->logex_distance > 0)
+    <p class="logrow">
+        Distance: <span class="heavy">{{ Format::correct_distance($log_exercise->logex_distance, 'm', 'km') }}</span>km</span>
+    </p>
 @endif
 </p>
 <table class="table">
@@ -29,13 +39,13 @@
         <td class="logrow">
             {!! ($log_item->logitem_reps == 0) ? '<del>' : '' !!}
             <span class="heavy">{{ $log_item->display_value }}</span>{{ ($log_item->show_unit) ? Auth::user()->user_unit : ''}}
-            @if (($log_item->is_time && $log_item->logitem_reps > 1) || !$log_item->is_time)
+            @if ((($log_item->is_time || $log_item->is_distance) && $log_item->logitem_reps > 1) || !($log_item->is_time || $log_item->is_distance))
                 x <span class="heavy">{{ $log_item->logitem_reps }}</span>
             @endif
-            @if (($log_item->is_time && $log_item->logitem_sets > 1) || !$log_item->is_time)
+            @if ((($log_item->is_time || $log_item->is_distance) && $log_item->logitem_sets > 1) || !($log_item->is_time || $log_item->is_distance))
                 x <span class="heavy">{{ $log_item->logitem_sets }}</span>
             @endif
-            @if ($log_item->logitem_reps && !$log_item->is_time)
+            @if ($log_item->logitem_reps && !$log_item->is_time && !$log_item->is_distance)
                 <small class="leftspace"><i>&#8776; {{ Format::correct_weight($log_item->logitem_1rm) }} {{ ($log_item->show_unit) ?  Auth::user()->user_unit : ''}}</i></small>
             @endif
             @if ($log_item->logitem_pre != NULL)

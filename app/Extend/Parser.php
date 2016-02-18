@@ -337,6 +337,7 @@ class Parser
 			$this->log = Log::where('log_date', $this->log_date)
 							->where('user_id', $this->user->user_id)
 							->firstOrFail();
+            $this->resetLogDefaults ();
 		}
 		else
 		{
@@ -413,8 +414,8 @@ class Parser
 				{
 					$this->log_items[$i][$j]->is_pr = true;
                     $pr_type = ($this->log_items[$i][$j]->is_distance == true) ? 'D' :
-								($this->log_items[$i][$j]->is_endurance == true) ? 'E' :
-								($this->log_items[$i][$j]->is_time == true) ? 'T' : 'W';
+								(($this->log_items[$i][$j]->is_endurance == true) ? 'E' :
+								(($this->log_items[$i][$j]->is_time == true) ? 'T' : 'W'));
                     // the user has set a pr we need to add/update it in the database
                     $this->updatePrs ($old_records, $set, $i, $j);
                     if (!isset($this->new_prs[$exercise_name]))
@@ -1309,6 +1310,20 @@ class Parser
 		{
 			$this->user_weight = Format::correct_weight(floatval($this->user_weight), $this->user->user_unit, 'kg');
 		}
+    }
+
+    private function resetLogDefaults ()
+    {
+        $this->log->log_warmup_volume = 0;
+        $this->log->log_warmup_reps = 0;
+        $this->log->log_warmup_sets = 0;
+        $this->log->log_total_volume = 0;
+        $this->log->log_total_reps = 0;
+        $this->log->log_total_sets = 0;
+        $this->log->log_failed_volume = 0;
+        $this->log->log_failed_sets = 0;
+        $this->log->log_total_time = 0;
+        $this->log->log_total_distance = 0;
     }
 
     private function flag_error($error)

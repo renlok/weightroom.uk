@@ -37,7 +37,19 @@ class Format {
     	}
     }
 
-    public static function correct_time($time, $unit_used, $unit_want, $round = 2) // $unit_used = s/m/h $unit_want = s/m/h
+    public static function format_distance($distance)
+    {
+    	if ($distance < 1000)
+    	{
+    		return $distance . ' m';
+    	}
+    	else
+    	{
+    		return $distance/1000 . 'km';
+    	}
+    }
+
+    public static function correct_time($time, $unit_used = 's', $unit_want = 's', $round = 2) // $unit_used = s/m/h $unit_want = s/m/h
     {
     	$unit_used = ($unit_used == 's') ? 1 : (($unit_used == 'm') ? 2 : 3);
     	$unit_want = ($unit_want == 's') ? 1 : (($unit_want == 'm') ? 2 : 3);
@@ -63,7 +75,7 @@ class Format {
         }
     }
 
-    public static function correct_weight($weight, $unit_used = 'kg', $unit_want = 'kg', $round = 20) // $unit_used = kg/lb $unit_want = kg/lb
+    public static function correct_weight($weight, $unit_used = 'kg', $unit_want = 0, $round = 20) // $unit_used = kg/lb $unit_want = kg/lb
     {
         $unit_want = ($unit_want == 0) ? Auth::user()->user_unit : $unit_want;
     	if ($unit_used == 'kg' && $unit_want == 'lb')

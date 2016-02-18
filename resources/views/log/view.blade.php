@@ -60,6 +60,8 @@ h3.exercise {
 				@foreach ($weights as $weight)
 					@if ($type == 'W')
 						<p>You have set a new <strong>{{ $exercise }} {{ $rep }}RM</strong> of <strong>{{ $weight }}</strong> kg</p>
+					@elseif ($type == 'D')
+						<p>You have set a new <strong>{{ $exercise }} {{ $rep }}RM</strong> of <strong>{{ $weight/1000 }}</strong>km</p>
 					@else
 						<p>You have set a new <strong>{{ $exercise }} {{ $rep }}RM</strong> of <strong>{{ $weight }}</strong>s</p>
 					@endif
@@ -124,6 +126,16 @@ h3.exercise {
 		@if (Auth::user()->user_showintensity != 'h')
 			- Avg. Intensity: <span class="heavy">{{ $log->average_intensity }}</span>
 		@endif
+		</p>
+	@endif
+	@if ($log->log_total_time > 0)
+		<p class="logrow">
+			Distance: <span class="heavy">{{ Format::correct_time($log->log_total_time, 's', 'h') }}</span>km</span>
+		</p>
+	@endif
+	@if($log->log_total_distance > 0)
+		<p class="logrow">
+			Distance: <span class="heavy">{{ Format::correct_distance($log->log_total_distance, 'm', 'km') }}</span>km</span>
 		</p>
 	@endif
 	@if ($log->log_weight > 0)

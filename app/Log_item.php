@@ -72,11 +72,15 @@ class Log_item extends Model
      */
     public function getDisplayValueAttribute()
     {
-        if (isset($this->attributes['is_time']) && isset($this->attributes['is_bw']) && isset($this->attributes['logitem_weight']) && isset($this->attributes['logitem_time']))
+        if (isset($this->attributes['is_time']) && isset($this->attributes['is_bw']) && isset($this->attributes['is_distance']) && isset($this->attributes['logitem_weight']) && isset($this->attributes['logitem_time']))
         {
             if ($this->attributes['is_time'])
     		{
     			return Format::format_time($this->attributes['logitem_time']);
+    		}
+    		elseif ($this->attributes['is_distance'])
+    		{
+    			return Format::format_distance($this->attributes['logitem_distance']);
     		}
     		elseif ($this->attributes['is_bw'] == 0)
     		{
@@ -113,6 +117,10 @@ class Log_item extends Model
         if (isset($this->attributes['is_time']) && isset($this->attributes['is_bw']) && isset($this->attributes['logitem_weight']))
         {
             if ($this->attributes['is_time'])
+    		{
+    			return false;
+    		}
+    		elseif ($this->attributes['is_distance'])
     		{
     			return false;
     		}
