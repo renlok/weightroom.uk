@@ -27,7 +27,21 @@ class ExercisesController extends Controller
 
     public function getEdit($exercise_name)
     {
-        return view('exercise.edit', compact('exercise_name'));
+        $exercise = Exercise::select('is_time', 'is_endurance', 'is_distance')->where('exercise_name', $exercise_name)->where('user_id', Auth::user()->user_id)->firstOrFail();
+        $current_type = 'weight';
+        if ($exercise->is_distance)
+        {
+            $current_type = 'distance';
+        }
+        elseif ($exercise->is_endurance)
+        {
+            $current_type = 'enduracne';
+        }
+        elseif ($exercise->is_time)
+        {
+            $current_type = 'time';
+        }
+        return view('exercise.edit', compact('exercise_name', 'current_type'));
     }
 
     public function postEdit($exercise_name, Request $request)
@@ -69,6 +83,33 @@ class ExercisesController extends Controller
         return redirect()
             ->route('viewExercise', ['exercise_name' => $new_name])
             ->with(['flash_message' => "$exercise_name shall be now known as $new_name"]);
+    }
+
+    public function postEditType($exercise_name, Request $request)
+    {
+        $new_type = $request->input('exerciseType');
+        $exercise = Exercise::select('exercise_id')->where('exercise_name', $exercise_name)->where('user_id', Auth::user()->user_id)->firstOrFail();
+        $update = ['is_time' => false, 'is_endurance' => false, 'is_distance' => false];
+        if ($new_type == 'time')
+        {
+            $update['is_time'] = true;
+        }
+        elseif ($new_type == 'enduracne')
+        {
+            $update['is_time'] = true;
+            $update['is_endurance'] = true;
+        }
+        elseif ($new_type == 'distance')
+        {
+            $update['is_distance'] = true;
+        }
+    	// update the log texts
+        DB::table('exercises')
+            ->where('exercise_id', $exercise->exercise_id)
+            ->update($update);
+        return redirect()
+            ->route('viewExercise', ['exercise_name' => $exercise_name])
+            ->with(['flash_message' => "$exercise_name has been updated"]);
     }
 
     public function history($exercise_name, $from_date = '', $to_date = '')

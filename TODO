@@ -1,8 +1,3 @@
-- fixes for parser
-    add total time/total distance columns
-    add distance option (is_distance flags)
-    add exercise tags (like wxr) #Exercise Name #Tag
-
 - add importer!!
     http://tutsnare.com/upload-files-in-laravel/
     http://www.maatwebsite.nl/laravel-excel/docs/import#results
@@ -32,7 +27,7 @@
 - give a description of each page so any pleb would understand what the page is for
 - add Performance page (similar to TSRs one)
 - Add list of users you follow
-- add tags to exercises
+- add tags to exercises (and tags (like wxr) #Exercise Name #Tag)
 - add a page that you are taken too before you post your first log that gives simple tutorial
 - Add a stats page
 

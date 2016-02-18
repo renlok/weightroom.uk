@@ -76,6 +76,7 @@ Route::group(['prefix' => 'exercise', 'middleware' => 'auth'], function () {
     // edit exercise routes
     Route::get('{exercise_name}/edit', 'ExercisesController@getEdit')->name('editExercise');
     Route::post('{exercise_name}/edit', 'ExercisesController@postEdit');
+    Route::post('{exercise_name}/edittype', 'ExercisesController@postEditType')->name('editExerciseType');
     // history
     Route::get('{exercise_name}/history/{from_date?}/{to_date?}', 'ExercisesController@history')->name('exerciseHistory');
     // volume
