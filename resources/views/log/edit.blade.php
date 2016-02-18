@@ -265,6 +265,7 @@ $(document).ready(function(){
 		WW: function(s, o) {
 			if (s.match(/^\s*\d+(\s*:\s*\d{1,2}){1,2}(\s*,\s*)?/i, true) ||
                 s.match(/^\s*\d+\s*(second|sec|minute|min|hour|hr)s?(\s*,\s*)?/i, true) ||
+                s.match(/^\s*\d+\s*(m|km|mile)s?(\s*,\s*)?/i, true) ||
                 s.match(/^\s*\d+(\.\d{1,2})?(\s*kgs?|\s*lbs?)?(\s*,\s*)?/i, true) ||
                 s.match(/^\s*BW(\s*[\+\-]\s*\d+(\.\d{1,2})?(\s*(kgs?|lbs?))?(\s*,\s*)?)?/i, true)) {
 				this.next = [this.W, this.WW, this.RR, this.R, this.RPERPE, this.RPE, this.C];
@@ -274,6 +275,7 @@ $(document).ready(function(){
 		W: function(s, o) {
 			if (s.sol()) {
 				if (s.match(/^\s*\d+(\s*:\s*\d{1,2}){1,2}(\s*,\s*)?/i, true) ||
+                    s.match(/^\s*\d+\s*(m|km|mile)s?(\s*,\s*)?/i, true) ||
                     s.match(/^\s*\d+\s*(second|sec|minute|min|hour|hr)s?(\s*,\s*)?/i, true) ||
                     s.match(/^\s*\d+(\.\d{1,2})?(\s*kgs?|\s*lbs?)?(\s*,\s*)?/i, true) ||
                     s.match(/^\s*BW(\s*[\+\-]\s*\d+(\.\d{1,2})?(\s*(kgs?|lbs?))?(\s*,\s*)?)?/i, true)) {

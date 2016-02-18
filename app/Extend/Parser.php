@@ -560,6 +560,11 @@ class Parser
 				$set['T'][0] = floatval($set['U']);
 				$set['T'][1] = '';
 			}
+			elseif ($this->exercises[$i]['distance'])
+			{
+				$set['D'][0] = floatval($set['U']);
+				$set['D'][1] = '';
+			}
 			else
 			{
 				$set['W'][0] = floatval($set['U']);
@@ -577,6 +582,7 @@ class Parser
 			}
 			$set['W'] = $this->correctUnitsDatabase ($set['W'], 'W');
 			$set['T'] = 0;
+            $set['D'] = 0;
 		}
 		elseif (isset($set['T']))
 		{
@@ -584,6 +590,15 @@ class Parser
 			$set['T'] = $this->correctUnitsDatabase ($set['T'], 'T');
 			$this->log_items[$i][$j]->is_time = true;
 			$set['W'] = 0;
+            $set['D'] = 0;
+		}
+		elseif (isset($set['D']))
+		{
+			$set['D'][0] = str_replace(' ', '', $set['D'][0]);
+			$set['D'] = $this->correctUnitsDatabase ($set['D'], 'D');
+			$this->log_items[$i][$j]->is_distance = true;
+			$set['W'] = 0;
+            $set['T'] = 0;
 		}
 		$set['R'] = (isset($set['R'])) ? intval($set['R']) : 1;
 		$set['S'] = (isset($set['S'])) ? intval($set['S']) : 1;
@@ -699,43 +714,44 @@ class Parser
 			return false;
 		}
 
-		$item_volume = $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
-		$this->log_exercises[$i]->logex_volume += $item_volume;
-		$this->log_exercises[$i]->logex_reps += ($set['R'] * $set['S']);
-		$this->log_exercises[$i]->logex_sets += $set['S'];
-		$this->log->log_total_volume += $item_volume;
-		$this->log->log_total_reps += ($set['R'] * $set['S']);
-		$this->log->log_total_sets += $set['S'];
+        if ($this->log_items[$i][$j]->is_time)
+        {
+            $this->log_exercises[$i]->logex_time += $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
+            $this->log->log_total_time += $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
+        }
+        elseif ($this->log_items[$i][$j]->is_distance)
+        {
+            $this->log_exercises[$i]->logex_distance += $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
+            $this->log->log_total_distance += $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
+        }
+        else
+        {
+            $item_volume = $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
+    		$this->log_exercises[$i]->logex_volume += $item_volume;
+    		$this->log_exercises[$i]->logex_reps += ($set['R'] * $set['S']);
+    		$this->log_exercises[$i]->logex_sets += $set['S'];
+    		$this->log->log_total_volume += $item_volume;
+    		$this->log->log_total_reps += ($set['R'] * $set['S']);
+    		$this->log->log_total_sets += $set['S'];
 
-		if ($set['R'] == 0)
-		{
-			$this->log_exercises[$i]->logex_failed_volume += ($this->log_items[$i][$j]->logitem_abs_weight * $set['S']);
-			$this->log_exercises[$i]->logex_failed_sets += $set['S'];
-			$this->log->log_failed_volume += ($this->log_items[$i][$j]->logitem_abs_weight * $set['S']);
-			$this->log->log_failed_sets += $set['S'];
-		}
+    		if ($set['R'] == 0)
+    		{
+    			$this->log_exercises[$i]->logex_failed_volume += ($this->log_items[$i][$j]->logitem_abs_weight * $set['S']);
+    			$this->log_exercises[$i]->logex_failed_sets += $set['S'];
+    			$this->log->log_failed_volume += ($this->log_items[$i][$j]->logitem_abs_weight * $set['S']);
+    			$this->log->log_failed_sets += $set['S'];
+    		}
 
-		if ($this->log_items[$i][$j]->is_warmup)
-		{
-			$this->log_exercises[$i]->logex_warmup_volume += $item_volume;
-			$this->log_exercises[$i]->logex_warmup_reps += ($set['R'] * $set['S']);
-			$this->log_exercises[$i]->logex_warmup_sets += $set['S'];
-			$this->log->log_warmup_volume += $item_volume;
-			$this->log->log_warmup_reps += ($set['R'] * $set['S']);
-			$this->log->log_warmup_sets += $set['S'];
-		}
-
-		if ($this->log_items[$i][$j]->is_time)
-		{
-			$this->log_exercises[$i]->logex_time += $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
-			$this->log->log_total_time += $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
-		}
-
-		if ($this->log_items[$i][$j]->is_distance)
-		{
-			$this->log_exercises[$i]->logex_distance += $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
-			$this->log->log_total_distance += $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
-		}
+    		if ($this->log_items[$i][$j]->is_warmup)
+    		{
+    			$this->log_exercises[$i]->logex_warmup_volume += $item_volume;
+    			$this->log_exercises[$i]->logex_warmup_reps += ($set['R'] * $set['S']);
+    			$this->log_exercises[$i]->logex_warmup_sets += $set['S'];
+    			$this->log->log_warmup_volume += $item_volume;
+    			$this->log->log_warmup_reps += ($set['R'] * $set['S']);
+    			$this->log->log_warmup_sets += $set['S'];
+    		}
+        }
 	}
 
 	private function checkPR (&$prs, $set, $i, $j)
@@ -997,16 +1013,18 @@ class Parser
                 's' => 's', // needs to be at the end or it ruins the party
             ),
             'W' => array(
-                'kg' => 'kg',
                 'kgs' => 'kg',
-                'lb' => 'lb',
+                'kg' => 'kg',
                 'lbs' => 'lb',
+                'lb' => 'lb',
             ),
             'D' => array(
-                'm' => 'm',
+                'kms' => 'km',
                 'km' => 'km',
-                'mile' => 'mile',
+                'ms' => 'm',
+                'm' => 'm',
                 'miles' => 'mile',
+                'mile' => 'mile',
             ),
         );
         $this->format_types_all = array(

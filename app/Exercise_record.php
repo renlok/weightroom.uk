@@ -30,10 +30,6 @@ class Exercise_record extends Model
         {
             $query = $query->addSelect(DB::raw('MAX(log_date) as log_date'));
         }
-        else
-        {
-            $query = $query->lists('pr_value', 'pr_reps');
-        }
         return $query;
     }
 
