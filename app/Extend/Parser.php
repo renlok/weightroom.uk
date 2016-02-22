@@ -403,7 +403,7 @@ class Parser
                 $this->log_items[$i][$j]->is_distance = $this->exercises[$i]['distance'];
                 // check comment for special tags
 				$set['C'] = (isset($set['C'])) ? $set['C'] : '';
-				$this->checkSpecialTags ($set['C'], $i, $j, $set);
+				$this->checkSpecialTags ($set['C'], $i, $j);
 				// clean up set data
 				$set = $this->cleanSetData ($set, $i, $j);
 				$this->setAbsoluteWeight ($set, $i, $j);

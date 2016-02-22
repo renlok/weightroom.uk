@@ -18,30 +18,40 @@ class Exercise_record extends Model
     ];
     protected $guarded = ['pr_id'];
 
-    public function scopeGetexerciseprs($query, $user_id, $log_date, $exercise_name, $return_date = false)
+    public function scopeGetexerciseprs($query, $user_id, $log_date, $exercise_name, $exercise_object = false, $return_date = false)
     {
         $query = $query->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
                 ->select(DB::raw('MAX(pr_value) as pr_value'), 'pr_reps', 'exercise_records.is_time', 'exercise_records.is_endurance', 'exercise_records.is_distance')
                 ->where('exercise_records.user_id', $user_id)
                 ->where('exercises.exercise_name', $exercise_name)
-                ->where('log_date', '<=', $log_date)
-                ->groupBy('pr_reps');
+                ->where('log_date', '<=', $log_date);
+        if ($exercise_object !== false)
+        {
+            $query = $query->where('exercise_records.is_time', $exercise_object->is_time)
+                            ->where('exercise_records.is_endurance', $exercise_object->is_endurance)
+                            ->where('exercise_records.is_distance', $exercise_object->is_distance);
+        }
         if ($return_date)
         {
             $query = $query->addSelect(DB::raw('MAX(log_date) as log_date'));
         }
+        $query = $query->groupBy('pr_reps');
         return $query;
     }
 
-    public function scopeGetexerciseprsall($query, $user_id, $range, $exercise_name, $is_time = false, $is_endurance = false, $show_reps = [1,2,3,4,5,6,7,8,9,10])
+    public function scopeGetexerciseprsall($query, $user_id, $range, $exercise_name, $exercise_object = false, $show_reps = [1,2,3,4,5,6,7,8,9,10])
     {
         $query = $query->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
                 ->select('pr_reps', DB::raw('MAX(pr_value) as pr_value'), 'log_date')
                 ->where('exercise_records.user_id', $user_id)
                 ->where('exercises.exercise_name', $exercise_name)
-                ->where('exercises.is_time', $is_time)
-                ->where('exercises.is_endurance', $is_endurance)
                 ->whereIn('pr_reps', $show_reps);
+        if ($exercise_object !== false)
+        {
+            $query = $query->where('exercise_records.is_time', $exercise_object->is_time)
+                            ->where('exercise_records.is_endurance', $exercise_object->is_endurance)
+                            ->where('exercise_records.is_distance', $exercise_object->is_distance);
+        }
         if ($range > 0)
         {
             $query = $query->where('log_date', '>=', Carbon::now()->subMonths($range)->toDateString());

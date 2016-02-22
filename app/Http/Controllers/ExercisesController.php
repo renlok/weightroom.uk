@@ -44,7 +44,7 @@ class ExercisesController extends Controller
         return view('exercise.edit', compact('exercise_name', 'current_type'));
     }
 
-    public function postEdit($exercise_name, Request $request)
+    public function postEditName($exercise_name, Request $request)
     {
         $new_name = $request->input('exercisenew');
         $exercise_old = Exercise::where('exercise_name', $exercise_name)->where('user_id', Auth::user()->user_id)->firstOrFail();
@@ -85,7 +85,7 @@ class ExercisesController extends Controller
             ->with(['flash_message' => "$exercise_name shall be now known as $new_name"]);
     }
 
-    public function postEditType($exercise_name, Request $request)
+    public function postEdit($exercise_name, Request $request)
     {
         $new_type = $request->input('exerciseType');
         $exercise = Exercise::select('exercise_id')->where('exercise_name', $exercise_name)->where('user_id', Auth::user()->user_id)->firstOrFail();
@@ -157,13 +157,13 @@ class ExercisesController extends Controller
     public function getViewExercise($exercise_name, $type = 'prs', $range = 0, $force_pr_type = null)
     {
         $exercise = Exercise::getexercise($exercise_name, Auth::user()->user_id)->firstOrFail();
-        $query = Exercise_record::getexerciseprs(Auth::user()->user_id, Carbon::now()->toDateString(), $exercise_name, true)->get();
+        $query = Exercise_record::getexerciseprs(Auth::user()->user_id, Carbon::now()->toDateString(), $exercise_name, $exercise, true)->get();
         $current_prs = $query->groupBy('pr_reps')->toArray();
         $filtered_prs = Exercise_record::filterPrs($query);
         if ($type == 'prs')
         {
-            $prs = Exercise_record::getexerciseprsall(Auth::user()->user_id, $range, $exercise_name, $exercise->is_time, $exercise->is_endurance, Auth::user()->user_showreps)->get()->groupBy('pr_reps');
-            if (!$exercise->is_time)
+            $prs = Exercise_record::getexerciseprsall(Auth::user()->user_id, $range, $exercise_name, $exercise, Auth::user()->user_showreps)->get()->groupBy('pr_reps');
+            if (!($exercise->is_time || $exercise->is_distance))
             {
                 $prs['Approx. 1'] = Exercise_record::getest1rmall(Auth::user()->user_id, $range, $exercise_name, Auth::user()->user_showreps)->get();
                 // be in format [1 => ['log_weight' => ??, 'log_date' => ??]]
@@ -173,8 +173,17 @@ class ExercisesController extends Controller
         {
             $prs = Log_item::getexercisemaxes(Auth::user()->user_id, $range, $exercise_name, $exercise->is_time, Auth::user()->user_showreps, $type)->get()->groupBy('logitem_reps');
         }
+        $graph_label = 'Weight';
+        if ($exercise->is_time)
+        {
+            $graph_label = 'Time';
+        }
+        elseif ($exercise->is_distance)
+        {
+            $graph_label = 'Distance';
+        }
 
-        return view('exercise.view', compact('exercise_name', 'current_prs', 'filtered_prs', 'prs', 'range', 'type'));
+        return view('exercise.view', compact('exercise_name', 'current_prs', 'filtered_prs', 'prs', 'range', 'type', 'graph_label'));
     }
 
     public function getCompareForm()

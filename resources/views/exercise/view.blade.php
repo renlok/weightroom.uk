@@ -149,7 +149,7 @@
             .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); });
 
         chart.yAxis
-            .axisLabel('Weight')
+            .axisLabel('{{ $graph_label }}')
             .tickFormat(d3.format('.02f'));
 
 		d3.select('#prHistoryChart')

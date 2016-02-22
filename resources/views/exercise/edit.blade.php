@@ -4,7 +4,7 @@
 
 @section('content')
 <h2>Edit: {{ $exercise_name }}</h2>
-<form class="form-horizontal" action="{{ route('editExercise', ['exercise_name' => $exercise_name]) }}" method="post">
+<form class="form-horizontal" action="{{ route('editExerciseName', ['exercise_name' => $exercise_name]) }}" method="post">
   <div class="form-group">
     <h3>Rename exercise</h3>
   </div>
@@ -23,7 +23,7 @@
   </div>
 </form>
 
-<form class="form-horizontal" action="{{ route('editExerciseType', ['exercise_name' => $exercise_name]) }}" method="post">
+<form class="form-horizontal" action="{{ route('editExercise', ['exercise_name' => $exercise_name]) }}" method="post">
   <div class="form-group">
     <h3>Change exercise type</h3>
   </div>
