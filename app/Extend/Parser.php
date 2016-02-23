@@ -32,7 +32,7 @@ class Parser
     private $format_dump;
     private $chunk_dump;
     // final array
-    private $log_data;
+    public $log_data;
     private $log_text;
     // useful data for saving the log
     private $user_weight;
@@ -108,7 +108,7 @@ class Parser
     private function parseLine ($line, $position)
     {
         // build the initial startup data
-        $this->current_blocks = array('U', 'W', 'T', 'D', 'C');
+        $this->current_blocks = array('U', 'W', 'D', 'T', 'C');
         $this->build_next_formats ();
         $this->build_accepted_char ();
         $this->build_accepted_chars ();
@@ -204,7 +204,16 @@ class Parser
         {
             if ($this->current_blocks[0] != 'C')
             {
-                $this->chunk_dump = $this->clean_units($this->chunk_dump, $this->current_blocks[0]);
+                // TODO: not sure this works
+                if ($this->format_check())
+                {
+                    $this->chunk_dump = $this->clean_units($this->chunk_dump, $this->current_blocks[0]);
+                }
+                else
+                {
+                    // final chunk not valid assume its a comment
+                    $this->current_blocks[0] == 'C';
+                }
             }
             if (isset($output_data[$multiline][$this->current_blocks[0]]))
             {
@@ -382,6 +391,7 @@ class Parser
                 $this->exercises[$i]['endurance'] = $exercise->is_endurance;
 				$this->exercises[$i]['distance'] = $exercise->is_distance;
             }
+            $this->exercises[$i]['update'] = false;
 			$this->exercises[$i]['id'] = $exercise->exercise_id;
 			// insert log_exercise data
 			$this->log_exercises[$i]->log_date = $this->log_date;
@@ -427,8 +437,11 @@ class Parser
 				}
                 if ($this->exercises[$i]['new'])
                 {
+                    $this->exercises[$i]['new'] = false;
+                    $this->exercises[$i]['update'] = true;
                     $this->exercises[$i]['time'] = $this->log_items[$i][$j]->is_time;
                     $this->exercises[$i]['endurance'] = $this->log_items[$i][$j]->is_endurance;
+                    $this->exercises[$i]['distance'] = $this->log_items[$i][$j]->is_distance;
                 }
 				$this->log_items[$i][$j]->logitem_1rm = $this->generate_rm ($this->log_items[$i][$j]->logitem_abs_weight, $set['R']);
 				// get estimate 1rm
@@ -803,7 +816,7 @@ class Parser
 	private function setExerciseDefaultTypes ($i)
 	{
 		// if new exercise set if it a time based exercise
-		if ($this->exercises[$i]['new'])
+		if ($this->exercises[$i]['update'])
 		{
 			$update_exercises = [];
 			if ($this->exercises[$i]['time'])
@@ -848,6 +861,7 @@ class Parser
 					->where('is_est1rm', 1)
                     ->where('is_time', $is_time)
                     ->where('is_endurance', $is_endurance)
+                    ->where('is_distance', $is_distance)
                     ->orderBy('log_date', 'desc')
                     ->value('pr_1rm');
         $new_1rm = $this->generate_rm ($set_weight, $set_reps);
@@ -996,23 +1010,6 @@ class Parser
     {
         // pre-defined data
         $this->units = array(
-            'T' => array(
-                'secs' => 's',
-                'sec' => 's',
-                'seconds' => 's',
-                'second' => 's',
-                'm' => 'm',
-                'mins' => 'm',
-                'min' => 'm',
-                'minutes' => 'm',
-                'minute' => 'm',
-                'h' => 'h',
-                'hrs' => 'h',
-                'hr' => 'h',
-                'hours' => 'h',
-                'hour' => 'h',
-                's' => 's', // needs to be at the end or it ruins the party
-            ),
             'W' => array(
                 'kgs' => 'kg',
                 'kg' => 'kg',
@@ -1027,15 +1024,26 @@ class Parser
                 'miles' => 'mile',
                 'mile' => 'mile',
             ),
+            'T' => array(
+                'seconds' => 's',
+                'second' => 's',
+                'secs' => 's',
+                'sec' => 's',
+                'minutes' => 'm',
+                'minute' => 'm',
+                'mins' => 'm',
+                'min' => 'm',
+                'm' => 'm',
+                'hours' => 'h',
+                'hour' => 'h',
+                'hrs' => 'h',
+                'hr' => 'h',
+                'h' => 'h',
+                's' => 's', // needs to be at the end or it ruins the party
+            )
         );
         $this->format_types_all = array(
 			'U' => array(('0')),
-            'T' => array(
-                ('0:0:0'),
-                ('0:0'),
-                ('0.0'),
-                ('0'),
-            ),
             'W' => array(
                 ('0.0'),
                 ('0'),
@@ -1046,6 +1054,12 @@ class Parser
                 ('bw-0'),
             ),
             'D' => array(
+                ('0.0'),
+                ('0'),
+            ),
+            'T' => array(
+                ('0:0:0'),
+                ('0:0'),
                 ('0.0'),
                 ('0'),
             ),
@@ -1068,9 +1082,9 @@ class Parser
         // comment can follow anything
         $this->format_follows = array(
             'U' => array('R', 'P'),
-            'T' => array('R', 'P'),
             'W' => array('R', 'P'),
             'D' => array('R', 'P'),
+            'T' => array('R', 'P'),
             'R' => array('S', 'P'),
             'S' => array('P'),
             'P' => array(''),
