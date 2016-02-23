@@ -94,9 +94,9 @@ class LogsController extends Controller
 
     public function getEdit($date)
     {
-        $user = User::find(Auth::user()->user_id)->firstOrFail();
-        $log = Log::where('log_date', $date)
-                    ->select('log_text', 'log_weight', 'log_update_text')
+        $user = Auth::user();
+        $log = Log::select('log_text', 'log_weight', 'log_update_text')
+                    ->where('log_date', $date)
                     ->where('user_id', $user->user_id)
                     ->firstOrFail();
         if ($log->log_update_text == 1)
@@ -133,7 +133,7 @@ class LogsController extends Controller
 
     public function getNew($date)
     {
-        $user = User::find(Auth::user()->user_id)->firstOrFail();
+        $user = Auth::user();
         $log = [
             'log_text' => '',
             'log_weight' => Log::getlastbodyweight(Auth::user()->user_id, $date)->value('log_weight'),
