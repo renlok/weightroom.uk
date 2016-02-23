@@ -129,6 +129,7 @@ class Exercise_record extends Model
                         ($pr->is_time == true) ? 'T' : 'W';
             $return_prs[$pr_type][$pr->pr_reps] = $pr->pr_value;
         }
+        return $return_prs;
     }
 
     public static function filterPrs($collection)
