@@ -54,7 +54,7 @@ class Parser
         // build the initial startup data
         $this->log_text = $log_text;
         $this->log_date = $log_date;
-        $this->user_weight = $user_weight;
+        $this->user_weight = ($user_weight == '') ? 0 : floatval($user_weight);
         $this->construct_globals ();
         $this->getUserWeight ();
     }
@@ -424,6 +424,10 @@ class Parser
 				$this->checkSpecialTags ($set['C'], $i, $j);
 				// clean up set data
 				$set = $this->cleanSetData ($set, $i, $j);
+                if ($this->log_items[$i][$j]->is_bw && $this->user_weight == 0)
+                {
+                    $this->warnings['blank_bodyweight'] = true;
+                }
 				$this->setAbsoluteWeight ($set, $i, $j);
 				// calculate volume data
 				$this->updateVolumes ($set, $i, $j);
@@ -440,8 +444,12 @@ class Parser
 					{
                         $this->new_prs[$exercise_name] = array('W' => [], 'T' => [], 'E' => [], 'D' => []);
 					}
-                    $this->new_prs[$exercise_name][$pr_type][$set['R']][] = $this->log_items[$i][$j]->logitem_abs_weight;
                     $prs[$pr_type][$set['R']] = $this->log_items[$i][$j]->logitem_abs_weight;
+                    // dont give PR message if new exercise
+                    if (!($this->exercises[$i]['new'] || $this->exercises[$i]['update']))
+                    {
+                        $this->new_prs[$exercise_name][$pr_type][$set['R']][] = $this->log_items[$i][$j]->logitem_abs_weight;
+                    }
 				}
                 if ($this->exercises[$i]['new'])
                 {
@@ -1323,7 +1331,7 @@ class Parser
 
     public function getUserWeight ()
     {
-        if (strlen($this->user_weight) == 0 || intval($this->user_weight) == 0)
+        if (strlen($this->user_weight) == 0 || $this->user_weight == 0)
 		{
             $query = DB::table('logs')
                         ->where('log_date', '<', $this->log_date)
@@ -1341,7 +1349,7 @@ class Parser
 		}
 		else
 		{
-			$this->user_weight = Format::correct_weight(floatval($this->user_weight), $this->user->user_unit, 'kg');
+			$this->user_weight = Format::correct_weight($this->user_weight, $this->user->user_unit, 'kg');
 		}
     }
 

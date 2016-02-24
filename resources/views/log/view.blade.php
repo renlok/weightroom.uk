@@ -75,7 +75,7 @@ h3.exercise {
 <div class="alert alert-info">
 	@foreach (session('new_exercises') as $new_exercise)
 		<p>You have logged {{ $new_exercise[0] }} for the first time</p>
-		<p class="small">We have set it to be a {{ ($new_exercise[2]) ? 'endurance' : (($new_exercise[3]) ? 'distance' : (($new_exercise[1]) ? 'time' : 'weight')) }} exercise by default from now on</p>
+		<p class="small">We have set it to be a {{ ($new_exercise[2]) ? 'endurance' : (($new_exercise[3]) ? 'distance' : (($new_exercise[1]) ? 'time' : 'weight')) }} exercise by default from now on, you change this in <a href="{{ route('editExercise', ['exercise_name' => $new_exercise[0]]) }}">edit exercise</a> page.</p>
 	@endforeach
 </div>
 @endif
@@ -84,6 +84,9 @@ h3.exercise {
 	@foreach (session('warnings') as $warning => $bool)
 		@if ($warning == 'blank_exercise')
 			<p>One or more of the exercises you added did not have any workout data</p>
+		@endif
+		@if ($warning == 'blank_bodyweight')
+			<p>You have entered a bodyweight exercise but have no entered your bodyweight</p>
 		@endif
 	@endforeach
 </div>
