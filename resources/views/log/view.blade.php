@@ -61,9 +61,9 @@ h3.exercise {
 					@if ($type == 'W')
 						<p>You have set a new <strong>{{ $exercise }} {{ $rep }}RM</strong> of <strong>{{ $weight }}</strong> kg</p>
 					@elseif ($type == 'D')
-						<p>You have set a new <strong>{{ $exercise }} {{ $rep }}RM</strong> of <strong>{{ Format::format_distance($weight) }}</strong></p>
+						<p>You have set a new <strong>{{ $exercise }}</strong> personal best of <strong>{{ Format::format_distance($weight) }}</strong></p>
 					@else
-						<p>You have set a new <strong>{{ $exercise }} {{ $rep }}RM</strong> of <strong>{{ Format::format_time($weight) }}</strong></p>
+						<p>You have set a new <strong>{{ $exercise }}</strong> personal best of <strong>{{ Format::format_time($weight) }}</strong></p>
 					@endif
 				@endforeach
 			@endforeach
