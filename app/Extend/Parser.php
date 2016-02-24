@@ -440,14 +440,14 @@ class Parser
 								(($this->log_items[$i][$j]->is_time == true) ? 'T' : 'W'));
                     // the user has set a pr we need to add/update it in the database
                     $this->updatePrs ($old_records, $set, $i, $j);
-                    if (!isset($this->new_prs[$exercise_name]))
-					{
-                        $this->new_prs[$exercise_name] = array('W' => [], 'T' => [], 'E' => [], 'D' => []);
-					}
                     $prs[$pr_type][$set['R']] = $this->log_items[$i][$j]->logitem_abs_weight;
                     // dont give PR message if new exercise
                     if (!($this->exercises[$i]['new'] || $this->exercises[$i]['update']))
                     {
+                        if (!isset($this->new_prs[$exercise_name]))
+    					{
+                            $this->new_prs[$exercise_name] = array('W' => [], 'T' => [], 'E' => [], 'D' => []);
+    					}
                         $this->new_prs[$exercise_name][$pr_type][$set['R']][] = $this->log_items[$i][$j]->logitem_abs_weight;
                     }
 				}
