@@ -27,7 +27,7 @@
 </p>
 <table class="table">
 <tbody>
-@foreach ($log_exercise->log_items as $log_item)
+@forelse ($log_exercise->log_items as $log_item)
     <tr class="{{ $log_item->is_pr ? 'alert alert-success' : ''}}{{ ($log_item->logitem_reps == 0) ? 'alert alert-danger' : ''}} {{ (($log_item->is_warmup) ? 'warmup' : '') }}">
         <td class="tdpr">
             @if($log_item->is_pr)
@@ -46,7 +46,7 @@
                 x <span class="heavy">{{ $log_item->logitem_sets }}</span>
             @endif
             @if ($log_item->logitem_reps && !$log_item->is_time && !$log_item->is_distance)
-                <small class="leftspace"><i>&#8776; {{ Format::correct_weight($log_item->logitem_1rm) }} {{ ($log_item->show_unit) ?  Auth::user()->user_unit : ''}}</i></small>
+                <small class="leftspace"><i>&#8776; {{ Format::correct_weight($log_item->logitem_1rm) }} {{ Auth::user()->user_unit }}</i></small>
             @endif
             @if ($log_item->logitem_pre != NULL)
                 <span class="leftspace">@ {{ $log_item->logitem_pre }}</span>
@@ -66,7 +66,11 @@
             @endif
         </td>
     </tr>
-@endforeach
+@empty
+    <tr>
+        <td colspan="3">Nothing seems to be here</td>
+    </tr>
+@endforelse
     <tr>
         <td colspan="3">{!! Format::replace_video_urls(nl2br(e($log_exercise->logex_comment))) !!}</td>
     </tr>

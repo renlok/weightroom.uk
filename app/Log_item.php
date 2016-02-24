@@ -129,7 +129,7 @@ class Log_item extends Model
     		{
     			return false;
     		}
-    		elseif ($this->attributes['is_bw'] == 0)
+    		elseif (!$this->attributes['is_bw'])
     		{
     			return true;
     		}
