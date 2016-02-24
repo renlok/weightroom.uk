@@ -32,17 +32,20 @@ class Parser
     private $format_dump;
     private $chunk_dump;
     // final array
-    public $log_data;
+    private $log_data;
     private $log_text;
     // useful data for saving the log
     private $user_weight;
     private $log_date;
     // formatted data
     private $log;
-	private $new_prs = [];
 	private $log_exercises = [];
 	private $log_items = [];
 	private $exercises = [];
+    // for flash messages
+	private $new_prs = [];
+	private $new_exercises = [];
+    private $warnings = [];
 
 	public function __construct($log_text, $log_date, $user_weight)
     {
@@ -403,6 +406,11 @@ class Parser
             $prs = Exercise_record::exercisePrs($this->user->user_id, $this->log_date, $exercise_name);
 
 			$max_estimate_rm = Exercise_record::getlastest1rm($this->user->user_id, $exercise_name)->value('pr_1rm');
+            if (count($item['data']) == 0)
+            {
+                $this->warnings['blank_exercise'] = true;
+            }
+            // add set data to exercise
 			for ($j = 0, $count_j = count($item['data']); $j < $count_j; $j++)
 			{
 				$set = $item['data'][$j];
@@ -442,6 +450,7 @@ class Parser
                     $this->exercises[$i]['time'] = $this->log_items[$i][$j]->is_time;
                     $this->exercises[$i]['endurance'] = $this->log_items[$i][$j]->is_endurance;
                     $this->exercises[$i]['distance'] = $this->log_items[$i][$j]->is_distance;
+                    $this->new_exercises[] = [$exercise_name, $this->exercises[$i]['time'], $this->exercises[$i]['endurance'], $this->exercises[$i]['distance']];
                 }
 				$this->log_items[$i][$j]->logitem_1rm = $this->generate_rm ($this->log_items[$i][$j]->logitem_abs_weight, $set['R']);
 				// get estimate 1rm
@@ -468,6 +477,16 @@ class Parser
         if (count($this->new_prs) > 0)
         {
             Session::flash('new_prs', $this->new_prs);
+        }
+        //return your new exercises :)
+        if (count($this->new_exercises) > 0)
+        {
+            Session::flash('new_exercises', $this->new_exercises);
+        }
+        //return warnings
+        if (count($this->warnings) > 0)
+        {
+            Session::flash('warnings', $this->warnings);
         }
 	}
 
