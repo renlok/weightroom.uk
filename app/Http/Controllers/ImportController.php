@@ -11,7 +11,7 @@ use Excel;
 class ImportController extends Controller
 {
 	public function import(Request $request)
-    {
+	{
 		$map = [
 			'FitNotes' => [
 				'Date' => 'log_date',
@@ -80,7 +80,7 @@ class ImportController extends Controller
 		];
 		if ($request->hasFile('csvfile')) {
 			if ($request->file('csvfile')->isValid()) {
-			    // do stuff
+				// do stuff
 				$csvfile = $request->file('csvfile');
 				$reader = Excel::load($csvfile, function($reader){});
 				$first_row = $reader->first();
@@ -88,7 +88,7 @@ class ImportController extends Controller
 				return view('import.matchUpload', compact('colomn_names', 'file_headers', 'first_row'));
 			}
 		}
-    }
+	}
 
 	public function importForm()
 	{

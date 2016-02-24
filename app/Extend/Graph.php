@@ -3,7 +3,7 @@
 namespace App\Extend;
 
 class Graph {
-    public static function calculate_wilks ($total, $bw, $gender)
+	public static function calculate_wilks ($total, $bw, $gender)
 	{
 		if ($gender == 'm')
 		{

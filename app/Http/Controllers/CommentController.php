@@ -19,11 +19,11 @@ class CommentController extends Controller
 		if ($request->input('parent_id') == 0)
 		{
 			Notification::create([
-	            'user_id' => $log->user_id,
-	            'notification_type' => 'comment',
+				'user_id' => $log->user_id,
+				'notification_type' => 'comment',
 				'notification_from' => ['log_date' => $log->log_date->toDateString()],
-	            'notification_value' => Auth::user()->user_name
-	        ]);
+				'notification_value' => Auth::user()->user_name
+			]);
 		}
 		else
 		{
@@ -34,11 +34,11 @@ class CommentController extends Controller
 							->withTrashed()
 							->firstOrFail();
 			Notification::create([
-	            'user_id' => $parent_comment->user_id,
-	            'notification_type' => 'reply',
+				'user_id' => $parent_comment->user_id,
+				'notification_type' => 'reply',
 				'notification_from' => ['log_date' => $parent_comment->log_date, 'user_name' => $parent_comment->user_name],
-	            'notification_value' => Auth::user()->user_name
-	        ]);
+				'notification_value' => Auth::user()->user_name
+			]);
 		}
 		Comment::create([
 			'parent_id' => $request->input('parent_id'),
@@ -49,8 +49,8 @@ class CommentController extends Controller
 			'user_id' => Auth::user()->user_id
 		]);
 		return redirect()
-                ->route('viewLog', ['date' => $log->log_date->toDateString(), 'user_name' => $log->user->user_name])
-                ->with('commenting', true);
+				->route('viewLog', ['date' => $log->log_date->toDateString(), 'user_name' => $log->user->user_name])
+				->with('commenting', true);
 	}
 
 	public function delete($comment_id)

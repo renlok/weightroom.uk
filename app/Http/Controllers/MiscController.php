@@ -11,35 +11,35 @@ use Illuminate\Http\Request;
 
 class MiscController extends Controller
 {
-    public function landing()
-    {
-        return view('landing');
-    }
+	public function landing()
+	{
+		return view('landing');
+	}
 
-    public function demo()
-    {
-        return view('demo');
-    }
+	public function demo()
+	{
+		return view('demo');
+	}
 
-    public function plans()
-    {
-        return view('plans');
-    }
+	public function plans()
+	{
+		return view('plans');
+	}
 
-    public function privacyPolicy()
-    {
-        return view('help.privacypolicy');
-    }
+	public function privacyPolicy()
+	{
+		return view('help.privacypolicy');
+	}
 
-    public function dash()
-    {
-        $logs = Log::whereIn('user_id', User_follow::where('user_id', Auth::user()->user_id)->lists('follow_user_id'))->orderBy('log_date', 'desc')->paginate(50);
-        return view('dash', compact('logs'));
-    }
+	public function dash()
+	{
+		$logs = Log::whereIn('user_id', User_follow::where('user_id', Auth::user()->user_id)->lists('follow_user_id'))->orderBy('log_date', 'desc')->paginate(50);
+		return view('dash', compact('logs'));
+	}
 
-    public function dashAll()
-    {
-        $logs = Log::orderBy('log_date', 'desc')->paginate(50);
-        return view('dash', compact('logs'));
-    }
+	public function dashAll()
+	{
+		$logs = Log::orderBy('log_date', 'desc')->paginate(50);
+		return view('dash', compact('logs'));
+	}
 }

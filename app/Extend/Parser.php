@@ -17,64 +17,64 @@ use App\Extend\Format;
 class Parser
 {
 	// the predefined data variables
-    private $units; // array of units for each block type
-    private $format_types_all; // all possible formats for all possible blocks
-    private $next_values_all; // flags that show a certain type of block is coming up
-    private $format_follows; // what should come after each block type
-    private $user; // load User class
-    // the working variables
-    private $accepted_char;
-    private $accepted_chars;
-    private $format_type;
-    private $current_blocks; // the blocks that are expected
-    private $next_values;
-    // data dumps
-    private $format_dump;
-    private $chunk_dump;
-    // final array
-    private $log_data;
-    private $log_text;
-    // useful data for saving the log
-    private $user_weight;
-    private $log_date;
-    // formatted data
-    private $log;
+	private $units; // array of units for each block type
+	private $format_types_all; // all possible formats for all possible blocks
+	private $next_values_all; // flags that show a certain type of block is coming up
+	private $format_follows; // what should come after each block type
+	private $user; // load User class
+	// the working variables
+	private $accepted_char;
+	private $accepted_chars;
+	private $format_type;
+	private $current_blocks; // the blocks that are expected
+	private $next_values;
+	// data dumps
+	private $format_dump;
+	private $chunk_dump;
+	// final array
+	private $log_data;
+	private $log_text;
+	// useful data for saving the log
+	private $user_weight;
+	private $log_date;
+	// formatted data
+	private $log;
 	private $log_exercises = [];
 	private $log_items = [];
 	private $exercises = [];
-    // for flash messages
+	// for flash messages
 	private $new_prs = [];
 	private $new_exercises = [];
-    private $warnings = [];
+	private $warnings = [];
 
 	public function __construct($log_text, $log_date, $user_weight)
-    {
-        // load the user
-        $this->user = Auth::user();
-        // build the initial startup data
-        $this->log_text = $log_text;
-        $this->log_date = $log_date;
-        $this->user_weight = ($user_weight == '') ? 0 : floatval($user_weight);
-        $this->construct_globals ();
-        $this->getUserWeight ();
-    }
+	{
+		// load the user
+		$this->user = Auth::user();
+		// build the initial startup data
+		$this->log_text = $log_text;
+		$this->log_date = $log_date;
+		$this->user_weight = ($user_weight == '') ? 0 : floatval($user_weight);
+		$this->construct_globals ();
+		$this->getUserWeight ();
+	}
 
 	public function parseText ()
-    {
-        $exercise = '';
-        $position = -1; // a pointer for when exercise was done
-        $this->log_data = array('comment' => '', 'exercises' => array()); // the output array
-        // convert log_text to array
-        $log_lines = explode("\n", $this->log_text);
-        foreach ($log_lines as $line)
-        {
-            // check if blank line
+	{
+		$exercise = '';
+		$position = -1; // a pointer for when exercise was done
+		$this->log_data = array('comment' => '', 'exercises' => array()); // the output array
+		// convert log_text to array
+		$log_lines = explode("\n", $this->log_text);
+		foreach ($log_lines as $line)
+		{
+			// check if blank line
 			if (strlen($line) == 0)
 			{
 				continue;
 			}
 
-            // check if new exercise
+			// check if new exercise
 			if ($line[0] == '#')
 			{
 				$position++;
@@ -99,142 +99,142 @@ class Parser
 			}
 			elseif (is_numeric($line[0]) || $line[0] == 'B')
 			{
-                $this->parseLine ($line, $position);
+				$this->parseLine ($line, $position);
 			}
 			else
 			{
 				$this->log_data['exercises'][$position]['comment'] .= $line . "\n";
 			}
-        }
-    }
+		}
+	}
 
-    private function parseLine ($line, $position)
-    {
-        // build the initial startup data
-        $this->current_blocks = array('U', 'W', 'D', 'T', 'C');
-        $this->build_next_formats ();
-        $this->build_accepted_char ();
-        $this->build_accepted_chars ();
-        $this->format_dump = '';
-        $this->chunk_dump = '';
-        // for when a line contains commas we can add them as multiple sets
-        $multiline = 0;
-        $multiline_max = 0;
-        $output_data = array();
-        $string_array = str_split($line);
-        foreach($string_array as $chr)
-        {
-            // if the character is a space just add it to the chunk and continue
-            if ($chr == ' ')
-            {
-                $this->chunk_dump .= ' ';
-                continue;
-            }
-            $format_chr = $this->format_character ($chr);
-            // check character is in format and empty accepted_chars counts as allowing anything
-            if (count($this->accepted_chars) == 0 || (in_array($format_chr, $this->accepted_chars) && $this->check_keeps_format($format_chr)))
-            {
-                $this->build_accepted_char ();
-                $this->build_accepted_chars ($format_chr);
-                if (is_numeric($chr))
-                {
-                    // check the last value of the format_dump if its not 0 already set it to 0
-                    if (!isset($this->format_dump[strlen($this->format_dump) - 1]) || $this->format_dump[strlen($this->format_dump) - 1] != '0')
-                    {
-                        $this->format_dump .= '0';
-                    }
-                }
-                else
-                {
-                    // the character is not a number so just add it to the format
-                    $this->format_dump .= $format_chr;
-                }
-                $this->chunk_dump .= $chr;
-            }
-            else
-            {
-                // check the previous chunk is valid
-                if ($this->format_check())
-                {
-    				// the current chunk has finshed do something
-    				$output_data[$multiline][$this->current_blocks[0]] = $this->clean_units(trim($this->chunk_dump), $this->current_blocks[0]);
-    				// reset the dumps
-    				$this->format_dump = '';
-    				$this->chunk_dump = '';
-                    // we are repeating the chunk
-        			if ($this->current_blocks[0] != 'C' && $format_chr == ',')
-        			{
-        				$multiline++;
-    					// new multiline_max?
-    					if ($multiline_max < $multiline)
-    					{
-    						$multiline_max = $multiline;
-    					}
-        			}
-        			else
-        			{
-        				// find the options for the next format
-        				if (in_array($format_chr, $this->next_values))
-        				{
-        					// find what block comes next
-        					$this->current_blocks = array_keys ($this->next_values, $chr);
-        					// reset $format_type + next values
-        					$this->build_next_formats ();
-        					// rebuild everything
-        					$this->build_accepted_char ();
-        					$this->build_accepted_chars ();
-        				}
-        				else
-        				{
-        					// assume it is a comment
-        					$this->accepted_chars = array();
-        					$this->accepted_char = array();
-                            $this->chunk_dump .= $chr;
-        				}
-        				$multiline = 0;
-        			}
-                }
-                else
-                {
-                    // the chuck is no longer valid assumes its a comment
-                    $this->chunk_dump .= $chr;
-                    $this->current_blocks[0] = 'C';
-                }
-            }
-        }
+	private function parseLine ($line, $position)
+	{
+		// build the initial startup data
+		$this->current_blocks = array('U', 'W', 'D', 'T', 'C');
+		$this->build_next_formats ();
+		$this->build_accepted_char ();
+		$this->build_accepted_chars ();
+		$this->format_dump = '';
+		$this->chunk_dump = '';
+		// for when a line contains commas we can add them as multiple sets
+		$multiline = 0;
+		$multiline_max = 0;
+		$output_data = array();
+		$string_array = str_split($line);
+		foreach($string_array as $chr)
+		{
+			// if the character is a space just add it to the chunk and continue
+			if ($chr == ' ')
+			{
+				$this->chunk_dump .= ' ';
+				continue;
+			}
+			$format_chr = $this->format_character ($chr);
+			// check character is in format and empty accepted_chars counts as allowing anything
+			if (count($this->accepted_chars) == 0 || (in_array($format_chr, $this->accepted_chars) && $this->check_keeps_format($format_chr)))
+			{
+				$this->build_accepted_char ();
+				$this->build_accepted_chars ($format_chr);
+				if (is_numeric($chr))
+				{
+					// check the last value of the format_dump if its not 0 already set it to 0
+					if (!isset($this->format_dump[strlen($this->format_dump) - 1]) || $this->format_dump[strlen($this->format_dump) - 1] != '0')
+					{
+						$this->format_dump .= '0';
+					}
+				}
+				else
+				{
+					// the character is not a number so just add it to the format
+					$this->format_dump .= $format_chr;
+				}
+				$this->chunk_dump .= $chr;
+			}
+			else
+			{
+				// check the previous chunk is valid
+				if ($this->format_check())
+				{
+					// the current chunk has finshed do something
+					$output_data[$multiline][$this->current_blocks[0]] = $this->clean_units(trim($this->chunk_dump), $this->current_blocks[0]);
+					// reset the dumps
+					$this->format_dump = '';
+					$this->chunk_dump = '';
+					// we are repeating the chunk
+					if ($this->current_blocks[0] != 'C' && $format_chr == ',')
+					{
+						$multiline++;
+						// new multiline_max?
+						if ($multiline_max < $multiline)
+						{
+							$multiline_max = $multiline;
+						}
+					}
+					else
+					{
+						// find the options for the next format
+						if (in_array($format_chr, $this->next_values))
+						{
+							// find what block comes next
+							$this->current_blocks = array_keys ($this->next_values, $chr);
+							// reset $format_type + next values
+							$this->build_next_formats ();
+							// rebuild everything
+							$this->build_accepted_char ();
+							$this->build_accepted_chars ();
+						}
+						else
+						{
+							// assume it is a comment
+							$this->accepted_chars = array();
+							$this->accepted_char = array();
+							$this->chunk_dump .= $chr;
+						}
+						$multiline = 0;
+					}
+				}
+				else
+				{
+					// the chuck is no longer valid assumes its a comment
+					$this->chunk_dump .= $chr;
+					$this->current_blocks[0] = 'C';
+				}
+			}
+		}
 		// add the last chunk to the data array
-        if (!empty($this->chunk_dump))
-        {
-            if ($this->current_blocks[0] != 'C')
-            {
-                // TODO: not sure this works
-                if ($this->format_check())
-                {
-                    $this->chunk_dump = $this->clean_units($this->chunk_dump, $this->current_blocks[0]);
-                }
-                else
-                {
-                    // final chunk not valid assume its a comment
-                    $this->current_blocks[0] == 'C';
-                }
-            }
-            if (isset($output_data[$multiline][$this->current_blocks[0]]))
-            {
-                if (is_array($this->chunk_dump))
-                {
-                    $output_data[$multiline][$this->current_blocks[0]][0] .= $this->chunk_dump[0];
-                    $output_data[$multiline][$this->current_blocks[0]][1] .= $this->chunk_dump[1];
-                }
-                else
-                {
-                    $output_data[$multiline][$this->current_blocks[0]] .= $this->chunk_dump;
-                }
-            }
-            else
-            {
-                $output_data[$multiline][$this->current_blocks[0]] = $this->chunk_dump;
-            }
-        }
+		if (!empty($this->chunk_dump))
+		{
+			if ($this->current_blocks[0] != 'C')
+			{
+				// TODO: not sure this works
+				if ($this->format_check())
+				{
+					$this->chunk_dump = $this->clean_units($this->chunk_dump, $this->current_blocks[0]);
+				}
+				else
+				{
+					// final chunk not valid assume its a comment
+					$this->current_blocks[0] == 'C';
+				}
+			}
+			if (isset($output_data[$multiline][$this->current_blocks[0]]))
+			{
+				if (is_array($this->chunk_dump))
+				{
+					$output_data[$multiline][$this->current_blocks[0]][0] .= $this->chunk_dump[0];
+					$output_data[$multiline][$this->current_blocks[0]][1] .= $this->chunk_dump[1];
+				}
+				else
+				{
+					$output_data[$multiline][$this->current_blocks[0]] .= $this->chunk_dump;
+				}
+			}
+			else
+			{
+				$output_data[$multiline][$this->current_blocks[0]] = $this->chunk_dump;
+			}
+		}
 
 		// clean up the given data
 		if ($multiline_max > 0)
@@ -264,32 +264,32 @@ class Parser
 			$output_data[$multiline_max]['C'] = (isset($comment)) ? $comment : '';
 		}
 
-        // check isn't just a comment
-        if (isset($output_data[$multiline_max]['C']) && !empty($output_data[$multiline_max]['C']) && count($output_data[$multiline_max]) == 1)
-        {
-            $this->log_data['exercises'][$position]['comment'] .= $output_data[$multiline_max]['C'] . "\n";
-            unset($output_data[$multiline_max]);
-        }
+		// check isn't just a comment
+		if (isset($output_data[$multiline_max]['C']) && !empty($output_data[$multiline_max]['C']) && count($output_data[$multiline_max]) == 1)
+		{
+			$this->log_data['exercises'][$position]['comment'] .= $output_data[$multiline_max]['C'] . "\n";
+			unset($output_data[$multiline_max]);
+		}
 
-        if (count($output_data) > 0)
-        {
-            // update log_data variable
-            $this->log_data['exercises'][$position]['data'] = array_merge($this->log_data['exercises'][$position]['data'], $output_data);
-        }
-    }
+		if (count($output_data) > 0)
+		{
+			// update log_data variable
+			$this->log_data['exercises'][$position]['data'] = array_merge($this->log_data['exercises'][$position]['data'], $output_data);
+		}
+	}
 
 	public function saveLogData ()
 	{
 		// clear old entries
-        DB::table('log_items')->where('log_date', $this->log_date)->where('user_id', $this->user->user_id)->delete();
-        DB::table('log_exercises')->where('log_date', $this->log_date)->where('user_id', $this->user->user_id)->delete();
+		DB::table('log_items')->where('log_date', $this->log_date)->where('user_id', $this->user->user_id)->delete();
+		DB::table('log_exercises')->where('log_date', $this->log_date)->where('user_id', $this->user->user_id)->delete();
 
 		// update user weight
 		if ($this->log_date == Carbon::now()->format('Y-m-d'))
 		{
-            DB::table('users')
-                ->where('user_id', $this->user->user_id)
-                ->update(['user_weight' => $this->user_weight]);
+			DB::table('users')
+				->where('user_id', $this->user->user_id)
+				->update(['user_weight' => $this->user_weight]);
 		}
 		else
 		{
@@ -325,22 +325,22 @@ class Parser
 
 	public function formatLogData ($is_new)
 	{
-        // get old records if are any
-        $old_records_raw = Exercise_record::select(DB::raw('MAX(pr_value) as pr_value'), 'pr_reps', 'exercise_id')
-                                    ->where('log_date', $this->log_date)
-                                    ->where('user_id', $this->user->user_id)
-                                    ->groupBy('exercise_id')
-                                    ->groupBy('pr_reps')
-                                    ->get()
-                                    ->toArray();
-        $old_records = [];
-        if (count($old_records_raw) > 0)
-        {
-            foreach ($old_records_raw as $record)
-            {
-                $old_records[$record['exercise_id']][$record['pr_reps']] = $record['pr_value'];
-            }
-        }
+		// get old records if are any
+		$old_records_raw = Exercise_record::select(DB::raw('MAX(pr_value) as pr_value'), 'pr_reps', 'exercise_id')
+									->where('log_date', $this->log_date)
+									->where('user_id', $this->user->user_id)
+									->groupBy('exercise_id')
+									->groupBy('pr_reps')
+									->get()
+									->toArray();
+		$old_records = [];
+		if (count($old_records_raw) > 0)
+		{
+			foreach ($old_records_raw as $record)
+			{
+				$old_records[$record['exercise_id']][$record['pr_reps']] = $record['pr_value'];
+			}
+		}
 		Exercise_record::where('log_date', $this->log_date)->where('user_id', $this->user->user_id)->delete();
 
 		if (!$is_new)
@@ -349,7 +349,7 @@ class Parser
 			$this->log = Log::where('log_date', $this->log_date)
 							->where('user_id', $this->user->user_id)
 							->firstOrFail();
-            $this->resetLogDefaults ();
+			$this->resetLogDefaults ();
 		}
 		else
 		{
@@ -373,28 +373,28 @@ class Parser
 			// set exercise name
 			$exercise_name = trim($item['name']);
 
-            // get exercise information
-            $exercise = Exercise::getexercise($exercise_name, $this->user->user_id)->first();
-            if ($exercise == null)
-            {
+			// get exercise information
+			$exercise = Exercise::getexercise($exercise_name, $this->user->user_id)->first();
+			if ($exercise == null)
+			{
 				// new exercise
-                $exercise = Exercise::create([
-                    'exercise_name' => $exercise_name,
-                    'user_id' => $this->user->user_id
-                ]);
+				$exercise = Exercise::create([
+					'exercise_name' => $exercise_name,
+					'user_id' => $this->user->user_id
+				]);
 				$this->exercises[$i]['new'] = true;
 				$this->exercises[$i]['time'] = false;
 				$this->exercises[$i]['endurance'] = false;
 				$this->exercises[$i]['distance'] = false;
-            }
-            else
-            {
-	            $this->exercises[$i]['new'] = false;
-                $this->exercises[$i]['time'] = $exercise->is_time;
-                $this->exercises[$i]['endurance'] = $exercise->is_endurance;
+			}
+			else
+			{
+				$this->exercises[$i]['new'] = false;
+				$this->exercises[$i]['time'] = $exercise->is_time;
+				$this->exercises[$i]['endurance'] = $exercise->is_endurance;
 				$this->exercises[$i]['distance'] = $exercise->is_distance;
-            }
-            $this->exercises[$i]['update'] = false;
+			}
+			$this->exercises[$i]['update'] = false;
 			$this->exercises[$i]['id'] = $exercise->exercise_id;
 			// insert log_exercise data
 			$this->log_exercises[$i]->log_date = $this->log_date;
@@ -403,63 +403,63 @@ class Parser
 			$this->log_exercises[$i]->logex_comment = trim($item['comment']);
 			$this->log_exercises[$i]->logex_order = $i;
 
-            $prs = Exercise_record::exercisePrs($this->user->user_id, $this->log_date, $exercise_name);
+			$prs = Exercise_record::exercisePrs($this->user->user_id, $this->log_date, $exercise_name);
 
 			$max_estimate_rm = Exercise_record::getlastest1rm($this->user->user_id, $exercise_name)->value('pr_1rm');
-            if (count($item['data']) == 0)
-            {
-                $this->warnings['blank_exercise'] = true;
-            }
-            // add set data to exercise
+			if (count($item['data']) == 0)
+			{
+				$this->warnings['blank_exercise'] = true;
+			}
+			// add set data to exercise
 			for ($j = 0, $count_j = count($item['data']); $j < $count_j; $j++)
 			{
 				$set = $item['data'][$j];
 				$this->log_items[$i][$j] = new Log_item;
 				// guess what these should be from exercise data
-                $this->log_items[$i][$j]->is_time = $this->exercises[$i]['time'];
-                $this->log_items[$i][$j]->is_endurance = $this->exercises[$i]['endurance'];
-                $this->log_items[$i][$j]->is_distance = $this->exercises[$i]['distance'];
-                // check comment for special tags
+				$this->log_items[$i][$j]->is_time = $this->exercises[$i]['time'];
+				$this->log_items[$i][$j]->is_endurance = $this->exercises[$i]['endurance'];
+				$this->log_items[$i][$j]->is_distance = $this->exercises[$i]['distance'];
+				// check comment for special tags
 				$set['C'] = (isset($set['C'])) ? $set['C'] : '';
 				$this->checkSpecialTags ($set['C'], $i, $j);
 				// clean up set data
 				$set = $this->cleanSetData ($set, $i, $j);
-                if ($this->log_items[$i][$j]->is_bw && $this->user_weight == 0)
-                {
-                    $this->warnings['blank_bodyweight'] = true;
-                }
+				if ($this->log_items[$i][$j]->is_bw && $this->user_weight == 0)
+				{
+					$this->warnings['blank_bodyweight'] = true;
+				}
 				$this->setAbsoluteWeight ($set, $i, $j);
 				// calculate volume data
 				$this->updateVolumes ($set, $i, $j);
 				// check its a pr
-                if ($this->checkPR ($prs, $set, $i, $j))
+				if ($this->checkPR ($prs, $set, $i, $j))
 				{
 					$this->log_items[$i][$j]->is_pr = true;
-                    $pr_type = ($this->log_items[$i][$j]->is_distance == true) ? 'D' :
+					$pr_type = ($this->log_items[$i][$j]->is_distance == true) ? 'D' :
 								(($this->log_items[$i][$j]->is_endurance == true) ? 'E' :
 								(($this->log_items[$i][$j]->is_time == true) ? 'T' : 'W'));
-                    // the user has set a pr we need to add/update it in the database
-                    $this->updatePrs ($old_records, $set, $i, $j);
-                    $prs[$pr_type][$set['R']] = $this->log_items[$i][$j]->logitem_abs_weight;
-                    // dont give PR message if new exercise
-                    if (!($this->exercises[$i]['new'] || $this->exercises[$i]['update']))
-                    {
-                        if (!isset($this->new_prs[$exercise_name]))
-    					{
-                            $this->new_prs[$exercise_name] = array('W' => [], 'T' => [], 'E' => [], 'D' => []);
-    					}
-                        $this->new_prs[$exercise_name][$pr_type][$set['R']][] = $this->log_items[$i][$j]->logitem_abs_weight;
-                    }
+					// the user has set a pr we need to add/update it in the database
+					$this->updatePrs ($old_records, $set, $i, $j);
+					$prs[$pr_type][$set['R']] = $this->log_items[$i][$j]->logitem_abs_weight;
+					// dont give PR message if new exercise
+					if (!($this->exercises[$i]['new'] || $this->exercises[$i]['update']))
+					{
+						if (!isset($this->new_prs[$exercise_name]))
+						{
+							$this->new_prs[$exercise_name] = array('W' => [], 'T' => [], 'E' => [], 'D' => []);
+						}
+						$this->new_prs[$exercise_name][$pr_type][$set['R']][] = $this->log_items[$i][$j]->logitem_abs_weight;
+					}
 				}
-                if ($this->exercises[$i]['new'])
-                {
-                    $this->exercises[$i]['new'] = false;
-                    $this->exercises[$i]['update'] = true;
-                    $this->exercises[$i]['time'] = $this->log_items[$i][$j]->is_time;
-                    $this->exercises[$i]['endurance'] = $this->log_items[$i][$j]->is_endurance;
-                    $this->exercises[$i]['distance'] = $this->log_items[$i][$j]->is_distance;
-                    $this->new_exercises[] = [$exercise_name, $this->exercises[$i]['time'], $this->exercises[$i]['endurance'], $this->exercises[$i]['distance']];
-                }
+				if ($this->exercises[$i]['new'])
+				{
+					$this->exercises[$i]['new'] = false;
+					$this->exercises[$i]['update'] = true;
+					$this->exercises[$i]['time'] = $this->log_items[$i][$j]->is_time;
+					$this->exercises[$i]['endurance'] = $this->log_items[$i][$j]->is_endurance;
+					$this->exercises[$i]['distance'] = $this->log_items[$i][$j]->is_distance;
+					$this->new_exercises[] = [$exercise_name, $this->exercises[$i]['time'], $this->exercises[$i]['endurance'], $this->exercises[$i]['distance']];
+				}
 				$this->log_items[$i][$j]->logitem_1rm = $this->generate_rm ($this->log_items[$i][$j]->logitem_abs_weight, $set['R']);
 				// get estimate 1rm
 				if ($max_estimate_rm < $this->log_items[$i][$j]->logitem_1rm)
@@ -482,29 +482,29 @@ class Parser
 		}
 
 		//return your new records :)
-        if (count($this->new_prs) > 0)
-        {
-            Session::flash('new_prs', $this->new_prs);
-        }
-        //return your new exercises :)
-        if (count($this->new_exercises) > 0)
-        {
-            Session::flash('new_exercises', $this->new_exercises);
-        }
-        //return warnings
-        if (count($this->warnings) > 0)
-        {
-            Session::flash('warnings', $this->warnings);
-        }
+		if (count($this->new_prs) > 0)
+		{
+			Session::flash('new_prs', $this->new_prs);
+		}
+		//return your new exercises :)
+		if (count($this->new_exercises) > 0)
+		{
+			Session::flash('new_exercises', $this->new_exercises);
+		}
+		//return warnings
+		if (count($this->warnings) > 0)
+		{
+			Session::flash('warnings', $this->warnings);
+		}
 	}
 
 	private function insertLogItemWeightTime ($set, $i, $j)
 	{
-        $value = $set['W'] + $set['T'] + $set['D'];
-        $this->log_items[$i][$j]->logitem_time = 0;
-        $this->log_items[$i][$j]->logitem_weight = 0;
-        $this->log_items[$i][$j]->logitem_distance = 0;
-        if ($this->log_items[$i][$j]->is_time)
+		$value = $set['W'] + $set['T'] + $set['D'];
+		$this->log_items[$i][$j]->logitem_time = 0;
+		$this->log_items[$i][$j]->logitem_weight = 0;
+		$this->log_items[$i][$j]->logitem_distance = 0;
+		if ($this->log_items[$i][$j]->is_time)
 		{
 			$this->log_items[$i][$j]->logitem_time = $value;
 		}
@@ -578,18 +578,18 @@ class Parser
 	private function updateUserBodyweight ()
 	{
 		// get old weight
-        $old_weight = DB::table('logs')
-                        ->where('log_date', '<', $this->log_date)
-                        ->where('user_id', $this->user->user_id)
-                        ->orderBy('log_date', 'desc')
-                        ->value('log_weight');
+		$old_weight = DB::table('logs')
+						->where('log_date', '<', $this->log_date)
+						->where('user_id', $this->user->user_id)
+						->orderBy('log_date', 'desc')
+						->value('log_weight');
 
 		// update log entries with new weight
-        DB::table('logs')
-            ->where('log_date', '>', $this->log_date)
-            ->where('user_id', $this->user->user_id)
-            ->where('log_weight', $old_weight)
-            ->update(['log_weight' => $this->user_weight]);
+		DB::table('logs')
+			->where('log_date', '>', $this->log_date)
+			->where('user_id', $this->user->user_id)
+			->where('log_weight', $old_weight)
+			->update(['log_weight' => $this->user_weight]);
 	}
 
 	public function cleanSetData ($set, $i, $j)
@@ -623,7 +623,7 @@ class Parser
 			}
 			$set['W'] = $this->correctUnitsDatabase ($set['W'], 'W');
 			$set['T'] = 0;
-            $set['D'] = 0;
+			$set['D'] = 0;
 		}
 		elseif (isset($set['T']))
 		{
@@ -631,7 +631,7 @@ class Parser
 			$set['T'] = $this->correctUnitsDatabase ($set['T'], 'T');
 			$this->log_items[$i][$j]->is_time = true;
 			$set['W'] = 0;
-            $set['D'] = 0;
+			$set['D'] = 0;
 		}
 		elseif (isset($set['D']))
 		{
@@ -639,7 +639,7 @@ class Parser
 			$set['D'] = $this->correctUnitsDatabase ($set['D'], 'D');
 			$this->log_items[$i][$j]->is_distance = true;
 			$set['W'] = 0;
-            $set['T'] = 0;
+			$set['T'] = 0;
 		}
 		$set['R'] = (isset($set['R'])) ? intval($set['R']) : 1;
 		$set['S'] = (isset($set['S'])) ? intval($set['S']) : 1;
@@ -648,17 +648,17 @@ class Parser
 
 	private function checkSpecialTags ($string, $i, $j)
 	{
-        if (empty($string))
-        {
-            return 0;
-        }
+		if (empty($string))
+		{
+			return 0;
+		}
 		$string = trim(strtolower($string));
 		// line is warmup
 		if ($this->isWarmupTag ($string))
 		{
 			$this->log_items[$i][$j]->is_warmup = true;
 		}
-        elseif ($this->isEnduranceTag ($string))
+		elseif ($this->isEnduranceTag ($string))
 		{
 			$this->log_items[$i][$j]->is_endurance = true;
 			$this->log_items[$i][$j]->is_time = true;
@@ -669,31 +669,31 @@ class Parser
 		}
 		else
 		{
-	        $parts = explode('|', $string);
-	        if (count($parts) > 1)
-	        {
-	            $return = [];
-	            foreach ($parts as $part)
-	            {
-	                if ($this->isWarmupTag ($part))
-	        		{
-	        			$this->log_items[$i][$j]->is_warmup = true;
-	        		}
-	                elseif ($this->isEnduranceTag ($part))
-	        		{
-	                    $this->log_items[$i][$j]->is_endurance = true;
+			$parts = explode('|', $string);
+			if (count($parts) > 1)
+			{
+				$return = [];
+				foreach ($parts as $part)
+				{
+					if ($this->isWarmupTag ($part))
+					{
+						$this->log_items[$i][$j]->is_warmup = true;
+					}
+					elseif ($this->isEnduranceTag ($part))
+					{
+						$this->log_items[$i][$j]->is_endurance = true;
 						$this->log_items[$i][$j]->is_time = true;
-	        		}
+					}
 					elseif ($this->isDistanceTag ($part))
 					{
 						$this->log_items[$i][$j]->is_distance = true;
 					}
-	                else
-	                {
-	                    $this->log_items[$i][$j]->logitem_comment .= $part;
-	                }
-	            }
-	        }
+					else
+					{
+						$this->log_items[$i][$j]->logitem_comment .= $part;
+					}
+				}
+			}
 			else
 			{
 				$this->log_items[$i][$j]->logitem_comment = $string;
@@ -755,44 +755,44 @@ class Parser
 			return false;
 		}
 
-        if ($this->log_items[$i][$j]->is_time)
-        {
-            $this->log_exercises[$i]->logex_time += $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
-            $this->log->log_total_time += $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
-        }
-        elseif ($this->log_items[$i][$j]->is_distance)
-        {
-            $this->log_exercises[$i]->logex_distance += $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
-            $this->log->log_total_distance += $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
-        }
-        else
-        {
-            $item_volume = $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
-    		$this->log_exercises[$i]->logex_volume += $item_volume;
-    		$this->log_exercises[$i]->logex_reps += ($set['R'] * $set['S']);
-    		$this->log_exercises[$i]->logex_sets += $set['S'];
-    		$this->log->log_total_volume += $item_volume;
-    		$this->log->log_total_reps += ($set['R'] * $set['S']);
-    		$this->log->log_total_sets += $set['S'];
+		if ($this->log_items[$i][$j]->is_time)
+		{
+			$this->log_exercises[$i]->logex_time += $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
+			$this->log->log_total_time += $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
+		}
+		elseif ($this->log_items[$i][$j]->is_distance)
+		{
+			$this->log_exercises[$i]->logex_distance += $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
+			$this->log->log_total_distance += $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
+		}
+		else
+		{
+			$item_volume = $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
+			$this->log_exercises[$i]->logex_volume += $item_volume;
+			$this->log_exercises[$i]->logex_reps += ($set['R'] * $set['S']);
+			$this->log_exercises[$i]->logex_sets += $set['S'];
+			$this->log->log_total_volume += $item_volume;
+			$this->log->log_total_reps += ($set['R'] * $set['S']);
+			$this->log->log_total_sets += $set['S'];
 
-    		if ($set['R'] == 0)
-    		{
-    			$this->log_exercises[$i]->logex_failed_volume += ($this->log_items[$i][$j]->logitem_abs_weight * $set['S']);
-    			$this->log_exercises[$i]->logex_failed_sets += $set['S'];
-    			$this->log->log_failed_volume += ($this->log_items[$i][$j]->logitem_abs_weight * $set['S']);
-    			$this->log->log_failed_sets += $set['S'];
-    		}
+			if ($set['R'] == 0)
+			{
+				$this->log_exercises[$i]->logex_failed_volume += ($this->log_items[$i][$j]->logitem_abs_weight * $set['S']);
+				$this->log_exercises[$i]->logex_failed_sets += $set['S'];
+				$this->log->log_failed_volume += ($this->log_items[$i][$j]->logitem_abs_weight * $set['S']);
+				$this->log->log_failed_sets += $set['S'];
+			}
 
-    		if ($this->log_items[$i][$j]->is_warmup)
-    		{
-    			$this->log_exercises[$i]->logex_warmup_volume += $item_volume;
-    			$this->log_exercises[$i]->logex_warmup_reps += ($set['R'] * $set['S']);
-    			$this->log_exercises[$i]->logex_warmup_sets += $set['S'];
-    			$this->log->log_warmup_volume += $item_volume;
-    			$this->log->log_warmup_reps += ($set['R'] * $set['S']);
-    			$this->log->log_warmup_sets += $set['S'];
-    		}
-        }
+			if ($this->log_items[$i][$j]->is_warmup)
+			{
+				$this->log_exercises[$i]->logex_warmup_volume += $item_volume;
+				$this->log_exercises[$i]->logex_warmup_reps += ($set['R'] * $set['S']);
+				$this->log_exercises[$i]->logex_warmup_sets += $set['S'];
+				$this->log->log_warmup_volume += $item_volume;
+				$this->log->log_warmup_reps += ($set['R'] * $set['S']);
+				$this->log->log_warmup_sets += $set['S'];
+			}
+		}
 	}
 
 	private function checkPR (&$prs, $set, $i, $j)
@@ -876,75 +876,75 @@ class Parser
 
 		// dont log reps over 10
 		if ($set_reps > 10 || $set_reps < 1)
-        {
+		{
 			return false;
-        }
+		}
 
 		// check if set a new est 1 RM
-        $old_1rm = DB::table('exercise_records')
-                    ->where('user_id', $this->user->user_id)
-                    ->where('log_date', '<', $this->log_date)
-                    ->where('exercise_id', $exercise_id)
+		$old_1rm = DB::table('exercise_records')
+					->where('user_id', $this->user->user_id)
+					->where('log_date', '<', $this->log_date)
+					->where('exercise_id', $exercise_id)
 					->where('is_est1rm', 1)
-                    ->where('is_time', $is_time)
-                    ->where('is_endurance', $is_endurance)
-                    ->where('is_distance', $is_distance)
-                    ->orderBy('log_date', 'desc')
-                    ->value('pr_1rm');
-        $new_1rm = $this->generate_rm ($set_weight, $set_reps);
-        $is_est1rm = (($old_1rm < $new_1rm) || ($is_time == 1 && $is_endurance == 0 && $old_1rm > $new_1rm)) ? true : false;
+					->where('is_time', $is_time)
+					->where('is_endurance', $is_endurance)
+					->where('is_distance', $is_distance)
+					->orderBy('log_date', 'desc')
+					->value('pr_1rm');
+		$new_1rm = $this->generate_rm ($set_weight, $set_reps);
+		$is_est1rm = (($old_1rm < $new_1rm) || ($is_time == 1 && $is_endurance == 0 && $old_1rm > $new_1rm)) ? true : false;
 
 		// delete future logs that have lower prs
-        DB::table('exercise_records')
-            ->where('user_id', $this->user->user_id)
-            ->where('log_date', '>=', $this->log_date)
-            ->where('exercise_id', $exercise_id)
-            ->where('pr_reps', $set_reps)
-            ->where(function($query) use ($is_time, $is_endurance, $set_weight){
-                if ($is_time == 1 && $is_endurance == 0)
-                {
-                    $query->where('pr_value', '>=', $set_weight);
-                }
-                else
-                {
-                    $query->where('pr_value', '<=', $set_weight);
-                }
-            })
-            ->where('is_time', $is_time)
-            ->where('is_endurance', $is_endurance)
-            ->where('is_distance', $is_distance)
-            ->delete();
+		DB::table('exercise_records')
+			->where('user_id', $this->user->user_id)
+			->where('log_date', '>=', $this->log_date)
+			->where('exercise_id', $exercise_id)
+			->where('pr_reps', $set_reps)
+			->where(function($query) use ($is_time, $is_endurance, $set_weight){
+				if ($is_time == 1 && $is_endurance == 0)
+				{
+					$query->where('pr_value', '>=', $set_weight);
+				}
+				else
+				{
+					$query->where('pr_value', '<=', $set_weight);
+				}
+			})
+			->where('is_time', $is_time)
+			->where('is_endurance', $is_endurance)
+			->where('is_distance', $is_distance)
+			->delete();
 
-        if ($is_est1rm)
-        {
-            // reset newer is_est1rm flags if they are now invalid
-            DB::table('exercise_records')
-                ->where('user_id', $this->user->user_id)
-                ->where('log_date', '>=', $this->log_date)
-                ->where('exercise_id', $exercise_id)
-                ->where(function($query) use ($is_time, $is_endurance, $set_weight){
-                    if ($is_time == 1 && $is_endurance == 0)
-                    {
-                        $query->where('pr_1rm', '>=', $set_weight);
-                    }
-                    else
-                    {
-                        $query->where('pr_value', '<=', $set_weight);
-                    }
-                })
-                ->where('is_time', $is_time)
-                ->where('is_endurance', $is_endurance)
-                ->where('is_distance', $is_distance)
-                ->update(['is_est1rm' => 0]);
-        }
+		if ($is_est1rm)
+		{
+			// reset newer is_est1rm flags if they are now invalid
+			DB::table('exercise_records')
+				->where('user_id', $this->user->user_id)
+				->where('log_date', '>=', $this->log_date)
+				->where('exercise_id', $exercise_id)
+				->where(function($query) use ($is_time, $is_endurance, $set_weight){
+					if ($is_time == 1 && $is_endurance == 0)
+					{
+						$query->where('pr_1rm', '>=', $set_weight);
+					}
+					else
+					{
+						$query->where('pr_value', '<=', $set_weight);
+					}
+				})
+				->where('is_time', $is_time)
+				->where('is_endurance', $is_endurance)
+				->where('is_distance', $is_distance)
+				->update(['is_est1rm' => 0]);
+		}
 
 		// unset lower future PRs
-        DB::table('log_items')
-            ->where('user_id', $this->user->user_id)
-            ->where('log_date', '>=', $this->log_date)
-            ->where('exercise_id', $exercise_id)
-            ->where('logitem_reps', $set_reps)
-            ->where(function($query) use ($is_time, $is_endurance, $set_weight){
+		DB::table('log_items')
+			->where('user_id', $this->user->user_id)
+			->where('log_date', '>=', $this->log_date)
+			->where('exercise_id', $exercise_id)
+			->where('logitem_reps', $set_reps)
+			->where(function($query) use ($is_time, $is_endurance, $set_weight){
 				if ($is_time == 1 && $is_endurance == 0)
 				{
 					$query->where('logitem_abs_weight', '>=', $set_weight);
@@ -953,24 +953,24 @@ class Parser
 				{
 					$query->where('logitem_abs_weight', '<=', $set_weight);
 				}
-            })
+			})
 			->where('is_time', $is_time)
 			->where('is_endurance', $is_endurance)
 			->where('is_distance', $is_distance)
-            ->update(['is_pr' => 0]);
+			->update(['is_pr' => 0]);
 
 		// we are modifying a PR that was set today
 		if (isset($old_records[$exercise_id][$set_reps]))
 		{
 			$old_pr_value = $old_records[$exercise_id][$set_reps];
 			// add future prs if needed
-	        $sets = DB::table('log_items')
-	                    ->select('log_id', 'log_date', 'logitem_abs_weight')
-	                    ->where('user_id', $this->user->user_id)
-	                    ->where('log_date', '>', $this->log_date)
-	                    ->where('exercise_id', $exercise_id)
-	                    ->where('logitem_reps', $set_reps)
-	                    ->where(function($query) use ($is_time, $is_endurance, $set_weight, $old_pr_value){
+			$sets = DB::table('log_items')
+						->select('log_id', 'log_date', 'logitem_abs_weight')
+						->where('user_id', $this->user->user_id)
+						->where('log_date', '>', $this->log_date)
+						->where('exercise_id', $exercise_id)
+						->where('logitem_reps', $set_reps)
+						->where(function($query) use ($is_time, $is_endurance, $set_weight, $old_pr_value){
 							if ($is_time == 1 && $is_endurance == 0)
 							{
 								$query->where('logitem_abs_weight', '<', $set_weight)
@@ -981,276 +981,276 @@ class Parser
 								$query->where('logitem_abs_weight', '>', $set_weight)
 									->where('logitem_abs_weight', '<=', $old_pr_value);
 							}
-	                    })
+						})
 						->where('is_time', $is_time)
 						->where('is_endurance', $is_endurance)
 						->where('is_distance', $is_distance)
-	                    ->where('is_pr', 0)
+						->where('is_pr', 0)
 						->orderBy('log_date', 'asc')
-	                    ->get();
+						->get();
 			foreach ($sets as $set)
 			{
 				// update is_pr flag
-	            DB::table('log_items')
-	                ->where('log_id', $set->log_id)
-	                ->update(['is_pr' => 1]);
+				DB::table('log_items')
+					->where('log_id', $set->log_id)
+					->update(['is_pr' => 1]);
 
 				// check if new 1rm has been set
-	            $new_1rm = $this->generate_rm ($set->logitem_abs_weight, $set_reps);
+				$new_1rm = $this->generate_rm ($set->logitem_abs_weight, $set_reps);
 				$is_est1rm = (($old_1rm < $new_1rm) || ($is_time == 1 && $is_endurance == 0 && $old_1rm > $new_1rm)) ? true : false;
 				if ($is_est1rm)
 				{
 					$old_1rm = $new_1rm;
 				}
 				// insert pr data
-	            Exercise_record::create([
-	                'exercise_id' => $exercise_id,
-	                'user_id' => $this->user->user_id,
-	                'log_date' => $set->log_date,
-	                'pr_value' => $set->logitem_abs_weight,
-	                'pr_reps' => $set_reps,
-	                'pr_1rm' => $new_1rm,
-	                'is_est1rm' => $is_est1rm,
-	                'is_time' => $is_time,
+				Exercise_record::create([
+					'exercise_id' => $exercise_id,
+					'user_id' => $this->user->user_id,
+					'log_date' => $set->log_date,
+					'pr_value' => $set->logitem_abs_weight,
+					'pr_reps' => $set_reps,
+					'pr_1rm' => $new_1rm,
+					'is_est1rm' => $is_est1rm,
+					'is_time' => $is_time,
 					'is_endurance' => $is_endurance,
 					'is_distance' => $is_distance
-	            ]);
+				]);
 			}
 		}
 
 		// insert new entry
-        Exercise_record::create([
-            'exercise_id' => $exercise_id,
-            'user_id' => $this->user->user_id,
-            'log_date' => $this->log_date,
-            'pr_value' => $set_weight,
-            'pr_reps' => $set_reps,
-            'pr_1rm' => $new_1rm,
-            'is_est1rm' => $is_est1rm,
-            'is_time' => $is_time,
+		Exercise_record::create([
+			'exercise_id' => $exercise_id,
+			'user_id' => $this->user->user_id,
+			'log_date' => $this->log_date,
+			'pr_value' => $set_weight,
+			'pr_reps' => $set_reps,
+			'pr_1rm' => $new_1rm,
+			'is_est1rm' => $is_est1rm,
+			'is_time' => $is_time,
 			'is_endurance' => $is_endurance,
 			'is_distance' => $is_distance
-        ]);
+		]);
 	}
 
 	private function construct_globals ()
-    {
-        // pre-defined data
-        $this->units = array(
-            'W' => array(
-                'kgs' => 'kg',
-                'kg' => 'kg',
-                'lbs' => 'lb',
-                'lb' => 'lb',
-            ),
-            'D' => array(
-                'kms' => 'km',
-                'km' => 'km',
-                'ms' => 'm',
-                'm' => 'm',
-                'miles' => 'mile',
-                'mile' => 'mile',
-            ),
-            'T' => array(
-                'seconds' => 's',
-                'second' => 's',
-                'secs' => 's',
-                'sec' => 's',
-                'minutes' => 'm',
-                'minute' => 'm',
-                'mins' => 'm',
-                'min' => 'm',
-                'm' => 'm',
-                'hours' => 'h',
-                'hour' => 'h',
-                'hrs' => 'h',
-                'hr' => 'h',
-                'h' => 'h',
-                's' => 's', // needs to be at the end or it ruins the party
-            )
-        );
-        $this->format_types_all = array(
+	{
+		// pre-defined data
+		$this->units = array(
+			'W' => array(
+				'kgs' => 'kg',
+				'kg' => 'kg',
+				'lbs' => 'lb',
+				'lb' => 'lb',
+			),
+			'D' => array(
+				'kms' => 'km',
+				'km' => 'km',
+				'ms' => 'm',
+				'm' => 'm',
+				'miles' => 'mile',
+				'mile' => 'mile',
+			),
+			'T' => array(
+				'seconds' => 's',
+				'second' => 's',
+				'secs' => 's',
+				'sec' => 's',
+				'minutes' => 'm',
+				'minute' => 'm',
+				'mins' => 'm',
+				'min' => 'm',
+				'm' => 'm',
+				'hours' => 'h',
+				'hour' => 'h',
+				'hrs' => 'h',
+				'hr' => 'h',
+				'h' => 'h',
+				's' => 's', // needs to be at the end or it ruins the party
+			)
+		);
+		$this->format_types_all = array(
 			'U' => array(('0')),
-            'W' => array(
-                ('0.0'),
-                ('0'),
-                ('bw'),
-                ('bw+0.0'),
-                ('bw+0'),
-                ('bw-0.0'),
-                ('bw-0'),
-            ),
-            'D' => array(
-                ('0.0'),
-                ('0'),
-            ),
-            'T' => array(
-                ('0:0:0'),
-                ('0:0'),
-                ('0.0'),
-                ('0'),
-            ),
-            'R' => array(('0')),
-            'S' => array(('0')),
-            'P' => array(
-                ('0.0'),
-                ('0'),
-            ),
-            'C' => array(('')),
-        );
-        // add units to the formats
-        $this->add_units();
-        $this->next_values_all = array(
-            'R' => 'x',
-            'S' => 'x',
-            'P' => '@',
-            'C' => '',
-        );
-        // comment can follow anything
-        $this->format_follows = array(
-            'U' => array('R', 'P'),
-            'W' => array('R', 'P'),
-            'D' => array('R', 'P'),
-            'T' => array('R', 'P'),
-            'R' => array('S', 'P'),
-            'S' => array('P'),
-            'P' => array(''),
-            'C' => array(''),
-        );
-    }
+			'W' => array(
+				('0.0'),
+				('0'),
+				('bw'),
+				('bw+0.0'),
+				('bw+0'),
+				('bw-0.0'),
+				('bw-0'),
+			),
+			'D' => array(
+				('0.0'),
+				('0'),
+			),
+			'T' => array(
+				('0:0:0'),
+				('0:0'),
+				('0.0'),
+				('0'),
+			),
+			'R' => array(('0')),
+			'S' => array(('0')),
+			'P' => array(
+				('0.0'),
+				('0'),
+			),
+			'C' => array(('')),
+		);
+		// add units to the formats
+		$this->add_units();
+		$this->next_values_all = array(
+			'R' => 'x',
+			'S' => 'x',
+			'P' => '@',
+			'C' => '',
+		);
+		// comment can follow anything
+		$this->format_follows = array(
+			'U' => array('R', 'P'),
+			'W' => array('R', 'P'),
+			'D' => array('R', 'P'),
+			'T' => array('R', 'P'),
+			'R' => array('S', 'P'),
+			'S' => array('P'),
+			'P' => array(''),
+			'C' => array(''),
+		);
+	}
 
-    private function build_next_formats ()
-    {
-        $this->format_type = array();
-        $this->next_values = array();
-        foreach ($this->current_blocks as $key)
-        {
-            $this->format_type[$key] = $this->format_types_all[$key];
-            $this->next_values = array_merge($this->next_values, array_intersect_key($this->next_values_all, array_flip($this->format_follows[$key])));
-        }
-    }
+	private function build_next_formats ()
+	{
+		$this->format_type = array();
+		$this->next_values = array();
+		foreach ($this->current_blocks as $key)
+		{
+			$this->format_type[$key] = $this->format_types_all[$key];
+			$this->next_values = array_merge($this->next_values, array_intersect_key($this->next_values_all, array_flip($this->format_follows[$key])));
+		}
+	}
 
-    private function build_accepted_char ()
-    {
-        $this->accepted_char = array();
-        foreach ($this->format_type as $key => $sub_type)
-        {
-            foreach ($sub_type as $val)
-            {
-                if (isset($this->accepted_char[$key]))
-                {
-                    $this->accepted_char[$key] = array_unique(array_merge($this->accepted_char[$key], str_split($val)));
-                }
-                else
-                {
-                    $this->accepted_char[$key] = array_unique(str_split($val));
-                }
-            }
-        }
-    }
+	private function build_accepted_char ()
+	{
+		$this->accepted_char = array();
+		foreach ($this->format_type as $key => $sub_type)
+		{
+			foreach ($sub_type as $val)
+			{
+				if (isset($this->accepted_char[$key]))
+				{
+					$this->accepted_char[$key] = array_unique(array_merge($this->accepted_char[$key], str_split($val)));
+				}
+				else
+				{
+					$this->accepted_char[$key] = array_unique(str_split($val));
+				}
+			}
+		}
+	}
 
-    private function build_accepted_chars ($format_chr = '')
-    {
-        // not an empty string then do some checks
-        if ($format_chr != '')
-        {
-            // check all formats still valid
-            $rebuild_accepted_chars = false;
-            foreach ($this->accepted_char as $key => $val)
-            {
-                if(!in_array($format_chr, $val))
-                {
-                    // remove from accepted_char
-                    unset($this->accepted_char[$key]);
-                    unset($this->format_type[$key]);
-                    unset($this->current_blocks[array_search ($key, $this->current_blocks)]);
-                    // comments are always allowed
-                    $this->current_blocks[] = 'C';
-                    // rebuild keys
-                    $this->current_blocks = array_values($this->current_blocks);
-                    $rebuild_accepted_chars = true;
-                }
-            }
-        }
-        else
-        {
-            $rebuild_accepted_chars = true;
-        }
-        // if some formats have become invalid rebuild the master format array
-        if ($rebuild_accepted_chars)
-        {
-            if (is_array($this->accepted_char) && count($this->accepted_char) > 0)
-            {
-                $this->accepted_chars = array_unique(call_user_func_array('array_merge', $this->accepted_char));
-            }
-            else
-            {
-                $this->accepted_chars = array();
-            }
-            $this->build_next_formats ();
-        }
-    }
+	private function build_accepted_chars ($format_chr = '')
+	{
+		// not an empty string then do some checks
+		if ($format_chr != '')
+		{
+			// check all formats still valid
+			$rebuild_accepted_chars = false;
+			foreach ($this->accepted_char as $key => $val)
+			{
+				if(!in_array($format_chr, $val))
+				{
+					// remove from accepted_char
+					unset($this->accepted_char[$key]);
+					unset($this->format_type[$key]);
+					unset($this->current_blocks[array_search ($key, $this->current_blocks)]);
+					// comments are always allowed
+					$this->current_blocks[] = 'C';
+					// rebuild keys
+					$this->current_blocks = array_values($this->current_blocks);
+					$rebuild_accepted_chars = true;
+				}
+			}
+		}
+		else
+		{
+			$rebuild_accepted_chars = true;
+		}
+		// if some formats have become invalid rebuild the master format array
+		if ($rebuild_accepted_chars)
+		{
+			if (is_array($this->accepted_char) && count($this->accepted_char) > 0)
+			{
+				$this->accepted_chars = array_unique(call_user_func_array('array_merge', $this->accepted_char));
+			}
+			else
+			{
+				$this->accepted_chars = array();
+			}
+			$this->build_next_formats ();
+		}
+	}
 
-    // check end chunk is valid
-    private function format_check()
-    {
-        // the block is a comment so skip the check
-        if ($this->current_blocks[0] == 'C')
-        {
-            return true;
-        }
-        // check if the final format_dump matches a vlid format type
-        foreach ($this->format_type as $sub_type)
-        {
-            foreach ($sub_type as $key => $format_string)
-            {
-                //foreach ($val as $format_string)
-                if ($format_string == $this->format_dump)
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+	// check end chunk is valid
+	private function format_check()
+	{
+		// the block is a comment so skip the check
+		if ($this->current_blocks[0] == 'C')
+		{
+			return true;
+		}
+		// check if the final format_dump matches a vlid format type
+		foreach ($this->format_type as $sub_type)
+		{
+			foreach ($sub_type as $key => $format_string)
+			{
+				//foreach ($val as $format_string)
+				if ($format_string == $this->format_dump)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
-    // check if next character keeps chunk valid
-    private function check_keeps_format($format_chr)
-    {
-        // nothing significcant has been added
-        if (isset($this->format_dump[strlen($this->format_dump) - 1]) && $this->format_dump[strlen($this->format_dump) - 1] == '0' && $format_chr == '0')
-        {
-            return true;
-        }
-        // check if the current format_dump matches a vlid format type
-        $format_string = $this->format_dump . $format_chr;
-        foreach ($this->format_type as $sub_type)
-        {
-            foreach($sub_type as $format)
-            {
-                if(stristr($format, $format_string) !== false)
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+	// check if next character keeps chunk valid
+	private function check_keeps_format($format_chr)
+	{
+		// nothing significcant has been added
+		if (isset($this->format_dump[strlen($this->format_dump) - 1]) && $this->format_dump[strlen($this->format_dump) - 1] == '0' && $format_chr == '0')
+		{
+			return true;
+		}
+		// check if the current format_dump matches a vlid format type
+		$format_string = $this->format_dump . $format_chr;
+		foreach ($this->format_type as $sub_type)
+		{
+			foreach($sub_type as $format)
+			{
+				if(stristr($format, $format_string) !== false)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
-    private function add_units()
-    {
-        $dump_all_format_types = $this->format_types_all;
-        foreach ($this->units as $type => $unit_types)
-        {
-            foreach ($unit_types as $unit => $val)
-            {
-                foreach ($dump_all_format_types[$type] as $format)
-                {
-                    $this->format_types_all[$type][] = $format . $unit;
-                }
-            }
-        }
-    }
+	private function add_units()
+	{
+		$dump_all_format_types = $this->format_types_all;
+		foreach ($this->units as $type => $unit_types)
+		{
+			foreach ($unit_types as $unit => $val)
+			{
+				foreach ($dump_all_format_types[$type] as $format)
+				{
+					$this->format_types_all[$type][] = $format . $unit;
+				}
+			}
+		}
+	}
 
 	private function clean_units($block, $block_type)
 	{
@@ -1260,7 +1260,7 @@ class Parser
 			$end = $this->strposa($block, array_keys($this->units[$block_type]));
 			if ($end !== false)
 			{
-                // TODO: fix trim(substr($block, $end)), $block set incorrectly
+				// TODO: fix trim(substr($block, $end)), $block set incorrectly
 				$block = array(trim(substr($block, 0, $end)), $this->units[$block_type][trim(substr($block, $end))]);
 			}
 			else
@@ -1273,33 +1273,33 @@ class Parser
 
 	private function strposa($haystack, $needle, $offset=0)
 	{
-        if(!is_array($needle)) $needle = array($needle);
-        foreach($needle as $query)
-    	{
-            if(($return = strpos($haystack, $query, $offset)) !== false) return $return; // stop on first true result
-        }
-        return false;
+		if(!is_array($needle)) $needle = array($needle);
+		foreach($needle as $query)
+		{
+			if(($return = strpos($haystack, $query, $offset)) !== false) return $return; // stop on first true result
+		}
+		return false;
 	}
 
-    // TODO: add all the possible characters that will be accpected
-    private function format_character($chr)
-    {
-        $output_chr = $chr;
-        // is number
-        if (is_numeric($chr))
-        {
-            $output_chr = '0';
-        }
-        $output_chr = strtolower($output_chr);
-        // is x
-        if ($chr == '*' || $chr == '×')
-        {
-            $output_chr = 'x';
-        }
-        return $output_chr;
-    }
+	// TODO: add all the possible characters that will be accpected
+	private function format_character($chr)
+	{
+		$output_chr = $chr;
+		// is number
+		if (is_numeric($chr))
+		{
+			$output_chr = '0';
+		}
+		$output_chr = strtolower($output_chr);
+		// is x
+		if ($chr == '*' || $chr == '×')
+		{
+			$output_chr = 'x';
+		}
+		return $output_chr;
+	}
 
-    public static function generate_rm ($weight, $reps, $rm = 1)
+	public static function generate_rm ($weight, $reps, $rm = 1)
 	{
 		if ($reps == $rm)
 		{
@@ -1329,15 +1329,15 @@ class Parser
 		return floor(($lomrm + $brzrm + $eplrm + $mayrm + $ocorm + $watrm + $lanrm) / 7);
 	}
 
-    public function getUserWeight ()
-    {
-        if (strlen($this->user_weight) == 0 || $this->user_weight == 0)
+	public function getUserWeight ()
+	{
+		if (strlen($this->user_weight) == 0 || $this->user_weight == 0)
 		{
-            $query = DB::table('logs')
-                        ->where('log_date', '<', $this->log_date)
-                        ->where('user_id', $this->user->user_id)
-                        ->where('log_weight', '>', 0)
-                        ->orderBy('log_date', 'desc');
+			$query = DB::table('logs')
+						->where('log_date', '<', $this->log_date)
+						->where('user_id', $this->user->user_id)
+						->where('log_weight', '>', 0)
+						->orderBy('log_date', 'desc');
 			if ($query->count() > 0)
 			{
 				$this->user_weight = $query->value('log_weight');
@@ -1351,24 +1351,24 @@ class Parser
 		{
 			$this->user_weight = Format::correct_weight($this->user_weight, $this->user->user_unit, 'kg');
 		}
-    }
+	}
 
-    private function resetLogDefaults ()
-    {
-        $this->log->log_warmup_volume = 0;
-        $this->log->log_warmup_reps = 0;
-        $this->log->log_warmup_sets = 0;
-        $this->log->log_total_volume = 0;
-        $this->log->log_total_reps = 0;
-        $this->log->log_total_sets = 0;
-        $this->log->log_failed_volume = 0;
-        $this->log->log_failed_sets = 0;
-        $this->log->log_total_time = 0;
-        $this->log->log_total_distance = 0;
-    }
+	private function resetLogDefaults ()
+	{
+		$this->log->log_warmup_volume = 0;
+		$this->log->log_warmup_reps = 0;
+		$this->log->log_warmup_sets = 0;
+		$this->log->log_total_volume = 0;
+		$this->log->log_total_reps = 0;
+		$this->log->log_total_sets = 0;
+		$this->log->log_failed_volume = 0;
+		$this->log->log_failed_sets = 0;
+		$this->log->log_total_time = 0;
+		$this->log->log_total_distance = 0;
+	}
 
-    private function flag_error($error)
-    {
-        echo $error;
-    }
+	private function flag_error($error)
+	{
+		echo $error;
+	}
 }
