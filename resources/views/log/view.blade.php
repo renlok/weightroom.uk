@@ -72,7 +72,8 @@ h3.exercise {
 </div>
 @endif
 @if (Session::has('new_exercises'))
-<div class="alert alert-info alert-important">
+<div class="alert alert-info alert-important alert-dismissible fade in">
+	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 	@foreach (session('new_exercises') as $new_exercise)
 		<p>You have logged {{ $new_exercise[0] }} for the first time</p>
 		<p class="small">We have set it to be a {{ ($new_exercise[2]) ? 'endurance' : (($new_exercise[3]) ? 'distance' : (($new_exercise[1]) ? 'time' : 'weight')) }} exercise by default from now on, you change this in <a href="{{ route('editExercise', ['exercise_name' => $new_exercise[0]]) }}">edit exercise</a> page.</p>
@@ -80,7 +81,8 @@ h3.exercise {
 </div>
 @endif
 @if (Session::has('warnings'))
-<div class="alert alert-danger alert-important">
+<div class="alert alert-danger alert-important alert-dismissible fade in">
+	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 	@foreach (session('warnings') as $warning => $bool)
 		@if ($warning == 'blank_exercise')
 			<p>One or more of the exercises you added did not have any workout data</p>
