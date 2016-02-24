@@ -17,11 +17,11 @@ class UpdateUserSettingsRequest extends Request
             'bodyweight' => 'required|numeric',
             'weightunit' => 'required|in:kg,lb',
             'weekstart' => 'required|boolean',
-            'squat' => 'required|exists:exercises,exercise_id,user_id,'.Auth::user()->user_id,
-            'bench' => 'required|exists:exercises,exercise_id,user_id,'.Auth::user()->user_id,
-            'deadlift' => 'required|exists:exercises,exercise_id,user_id,'.Auth::user()->user_id,
-            'snatch' => 'required|exists:exercises,exercise_id,user_id,'.Auth::user()->user_id,
-            'cnj' => 'required|exists:exercises,exercise_id,user_id,'.Auth::user()->user_id,
+            'squat' => 'required|existsornull:exercises,exercise_id,user_id,'.Auth::user()->user_id,
+            'bench' => 'required|existsornull:exercises,exercise_id,user_id,'.Auth::user()->user_id,
+            'deadlift' => 'required|existsornull:exercises,exercise_id,user_id,'.Auth::user()->user_id,
+            'snatch' => 'required|existsornull:exercises,exercise_id,user_id,'.Auth::user()->user_id,
+            'cnj' => 'required|existsornull:exercises,exercise_id,user_id,'.Auth::user()->user_id,
             'volumeincfails' => 'required|boolean',
             'viewintensityabs' => 'required|in:p,a,h',
             'limitintensity' => 'required|between:0,100',
@@ -49,11 +49,11 @@ class UpdateUserSettingsRequest extends Request
     public function messages()
     {
         return [
-            'squat.exists' => 'The squat variation selected is invalid',
-            'bench.exists' => 'The bench press variation selected is invalid',
-            'deadlift.exists' => 'The deadlift variation selected is invalid',
-            'snatch.exists' => 'The snatch variation selected is invalid',
-            'cnj.exists' => 'The clean and jerk variation selected is invalid',
+            'squat.existsornull' => 'The squat variation selected is invalid',
+            'bench.existsornull' => 'The bench press variation selected is invalid',
+            'deadlift.existsornull' => 'The deadlift variation selected is invalid',
+            'snatch.existsornull' => 'The snatch variation selected is invalid',
+            'cnj.existsornull' => 'The clean and jerk variation selected is invalid',
         ];
     }
 }

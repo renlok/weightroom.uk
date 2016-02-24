@@ -143,7 +143,7 @@ class ToolsController extends Controller
 
     public function invites()
     {
-        $user = User::find(Auth::user()->user_id);
+        $user = Auth::user();
         $codes = $user->invite_codes->all();
         $open_codes = DB::table('invite_codes')->where('user_id', 0)->get();
         foreach ($open_codes as $open_code)

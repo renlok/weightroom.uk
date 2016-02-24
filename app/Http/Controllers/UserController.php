@@ -55,7 +55,7 @@ class UserController extends Controller
     public function postSettings(UpdateUserSettingsRequest $request)
     {
         //build temporary new data
-        $user = User::find(Auth::user()->user_id);
+        $user = Auth::user();
         $user->user_unit = $request->input('weightunit');
         $user->user_showreps = $request->input('showreps');
         $user->user_squatid = $request->input('squat');

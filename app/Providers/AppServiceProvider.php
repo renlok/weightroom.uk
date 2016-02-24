@@ -24,6 +24,19 @@ class AppServiceProvider extends ServiceProvider
 
             return DB::table($table)->where($column, $value)->where($count, '>', 0)->where($date, '>', Carbon::now())->count() > 0;
         });
+        Validator::extend('existsornull', function($attribute, $value, $parameters, $validator) {
+            $table = $parameters[0];
+            $column = $parameters[1];
+            $where = $parameters[2];
+            $where_equals = $parameters[3];
+
+            if ($value == 0 || $value == NULL)
+            {
+                return true;
+            }
+
+            return DB::table($table)->where($column, $value)->where($where, $where_equals)->count() > 0;
+        });
     }
 
     /**
