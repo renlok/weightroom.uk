@@ -6,6 +6,9 @@
 @endsection
 
 @section('content')
+@if ($map_match != '')
+<p>CSV from: {{ $map_match }}</p>
+@endif
 <form action="{{ url('import') }}" method="post">
 <table class="table table-striped">
   <thead>
@@ -16,7 +19,7 @@
     </tr>
   </thead>
   <tbody>
-@foreach ($file_headers as $file_header)
+@foreach ($file_headers as $key => $file_header)
     <tr>
       <td>
         <label for="{{ $file_header }}">{{ $file_header }}</label>
@@ -25,7 +28,7 @@
     	  <select class="form-control" name="{{ $file_header }}">
     	    <option value="">Ignore</option>
 	@foreach ($colomn_names as $colomn_name => $colomn_desc)
-          <option value="{{ $colomn_name }}">{{ $colomn_desc }}</option>
+          <option value="{{ $colomn_name }}" {{ ($link_array[$file_header] == $colomn_name) ? 'selected="selected"' : '' }}>{{ $colomn_desc }}</option>
 	@endforeach
         </select>
       </td>

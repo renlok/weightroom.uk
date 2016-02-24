@@ -6,6 +6,7 @@
 @endsection
 
 @section('content')
+@include('errors.validation')
 <form action="{{ url('import') }}" method="post" enctype="multipart/form-data">
   <div class="form-group">
     <label for="csvfile">File input</label>
