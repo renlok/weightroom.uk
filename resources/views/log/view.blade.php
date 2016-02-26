@@ -152,12 +152,12 @@ h3.exercise {
 	@endif
 	@if ($log->log_total_time > 0)
 		<p class="logrow">
-			Distance: <span class="heavy">{{ Format::correct_time($log->log_total_time, 's', 'h') }}</span>km</span>
+			Time: {!! Format::format_time($log->log_total_time, true) !!}</span>
 		</p>
 	@endif
 	@if($log->log_total_distance > 0)
 		<p class="logrow">
-			Distance: <span class="heavy">{{ Format::correct_distance($log->log_total_distance, 'm', 'km') }}</span>km</span>
+			Distance: {!! Format::format_distance($log->log_total_distance, true) !!}</span>
 		</p>
 	@endif
 	@if ($log->log_weight > 0)

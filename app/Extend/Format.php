@@ -4,20 +4,24 @@ namespace App\Extend;
 
 use Auth;
 
-class Format {
-	public static function format_time($time)
+class Format
+{
+	public static function format_time($time, $span = false)
 	{
 		if ($time <= 60)
 		{
-			return $time . ' secs';
+			$value = $time;
+			$unit = ' secs';
 		}
 		elseif ($time % 3600 == 0)
 		{
-			return ($time / 3600) . ' hours';
+			$value = ($time / 3600);
+			$unit = ' hours';
 		}
 		elseif ($time % 60 == 0)
 		{
-			return ($time / 60) . ' mins';
+			$value = ($time / 60);
+			$unit = ' mins';
 		}
 		else
 		{
@@ -28,24 +32,43 @@ class Format {
 			$secs = $time % 60;
 			if ($hours > 0)
 			{
-				return $hours . ':' . sprintf("%02d", $mins) . ':' . sprintf("%02d", $secs);
+				$value = $hours . ':' . sprintf("%02d", $mins) . ':' . sprintf("%02d", $secs);
 			}
 			else
 			{
-				return $mins . ':' . sprintf("%02d", $secs);
+				$value = $mins . ':' . sprintf("%02d", $secs);
 			}
+			$unit = '';
 		}
-	}
-
-	public static function format_distance($distance)
-	{
-		if ($distance < 1000)
+		if ($span)
 		{
-			return $distance . ' m';
+			return '<span class="heavy">' . $value . '</span>' . $unit;
 		}
 		else
 		{
-			return $distance/1000 . 'km';
+			return $value . $unit;
+		}
+	}
+
+	public static function format_distance($distance, $span = false)
+	{
+		if ($distance < 1000)
+		{
+			$value = $distance;
+			$unit = ' m';
+		}
+		else
+		{
+			$value = $distance/1000;
+			$unit = ' km';
+		}
+		if ($span)
+		{
+			return '<span class="heavy">' . $value . '</span>' . $unit;
+		}
+		else
+		{
+			return $value . $unit;
 		}
 	}
 

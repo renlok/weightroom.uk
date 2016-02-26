@@ -127,7 +127,18 @@ class ExercisesController extends Controller
 			$query = $query->where('log_date', '<=', $to_date);
 		}
 		// set scales
-		$max_volume = Format::correct_weight($query->max('logex_volume'));
+		if ($exercise->is_time)
+		{
+			$max_volume = Format::correct_time($query->max('logex_time'), 's', 'h');
+		}
+		elseif ($exercise->is_distance)
+		{
+			$max_volume = Format::correct_distance($query->max('logex_distance'), 'm', 'km');
+		}
+		else
+		{
+			$max_volume = Format::correct_weight($query->max('logex_volume'));
+		}
 		$max_reps = $query->max('logex_reps');
 		$max_sets = $query->max('logex_sets');
 		$max_rm = Exercise_record::exercisemaxpr($user->user_id, $exercise->exercise_id, $exercise->is_time, $exercise->is_endurance, $exercise->is_distance);

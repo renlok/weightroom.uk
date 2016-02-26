@@ -16,12 +16,12 @@
 @endif
 @if ($log_exercise->logex_time > 0)
     <p class="logrow">
-        Distance: <span class="heavy">{{ Format::correct_time($log_exercise->logex_time, 's', 'h') }}</span>km</span>
+        Time: {!! Format::format_time($log_exercise->logex_time, true) !!}</span>
     </p>
 @endif
 @if($log_exercise->logex_distance > 0)
     <p class="logrow">
-        Distance: <span class="heavy">{{ Format::correct_distance($log_exercise->logex_distance, 'm', 'km') }}</span>km</span>
+        Distance: {!! Format::format_distance($log_exercise->logex_distance, true) !!}</span>
     </p>
 @endif
 </p>

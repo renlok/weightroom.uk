@@ -429,8 +429,6 @@ class Parser
 					$this->warnings['blank_bodyweight'] = true;
 				}
 				$this->setAbsoluteWeight ($set, $i, $j);
-				// calculate volume data
-				$this->updateVolumes ($set, $i, $j);
 				// check its a pr
 				if ($this->checkPR ($prs, $set, $i, $j))
 				{
@@ -477,6 +475,8 @@ class Parser
 				$this->log_items[$i][$j]->logex_order = $i;
 				$this->log_items[$i][$j]->logitem_pre = (!isset($set['P']) || $set['P'] == NULL) ? NULL : $set['P'];
 				$this->setExerciseDefaultTypes ($i);
+				// calculate volume data
+				$this->updateVolumes ($set, $i, $j);
 			}
 			$this->log_exercises[$i]->logex_1rm = $max_estimate_rm;
 		}
@@ -750,11 +750,6 @@ class Parser
 
 	private function updateVolumes ($set, $i, $j)
 	{
-		if ($this->log_items[$i][$j]->is_time)
-		{
-			return false;
-		}
-
 		if ($this->log_items[$i][$j]->is_time)
 		{
 			$this->log_exercises[$i]->logex_time += $this->log_items[$i][$j]->logitem_abs_weight * $set['R'] * $set['S'];
