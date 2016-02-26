@@ -8,8 +8,8 @@
 <p><h3>{{ $log_exercise->log_date->toDateString() }}</h3><a href="{{ route('viewLog', ['date' => $log_exercise->log_date->toDateString()]) }}">View Log</a></p>
 @endif
 <p class="logrow">
-@if ($log_exercise->logex_volume + ($log->logex_failed_volume * $user->user_volumeincfails) > 0)
-    Volume: <span class="heavy">{{ Format::correct_weight($log_exercise->logex_volume + ($log->logex_failed_volume * $user->user_volumeincfails)) }}</span>{{ Auth::user()->user_unit }} - Reps: <span class="heavy">{{ $log_exercise->logex_reps }}</span> - Sets: <span class="heavy">{{ $log_exercise->logex_sets }}</span>
+@if ($log_exercise->logex_volume + ($log_exercise->logex_failed_volume * $user->user_volumeincfails) > 0)
+    Volume: <span class="heavy">{{ Format::correct_weight($log_exercise->logex_volume + ($log_exercise->logex_failed_volume * $user->user_volumeincfails)) }}</span>{{ Auth::user()->user_unit }} - Reps: <span class="heavy">{{ $log_exercise->logex_reps }}</span> - Sets: <span class="heavy">{{ $log_exercise->logex_sets }}</span>
     @if (Auth::user()->user_showintensity != 'h')
          - Avg. Intensity: <span class="heavy">{{ $log_exercise->average_intensity }}</span>
     @endif
