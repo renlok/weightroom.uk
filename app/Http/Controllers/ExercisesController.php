@@ -126,36 +126,48 @@ class ExercisesController extends Controller
 		{
 			$query = $query->where('log_date', '<=', $to_date);
 		}
+		$scales = [
+			'logex_reps' => 1,
+			'logex_sets' => 1,
+			'logex_1rm' => 1,
+		];
 		// set scales
 		if ($exercise->is_time)
 		{
 			$max_volume = Format::correct_time($query->max('logex_time'), 's', 'h');
+			$table_name = 'logex_time';
+			$scales['logex_time'] = 1;
+			$graph_names = ['logex_time' => 'Total Time'];
 		}
 		elseif ($exercise->is_distance)
 		{
 			$max_volume = Format::correct_distance($query->max('logex_distance'), 'm', 'km');
+			$table_name = 'logex_distance';
+			$scales['logex_distance'] = 1;
+			$graph_names = ['logex_distance' => 'Total Distance'];
 		}
 		else
 		{
 			$max_volume = Format::correct_weight($query->max('logex_volume'));
+			$table_name = 'logex_volume';
+			$max_reps = $query->max('logex_reps');
+			$max_sets = $query->max('logex_sets');
+			$max_rm = Exercise_record::exercisemaxpr($user->user_id, $exercise->exercise_id, $exercise->is_time, $exercise->is_endurance, $exercise->is_distance);
+			$scales = [
+				'logex_volume' => 1,
+				'logex_reps' => floor($max_volume / $max_reps),
+				'logex_sets' => floor($max_volume / $max_sets),
+				'logex_1rm' => floor($max_volume / $max_rm),
+			];
+			$graph_names = [
+				'logex_volume' => 'Volume',
+				'logex_reps' => 'Total reps',
+				'logex_sets' => 'Total sets',
+				'logex_1rm' => '1RM',
+			];
 		}
-		$max_reps = $query->max('logex_reps');
-		$max_sets = $query->max('logex_sets');
-		$max_rm = Exercise_record::exercisemaxpr($user->user_id, $exercise->exercise_id, $exercise->is_time, $exercise->is_endurance, $exercise->is_distance);
-		$scales = [
-			'logex_volume' => 1,
-			'logex_reps' => floor($max_volume / $max_reps),
-			'logex_sets' => floor($max_volume / $max_sets),
-			'logex_1rm' => floor($max_volume / $max_rm),
-		];
 		// get log_exercises
 		$log_exercises = $query->orderBy('log_date', 'desc')->get();
-		$graph_names = [
-			'logex_volume' => 'Volume',
-			'logex_reps' => 'Total reps',
-			'logex_sets' => 'Total sets',
-			'logex_1rm' => '1RM',
-		];
 		return view('exercise.history', compact('exercise_name', 'graph_names', 'log_exercises', 'scales', 'user'));
 	}
 
@@ -185,16 +197,19 @@ class ExercisesController extends Controller
 			$prs = Log_item::getexercisemaxes(Auth::user()->user_id, $range, $exercise_name, $exercise->is_time, Auth::user()->user_showreps, $type)->get()->groupBy('logitem_reps');
 		}
 		$graph_label = 'Weight';
+		$format_func = 'correct_weight';
 		if ($exercise->is_time)
 		{
 			$graph_label = 'Time';
+			$format_func = 'format_time';
 		}
 		elseif ($exercise->is_distance)
 		{
 			$graph_label = 'Distance';
+			$format_func = 'format_distance';
 		}
 
-		return view('exercise.view', compact('exercise_name', 'current_prs', 'filtered_prs', 'prs', 'range', 'type', 'graph_label'));
+		return view('exercise.view', compact('exercise_name', 'current_prs', 'filtered_prs', 'prs', 'range', 'type', 'graph_label', 'format_func'));
 	}
 
 	public function getCompareForm()

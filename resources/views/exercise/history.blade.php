@@ -72,6 +72,10 @@
 			color: '#56c5a6'
 	@elseif ($table_name == 'logex_1rm')
 			color: '#765dcb'
+	@elseif ($table_name == 'logex_time')
+			color: '#b84a66'
+	@elseif ($table_name == 'logex_distance')
+			color: '#b84a67'
 	@else
 			color: '#b84a68'
 	@endif
@@ -90,6 +94,18 @@
 			var point_value = key.point.y;
 			if (key.point.color == '#b84a68')
 				var tool_type = 'Volume';
+			if (key.point.color == '#b84a66')
+			{
+				var tool_type = 'Time';
+				point_value = Math.round((point_value / 3600) * 100) / 100;
+				units = 'h';
+			}
+			if (key.point.color == '#b84a68')
+			{
+				var tool_type = 'Distance';
+				point_value = Math.round((point_value / 1000) * 100) / 100;
+				units = 'km';
+			}
 			if (key.point.color == '#a6bf50')
 			{
 				var tool_type = 'Total reps';

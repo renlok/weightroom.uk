@@ -51,12 +51,12 @@
 <tbody>
   <tr>
 @for ($i = 1; $i <= 10; $i++)
-    <td>{{ (isset($filtered_prs[$i])) ? $filtered_prs[$i][0]['pr_value'] : '-' }}</td>
+    <td>{{ (isset($filtered_prs[$i])) ? Format::$format_func($filtered_prs[$i][0]['pr_value']) : '-' }}</td>
 @endfor
   </tr>
   <tr>
 @for ($i = 1; $i <= 10; $i++)
-    <td>{!! (isset($current_prs[$i])) ? '<a href="' . route('viewLog', ['date' => $current_prs[$i][0]['log_date']]) . '">' . floatval($current_prs[$i][0]['pr_value']) . '</a>' : '-' !!}</td>
+    <td>{!! (isset($current_prs[$i])) ? '<a href="' . route('viewLog', ['date' => $current_prs[$i][0]['log_date']]) . '">' . Format::$format_func($current_prs[$i][0]['pr_value']) . '</a>' : '-' !!}</td>
 @endfor
   </tr>
 </tbody>
