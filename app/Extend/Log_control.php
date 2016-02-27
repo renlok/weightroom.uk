@@ -48,7 +48,7 @@ class Log_control
 
 	public static function average_intensity($user_id, $exercise_id, $logex_id, $raw = false)
 	{
-		$exercise = Exercise::select('is_time', 'is_endurance')->find($exercise_id);
+		$exercise = Exercise::select('is_time', 'is_endurance', 'is_distance')->find($exercise_id);
 		$current_1rm = Exercise_record::exercisemaxpr($user_id, $exercise_id, $exercise->is_time, $exercise->is_endurance, $exercise->is_distance);
 		$log_exercise = Log_control::correct_totals($user_id, $exercise_id, $logex_id, $current_1rm);
 
