@@ -31,7 +31,7 @@
     Last {{ $range }} months
 @endif
 </h3>
-<small><a href="{{ route('listExercises') }}">&larr; Back to list</a></small> | <small><a href="{{ route('editExercise', ['exercise_name' => $exercise_name]) }}">Edit exercise</a></small> | <small><a href="{{ route('exerciseHistory', ['exercise_name' => $exercise_name]) }}">View history</a></small>
+<p><small><a href="{{ route('listExercises') }}">&larr; Back to list</a></small> | <small><a href="{{ route('editExercise', ['exercise_name' => $exercise_name]) }}">Edit exercise</a></small> | <small><a href="{{ route('exerciseHistory', ['exercise_name' => $exercise_name]) }}">View history</a></small></p>
 
 <table width="100%" class="table">
 <thead>
@@ -61,6 +61,7 @@
   </tr>
 </tbody>
 </table>
+<small><a href="{{ route('viewExercisePRHistory', ['exercise_name' => $exercise_name]) }}">View PR history</a></small>
 
 <div id="prHistoryChart">
     <svg></svg>

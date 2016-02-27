@@ -72,6 +72,7 @@ Route::group(['prefix' => 'exercise', 'middleware' => 'auth'], function () {
     // list exercises
     Route::get('/', 'ExercisesController@getList');
     Route::get('list', 'ExercisesController@getList')->name('listExercises');
+    Route::get('{exercise_name}/view/prhistory/', 'ExercisesController@getViewExercisePRHistory')->name('viewExercisePRHistory');
     Route::get('{exercise_name}/view/{type?}/{range?}/{force_pr_type?}/', 'ExercisesController@getViewExercise')->name('viewExercise');
     // edit exercise routes
     Route::get('{exercise_name}/edit', 'ExercisesController@getEdit')->name('editExercise');

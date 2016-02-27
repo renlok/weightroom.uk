@@ -212,6 +212,24 @@ class ExercisesController extends Controller
 		return view('exercise.view', compact('exercise_name', 'current_prs', 'filtered_prs', 'prs', 'range', 'type', 'graph_label', 'format_func'));
 	}
 
+	public function getViewExercisePRHistory($exercise_name)
+	{
+		$exercise = Exercise::getexercise($exercise_name, Auth::user()->user_id)->firstOrFail();
+		$prs = Exercise_record::getexerciseprsall(Auth::user()->user_id, 0, $exercise_name, $exercise, Auth::user()->user_showreps)->get()->groupBy(function ($item, $key) {
+			return $item['log_date']->toDateString();
+		})->toArray();
+		$prs = array_map(function($collection) {
+			$temp = [];
+			foreach ($collection as $item)
+			{
+				$temp[$item['pr_reps']] = $item['pr_value'];
+			}
+			return $temp;
+		}, $prs);
+		krsort ($prs);
+		return view('exercise.prhistory', compact('exercise_name', 'exercise', 'prs'));
+	}
+
 	public function getCompareForm()
 	{
 		$exercises = Exercise::listexercises(true)->get();
