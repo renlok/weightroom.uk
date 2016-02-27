@@ -19,12 +19,12 @@
 	  <option value="wlt">Total</option>
 	  <option value="wls">Snatch</option>
 	  <option value="wlcnj">Clean and Jerk</option>
-	  <option value="wlps">Power Snatch</option>
-	  <option value="wlpc">Power Clean</option>
 	  <option value="wlpj">Power Jerk</option>
 	  <option value="wlfs">Front Squat</option>
 	  <option value="wlbs">Back Squat</option>
 	  <option value="wlp">Pull</option>
+	  <option value="wlps">Power Snatch</option>
+	  <option value="wlpc">Power Clean</option>
 	</select>
   </div>
   <div class="form-group">
@@ -38,12 +38,17 @@
 	<p>Total: <span id="wlt"></span></p>
 	<p>Snatch: <span id="wls"></span></p>
 	<p>Clean and Jerk: <span id="wlcnj"></span></p>
-	<p>Power Snatch: <span id="wlps"></span></p>
-	<p>Power Clean: <span id="wlpc"></span></p>
-	<p>Power Jerk: <span id="wlpj"></span></p>
 	<p>Front Squat: <span id="wlfs"></span></p>
 	<p>Back Squat: <span id="wlbs"></span></p>
 	<p>Pull: <span id="wlp"></span></p>
+	<p>Power Snatch: <span id="wlps"></span></p>
+	<p>Power Clean: <span id="wlpc"></span></p>
+	<p>Power Jerk: <span id="wlpj"></span></p>
+    <h3>Accessory lifts</h3>
+	<p>Hang Clean: <span id="wlhc"></span></p>
+	<p>Hang Snatch: <span id="wlhs"></span></p>
+	<p>Muscle Snatch: <span id="wlms"></span></p>
+	<p>Sots Press: <span id="wlsp"></span></p>
 </div>
 <small class="text-muted">Ratios lovingly stolen from the <a href="http://www.qwa.org/Resources/Calculators.aspx">Queensland weightlifting association</a></small>
 @endsection
@@ -67,6 +72,10 @@ $('#calculate').click(function(){
 	ratio.wlfs = 0.86;
 	ratio.wlbs = 1;
 	ratio.wlp = 1.04;
+	ratio.wlhc = 0.7084;
+	ratio.wlhs = 0.5952;
+	ratio.wlms = 0.434;
+	ratio.wlsp = 0.4235;
 	// get squat value
 	var squat = liftrm/ratio[bmlift];
 	// set all values
@@ -79,6 +88,10 @@ $('#calculate').click(function(){
 	$('#wlfs').text(Math.round(squat*ratio.wlfs));
 	$('#wlbs').text(Math.round(squat));
 	$('#wlp').text(Math.round(squat*ratio.wlp));
+	$('#wlhc').text(Math.round(squat*ratio.wlhc));
+	$('#wlhs').text(Math.round(squat*ratio.wlhs));
+	$('#wlms').text(Math.round(squat*ratio.wlms));
+	$('#wlsp').text(Math.round(squat*ratio.wlsp));
 });
 </script>
 @endsection
