@@ -138,12 +138,14 @@
         }
 		var height = Math.round(width/2);
         var chart = nv.models.lineChart()
-						.margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
-						.useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
-						.duration(350)  //how fast do you want the lines to transition?
-						.showLegend(true)       //Show the legend, allowing users to turn on/off line series.
-						.showYAxis(true)        //Show the y-axis
-						.showXAxis(true)        //Show the x-axis
+			.margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
+			.useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
+			.duration(350)  //how fast do you want the lines to transition?
+			.showLegend(true)       //Show the legend, allowing users to turn on/off line series.
+			.showYAxis(true)        //Show the y-axis
+			.showXAxis(true)        //Show the x-axis
+	
+	chart.noData("Not enough data to generate PR graph");
 
         chart.xAxis
             .axisLabel('Date')
@@ -153,27 +155,27 @@
             .axisLabel('{{ $graph_label }}')
             .tickFormat(d3.format('.02f'));
 
-		d3.select('#prHistoryChart')
-			.attr('style', "width: " + width + "px; height: " + height + "px;" );
+	d3.select('#prHistoryChart')
+		.attr('style', "width: " + width + "px; height: " + height + "px;" );
 
         var data = prHistoryData();
         d3.select('#prHistoryChart svg')
-            .datum(data)
-            .transition().duration(500)
-			.attr('perserveAspectRatio', 'xMinYMin meet')
-            .call(chart);
+		.datum(data)
+		.transition().duration(500)
+		.attr('perserveAspectRatio', 'xMinYMin meet')
+		.call(chart);
 
         nv.utils.windowResize(resizeChart);
         function resizeChart() {
-			var width = $(document).width() - 50;
-            if (width > 1150)
-            {
-                width = 1150;
-            }
-			var height = Math.round(width/2);
-			d3.select('#prHistoryChart')
-				.attr('style', "width: " + width + "px; height: " + height + "px;" );
-			chart.update();
+		var width = $(document).width() - 50;
+		if (width > 1150)
+		{
+			width = 1150;
+		}
+		var height = Math.round(width/2);
+		d3.select('#prHistoryChart')
+			.attr('style', "width: " + width + "px; height: " + height + "px;" );
+		chart.update();
         }
 
         return chart;
