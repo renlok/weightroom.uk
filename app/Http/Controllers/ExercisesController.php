@@ -215,7 +215,7 @@ class ExercisesController extends Controller
 	public function getViewExercisePRHistory($exercise_name)
 	{
 		$exercise = Exercise::getexercise($exercise_name, Auth::user()->user_id)->firstOrFail();
-		$prs = Exercise_record::getexerciseprsall(Auth::user()->user_id, 0, $exercise_name, $exercise, Auth::user()->user_showreps)->get()->groupBy(function ($item, $key) {
+		$prs = Exercise_record::getexerciseprsall(Auth::user()->user_id, 0, $exercise_name, $exercise)->get()->groupBy(function ($item, $key) {
 			return $item['log_date']->toDateString();
 		})->toArray();
 		$prs = array_map(function($collection) {
