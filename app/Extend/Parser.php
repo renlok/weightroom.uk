@@ -40,6 +40,7 @@ class Parser
 	// formatted data
 	private $log;
 	private $log_exercises = [];
+	private $is_speed;
 	private $log_items = [];
 	private $exercises = [];
 	// for flash messages
@@ -251,6 +252,7 @@ class Parser
 			for ($i = 0; $i <= $multiline_max; $i++)
 			{
 				// check each block
+				// TODO: merge simliar rows the are next to each other
 				foreach ($blocks as $block)
 				{
 					if (!isset($output_data[$i][$block]))
@@ -629,6 +631,14 @@ class Parser
 		{
 			$set['T'][0] = str_replace(' ', '', $set['T'][0]);
 			$set['T'] = $this->correctUnitsDatabase ($set['T'], 'T');
+			// if new exercise and no flags set guess time type
+			if ($this->exercises[$i]['new'] && $this->is_speed == null)
+			{
+				if ($set['T'] > 1800)
+				{
+					$this->log_items[$i][$j]->is_endurance = true;
+				}
+			}
 			$this->log_items[$i][$j]->is_time = true;
 			$set['W'] = 0;
 			$set['D'] = 0;
@@ -653,6 +663,7 @@ class Parser
 			return 0;
 		}
 		$string = trim(strtolower($string));
+		$this->is_speed = null;
 		// line is warmup
 		if ($this->isWarmupTag ($string))
 		{
@@ -661,11 +672,18 @@ class Parser
 		elseif ($this->isEnduranceTag ($string))
 		{
 			$this->log_items[$i][$j]->is_endurance = true;
+			$this->is_speed = false;
 			$this->log_items[$i][$j]->is_time = true;
 		}
 		elseif ($this->isDistanceTag ($string))
 		{
 			$this->log_items[$i][$j]->is_distance = true;
+		}
+		elseif ($this->isSpeedTag ($string))
+		{
+			$this->log_items[$i][$j]->is_endurance = false;
+			$this->is_speed = true;
+			$this->log_items[$i][$j]->is_time = true;
 		}
 		else
 		{
@@ -687,6 +705,11 @@ class Parser
 					elseif ($this->isDistanceTag ($part))
 					{
 						$this->log_items[$i][$j]->is_distance = true;
+					}
+					elseif ($this->isSpeedTag ($part))
+					{
+						$this->log_items[$i][$j]->is_endurance = false;
+						$this->log_items[$i][$j]->is_time = true;
 					}
 					else
 					{
@@ -713,6 +736,15 @@ class Parser
 	private function isEnduranceTag ($part)
 	{
 		if ($part == 'e' || $part == 'endurance')
+		{
+			return true;
+		}
+		return false;
+	}
+
+	private function isSpeedTag ($part)
+	{
+		if ($part == 's' || $part == 'speed')
 		{
 			return true;
 		}
@@ -983,33 +1015,39 @@ class Parser
 						->where('is_pr', 0)
 						->orderBy('log_date', 'asc')
 						->get();
+			$last_updated_pr = 0;
 			foreach ($sets as $set)
 			{
-				// update is_pr flag
-				DB::table('log_items')
-					->where('log_id', $set->log_id)
-					->update(['is_pr' => 1]);
-
-				// check if new 1rm has been set
-				$new_1rm = $this->generate_rm ($set->logitem_abs_weight, $set_reps);
-				$is_est1rm = (($old_1rm < $new_1rm) || ($is_time == 1 && $is_endurance == 0 && $old_1rm > $new_1rm)) ? true : false;
-				if ($is_est1rm)
+				// make sure the PRs are setting correctly
+				if ($set->logitem_abs_weight > $last_updated_pr)
 				{
-					$old_1rm = $new_1rm;
+					// update is_pr flag
+					DB::table('log_items')
+						->where('log_id', $set->log_id)
+						->update(['is_pr' => 1]);
+
+					// check if new 1rm has been set
+					$new_1rm = $this->generate_rm ($set->logitem_abs_weight, $set_reps);
+					$is_est1rm = (($old_1rm < $new_1rm) || ($is_time == 1 && $is_endurance == 0 && $old_1rm > $new_1rm)) ? true : false;
+					if ($is_est1rm)
+					{
+						$old_1rm = $new_1rm;
+					}
+					// insert pr data
+					Exercise_record::create([
+						'exercise_id' => $exercise_id,
+						'user_id' => $this->user->user_id,
+						'log_date' => $set->log_date,
+						'pr_value' => $set->logitem_abs_weight,
+						'pr_reps' => $set_reps,
+						'pr_1rm' => $new_1rm,
+						'is_est1rm' => $is_est1rm,
+						'is_time' => $is_time,
+						'is_endurance' => $is_endurance,
+						'is_distance' => $is_distance
+					]);
+					$last_updated_pr = $set->logitem_abs_weight;
 				}
-				// insert pr data
-				Exercise_record::create([
-					'exercise_id' => $exercise_id,
-					'user_id' => $this->user->user_id,
-					'log_date' => $set->log_date,
-					'pr_value' => $set->logitem_abs_weight,
-					'pr_reps' => $set_reps,
-					'pr_1rm' => $new_1rm,
-					'is_est1rm' => $is_est1rm,
-					'is_time' => $is_time,
-					'is_endurance' => $is_endurance,
-					'is_distance' => $is_distance
-				]);
 			}
 		}
 
