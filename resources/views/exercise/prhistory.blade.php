@@ -27,7 +27,7 @@
 		<tr>
 			<td>{{ $date }}</td>
 		@for ($i = 1; $i <= 10; $i++)
-			<td>{{ (isset($pr[$i])) ? Format::correct_weight($pr[$i]) . ' ' . Auth::user()->user_unit : '' }}</td>
+			<td>{{ (isset($pr[$i])) ? Format::$format_func($pr[$i]) : '' }}</td>
 		@endfor
 		</tr>
 @endforeach

@@ -227,7 +227,16 @@ class ExercisesController extends Controller
 			return $temp;
 		}, $prs);
 		krsort ($prs);
-		return view('exercise.prhistory', compact('exercise_name', 'exercise', 'prs'));
+		$format_func = 'correct_weight';
+		if ($exercise->is_time)
+		{
+			$format_func = 'format_time';
+		}
+		elseif ($exercise->is_distance)
+		{
+			$format_func = 'format_distance';
+		}
+		return view('exercise.prhistory', compact('exercise_name', 'exercise', 'prs', 'format_func'));
 	}
 
 	public function getCompareForm()
