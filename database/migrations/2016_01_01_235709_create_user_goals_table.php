@@ -16,7 +16,9 @@ class CreateUserGoalsTable extends Migration
             $table->increments('goal_id');
             $table->integer('user_id')->unsigned()->index();
             $table->integer('exercise_id')->unsigned()->index();
-            $table->integer('goal_value')->unsigned()->index();
+            $table->enum('goal_type', ['wr', 'rm', 'tv', 'tr'])->unsigned();
+            $table->integer('goal_value_one')->unsigned();
+            $table->integer('goal_value_two')->unsigned();
             $table->timestamps();
         });
     }
