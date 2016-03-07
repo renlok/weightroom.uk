@@ -45,4 +45,49 @@
     </div>
   </div>
 </form>
+
+<form class="form-horizontal" action="{{ route('updateGoal', ['exercise_name' => $exercise_name]) }}" method="post">
+  <div class="form-group">
+    <h3>Exercise Goals:</h3>
+  </div>
+  <div class="form-group">
+    <label for="exerciseType" class="col-sm-2 control-label">New goal</label>
+    <div class="col-sm-10">
+        <select class="form-control" name="goalType" id="goalType">
+            <option value="wr">Weight x Rep</option>
+            <option value="rm">Estimate 1rm</option>
+            <option value="tv">Total volume</option>
+            <option value="tr">Total reps</option>
+          </select>
+        <input type="text" name="valueOne" value="">
+        <input type="text" name="valueTwo" value="">
+    </div>
+  </div>
+@foreach ($goals as $goal)
+<div class="form-group">
+  <label for="exerciseType" class="col-sm-2 control-label">Edit:</label>
+  <div class="col-sm-10">
+        <select class="form-control" name="goalType" id="goalType">
+            <option value="wr" {{ ($goal->goal_type == 'wr') ? 'selected="selected"' : '' }}>Weight x Rep</option>
+            <option value="rm" {{ ($goal->goal_type == 'rm') ? 'selected="selected"' : '' }}>Estimate 1rm</option>
+            <option value="tv" {{ ($goal->goal_type == 'tv') ? 'selected="selected"' : '' }}>Total volume</option>
+            <option value="tr" {{ ($goal->goal_type == 'tr') ? 'selected="selected"' : '' }}>Total reps</option>
+          </select>
+        <input type="text" name="valueOne" value="{{ $goal->goal_value_one }}">
+        <input type="text" name="valueTwo" value="{{ $goal->goal_value_two }}">
+  </div>
+  <div class="progress">
+    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
+      60%
+    </div>
+  </div>
+</div>
+@endforeach
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+	  {!! csrf_field() !!}
+      <button type="submit" class="btn btn-default" name="action">Update</button>
+    </div>
+  </div>
+</form>
 @endsection

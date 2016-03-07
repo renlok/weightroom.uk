@@ -27,7 +27,7 @@ class ExercisesController extends Controller
 
 	public function getEdit($exercise_name)
 	{
-		$exercise = Exercise::select('is_time', 'is_endurance', 'is_distance')->where('exercise_name', $exercise_name)->where('user_id', Auth::user()->user_id)->firstOrFail();
+		$exercise = Exercise::select('is_time', 'is_endurance', 'is_distance', 'exercise_id')->where('exercise_name', $exercise_name)->where('user_id', Auth::user()->user_id)->firstOrFail();
 		$current_type = 'weight';
 		if ($exercise->is_distance)
 		{
@@ -41,7 +41,8 @@ class ExercisesController extends Controller
 		{
 			$current_type = 'time';
 		}
-		return view('exercise.edit', compact('exercise_name', 'current_type'));
+		$goals = Exercise_goal::where('exercise_id', $exercise->exercise_id)->get();
+		return view('exercise.edit', compact('exercise_name', 'current_type', 'goals'));
 	}
 
 	public function postEditName($exercise_name, Request $request)

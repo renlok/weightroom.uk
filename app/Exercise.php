@@ -60,4 +60,14 @@ class Exercise extends Model
     {
         return $this->hasMany('App\Log_exercise');
     }
+
+    /**
+     * an exercise can have many goals
+     *
+     * @returns Illuminate\Database\Eloquent\Relations\hasMany
+     */
+    public function exercise_goals()
+    {
+        return $this->hasMany('App\Exercise_goal');
+    }
 }

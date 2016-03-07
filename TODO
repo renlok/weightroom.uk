@@ -37,7 +37,7 @@
 
 - update demo
 
-- goals:
+- goals: (started, need to fixed add/edit goal, visulise goal, give message if goal is hut after adding log)
     weight x rep
     estimate 1rm
     total volume
