@@ -42,6 +42,7 @@ class ExercisesController extends Controller
 			$current_type = 'time';
 		}
 		$goals = Exercise_goal::where('exercise_id', $exercise->exercise_id)->get();
+		// TODO: get percentages for goals
 		return view('exercise.edit', compact('exercise_name', 'current_type', 'goals'));
 	}
 
