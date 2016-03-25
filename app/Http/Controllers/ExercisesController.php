@@ -200,7 +200,9 @@ class ExercisesController extends Controller
 		}
 		else
 		{
-			$prs = Log_item::getexercisemaxes(Auth::user()->user_id, $range, $exercise_name, $exercise->is_time, Auth::user()->user_showreps, $type)->get()->groupBy('logitem_reps');
+			$prs = Log_item::getexercisemaxes(Auth::user()->user_id, $range, $exercise_name, $exercise, Auth::user()->user_showreps, $type)->get()->groupBy('logitem_reps');
+			$prs['Approx. 1'] = Log_item::getestimatedmaxes(Auth::user()->user_id, $range, $exercise_name, $exercise, $type)->get();
+			$approx1rm = Exercise_record::getlastest1rm(Auth::user()->user_id, $exercise_name)->value('pr_1rm');
 		}
 		$graph_label = 'Weight';
 		$format_func = 'correct_weight';

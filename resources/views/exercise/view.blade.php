@@ -24,13 +24,41 @@
 
 @include('common.flash')
 
-<h3>Viewing:
-@if ($range == 0)
-    All
-@else
-    Last {{ $range }} months
-@endif
-</h3>
+<div class="row">
+    <div class="col-md-6">
+        <h3>Viewing:
+        @if ($range == 0)
+            All
+        @else
+            Last {{ $range }} months
+        @endif
+        </h3>
+    </div>
+    <div class="col-md-6 text-right">
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Range <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => $type, 'range' => 0]) }}">All</a></li>
+                <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => $type, 'range' => 12]) }}">1 year</a></li>
+                <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => $type, 'range' => 6]) }}">6 months</a></li>
+                <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => $type, 'range' => 3]) }}">3 months</a></li>
+                <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => $type, 'range' => 1]) }}">1 month</a></li>
+            </ul>
+        </div>
+        <div class="btn-group">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Graph Type <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => 'prs']) }}">PRs</a></li>
+                <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => 'monthly']) }}">Monthly maxes</a></li>
+                <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => 'weekly']) }}">Weekly maxes</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
 <p><small><a href="{{ route('listExercises') }}">&larr; Back to list</a></small> | <small><a href="{{ route('editExercise', ['exercise_name' => $exercise_name]) }}">Edit exercise</a></small> | <small><a href="{{ route('exerciseHistory', ['exercise_name' => $exercise_name]) }}">View history</a></small></p>
 
 <table width="100%" class="table">
@@ -61,52 +89,11 @@
   </tr>
 </tbody>
 </table>
-<small><a href="{{ route('viewExercisePRHistory', ['exercise_name' => $exercise_name]) }}">View PR history</a></small>
+<p class="text-right small"><a href="{{ route('viewExercisePRHistory', ['exercise_name' => $exercise_name]) }}">View PR history</a></p>
 
 <div id="prHistoryChart">
     <svg></svg>
 </div>
-
-<p>Range:
-@if($range != 0)
-	<a href=" {{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => $type, 'range' => 0]) }} ">All</a>
-@else
-	All
-@endif |
-@if($range != 12)
-	<a href=" {{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => $type, 'range' => 12]) }} ">1 year</a>
-@else
-	1 year
-@endif |
-@if($range != 6)
-	<a href=" {{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => $type, 'range' => 6]) }} ">6 months</a>
-@else
-	6 months
-@endif |
-@if($range != 3)
-	<a href=" {{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => $type, 'range' => 3]) }} ">3 months</a>
-@else
-	3 months
-@endif |
-@if($range != 1)
-	<a href=" {{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => $type, 'range' => 1]) }} ">1 month</a>
-@else
-	1 month
-@endif </p>
-<p>
-@unless ($type == 'monthly')
-    <a href=" {{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => 'monthly']) }} ">View monthly maxes</a>
-@endunless
-@if ($type == 'prs')
-    |
-@endif
-@unless ($type == 'weekly')
-    <a href=" {{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => 'weekly']) }} ">View weekly maxes</a>
-@endunless
-@unless ($type != 'monthly' && $type != 'weekly')
-    | <a href=" {{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => 'prs']) }} ">View Prs</a>
-@endunless
-</p>
 
 @if ($show_prilepin)
 <h3>Prilepin's table</h3>
