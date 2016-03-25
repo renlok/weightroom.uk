@@ -107,6 +107,54 @@
     | <a href=" {{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => 'prs']) }} ">View Prs</a>
 @endunless
 </p>
+
+@if ($show_prilepin)
+<h3>Prilepin's table</h3>
+<table class="table">
+    <tr>
+        <th>Intensity</th>
+        <th>Reps per set</th>
+        <th>Optimal total</th>
+        <th>Total range</th>
+    </tr>
+    <tr class="danger">
+        <td>
+            <b>{{ Format::$format_func($approx1rm * 0.9) }}</b> {{ Auth::user()->user_unit }} and up
+            <small>(Over 90%)</small>
+        </td>
+        <td>1-2</td>
+        <td>7</td>
+        <td>4-10</td>
+    </tr>
+    <tr class="warning">
+        <td>
+            <b>{{ Format::$format_func($approx1rm * 0.8) }}</b> {{ Auth::user()->user_unit }} - <b>{{ Format::$format_func($approx1rm * 0.89) }}</b> {{ Auth::user()->user_unit }}
+            <small>(80%-89%)</small>
+        </td>
+        <td>2-4</td>
+        <td>15</td>
+        <td>10-20</td>
+    </tr>
+    <tr class="success">
+        <td>
+            <b>{{ Format::$format_func($approx1rm * 0.7) }}</b> {{ Auth::user()->user_unit }} - <b>{{ Format::$format_func($approx1rm * 0.79) }}</b> {{ Auth::user()->user_unit }}
+            <small>(70%-79%)</small>
+        </td>
+        <td>3-6</td>
+        <td>18</td>
+        <td>12-24</td>
+    </tr>
+    <tr class="info">
+        <td>
+            <b>{{ Format::$format_func($approx1rm * 0.7) }}</b> {{ Auth::user()->user_unit }} and less
+            <small>(Less than 70%)</small>
+        </td>
+        <td>3-6</td>
+        <td>24</td>
+        <td>18-30</td>
+    </tr>
+</table>
+@endif
 @endsection
 
 @section('endjs')
@@ -144,7 +192,7 @@
 			.showLegend(true)       //Show the legend, allowing users to turn on/off line series.
 			.showYAxis(true)        //Show the y-axis
 			.showXAxis(true)        //Show the x-axis
-	
+
 	chart.noData("Not enough data to generate PR graph");
 
         chart.xAxis

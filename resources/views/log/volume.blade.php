@@ -87,7 +87,7 @@
 @endforeach
 @foreach ($graph_data as $item)
 		@foreach ($graph_names as $table_name => $graph_name)
-			dataset{{ $table_name }}.push({x: moment('{{ (is_object($item)) ? $item->log_date : $item['log_date'] }}','YYYY-MM-DD').toDate(), y: {{ Format::correct_weight((is_object($item)) ? $item->$table_name : $item[$table_name]) * $scales[$table_name] }}, shape:'circle'});
+			dataset{{ $table_name }}.push({x: moment('{{ (is_object($item)) ? $item->log_date : $item['log_date'] }}','YYYY-MM-DD').toDate(), y: {{ (($table_name == 'log_total_volume') ? Format::correct_weight((is_object($item) ? $item->$table_name : $item[$table_name])) : (is_object($item) ? $item->$table_name : $item[$table_name])) * $scales[$table_name] }}, shape:'circle'});
 		@endforeach
 @endforeach
 @foreach ($graph_names as $table_name => $graph_name)

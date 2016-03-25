@@ -66,7 +66,7 @@ class LogsController extends Controller
 					else
 					{
 						// correct format
-						$log->average_intensity = Format::correct_weight($log->average_intensity, 'kg', Auth::user()->user_unit);
+						$log->average_intensity = Format::correct_weight($log->average_intensity);
 						$ai_suffix = ' ' . Auth::user()->user_unit;
 					}
 					$log->average_intensity = round($log->average_intensity/$count) . $ai_suffix;

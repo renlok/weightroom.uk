@@ -191,6 +191,11 @@ class ExercisesController extends Controller
 			{
 				$prs['Approx. 1'] = Exercise_record::getest1rmall(Auth::user()->user_id, $range, $exercise_name, Auth::user()->user_showreps)->get();
 				// be in format [1 => ['log_weight' => ??, 'log_date' => ??]]
+				$approx1rm = $prs['Approx. 1']->last()->pr_value;
+			}
+			else
+			{
+				$approx1rm = 0;
 			}
 		}
 		else
@@ -199,18 +204,21 @@ class ExercisesController extends Controller
 		}
 		$graph_label = 'Weight';
 		$format_func = 'correct_weight';
+		$show_prilepin = true;
 		if ($exercise->is_time)
 		{
 			$graph_label = 'Time';
 			$format_func = 'format_time';
+			$show_prilepin = false;
 		}
 		elseif ($exercise->is_distance)
 		{
 			$graph_label = 'Distance';
 			$format_func = 'format_distance';
+			$show_prilepin = false;
 		}
 
-		return view('exercise.view', compact('exercise_name', 'current_prs', 'filtered_prs', 'prs', 'range', 'type', 'graph_label', 'format_func'));
+		return view('exercise.view', compact('exercise_name', 'current_prs', 'filtered_prs', 'prs', 'range', 'type', 'graph_label', 'format_func', 'show_prilepin', 'approx1rm'));
 	}
 
 	public function getViewExercisePRHistory($exercise_name)
