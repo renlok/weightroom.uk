@@ -37,7 +37,7 @@ class Log_item extends Model
     public function scopeGetexercisemaxes($query, $user_id, $range, $exercise_name, $exercise_object = false, $show_reps = [1,2,3,4,5,6,7,8,9,10], $group_type = 'weekly')
     {
         $group_function = ($group_type == 'weekly') ? 'WEEK' : 'MONTH';
-        return $query->select('logitem_abs_weight as pr_value', 'logitem_reps', 'log_date')
+        $query = $query->select('logitem_abs_weight as pr_value', 'logitem_reps', 'log_date')
                     ->whereIn(DB::raw('(logitem_abs_weight, logitem_reps, ' . $group_function . '(log_date))'), function($query) use ($user_id, $range, $exercise_name, $exercise_object, $show_reps, $group_function) {
                         $query->select(DB::raw('MAX(logitem_abs_weight) as logitem_abs_weight, logitem_reps, ' . $group_function . '(log_date)'))
                                 ->from('log_items')
@@ -56,16 +56,19 @@ class Log_item extends Model
                             $query = $query->where('log_date', '>=', Carbon::now()->subMonths($range)->toDateString());
                         }
                         $query = $query->groupBy(DB::raw('logitem_reps, ' . $group_function . '(log_date)'));
-                    })
-                    ->where('log_date', '>=', Carbon::now()->subMonths($range)->toDateString())
-                    ->groupBy(DB::raw('logitem_reps, log_date'))
-                    ->orderBy('log_date');
+                    });
+        if ($range > 0)
+        {
+            $query = $query->where('log_date', '>=', Carbon::now()->subMonths($range)->toDateString());
+        }
+        $query = $query->groupBy(DB::raw('logitem_reps, log_date'))->orderBy('log_date');
+        return $query;
     }
 
     public function scopeGetestimatedmaxes($query, $user_id, $range, $exercise_name, $exercise_object = false, $group_type = 'weekly')
     {
         $group_function = ($group_type == 'weekly') ? 'WEEK' : 'MONTH';
-        return $query->select('logitem_1rm as pr_value', 'log_date')
+        $query = $query->select('logitem_1rm as pr_value', 'log_date')
                     ->whereIn(DB::raw('(logitem_1rm, ' . $group_function . '(log_date))'), function($query) use ($user_id, $range, $exercise_name, $exercise_object, $group_function) {
                         $query->select(DB::raw('MAX(logitem_1rm) as logitem_1rm, ' . $group_function . '(log_date)'))
                                 ->from('log_items')
@@ -83,10 +86,13 @@ class Log_item extends Model
                             $query = $query->where('log_date', '>=', Carbon::now()->subMonths($range)->toDateString());
                         }
                         $query = $query->groupBy(DB::raw($group_function . '(log_date)'));
-                    })
-                    ->where('log_date', '>=', Carbon::now()->subMonths($range)->toDateString())
-                    ->groupBy(DB::raw('logitem_reps, log_date'))
-                    ->orderBy('log_date');
+                    });
+        if ($range > 0)
+        {
+            $query = $query->where('log_date', '>=', Carbon::now()->subMonths($range)->toDateString());
+        }
+        $query = $query->groupBy(DB::raw('logitem_reps, log_date'))->orderBy('log_date');
+        return $query;
     }
 
     /**
