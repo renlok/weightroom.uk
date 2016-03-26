@@ -52,9 +52,9 @@
                 Graph Type <span class="caret"></span>
             </button>
             <ul class="dropdown-menu">
-                <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => 'prs']) }}">PRs</a></li>
-                <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => 'monthly']) }}">Monthly maxes</a></li>
-                <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => 'weekly']) }}">Weekly maxes</a></li>
+                <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => 'prs', 'range' => $range]) }}">PRs</a></li>
+                <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => 'monthly', 'range' => $range]) }}">Monthly maxes</a></li>
+                <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => 'weekly', 'range' => $range]) }}">Weekly maxes</a></li>
             </ul>
         </div>
     </div>

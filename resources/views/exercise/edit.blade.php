@@ -70,7 +70,6 @@
             <input type="text" class="form-control" name="valueTwo" value="">
         </span>
   </div>
-  <button type="submit" class="btn btn-default" name="action">Update</button>
 </div>
 @if (count($goals) > 0)
 <h4>Edit goals</h4>

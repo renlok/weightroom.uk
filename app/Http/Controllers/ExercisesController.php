@@ -9,6 +9,7 @@ use Validator;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use App\Exercise;
+use App\Exercise_goal;
 use App\Exercise_record;
 use App\Logs;
 use App\Log_exercise;
@@ -111,6 +112,11 @@ class ExercisesController extends Controller
 		return redirect()
 			->route('viewExercise', ['exercise_name' => $exercise_name])
 			->with(['flash_message' => "$exercise_name has been updated"]);
+	}
+
+	public function postUpdateGoal($exercise_name, Request $request)
+	{
+
 	}
 
 	public function history($exercise_name, $from_date = '', $to_date = '')
