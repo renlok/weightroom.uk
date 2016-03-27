@@ -116,7 +116,35 @@ class ExercisesController extends Controller
 
 	public function postUpdateGoal($exercise_name, Request $request)
 	{
-
+		$exercise = Exercise::select('exercise_id')->where('exercise_name', $exercise_name)->where('user_id', Auth::user()->user_id)->firstOrFail();
+		// deal with new goal if entered
+		if ($request->has('valueOne'))
+		{
+			Exercise_goal::insert([
+				'user_id' => Auth::user()->user_id,
+				'exercise_id' => $exercise->exercise_id,
+				'goal_type' => $request->input('goalType'),
+				'goal_value_one' => $request->input('valueOne'),
+				'goal_value_two' => $request->input('valueTwo')
+			]);
+		}
+		if ($request->has('editGoalType'))
+		{
+			foreach($request->input('editGoalType') as $goal_id => $goal_type)
+			{
+				Exercise_goal::where('goal_id', $goal_id)
+					->where('user_id', Auth::user()->user_id)
+					->where('exercise_id', $exercise->exercise_id)
+					->update([
+						'goal_type' => $goal_type,
+						'goal_value_one' => $request->input('editValueOne')[$goal_id],
+						'goal_value_two' => $request->input('editValueTwo')[$goal_id]
+					]);
+			}
+		}
+		return redirect()
+			->route('viewExercise', ['exercise_name' => $exercise_name])
+			->with(['flash_message' => "$exercise_name goals have been updated"]);
 	}
 
 	public function history($exercise_name, $from_date = '', $to_date = '')

@@ -43,8 +43,8 @@ class Exercise_goal extends Model
             case 'rm':
                 $value = Log_item::where('exercise_id', $this->attributes['exercise_id'])
                                 ->where('user_id', $this->attributes['user_id'])
-                                ->orderBy('logitem_reps', 'desc')
-                                ->value('logitem_reps');
+                                ->orderBy('logitem_1rm', 'desc')
+                                ->value('logitem_1rm');
                 break;
             case 'tv':
                 $value = Log_exercise::where('exercise_id', $this->attributes['exercise_id'])
@@ -68,7 +68,7 @@ class Exercise_goal extends Model
         }
         else
         {
-            return $this->attributes['percentage'] = ($this->attributes['goal_value_one'] / 100) * $value;
+            return $this->attributes['percentage'] = round(($value/ $this->attributes['goal_value_one']) * 100, 1);
         }
     }
 }

@@ -64,7 +64,7 @@
             <option value="rm">Estimate 1rm</option>
             <option value="tv">Total volume</option>
             <option value="tr">Total reps</option>
-          </select>
+        </select>
         <input type="text" class="form-control" name="valueOne" value="">
         <span v-bind:class="{ 'hidden': hidden }"> x
             <input type="text" class="form-control" name="valueTwo" value="">
@@ -78,23 +78,25 @@
   <div v-for="goal in goals">
     <div class="form-inline">
       <div class="form-group">
-            <select class="form-control goalType" name="goalType" v-on:change="old_goal(goal)" v-model="goal.goal_type">
+            <select class="form-control goalType" name="editGoalType[goal.goal_id]" v-on:change="old_goal(goal)" v-model="goal.goal_type">
                 <option value="wr">Weight x Rep</option>
                 <option value="rm">Estimate 1rm</option>
                 <option value="tv">Total volume</option>
                 <option value="tr">Total reps</option>
-              </select>
-            <input type="text" class="form-control" name="valueOne" v-model="goal.goal_value_one">
+            </select>
+            <input type="text" class="form-control" name="editValueOne[goal.goal_id]" v-model="goal.goal_value_one">
             <span v-bind:class="{ 'hidden': goal.hidden }"> x
-                <input type="text" class="form-control" name="valueTwo" v-model="goal.goal_value_two">
+                <input type="text" class="form-control" name="editValueTwo[goal.goal_id]" v-model="goal.goal_value_two">
             </span>
       </div>
     </div>
-    <div class="progress">
-      <div class="progress-bar" role="progressbar" aria-valuenow="@{{ goal.percent }}" aria-valuemin="0" aria-valuemax="100" style="width: @{{ goal.percent }}%;">
-        @{{ goal.percent }}%
-      </div>
-    </div>
+	<div class="padding">
+	    <div class="progress">
+	      <div class="progress-bar" role="progressbar" aria-valuenow="@{{ goal.percent }}" aria-valuemin="0" aria-valuemax="100" style="width: @{{ goal.percent }}%;">
+	        @{{ goal.percent }}%
+	      </div>
+	    </div>
+	</div>
   </div>
 </div>
 {!! csrf_field() !!}
@@ -129,7 +131,7 @@ new Vue({
     data: {
         goals: [
 @foreach ($goals as $goal)
-        {goal_type: $goal->goal_type, goal_value_one: $goal->goal_value_one, goal_value_two: $goal->goal_value_two, hidden: {{ ($goal->goal_type == 'wr') ? 'false' : 'true' }}, percent: $goal->percentage},
+        {goal_id: {{$goal->goal_id}}, goal_type: '{{$goal->goal_type}}', goal_value_one: {{$goal->goal_value_one}}, goal_value_two: {{$goal->goal_value_two}}, hidden: {{ ($goal->goal_type == 'wr') ? 'false' : 'true' }}, percent: {{$goal->percentage}}},
 @endforeach
         ]
     },

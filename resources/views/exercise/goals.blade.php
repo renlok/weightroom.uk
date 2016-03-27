@@ -9,23 +9,31 @@
 <h2>Goals</h2>
 <p><a href="#">Edit goals</a></p>
 <div>
-    <div class="form-inline">
-      <div class="form-group">
-            <select class="form-control goalType" name="goalType" v-on:change="old_goal(goal)" v-model="goal.goal_type">
-                <option value="wr">Weight x Rep</option>
-                <option value="rm">Estimate 1rm</option>
-                <option value="tv">Total volume</option>
-                <option value="tr">Total reps</option>
-              </select>
-            <input type="text" class="form-control" name="valueOne" v-model="goal.goal_value_one">
-            <span v-bind:class="{ 'hidden': goal.hidden }"> x
-                <input type="text" class="form-control" name="valueTwo" v-model="goal.goal_value_two">
-            </span>
-      </div>
-    </div>
-    <div class="progress">
-      <div class="progress-bar" role="progressbar" aria-valuenow="@{{ goal.percent }}" aria-valuemin="0" aria-valuemax="100" style="width: @{{ goal.percent }}%;">
-        @{{ goal.percent }}%
+    <div id="old_goals">
+      <div v-for="goal in goals">
+        <div class="form-inline">
+          <div class="form-group">
+                <select class="form-control" name="editExercise[goal.goal_id]">
+                </select>
+                <select class="form-control goalType" name="editGoalType[goal.goal_id]" v-on:change="old_goal(goal)" v-model="goal.goal_type">
+                    <option value="wr">Weight x Rep</option>
+                    <option value="rm">Estimate 1rm</option>
+                    <option value="tv">Total volume</option>
+                    <option value="tr">Total reps</option>
+                </select>
+                <input type="text" class="form-control" name="editValueOne[goal.goal_id]" v-model="goal.goal_value_one">
+                <span v-bind:class="{ 'hidden': goal.hidden }"> x
+                    <input type="text" class="form-control" name="editValueTwo[goal.goal_id]" v-model="goal.goal_value_two">
+                </span>
+          </div>
+        </div>
+    	<div class="padding">
+    	    <div class="progress">
+    	      <div class="progress-bar" role="progressbar" aria-valuenow="@{{ goal.percent }}" aria-valuemin="0" aria-valuemax="100" style="width: @{{ goal.percent }}%;">
+    	        @{{ goal.percent }}%
+    	      </div>
+    	    </div>
+    	</div>
       </div>
     </div>
 </div>
