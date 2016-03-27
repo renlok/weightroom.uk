@@ -71,6 +71,32 @@ h3.exercise {
 	@endforeach
 </div>
 @endif
+@if (Session::has('goals_hit'))
+<div class="alert alert-info alert-important alert-dismissible fade in">
+	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	@foreach (session('goals_hit') as $goal)
+		<p>You have hit your goal of
+		@if ($goal['goal_type'] == 'wr')
+			@if ($goal['exersice']->is_time)
+				{{ Format::format_time($goal['goal_value_one'], true) }}
+			@elseif ($goal['exersice']->is_distance)
+				{{ Format::format_distance($goal['goal_value_one'], true) }}
+			@else
+				<strong>{{ Format::correct_weight($goal['goal_value_one']) }}</strong>{{ Auth::user()->user_unit }}
+			@endif
+			for {{$goal['goal_value_two']}}
+		@elseif ($goal['goal_type'] == 'rm')
+			getting an estimate 1rm of <strong>Format::correct_weight({{$goal['goal_value_one']}})</strong>{{ Auth::user()->user_unit }}
+		@elseif ($goal['goal_type'] == 'tv')
+			hitting a total volume of <strong>Format::correct_weight({{$goal['goal_value_one']}})</strong>{{ Auth::user()->user_unit }}
+		@else
+			hitting <strong>{{$goal['goal_value_one']}}</strong> total reps
+		@endif
+			({{ $goal['exersice']->exercise_name }})
+		</p>
+	@endforeach
+</div>
+@endif
 @if (Session::has('new_exercises'))
 <div class="alert alert-info alert-important alert-dismissible fade in">
 	<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>

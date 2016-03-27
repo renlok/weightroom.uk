@@ -11,6 +11,7 @@ use App\Log_item;
 use App\Log_exercise;
 use App\User;
 use App\Exercise;
+use App\Exercise_goal;
 use App\Exercise_record;
 use App\Extend\Format;
 
@@ -47,6 +48,7 @@ class Parser
 	private $new_prs = [];
 	private $new_exercises = [];
 	private $warnings = [];
+	private $goals_hit = [];
 
 	public function __construct($log_text, $log_date, $user_weight)
 	{
@@ -388,6 +390,7 @@ class Parser
 				$this->exercises[$i]['time'] = false;
 				$this->exercises[$i]['endurance'] = false;
 				$this->exercises[$i]['distance'] = false;
+				$goals = null;
 			}
 			else
 			{
@@ -395,6 +398,8 @@ class Parser
 				$this->exercises[$i]['time'] = $exercise->is_time;
 				$this->exercises[$i]['endurance'] = $exercise->is_endurance;
 				$this->exercises[$i]['distance'] = $exercise->is_distance;
+				// load exercise goals
+				$goals = Exercise_goal::where('exercise_id', $exercise->exercise_id)->where('goal_complete', false)->get();
 			}
 			$this->exercises[$i]['update'] = false;
 			$this->exercises[$i]['id'] = $exercise->exercise_id;
@@ -479,10 +484,25 @@ class Parser
 				$this->setExerciseDefaultTypes ($i);
 				// calculate volume data
 				$this->updateVolumes ($set, $i, $j);
+				// check goals
+				if ($goals != null)
+				{
+					$this->goals_hit = array_merge($this->goals_hit, Exercise_goal::checkGoalCompleteSet($goals, $exercise, $this->log_items[$i][$j]));
+				}
 			}
 			$this->log_exercises[$i]->logex_1rm = $max_estimate_rm;
+			// check goals
+			if ($goals != null)
+			{
+				$this->goals_hit = array_merge($this->goals_hit, Exercise_goal::checkGoalCompleteTotals($goals, $exercise, $this->log_exercises[$i]));
+			}
 		}
 
+		//return goals hit
+		if (count($this->goals_hit) > 0)
+		{
+			Session::flash('goals_hit', $this->goals_hit);
+		}
 		//return your new records :)
 		if (count($this->new_prs) > 0)
 		{

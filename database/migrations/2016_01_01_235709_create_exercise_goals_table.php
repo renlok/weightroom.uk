@@ -19,6 +19,7 @@ class CreateExerciseGoalsTable extends Migration
             $table->enum('goal_type', ['wr', 'rm', 'tv', 'tr']);
             $table->integer('goal_value_one');
             $table->integer('goal_value_two')->nullable()->default(null);
+            $table->boolean('goal_complete')->default(false);
             $table->timestamps();
         });
     }

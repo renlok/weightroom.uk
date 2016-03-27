@@ -71,4 +71,66 @@ class Exercise_goal extends Model
             return $this->attributes['percentage'] = round(($value/ $this->attributes['goal_value_one']) * 100, 1);
         }
     }
+
+    public static function checkGoalCompleteSet($goals, $exercise, $item)
+    {
+        $goals_complete = [];
+        foreach ($goals as $goal)
+        {
+            switch ($goal->goal_type)
+            {
+                case 'wr':
+                    $complete = ($item->logitem_abs_weight >= $goal->goal_value_one && $item->logitem_reps >= $goal->goal_value_two);
+                    break;
+                case 'rm':
+                    $complete = ($item->logitem_1rm >= $goal->goal_value_one);
+                    break;
+                case 'tv':
+                case 'tr':
+                default:
+                    $complete = false;
+                    break;
+            }
+            if ($complete)
+            {
+                $goal->toArray();
+                $goal['exersice'] = $exercise;
+                $goals_complete[] = $goal;
+                //update the goal to be compelete
+                Exercise_goal::where('goal_id', $goal->goal_id)->update(['goal_complete' => true]);
+            }
+        }
+        return $goals_complete;
+    }
+
+    public static function checkGoalCompleteTotals($goals, $exercise, $set)
+    {
+        $goals_complete = [];
+        foreach ($goals as $goal)
+        {
+            switch ($goal->goal_type)
+            {
+                case 'tv':
+                    $complete = ($set->logex_volume >= $goal->goal_value_one);
+                    break;
+                case 'tr':
+                    $complete = ($set->logex_reps >= $goal->goal_value_one);
+                    break;
+                case 'wr':
+                case 'rm':
+                default:
+                    $complete = false;
+                    break;
+            }
+            if ($complete)
+            {
+                $goal->toArray();
+                $goal['exersice'] = $exercise;
+                $goals_complete[] = $goal;
+                //update the goal to be compelete
+                Exercise_goal::where('goal_id', $goal->goal_id)->update(['goal_complete' => true]);
+            }
+        }
+        return $goals_complete;
+    }
 }
