@@ -155,7 +155,13 @@
 @foreach ($prs as $rep_name => $graph_data)
 		var dataset = [];
 	@foreach ($graph_data as $data)
-		dataset.push({x: moment('{{ $data->log_date->toDateString() }}','YYYY-MM-DD').toDate(), y: {{ $data->pr_value }}, shape:'circle'});
+        @if ($type == 'monthly')
+            dataset.push({x: moment('{{ $data->log_date->startOfMonth()->toDateString() }}','YYYY-MM-DD').toDate(), y: {{ $data->pr_value }}, shape:'circle'});
+        @elseif ($type == 'weekly')
+            dataset.push({x: moment('{{ $data->log_date->startOfWeek()->toDateString() }}','YYYY-MM-DD').toDate(), y: {{ $data->pr_value }}, shape:'circle'});
+        @else
+            dataset.push({x: moment('{{ $data->log_date->toDateString() }}','YYYY-MM-DD').toDate(), y: {{ $data->pr_value }}, shape:'circle'});
+        @endif
 	@endforeach
 		prHistoryChartData.push({
 			values: dataset,
@@ -182,13 +188,17 @@
 
 	chart.noData("Not enough data to generate PR graph");
 
-        chart.xAxis
-            .axisLabel('Date')
-            .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); });
+    chart.xAxis
+        .axisLabel('Date')
+    @if ($type == 'monthly')
+        .tickFormat(function(d) { return d3.time.format('%b %y')(new Date(d)); });
+    @else
+        .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); });
+    @endif
 
-        chart.yAxis
-            .axisLabel('{{ $graph_label }}')
-            .tickFormat(d3.format('.02f'));
+    chart.yAxis
+        .axisLabel('{{ $graph_label }}')
+        .tickFormat(d3.format('.02f'));
 
 	d3.select('#prHistoryChart')
 		.attr('style', "width: " + width + "px; height: " + height + "px;" );

@@ -221,15 +221,15 @@ class ExercisesController extends Controller
 		if ($type == 'prs')
 		{
 			$prs = Exercise_record::getexerciseprsall(Auth::user()->user_id, $range, $exercise_name, $exercise, Auth::user()->user_showreps)->get()->groupBy('pr_reps');
+			$approx1rm = 0;
 			if (!($exercise->is_time || $exercise->is_distance))
 			{
 				$prs['Approx. 1'] = Exercise_record::getest1rmall(Auth::user()->user_id, $range, $exercise_name, Auth::user()->user_showreps)->get();
 				// be in format [1 => ['log_weight' => ??, 'log_date' => ??]]
-				$approx1rm = $prs['Approx. 1']->last()->pr_value;
-			}
-			else
-			{
-				$approx1rm = 0;
+				if ($prs['Approx. 1']->count() > 0)
+				{
+					$approx1rm = $prs['Approx. 1']->last()->pr_value;
+				}
 			}
 		}
 		else
