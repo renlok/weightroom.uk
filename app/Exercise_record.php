@@ -39,10 +39,17 @@ class Exercise_record extends Model
         return $query;
     }
 
-    public function scopeGetexerciseprsall($query, $user_id, $range, $exercise_name, $exercise_object = false, $show_reps = [1,2,3,4,5,6,7,8,9,10])
+    public function scopeGetexerciseprsall($query, $user_id, $range, $exercise_name, $exercise_object = false, $get_bodyweight = true, $show_reps = [1,2,3,4,5,6,7,8,9,10])
     {
-        $query = $query->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
-                ->select('pr_reps', DB::raw('MAX(pr_value) as pr_value'), 'log_date')
+        $query = $query->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id');
+        if ($get_bodyweight)
+        {
+            $query = $query->join('logs', function ($join) {
+                $join->on('exercise_records.log_date', '=', 'logs.log_date')
+                ->on('exercise_records.user_id', '=', 'logs.user_id');
+            });
+        }
+        $query = $query->select('pr_reps', DB::raw('MAX(pr_value) as pr_value'), 'exercise_records.log_date')
                 ->where('exercise_records.user_id', $user_id)
                 ->where('exercises.exercise_name', $exercise_name)
                 ->whereIn('pr_reps', $show_reps);
@@ -51,6 +58,10 @@ class Exercise_record extends Model
             $query = $query->where('exercise_records.is_time', $exercise_object->is_time)
                             ->where('exercise_records.is_endurance', $exercise_object->is_endurance)
                             ->where('exercise_records.is_distance', $exercise_object->is_distance);
+        }
+        if ($get_bodyweight)
+        {
+            $query = $query->addSelect('logs.log_weight');
         }
         if ($range > 0)
         {

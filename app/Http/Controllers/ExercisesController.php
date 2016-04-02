@@ -220,7 +220,7 @@ class ExercisesController extends Controller
 		$filtered_prs = Exercise_record::filterPrs($query);
 		if ($type == 'prs')
 		{
-			$prs = Exercise_record::getexerciseprsall(Auth::user()->user_id, $range, $exercise_name, $exercise, Auth::user()->user_showreps)->get()->groupBy('pr_reps');
+			$prs = Exercise_record::getexerciseprsall(Auth::user()->user_id, $range, $exercise_name, $exercise, false, Auth::user()->user_showreps)->get()->groupBy('pr_reps');
 			$approx1rm = 0;
 			if (!($exercise->is_time || $exercise->is_distance))
 			{
@@ -267,6 +267,10 @@ class ExercisesController extends Controller
 			$temp = [];
 			foreach ($collection as $item)
 			{
+				if (!isset($temp['BW']))
+				{
+					$temp['BW'] = $item['log_weight'];
+				}
 				$temp[$item['pr_reps']] = $item['pr_value'];
 			}
 			return $temp;
