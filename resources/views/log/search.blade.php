@@ -2,6 +2,14 @@
 
 @section('title', 'Search Logs')
 
+@section('headerstyle')
+<style>
+.labeldd {
+	padding-top: 0px !important;
+}
+</style>
+@endsection
+
 @section('content')
 <h2>Search logs</h2>
 @include('errors.validation')
@@ -34,21 +42,35 @@
 	</select>
     </div>
   </div>
-  <div class="form-group">
-    <label for="weight" class="col-sm-2 control-label">Weight</label>
+  <div class="form-group" id="type_changer">
+    <label for="weight" class="col-sm-2 control-label labeldd">
+        <select class="form-control" name="valuetype" id="valuetype" v-on:change="change_type" v-model="selected">
+            <option value="weight"{{ ('weight' == old('valuetype')) ? ' selected="selected"' : '' }}>Weight</option>
+            <option value="distance"{{ ('distance' == old('valuetype')) ? ' selected="selected"' : '' }}>Distacne</option>
+            <option value="time"{{ ('time' == old('valuetype')) ? ' selected="selected"' : '' }}>Time</option>
+        </select>
+    </label>
     <div class="col-sm-10">
-    <div class="input-group">
-      <select class="form-control" name="weightoperator" id="weightoperator">
-        <option value="="{{ ('=' == old('weightoperator')) ? ' selected="selected"' : '' }}>=</option>
-        <option value=">="{{ ('>=' == old('weightoperator')) ? ' selected="selected"' : '' }}>&gt;=</option>
-        <option value="<="{{ ('<=' == old('weightoperator')) ? ' selected="selected"' : '' }}>&lt;=</option>
-        <option value=">"{{ ('>' == old('weightoperator')) ? ' selected="selected"' : '' }}>&gt;</option>
-        <option value="<"{{ ('<' == old('weightoperator')) ? ' selected="selected"' : '' }}>&lt;</option>
-      </select>
-      <input type="text" class="form-control" name="weight" id="weight" placeholder="Weight" value="{{ old('weight') }}">
-	  <div class="input-group-addon">{{ $user->user_unit }}</div>
+        <div class="row">
+            <div class="col-md-2">
+                <div class="input-group">
+                    <select class="form-control" name="weightoperator" id="weightoperator">
+                        <option value="="{{ ('=' == old('weightoperator')) ? ' selected="selected"' : '' }}>=</option>
+                        <option value=">="{{ ('>=' == old('weightoperator')) ? ' selected="selected"' : '' }}>&gt;=</option>
+                        <option value="<="{{ ('<=' == old('weightoperator')) ? ' selected="selected"' : '' }}>&lt;=</option>
+                        <option value=">"{{ ('>' == old('weightoperator')) ? ' selected="selected"' : '' }}>&gt;</option>
+                        <option value="<"{{ ('<' == old('weightoperator')) ? ' selected="selected"' : '' }}>&lt;</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-10">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="weight" id="weight" placeholder="@{{ type_placeholder }}" value="{{ old('weight') }}">
+                    <div class="input-group-addon" v-model="type_unit">@{{ type_unit }}</div>
+                </div>
+            </div>
+        </div>
 	</div>
-    </div>
   </div>
   <div class="form-group">
     <label for="reps" class="col-sm-2 control-label">Reps</label>
@@ -84,4 +106,38 @@
 @foreach ($log_exercises as $log_exercise)
     @include('common.logExercise', ['view_type' => 'search'])
 @endforeach
+@endsection
+
+@section('endjs')
+<script src="//cdnjs.cloudflare.com/ajax/libs/vue/1.0.17/vue.min.js" charset="utf-8"></script>
+<script>
+new Vue({
+    el: '#type_changer',
+    data: {
+        selected: '{{ old('weightoperator', 'weight') }}',
+        type_unit: '{{ $user->user_unit }}',
+        type_placeholder: 'Weight'
+    },
+    methods: {
+        change_type: function () {
+            console.log(this.selected);
+            if (this.selected == 'weight')
+            {
+                this.type_unit = '{{ $user->user_unit }}';
+                this.type_placeholder = 'Weight';
+            }
+            else if (this.selected == 'distance')
+            {
+                this.type_unit = 'km';
+                this.type_placeholder = 'Distance';
+            }
+            else
+            {
+                this.type_unit = 'hr';
+                this.type_placeholder = 'Time';
+            }
+        }
+    }
+});
+</script>
 @endsection
