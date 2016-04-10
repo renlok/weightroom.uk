@@ -101,6 +101,8 @@ Route::group(['prefix' => 'tools', 'middleware' => 'auth'], function () {
     Route::get('sinclair/{range?}', 'ToolsController@sinclair')->name('sinclairGraph');
     Route::get('wlratios', 'ToolsController@idealWLRatios')->name('wlratios');
     Route::get('rpeestimator', 'ToolsController@RPECalculator')->name('rpeestimator');
+    // General tools
+    Route::get('rmcalculator', 'ToolsController@RMcalculator')->name('rmcalculator');
 });
 
 // Misc

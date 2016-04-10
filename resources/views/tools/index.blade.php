@@ -24,7 +24,8 @@
 	<p>View how your bodyweight has changed</p>
   </div>
   <div class="col-md-4">
-	&nbsp;
+    <a href="{{ route('rmcalculator') }}">Rep Max Calculator</a>
+    <p>Calculate what you should be able to lift at different rep ranges</p>
   </div>
   <div class="col-md-4">
 	&nbsp;

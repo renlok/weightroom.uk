@@ -163,4 +163,9 @@ class ToolsController extends Controller
 	{
 		return view('tools.RPECalculator');
 	}
+
+	public function RMcalculator()
+	{
+		return view('tools.RMcalculator');
+	}
 }

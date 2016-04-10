@@ -18,7 +18,7 @@
 	  <td>{{$code->code}}</td>
 	  <td>{{$code->code_uses}}</td>
 	  <td>{{$code->code_expires}}</td>
-	  <td><a href="{{ route('register') }}?invcode={{$code->code}}">Register Link</a></td>
+	  <td><a href="{{ route('register') }}?invcode={{ $code->code }}">Register Link</a></td>
 	</tr>
 @empty
 	<tr>
