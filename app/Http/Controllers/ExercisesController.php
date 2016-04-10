@@ -224,7 +224,7 @@ class ExercisesController extends Controller
 			$approx1rm = 0;
 			if (!($exercise->is_time || $exercise->is_distance))
 			{
-				$prs['Approx. 1'] = Exercise_record::getest1rmall(Auth::user()->user_id, $range, $exercise_name, Auth::user()->user_showreps)->get();
+				$prs['Approx. 1'] = Exercise_record::getest1rmall(Auth::user()->user_id, $range, $exercise_name)->get();
 				// be in format [1 => ['log_weight' => ??, 'log_date' => ??]]
 				if ($prs['Approx. 1']->count() > 0)
 				{
