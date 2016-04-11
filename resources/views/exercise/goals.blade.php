@@ -7,35 +7,31 @@
 
 @section('content')
 <h2>Goals</h2>
-<p><a href="#">Edit goals</a></p>
-<div>
-    <div id="old_goals">
-      <div v-for="goal in goals">
-        <div class="form-inline">
-          <div class="form-group">
-                <select class="form-control" name="editExercise[goal.goal_id]">
-                </select>
-                <select class="form-control goalType" name="editGoalType[goal.goal_id]" v-on:change="old_goal(goal)" v-model="goal.goal_type">
-                    <option value="wr">Weight x Rep</option>
-                    <option value="rm">Estimate 1rm</option>
-                    <option value="tv">Total volume</option>
-                    <option value="tr">Total reps</option>
-                </select>
-                <input type="text" class="form-control" name="editValueOne[goal.goal_id]" v-model="goal.goal_value_one">
-                <span v-bind:class="{ 'hidden': goal.hidden }"> x
-                    <input type="text" class="form-control" name="editValueTwo[goal.goal_id]" v-model="goal.goal_value_two">
-                </span>
-          </div>
-        </div>
-    	<div class="padding">
-    	    <div class="progress">
-    	      <div class="progress-bar" role="progressbar" aria-valuenow="@{{ goal.percent }}" aria-valuemin="0" aria-valuemax="100" style="width: @{{ goal.percent }}%;">
-    	        @{{ goal.percent }}%
-    	      </div>
-    	    </div>
-    	</div>
-      </div>
-    </div>
+
+<div class="container">
+@foreach($exercise_groups as $exercise_name => $exercise_goals)
+	<h3>{{ $exercise_name }}</h3>
+	@foreach ($exercise_goals as $goal)
+		<div class="padding">
+		@if ($goal->goal_type == 'wr')
+			<span><b>{{ $goal->goal_value_one }}</b> {{ Auth::user()->user_unit }} x <b>{{ $goal->goal_value_two }}</b></span>
+		@elseif ($goal->goal_type == 'rm')
+			<span>Estimate 1RM: <b>{{ $goal->goal_value_one }}</b></span>
+		@elseif ($goal->goal_type == 'tv')
+			<span>Total volume: <b>{{ $goal->goal_value_one }}</b></span>
+		@else
+			<span>Total Reps: <b>{{ $goal->goal_value_one }}</b></span>
+		@endif
+		<a href="#">edit</a>
+	    <div class="progress">
+	      <div class="progress-bar" role="progressbar" aria-valuenow="{{ $goal->percent }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $goal->percent }}%;">
+	        {{ $goal->percent }}%
+	      </div>
+	    </div>
+		<div class="edit" id="edit-{{ $goal->goal_id }}">&nbsp;</div>
+	</div>
+	@endforeach
+@endforeach
 </div>
 @endsection
 

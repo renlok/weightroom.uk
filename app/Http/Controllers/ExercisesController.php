@@ -351,4 +351,11 @@ class ExercisesController extends Controller
 		return redirect()
 			->route('compareExercises', $route_data);
 	}
+	
+	public function getGlobalGoals()
+	{
+		$exercise_groups = Exercise_goal::select('exercise.exercise_name', DB::raw('exercise_goals.*'))->with('exercise')->get();
+		$exercise_groups = $exercise_groups->groupBy('exercise_name');
+		return view('exercise.goals', compact('exercise_groups'));
+	}
 }

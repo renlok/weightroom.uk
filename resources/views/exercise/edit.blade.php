@@ -131,7 +131,7 @@ new Vue({
     data: {
         goals: [
 @foreach ($goals as $goal)
-        {goal_id: {{$goal->goal_id}}, goal_type: '{{$goal->goal_type}}', goal_value_one: {{$goal->goal_value_one}}, goal_value_two: {{$goal->goal_value_two}}, hidden: {{ ($goal->goal_type == 'wr') ? 'false' : 'true' }}, percent: {{$goal->percentage}}},
+        {goal_id: {{ $goal->goal_id }}, goal_type: '{{ $goal->goal_type }}', goal_value_one: {{ $goal->goal_value_one }}, goal_value_two: {{ $goal->goal_value_two }}, hidden: {{ ( $goal->goal_type == 'wr' ) ? 'false' : 'true' }}, percent: {{ $goal->percentage }}},
 @endforeach
         ]
     },
