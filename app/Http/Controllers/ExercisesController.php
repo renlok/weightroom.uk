@@ -327,8 +327,8 @@ class ExercisesController extends Controller
 		]);
 		if ($validator->fails()) {
 			return redirect('exercise/compare')
-						->withErrors($validator)
-						->withInput();
+					->withErrors($validator)
+					->withInput();
 		}
 		$exercises = $request->input('exercises');
 		$route_data = ['reps' => $request->input('reps'), 'exercise1' => $exercises[0]];
@@ -351,11 +351,39 @@ class ExercisesController extends Controller
 		return redirect()
 			->route('compareExercises', $route_data);
 	}
-	
+
 	public function getGlobalGoals()
 	{
-		$exercise_groups = Exercise_goal::select('exercise.exercise_name', DB::raw('exercise_goals.*'))->with('exercise')->get();
+		$exercise_groups = Exercise_goal::select('exercises.exercise_name', DB::raw('exercise_goals.*'))
+				->join('exercises', 'exercises.exercise_id', '=', 'exercise_goals.exercise_id')
+				->where('exercise_goals.user_id', Auth::user()->user_id)->get();
 		$exercise_groups = $exercise_groups->groupBy('exercise_name');
-		return view('exercise.goals', compact('exercise_groups'));
+		$exercises = Exercise::listexercises(true)->get();
+		return view('exercise.goals', compact('exercise_groups', 'exercises'));
+	}
+
+	public function postNewGoal(Request $request)
+	{
+		$validator = Validator::make($request->all(), [
+			'valueOne' => 'required|numeric',
+			'goalType' => 'required|in:wr,rm,tv,tr',
+			'exerciseId' => 'exists:exercises,exercise_id,user_id,' . Auth::user()->user_id
+		]);
+		if ($validator->fails()) {
+			return redirect()
+					->route('globalGoals')
+					->withErrors($validator)
+					->withInput();
+		}
+		Exercise_goal::insert([
+			'user_id' => Auth::user()->user_id,
+			'exercise_id' => $request->input('exerciseId'),
+			'goal_type' => $request->input('goalType'),
+			'goal_value_one' => $request->input('valueOne'),
+			'goal_value_two' => $request->input('valueTwo')
+		]);
+		return redirect()
+			->route('globalGoals')
+			->with('flash_message', 'Goal Added.');
 	}
 }

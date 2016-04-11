@@ -103,6 +103,9 @@ Route::group(['prefix' => 'tools', 'middleware' => 'auth'], function () {
     Route::get('rpeestimator', 'ToolsController@RPECalculator')->name('rpeestimator');
     // General tools
     Route::get('rmcalculator', 'ToolsController@RMcalculator')->name('rmcalculator');
+    // goals
+    Route::get('goals', 'ExercisesController@getGlobalGoals')->name('globalGoals');
+    Route::post('goalsNew', 'ExercisesController@postNewGoal')->name('newGoal');
 });
 
 // Misc

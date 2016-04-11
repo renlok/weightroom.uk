@@ -28,7 +28,8 @@
     <p>Calculate what you should be able to lift at different rep ranges</p>
   </div>
   <div class="col-md-4">
-	&nbsp;
+    <a href="{{ route('globalGoals') }}">Exercise Goals</a>
+    <p>Set different goals for different exercises and see how close you are to hitting them</p>
   </div>
 </div>
 <h2>Weightlifting</h2>

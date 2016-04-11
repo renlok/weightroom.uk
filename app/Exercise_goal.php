@@ -12,7 +12,7 @@ class Exercise_goal extends Model
 {
     protected $primaryKey = 'goal_id';
     protected $guarded = ['goal_id'];
-    protected $appends = ['percentage'];
+    protected $appends = ['percentage', 'best'];
 
     /**
      * a goal belongs to a single exercise
@@ -62,6 +62,7 @@ class Exercise_goal extends Model
                 $value = 0;
                 break;
         }
+        $this->attributes['best'] = round($value, 1);
         if ($this->attributes['goal_value_one'] <= $value)
         {
             return $this->attributes['percentage'] = 100;
