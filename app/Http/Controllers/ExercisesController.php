@@ -203,7 +203,8 @@ class ExercisesController extends Controller
 		}
 		// get log_exercises
 		$log_exercises = $query->orderBy('log_date', 'desc')->get();
-		return view('exercise.history', compact('exercise_name', 'graph_names', 'log_exercises', 'scales', 'user'));
+		$exercise_count = $log_exercises->count();
+		return view('exercise.history', compact('exercise_name', 'graph_names', 'log_exercises', 'scales', 'user', 'exercise_count'));
 	}
 
 	public function volume($exercise_name)

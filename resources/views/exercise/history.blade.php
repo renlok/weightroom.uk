@@ -22,9 +22,11 @@
 <h2>{{ $exercise_name }}</h2>
 <small><a href="{{ route('listExercises') }}">&larr; Back to list</a></small> | <small><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name]) }}">&larr; Back to exercise</a></small>
 
+@if ($exercise_count > 1)
 <div id="HistoryChart">
     <svg></svg>
 </div>
+@endif
 
 <div class="panel-group margintb" id="workouthistory" role="tablist" aria-multiselectable="true">
 @foreach ($log_exercises as $log_exercise)
@@ -48,6 +50,7 @@
 @endsection
 
 @section('endjs')
+@if ($exercise_count > 1)
 <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.14/d3.min.js" charset="utf-8"></script>
 <script src="{{ asset('js/nv.d3.js') }}"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js" charset="utf-8"></script>
@@ -162,4 +165,5 @@
         $('#HistoryChart .nv-lineChart circle.nv-point').attr("r", "3.5");
     });
 </script>
+@endif
 @endsection
