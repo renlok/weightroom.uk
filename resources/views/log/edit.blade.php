@@ -47,7 +47,7 @@
 @endsection
 
 @section('content')
-<h2>Log workout for {{ $date }} <button class="btn btn-default glyphicon glyphicon-calendar" aria-hidden="true" id="track_date"></button></h2>
+<h1>Log: {!! Carbon::createFromFormat('Y-m-d', $date)->format('F j\<\s\u\p\>S\<\/\s\u\p\>, Y') !!} <button class="btn btn-default glyphicon glyphicon-calendar" aria-hidden="true" id="track_date"></button></h1>
 <small><a href="{{ route('viewLog', ['date' => $date]) }}">&larr; Back to log</a></small>
 
 <form action="{{ url('log/' . $date . '/' . $type) }}" method="post">

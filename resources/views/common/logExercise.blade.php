@@ -25,6 +25,11 @@
     </p>
 @endif
 </p>
+@if ($log_exercise->logex_comment != '')
+<blockquote class="small">
+    {!! Format::replace_video_urls(nl2br(e($log_exercise->logex_comment))) !!}
+</blockquote>
+@endif
 <table class="table">
 <tbody>
 @forelse ($log_exercise->log_items as $log_item)
@@ -53,7 +58,7 @@
             @endif
             {!! ($log_item->logitem_reps == 0) ? '</del>' : '' !!}
             @if ($log_item->logitem_comment != '')
-                <div class="well well-sm">{{ $log_item->logitem_comment }}</div>
+                <blockquote class="small">{{ $log_item->logitem_comment }}</blockquote>
             @endif
         </td>
         <td class="tdpr2">
@@ -71,8 +76,5 @@
         <td colspan="3">Nothing seems to be here</td>
     </tr>
 @endforelse
-    <tr>
-        <td colspan="3">{!! Format::replace_video_urls(nl2br(e($log_exercise->logex_comment))) !!}</td>
-    </tr>
 </tbody>
 </table>

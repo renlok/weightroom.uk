@@ -5,10 +5,6 @@
 @section('headerstyle')
 <link href="{{ asset('css/pickmeup.css') }}" rel="stylesheet">
 <style>
-#editaddbutton {
-	padding: 20px 0 0 0 ;
-	margin: 0;
-}
 h3.exercise {
 	color:#337ab7;
 }
@@ -46,6 +42,14 @@ h3.exercise {
 }
 .leftspace {
 	margin-left: 10px;
+}
+blockquote.small {
+	font-size: 95%;
+	padding: 5px 10px;
+    margin: 10px;
+}
+.datebuttons {
+    vertical-align: middle;
 }
 </style>
 @endsection
@@ -136,23 +140,28 @@ h3.exercise {
 		</div>
 		<div class="col-md-9 col-md-pull-3">
 			<div class="calender-cont" style="max-width: 640px;">
-				<div class="btn-group margintb" role="group" aria-label="Change Date">
-					<a class="btn btn-default" role="button" href="{{ route('viewLog', ['date' => $carbon_date->subDay()->toDateString(),'user_name' => $user->user_name]) }}"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>{{ $carbon_date->toDateString() }}</a>
-					<button type="button" class="btn btn-default"><strong>{{ $carbon_date->addDay()->toDateString() }}</strong></button>
-					<a class="btn btn-default" role="button" href="{{ route('viewLog', ['date' => $carbon_date->addDay()->toDateString(),'user' => $user->user_name]) }}">{{ $carbon_date->toDateString() }}<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
-				</div>
+				<div class="datebuttons text-left">
+                    <span class="h1">{!! $carbon_date->format('F j\<\s\u\p\>S\<\/\s\u\p\>, Y') !!}</h1>
+                    <span class="btn-group margintb" role="group" aria-label="Change Date">
+    					<a class="btn btn-default" role="button" href="{{ route('viewLog', ['date' => $carbon_date->subDay()->toDateString(),'user_name' => $user->user_name]) }}"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></a>
+    					<a class="btn btn-default" role="button" href="{{ route('viewLog', ['date' => $carbon_date->addDay(2)->toDateString(),'user' => $user->user_name]) }}"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
+    				</span>
+	@if ($user->user_id == Auth::user()->user_id)
+		@if ($log != null)
+                    <a href="http://weightroom.uk/log/2016-02-12/edit" class="btn btn-default">Edit Log</a>
+                	<button type="button" class="btn btn-danger deleteLink">Delete Log</button>
+		@else
+					<a href="{{ route('newLog', ['date' => $date]) }}" class="btn btn-default">Add Log</a>
+		@endif
+	@endif
+                </div>
 				<div class="date"></div>
 			</div>
 		</div>
 	</div>
 </div>
 
-@if ($user->user_id == Auth::user()->user_id)
-	@if ($log != null)
-<p id="editaddbutton">
-	<a href="{{ route('editLog', ['date' => $date]) }}" class="btn btn-default">Edit Log</a>
-	<button type="button" class="btn btn-danger deleteLink pull-right">Delete Log</button>
-</p>
+@if ($user->user_id == Auth::user()->user_id && $log != null)
 <div class="alert alert-danger margintb collapse" role="alert" id="deleteWarning" aria-expanded="false">
 	<button type="button" class="close deleteLink"><span aria-hidden="true">&times;</span></button>
 	<h4>You sure?</h4>
@@ -162,12 +171,9 @@ h3.exercise {
 		<button type="button" class="btn btn-default deleteLink">Nah leave it be</button>
 	</p>
 </div>
-	@else
-<p id="editaddbutton"><a href="{{ route('newLog', ['date' => $date]) }}" class="btn btn-default">Add Log</a></p>
-	@endif
 @endif
 @if ($log != null)
-	<h3>Workout summary</h3>
+	<h2>Workout summary</h2>
 	@if (($log->log_total_volume + ($log->log_failed_volume * $user->user_volumeincfails)) > 0)
 		<p class="logrow">
 			Volume: <span class="heavy">{{ Format::correct_weight($log->log_total_volume + ($log->log_failed_volume * $user->user_volumeincfails)) }}</span>{{ Auth::user()->user_unit }} - Reps: <span class="heavy">{{ $log->log_total_reps }}</span> - Sets: <span class="heavy">{{ $log->log_total_reps }}</span>
@@ -190,11 +196,9 @@ h3.exercise {
 		<p class="logrow marginl"><small>Bodyweight: <span class="heavy">{{ Format::correct_weight($log->log_weight) }}</span>{{ Auth::user()->user_unit }}</small></p>
 	@endif
 	@if ($log->log_comment != '')
-		<div class="panel panel-default">
-			<div class="panel-body">
-				{!! Format::replace_video_urls(nl2br(e($log->log_comment))) !!}
-			</div>
-		</div>
+		<blockquote>
+			{!! Format::replace_video_urls(nl2br(e($log->log_comment))) !!}
+		</blockquote>
 	@endif
 	@foreach ($log->log_exercises as $log_exercise)
 		@include('common.logExercise', ['view_type' => 'log'])
