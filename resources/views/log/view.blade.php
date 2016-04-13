@@ -148,7 +148,7 @@ blockquote.small {
     				</span>
 	@if ($user->user_id == Auth::user()->user_id)
 		@if ($log != null)
-                    <a href="http://weightroom.uk/log/2016-02-12/edit" class="btn btn-default">Edit Log</a>
+                    <a href="{{ route('editLog', ['date' => $date]) }}" class="btn btn-default">Edit Log</a>
                 	<button type="button" class="btn btn-danger deleteLink">Delete Log</button>
 		@else
 					<a href="{{ route('newLog', ['date' => $date]) }}" class="btn btn-default">Add Log</a>
