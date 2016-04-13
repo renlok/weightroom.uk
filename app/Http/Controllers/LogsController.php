@@ -274,7 +274,15 @@ class LogsController extends Controller
 		}
 		else
 		{
-			$from_date = Log::where('user_id', Auth::user()->user_id)->orderBy('log_date', 'asc')->value('log_date')->toDateString();
+			$from_date_query = Log::where('user_id', Auth::user()->user_id)->orderBy('log_date', 'asc')->value('log_date');
+			if ($from_date_query != null)
+			{
+				$from_date = $from_date_query->toDateString();
+			}
+			else
+			{
+				$from_date = Carbon::now()->toDateString();
+			}
 		}
 		if ($to_date != 0)
 		{
