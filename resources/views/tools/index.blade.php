@@ -4,6 +4,7 @@
 
 @section('content')
 <h1>Tools</h1>
+@if (Auth::check())
 <div class="row padding">
   <div class="col-md-4">
 	<a href="{{ route('totalVolume') }}">Total Volume Graph</a>
@@ -62,4 +63,21 @@
 	&nbsp;
   </div>
 </div>
+@else
+<p class="lead">Access more handy tools by <a href="{{ route('register') }}">creating an account</a></p>
+<div class="row padding">
+    <div class="col-md-4">
+      <a href="{{ route('rmcalculator') }}">Rep Max Calculator</a>
+      <p>Calculate what you should be able to lift at different rep ranges</p>
+    </div>
+    <div class="col-md-4">
+	    <a href="{{ route('wlratios') }}">Weightlifting Ratio Calculator</a>
+        <p>Calculate what your other lifts should be based off your current maxes</p>
+    </div>
+    <div class="col-md-4">
+  	<a href="{{ route('rpeestimator') }}">RPE Max rep estimator</a>
+      <p>Estimate your potential max lift based of RPE values</p>
+    </div>
+</div>
+@endif
 @endsection

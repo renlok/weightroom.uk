@@ -31,39 +31,47 @@ Route::group(['middleware' => 'guest'], function () {
 Route::get('logout', 'LoginController@getLogout')->name('logout');
 
 // User controller
-Route::group(['prefix' => 'user', 'middleware' => 'auth'], function () {
+Route::group(['prefix' => 'user'], function () {
     Route::post('search', 'UserController@search')->name('userSearch');
-    Route::get('settings', 'UserController@getSettings')->name('userSettings');
-    Route::post('settings', 'UserController@postSettings');
-    // follow/unfollow routes
-    Route::get('follow/{user_name}/{date?}', 'UserController@follow')->name('followUser');
-    Route::get('unfollow/{user_name}/{date?}', 'UserController@unfollow')->name('unfollowUser');
-    Route::get('notifications/clear', 'UserController@clearNotifications')->name('clearNotifications');
+
+    Route::group(['middleware' => 'auth'], function () {
+        // user settings
+        Route::get('settings', 'UserController@getSettings')->name('userSettings');
+        Route::post('settings', 'UserController@postSettings');
+        // follow/unfollow routes
+        Route::get('follow/{user_name}/{date?}', 'UserController@follow')->name('followUser');
+        Route::get('unfollow/{user_name}/{date?}', 'UserController@unfollow')->name('unfollowUser');
+        Route::get('notifications/clear', 'UserController@clearNotifications')->name('clearNotifications');
+    });
 });
 
 // Log controller
-Route::group(['prefix' => 'log', 'middleware' => 'auth'], function () {
+Route::group(['prefix' => 'log'], function () {
     // ajax
     Route::get('{date}/cal/{user_name}', 'LogsController@getAjaxcal')->name('ajaxCal');
     // view log
     Route::get('{date}/view/{user_name?}', 'LogsController@view')->name('viewLog');
-    //edit log
-    Route::group(['middleware' => 'log.notexists'], function () {
-        Route::get('{date}/edit', 'LogsController@getEdit')->name('editLog');
-        Route::post('{date}/edit', 'LogsController@postEdit');
+
+    // must be logged in to see
+    Route::group(['middleware' => 'auth'], function () {
+        //edit log
+        Route::group(['middleware' => 'log.notexists'], function () {
+            Route::get('{date}/edit', 'LogsController@getEdit')->name('editLog');
+            Route::post('{date}/edit', 'LogsController@postEdit');
+        });
+        //new log
+        Route::group(['middleware' => 'log.exists'], function () {
+            Route::get('{date}/new', 'LogsController@getNew')->name('newLog');
+            Route::post('{date}/new', 'LogsController@postNew');
+        });
+        Route::get('{date}/delete', 'LogsController@delete')->name('deleteLog');
+        // search logs
+        Route::get('search', 'LogsController@getSearch')->name('searchLog');
+        Route::post('search', 'LogsController@postSearch');
+        // total volume
+        Route::get('volume/{from_date?}/{to_date?}/{n?}', 'LogsController@getVolume')->name('totalVolume');
+        Route::post('volume', 'LogsController@postVolume');
     });
-    //new log
-    Route::group(['middleware' => 'log.exists'], function () {
-        Route::get('{date}/new', 'LogsController@getNew')->name('newLog');
-        Route::post('{date}/new', 'LogsController@postNew');
-    });
-    Route::get('{date}/delete', 'LogsController@delete')->name('deleteLog');
-    // search logs
-    Route::get('search', 'LogsController@getSearch')->name('searchLog');
-    Route::post('search', 'LogsController@postSearch');
-    // total volume
-    Route::get('volume/{from_date?}/{to_date?}/{n?}', 'LogsController@getVolume')->name('totalVolume');
-    Route::post('volume', 'LogsController@postVolume');
     Route::get('{user_name}', 'LogsController@viewUser')->name('viewUser');
 });
 
@@ -91,21 +99,25 @@ Route::group(['prefix' => 'exercise', 'middleware' => 'auth'], function () {
 });
 
 // Tools controller
-Route::group(['prefix' => 'tools', 'middleware' => 'auth'], function () {
+Route::group(['prefix' => 'tools'], function () {
     Route::get('/', 'ToolsController@index')->name('tools');
-    Route::get('bodyweight/{range?}', 'ToolsController@bodyweight')->name('bodyweightGraph');
-    Route::get('invites', 'ToolsController@invites')->name('invites');
-    // PL tools
-    Route::get('wilks/{range?}', 'ToolsController@wilks')->name('wilksGraph');
-    // WL tools
-    Route::get('sinclair/{range?}', 'ToolsController@sinclair')->name('sinclairGraph');
-    Route::get('wlratios', 'ToolsController@idealWLRatios')->name('wlratios');
+
+    // user only tools
+    Route::group(['middleware' => 'auth'], function () {
+        Route::get('bodyweight/{range?}', 'ToolsController@bodyweight')->name('bodyweightGraph');
+        Route::get('invites', 'ToolsController@invites')->name('invites');
+        // PL tools
+        Route::get('wilks/{range?}', 'ToolsController@wilks')->name('wilksGraph');
+        // WL tools
+        Route::get('sinclair/{range?}', 'ToolsController@sinclair')->name('sinclairGraph');
+        // goals
+        Route::get('goals', 'ExercisesController@getGlobalGoals')->name('globalGoals');
+        Route::post('goalsNew', 'ExercisesController@postNewGoal')->name('newGoal');
+    });
+    // guest friendly tools
     Route::get('rpeestimator', 'ToolsController@RPECalculator')->name('rpeestimator');
-    // General tools
     Route::get('rmcalculator', 'ToolsController@RMcalculator')->name('rmcalculator');
-    // goals
-    Route::get('goals', 'ExercisesController@getGlobalGoals')->name('globalGoals');
-    Route::post('goalsNew', 'ExercisesController@postNewGoal')->name('newGoal');
+    Route::get('wlratios', 'ToolsController@idealWLRatios')->name('wlratios');
 });
 
 // Misc

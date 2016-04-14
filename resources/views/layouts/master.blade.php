@@ -32,6 +32,7 @@
 	  @if (!Auth::check())
 		  <li role="presentation" class="{{ Request::is('login') ? 'active' : '' }}"><a href="{{ route('login') }}">{{ trans('master.login') }}</a></li>
 		  <li role="presentation" class="{{ Request::is('register') ? 'active' : '' }}"><a href="{{ route('register') }}">{{ trans('master.register') }}</a></li>
+          <li role="presentation" class="{{ Request::is('tools*') ? 'active' : '' }}"><a href="{{ route('tools') }}">{{ trans('master.tools') }}</a></li>
 		  <li role="presentation" class="{{ Request::is('demo') ? 'active' : '' }}"><a href="{{ route('demo') }}">{{ trans('master.demo') }}</a></li>
 	  @else
 		  <li role="presentation" class="{{ Request::is('dashboard*') ? 'active' : '' }}"><a href="{{ route('dashboard') }}" class="hidden-xs">{{ trans('master.home') }}</a><a href="?" class="visible-xs"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
