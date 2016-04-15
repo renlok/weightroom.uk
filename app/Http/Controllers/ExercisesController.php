@@ -219,7 +219,13 @@ class ExercisesController extends Controller
 		$query = Exercise_record::getexerciseprs(Auth::user()->user_id, Carbon::now()->toDateString(), $exercise_name, $exercise, true)->get();
 		$current_prs = $query->groupBy('pr_reps')->toArray();
 		$filtered_prs = Exercise_record::filterPrs($query);
-		if ($type == 'prs')
+		if ($type == 'weekly' || $type == 'monthly' || $type == 'daily')
+		{
+			$prs = Log_item::getexercisemaxes(Auth::user()->user_id, $range, $exercise_name, $exercise, Auth::user()->user_showreps, $type)->get()->groupBy('logitem_reps');
+			$prs['Approx. 1'] = Log_item::getestimatedmaxes(Auth::user()->user_id, $range, $exercise_name, $exercise, $type)->get();
+			$approx1rm = Exercise_record::getlastest1rm(Auth::user()->user_id, $exercise_name)->value('pr_1rm');
+		}
+		else
 		{
 			$prs = Exercise_record::getexerciseprsall(Auth::user()->user_id, $range, $exercise_name, $exercise, false, Auth::user()->user_showreps)->get()->groupBy('pr_reps');
 			$approx1rm = 0;
@@ -232,12 +238,6 @@ class ExercisesController extends Controller
 					$approx1rm = $prs['Approx. 1']->last()->pr_value;
 				}
 			}
-		}
-		else
-		{
-			$prs = Log_item::getexercisemaxes(Auth::user()->user_id, $range, $exercise_name, $exercise, Auth::user()->user_showreps, $type)->get()->groupBy('logitem_reps');
-			$prs['Approx. 1'] = Log_item::getestimatedmaxes(Auth::user()->user_id, $range, $exercise_name, $exercise, $type)->get();
-			$approx1rm = Exercise_record::getlastest1rm(Auth::user()->user_id, $exercise_name)->value('pr_1rm');
 		}
 		$graph_label = 'Weight';
 		$format_func = 'correct_weight';

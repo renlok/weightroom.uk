@@ -36,7 +36,18 @@ class Log_item extends Model
 
     public function scopeGetexercisemaxes($query, $user_id, $range, $exercise_name, $exercise_object = false, $show_reps = [1,2,3,4,5,6,7,8,9,10], $group_type = 'weekly')
     {
-        $group_function = ($group_type == 'weekly') ? 'WEEK' : 'MONTH';
+        if ($group_type == 'weekly')
+        {
+            $group_function = 'WEEK';
+        }
+        elseif ($group_type == 'monthly')
+        {
+            $group_function = 'MONTH';
+        }
+        else
+        {
+            $group_function = 'DAYOFYEAR';
+        }
         $query = $query->select('logitem_abs_weight as pr_value', 'logitem_reps', 'log_date')
                     ->whereIn(DB::raw('(logitem_abs_weight, logitem_reps, ' . $group_function . '(log_date), YEAR(log_date))'), function($query) use ($user_id, $range, $exercise_name, $exercise_object, $show_reps, $group_function) {
                         $query->select(DB::raw('MAX(logitem_abs_weight) as logitem_abs_weight, logitem_reps, ' . $group_function . '(log_date), YEAR(log_date)'))
@@ -67,7 +78,18 @@ class Log_item extends Model
 
     public function scopeGetestimatedmaxes($query, $user_id, $range, $exercise_name, $exercise_object = false, $group_type = 'weekly')
     {
-        $group_function = ($group_type == 'weekly') ? 'YEARWEEK' : 'MONTH';
+        if ($group_type == 'weekly')
+        {
+            $group_function = 'WEEK';
+        }
+        elseif ($group_type == 'monthly')
+        {
+            $group_function = 'MONTH';
+        }
+        else
+        {
+            $group_function = 'DAYOFYEAR';
+        }
         $query = $query->select('logitem_1rm as pr_value', 'log_date')
                     ->whereIn(DB::raw('(logitem_1rm, ' . $group_function . '(log_date), YEAR(log_date))'), function($query) use ($user_id, $range, $exercise_name, $exercise_object, $group_function) {
                         $query->select(DB::raw('MAX(logitem_1rm) as logitem_1rm, ' . $group_function . '(log_date), YEAR(log_date)'))

@@ -17,6 +17,8 @@
     Weekly maxes
 @elseif ($type == 'monthly')
     Monthly maxes
+@elseif ($type == 'daily')
+    Daily maxes
 @else
     PRs
 @endif
@@ -55,6 +57,7 @@
                 <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => 'prs', 'range' => $range]) }}">PRs</a></li>
                 <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => 'monthly', 'range' => $range]) }}">Monthly maxes</a></li>
                 <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => 'weekly', 'range' => $range]) }}">Weekly maxes</a></li>
+                <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => 'daily', 'range' => $range]) }}">Daily maxes</a></li>
             </ul>
         </div>
     </div>
