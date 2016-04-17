@@ -2,6 +2,18 @@
 
 @section('title', 'Dashboard')
 
+@section('headerstyle')
+<style>
+blockquote.small {
+	font-size: 95%;
+	padding: 5px 10px;
+    margin: 10px;
+    max-height: 300px;
+    overflow: hidden;;
+}
+</style>
+@endsection
+
 @section('content')
 <div class="padding-sb">
 <div class="btn-group btn-group-sm" role="group" aria-label="type">
@@ -15,6 +27,7 @@
 	<tr>
 		<td class="logrow">
 			<a href="{{ route('viewUser', ['user_name' => $log->user->user_name]) }}">{{ $log->user->user_name }}</a> posted a log {{ $log->log_date->diffForHumans() }}. <a href="{{ route('viewLog', ['date' => $log->log_date->toDateString(), 'user_name' => $log->user->user_name]) }}">View log</a>
+            <blockquote class="small">{!! nl2br($log->log_text) !!}</blockquote>
 		</td>
 	</tr>
 @empty
