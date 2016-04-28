@@ -44,6 +44,7 @@ class User extends Model implements AuthenticatableContract,
         'user_beta' => 'boolean',
         'user_admin' => 'boolean',
         'user_showreps' => 'array',
+        'user_showextrareps' => 'array'
     ];
 
     public function getAuthPassword() {

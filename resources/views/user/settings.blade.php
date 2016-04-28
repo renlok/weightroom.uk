@@ -29,7 +29,7 @@
     <div>
 	<label for="bodyweight">Current Bodyweight</label>
 	</div>
-	<input type="text" class="form-control" id="bodyweight" value="{{ $user->user_weight }}" name="bodyweight">
+	<input type="text" class="form-control" id="bodyweight" value="{{ round($user->user_weight, 2) }}" name="bodyweight">
   </div>
   <div class="form-group">
     <div>
@@ -119,59 +119,83 @@
 	  </select>
   </div>
   <div class="form-group">
-    <label for="inputEmail3" class="control-label">&nbsp;</label>
-    <h3>Advanced Settings</h3>
-  </div>
-  <div class="form-group">
-    <div>
-		<label for="volumeincfails">Include failed lifts in total tonnage (volume)</label>
-		<p><small><i>If enabled when the total tonnage is calculatedfailed lifts will be included as a completed lift</i></small></p>
-	</div>
-	<label class="radio-inline">
-	  <input type="radio" id="volumeincfails" name="volumeincfails" value="1" {{ $user->user_volumeincfails == '1' ? 'checked' : '' }}> enable
-	</label>
-	<label class="radio-inline">
-	  <input type="radio" id="volumeincfails" name="volumeincfails" value="0" {{ $user->user_volumeincfails == '0' ? 'checked' : '' }}> disable
-	</label>
-  </div>
-  <div class="form-group">
-    <div>
-		<label for="viewintensityabs">Show average intensity as % of current 1RM or as abolute value</label>
-	</div>
-	<label class="radio-inline">
-	  <input type="radio" id="viewintensityabs" name="viewintensityabs" value="p" {{ $user->user_showintensity == 'p' ? 'checked' : '' }}> % of 1RM value
-	</label>
-	<label class="radio-inline">
-	  <input type="radio" id="viewintensityabs" name="viewintensityabs" value="a" {{ $user->user_showintensity == 'a' ? 'checked' : '' }}> absolute value
-	</label>
-	<label class="radio-inline">
-	  <input type="radio" id="viewintensityabs" name="viewintensityabs" value="h" {{ $user->user_showintensity == 'h' ? 'checked' : '' }}> hidden
-	</label>
-  </div>
-  <div class="form-group">
-    <div>
-		<label for="limitintensity">Remove warmup sets from average intensity calculation</label>
-	</div>
-    <label class="radio-inline">
-	  <input type="radio" id="limitintensitywarmup" name="limitintensitywarmup" value="1" {{ $user->user_limitintensitywarmup == '1' ? 'checked' : '' }}> enable
-	</label>
-	<label class="radio-inline">
-	  <input type="radio" id="limitintensitywarmup" name="limitintensitywarmup" value="0" {{ $user->user_limitintensitywarmup == '0' ? 'checked' : '' }}> disable
-	</label>
-  </div>
-  <div class="form-group">
-    <div>
-		<label for="limitintensity">Limit what is included in average intensity calculation</label>
-		<p><small><i>If you track your warmups it is sometimes a good idea to ignore values lower than x% from the average intensity so they do not artificially bring the number down</i></small></p>
-	</div>
-	<div class="input-group">
-	  <input type="text" class="form-control" id="limitintensity" name="limitintensity" value="{{ $user->user_limitintensity }}">
-	  <div class="input-group-addon">%</div>
-	</div>
-  </div>
-  <div class="form-group">
-	  {!! csrf_field() !!}
       <button type="submit" class="btn btn-default" name="action">Save</button>
   </div>
+  <div class="form-group">
+    <label for="inputEmail3" class="control-label">&nbsp;</label>
+    <h3>Advanced Settings <span id="showhide"><button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span> Show</button></span></h3>
+  </div>
+  <div id="advanced_settings" style="display:none;">
+      <div class="form-group">
+        <div>
+    		<label for="volumeincfails">Include failed lifts in total tonnage (volume)</label>
+    		<p><small><i>If enabled when the total tonnage is calculatedfailed lifts will be included as a completed lift</i></small></p>
+    	</div>
+    	<label class="radio-inline">
+    	  <input type="radio" id="volumeincfails" name="volumeincfails" value="1" {{ $user->user_volumeincfails == '1' ? 'checked' : '' }}> enable
+    	</label>
+    	<label class="radio-inline">
+    	  <input type="radio" id="volumeincfails" name="volumeincfails" value="0" {{ $user->user_volumeincfails == '0' ? 'checked' : '' }}> disable
+    	</label>
+      </div>
+      <div class="form-group">
+        <div>
+    		<label for="viewintensityabs">Show average intensity as % of current 1RM or as abolute value</label>
+    	</div>
+    	<label class="radio-inline">
+    	  <input type="radio" id="viewintensityabs" name="viewintensityabs" value="p" {{ $user->user_showintensity == 'p' ? 'checked' : '' }}> % of 1RM value
+    	</label>
+    	<label class="radio-inline">
+    	  <input type="radio" id="viewintensityabs" name="viewintensityabs" value="a" {{ $user->user_showintensity == 'a' ? 'checked' : '' }}> absolute value
+    	</label>
+    	<label class="radio-inline">
+    	  <input type="radio" id="viewintensityabs" name="viewintensityabs" value="h" {{ $user->user_showintensity == 'h' ? 'checked' : '' }}> hidden
+    	</label>
+      </div>
+      <div class="form-group">
+        <div>
+    		<label for="limitintensity">Remove warmup sets from average intensity calculation</label>
+    	</div>
+        <label class="radio-inline">
+    	  <input type="radio" id="limitintensitywarmup" name="limitintensitywarmup" value="1" {{ $user->user_limitintensitywarmup == '1' ? 'checked' : '' }}> enable
+    	</label>
+    	<label class="radio-inline">
+    	  <input type="radio" id="limitintensitywarmup" name="limitintensitywarmup" value="0" {{ $user->user_limitintensitywarmup == '0' ? 'checked' : '' }}> disable
+    	</label>
+      </div>
+      <div class="form-group">
+        <div>
+    		<label for="limitintensity">Limit what is included in average intensity calculation</label>
+    		<p><small><i>If you track your warmups it is sometimes a good idea to ignore values lower than x% from the average intensity so they do not artificially bring the number down</i></small></p>
+    	</div>
+    	<div class="input-group">
+    	  <input type="text" class="form-control" id="limitintensity" name="limitintensity" value="{{ $user->user_limitintensity }}">
+    	  <div class="input-group-addon">%</div>
+    	</div>
+      </div>
+      <div class="form-group">
+    	  {!! csrf_field() !!}
+          <button type="submit" class="btn btn-default" name="action">Save</button>
+      </div>
+  </div>
 </form>
+@endsection
+
+@section('endjs')
+<script>
+$('#showhide').click(function() {
+    $('#advanced_settings').slideToggle('fast');
+    $('#showhide').html(function(_,txt) {
+        var ret='';
+
+        if ( txt == '<button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span> Show</button>' ) {
+           ret = '<button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span> Hide</button>';
+        } else {
+           ret = '<button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span> Show</button>';
+        }
+        return ret;
+    });
+    return false;
+});
+</script>
 @endsection
