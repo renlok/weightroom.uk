@@ -113,6 +113,8 @@ Route::group(['prefix' => 'tools'], function () {
         // goals
         Route::get('goals', 'ExercisesController@getGlobalGoals')->name('globalGoals');
         Route::post('goalsNew', 'ExercisesController@postNewGoal')->name('newGoal');
+        // reports
+        Route::get('reports', 'LogsController@getReports')->name('viewReports');
     });
     // guest friendly tools
     Route::get('rpeestimator', 'ToolsController@RPECalculator')->name('rpeestimator');

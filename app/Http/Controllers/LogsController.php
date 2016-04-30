@@ -334,4 +334,10 @@ class LogsController extends Controller
 					'n' => $request->input('n')
 				]);
 	}
+
+	public function getReports(Request $request)
+	{
+		$exercises = Exercise::listexercises(true)->get();
+		return view('log.reports', compact('exercises'));
+	}
 }
