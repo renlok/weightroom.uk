@@ -58,6 +58,7 @@ class UserController extends Controller
 		$user = Auth::user();
 		$user->user_unit = $request->input('weightunit');
 		$user->user_showreps = $request->input('showreps');
+		$user->user_showextrareps = array_map('trim', explode(',', $request->input('showextrareps')));
 		$user->user_squatid = $request->input('squat');
 		$user->user_deadliftid = $request->input('deadlift');
 		$user->user_benchid = $request->input('bench');

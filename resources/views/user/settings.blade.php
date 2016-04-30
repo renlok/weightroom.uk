@@ -65,6 +65,8 @@
       <input type="checkbox" name="showreps[]" id="inlineCheckbox{{ $i }}" value="{{ $i }}"{{ in_array($i, $user->user_showreps) ? 'checked' : '' }}> {{ $i }} RM
     </label>
 @endfor
+    <p><small><i>If you want reps above 10 you can add them below separating each rep by a comma. e.g. 12,15,25</i></small></p>
+    <input type="text" class="form-control" id="showextrareps" value="{{ implode(',', $user->user_showextrareps) }}" name="showextrareps">
   </div>
   <div class="form-group">
     <h3>For the Wilks Calculator</h3>
