@@ -412,7 +412,7 @@ class Parser
 
 			$prs = Exercise_record::exercisePrs($this->user->user_id, $this->log_date, $exercise_name);
 
-			$max_estimate_rm = Exercise_record::getlastest1rm($this->user->user_id, $exercise_name)->value('pr_1rm');
+			$max_estimate_rm = 0;
 			if (count($item['data']) == 0)
 			{
 				$this->warnings['blank_exercise'] = true;
