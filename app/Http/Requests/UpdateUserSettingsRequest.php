@@ -17,7 +17,7 @@ class UpdateUserSettingsRequest extends Request
             'bodyweight' => 'required|numeric',
             'weightunit' => 'required|in:kg,lb',
             'weekstart' => 'required|boolean',
-            'showextrareps' => 'regex:/^(\d+\s*\,?\s*)+$/',
+            'showextrareps' => 'regex:/^(\d\d+\s*\,?\s*)+$/',
             'squat' => 'required|existsornull:exercises,exercise_id,user_id,'.Auth::user()->user_id,
             'bench' => 'required|existsornull:exercises,exercise_id,user_id,'.Auth::user()->user_id,
             'deadlift' => 'required|existsornull:exercises,exercise_id,user_id,'.Auth::user()->user_id,
@@ -50,7 +50,7 @@ class UpdateUserSettingsRequest extends Request
     public function messages()
     {
         return [
-            'showextrareps.regex' => 'The extra reps you entered is invalid they must be in the format: 12,15,16,17',
+            'showextrareps.regex' => 'The extra reps you entered is invalid they must be in the format: 12,15,16,17 and no number can be less than 11',
             'squat.existsornull' => 'The squat variation selected is invalid',
             'bench.existsornull' => 'The bench press variation selected is invalid',
             'deadlift.existsornull' => 'The deadlift variation selected is invalid',

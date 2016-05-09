@@ -293,10 +293,11 @@ class ExercisesController extends Controller
 	{
 		$exercises = Exercise::listexercises(true)->get();
 		$exercise_names = [];
-		return view('exercise.compareform', compact('exercises', 'exercise_names'));
+		$reps = 0;
+		return view('exercise.compareform', compact('exercises', 'exercise_names', 'reps'));
 	}
 
-	public function getCompare($reps = '', $exercise1 = '', $exercise2 = '', $exercise3 = '', $exercise4 = '', $exercise5 = '')
+	public function getCompare($reps = 0, $exercise1 = '', $exercise2 = '', $exercise3 = '', $exercise4 = '', $exercise5 = '')
 	{
 		$exercises = Exercise::listexercises(true)->get();
 		$exercise_names = array_map('strtolower', array_filter([$exercise1, $exercise2, $exercise3, $exercise4, $exercise5]));
@@ -315,13 +316,13 @@ class ExercisesController extends Controller
 			$records = $records->where('is_est1rm', 1);
 		}
 		$records = $records->groupBy(DB::raw('log_date, exercise_name'))->orderBy('log_date', 'asc')->get();
-		return view('exercise.compare', compact('exercises', 'records', 'exercise1', 'exercise2', 'exercise3', 'exercise4', 'exercise5', 'exercise_names'));
+		return view('exercise.compare', compact('exercises', 'records', 'exercise1', 'exercise2', 'exercise3', 'exercise4', 'exercise5', 'reps', 'exercise_names'));
 	}
 
 	public function postCompare(Request $request)
 	{
 		$validator = Validator::make($request->all(), [
-			'reps' => 'required|between:0,10',
+			'reps' => 'required|integer',
 			'exercises.0' => 'required',
 			'exercises.*' => 'exists:exercises,exercise_name,user_id,'.Auth::user()->user_id
 		]);

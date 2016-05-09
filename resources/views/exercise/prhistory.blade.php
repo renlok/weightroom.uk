@@ -28,6 +28,11 @@ td:first-child, td:nth-child(2) {
 		<th>8 RM</th>
 		<th>9 RM</th>
 		<th>10 RM</th>
+    @foreach (Auth::user()->user_showextrareps as $j)
+        @if ($j != '')
+        <th>{{ $j }} RM</th>
+        @endif
+    @endforeach
 	</thead>
 	<tbody>
 @foreach ($prs as $date => $pr)
@@ -37,6 +42,11 @@ td:first-child, td:nth-child(2) {
 		@for ($i = 1; $i <= 10; $i++)
 			<td>{{ (isset($pr[$i])) ? Format::$format_func($pr[$i]) . ' ' . Auth::user()->user_unit : '' }}</td>
 		@endfor
+	    @foreach (Auth::user()->user_showextrareps as $j)
+	        @if ($j != '')
+	        <td>{{ (isset($pr[$j])) ? Format::$format_func($pr[$j]) . ' ' . Auth::user()->user_unit : '' }}</td>
+	        @endif
+	    @endforeach
 		</tr>
 @endforeach
 	</tbody>

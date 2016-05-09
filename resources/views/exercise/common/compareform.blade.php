@@ -11,10 +11,15 @@
 <div class="form-group">
     <label for="reps">Reps</label>
     <select name="reps" required class="form-control">
-        <option value="0" {{ (0 == old('reps')) ? 'selected' : '' }}>Estimated 1RM</option>
+        <option value="0" {{ (0 == $reps || $reps == '') ? 'selected' : '' }}>Estimated 1RM</option>
     @for ($i = 1; $i <= 10; $i++)
-        <option value="{{ $i }}" {{ ($i == old('reps')) ? 'selected' : '' }}>{{ $i }}</option>
+        <option value="{{ $i }}" {{ ($i == $reps) ? 'selected' : '' }}>{{ $i }}</option>
     @endfor
+    @foreach (Auth::user()->user_showextrareps as $j)
+        @if ($j != '')
+        <option value="{{ $j }}" {{ ($j == $reps) ? 'selected' : '' }}>{{ $j }}</option>
+        @endif
+    @endforeach
     </select>
 </div>
 {!! csrf_field() !!}
