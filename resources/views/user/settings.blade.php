@@ -142,6 +142,17 @@
       </div>
       <div class="form-group">
         <div>
+    		<label for="volumeincwarmup">Include warmup lifts in total tonnage (volume)</label>
+    	</div>
+    	<label class="radio-inline">
+    	  <input type="radio" id="volumeincwarmup" name="volumeincwarmup" value="1" {{ $user->user_volumeincwarmup == '1' ? 'checked' : '' }}> enable
+    	</label>
+    	<label class="radio-inline">
+    	  <input type="radio" id="volumeincwarmup" name="volumeincwarmup" value="0" {{ $user->user_volumeincwarmup == '0' ? 'checked' : '' }}> disable
+    	</label>
+      </div>
+      <div class="form-group">
+        <div>
     		<label for="viewintensityabs">Show average intensity as % of current 1RM or as abolute value</label>
     	</div>
     	<label class="radio-inline">
@@ -174,6 +185,28 @@
     	  <input type="text" class="form-control" id="limitintensity" name="limitintensity" value="{{ $user->user_limitintensity }}">
     	  <div class="input-group-addon">%</div>
     	</div>
+      </div>
+      <div class="form-group">
+        <div>
+    		<label for="showinol">Show INoL value in logs</label>
+    	</div>
+        <label class="radio-inline">
+    	  <input type="radio" id="showinol" name="showinol" value="1" {{ $user->user_showinol == '1' ? 'checked' : '' }}> enable
+    	</label>
+    	<label class="radio-inline">
+    	  <input type="radio" id="showinol" name="showinol" value="0" {{ $user->user_showinol == '0' ? 'checked' : '' }}> disable
+    	</label>
+      </div>
+      <div class="form-group">
+        <div>
+    		<label for="inolincwarmup">Include warmup sets from INoL calculation</label>
+    	</div>
+        <label class="radio-inline">
+    	  <input type="radio" id="inolincwarmup" name="inolincwarmup" value="1" {{ $user->user_inolincwarmup == '1' ? 'checked' : '' }}> enable
+    	</label>
+    	<label class="radio-inline">
+    	  <input type="radio" id="inolincwarmup" name="inolincwarmup" value="0" {{ $user->user_inolincwarmup == '0' ? 'checked' : '' }}> disable
+    	</label>
       </div>
       <div class="form-group">
     	  {!! csrf_field() !!}

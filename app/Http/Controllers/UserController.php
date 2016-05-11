@@ -71,6 +71,9 @@ class UserController extends Controller
 		$user->user_showintensity = $request->input('viewintensityabs');
 		$user->user_limitintensity = $request->input('limitintensity');
 		$user->user_limitintensitywarmup = $request->input('limitintensitywarmup');
+		$user->user_showinol = $request->input('showinol');
+		$user->user_inolincwarmup = $request->input('inolincwarmup');
+		$user->user_volumeincwarmup = $request->input('volumeincwarmup');
 		$user->save();
 		return redirect()
 				->route('userSettings')
