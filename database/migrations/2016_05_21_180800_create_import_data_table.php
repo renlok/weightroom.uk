@@ -39,6 +39,6 @@ class CreateImportDataTable extends Migration
      */
     public function down()
     {
-        Schema::drop('exercise_goals');
+        Schema::drop('import_data');
     }
 }
