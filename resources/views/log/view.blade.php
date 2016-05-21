@@ -174,9 +174,9 @@ blockquote.small {
 @endif
 @if ($log != null)
 	<h2>Workout summary</h2>
-	@if (($log->log_total_volume + ($log->log_failed_volume * $user->user_volumeincfails)) > 0)
+	@if (($log->log_total_volume + ($log->log_failed_volume * $user->user_volumeincfails) - ($log->log_warmup_volume * $user->user_volumewarmup)) > 0)
 		<p class="logrow">
-			Volume: <span class="heavy">{{ Format::correct_weight($log->log_total_volume + ($log->log_failed_volume * $user->user_volumeincfails)) }}</span>{{ Auth::user()->user_unit }} - Reps: <span class="heavy">{{ $log->log_total_reps }}</span> - Sets: <span class="heavy">{{ $log->log_total_reps }}</span>
+			Volume: <span class="heavy">{{ Format::correct_weight($log->log_total_volume + ($log->log_failed_volume * $user->user_volumeincfails) - ($log->log_warmup_volume * $user->user_volumewarmup)) }}</span>{{ Auth::user()->user_unit }} - Reps: <span class="heavy">{{ $log->log_total_reps }}</span> - Sets: <span class="heavy">{{ $log->log_total_reps }}</span>
 		@if (Auth::user()->user_showintensity != 'h')
 			- Avg. Intensity: <span class="heavy">{{ $log->average_intensity }}</span>
 		@endif

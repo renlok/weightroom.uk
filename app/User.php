@@ -47,6 +47,8 @@ class User extends Model implements AuthenticatableContract,
         'user_showextrareps' => 'array'
     ];
 
+    protected $appends = ['user_volumewarmup'];
+
     public function getAuthPassword() {
         return $this->user_password;
     }
@@ -57,6 +59,13 @@ class User extends Model implements AuthenticatableContract,
 
     public function getAuthIdentifierName () {
         return 'user_id';
+    }
+
+    public function getUserVolumewarmupAttribute () {
+        if ($this->attributes['user_volumeincwarmup'])
+            return 0;
+        else
+            return 1;
     }
 
     public function setUserShowrepsAttribute($value)
