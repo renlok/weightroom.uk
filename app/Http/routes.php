@@ -152,4 +152,5 @@ Route::group(['prefix' => 'comment', 'middleware' => 'auth'], function () {
 
 // import
 Route::get('import', 'ImportController@importForm')->name('import');
+Route::post('import/store', 'ImportController@storeImport')->name('storeImport');
 Route::post('import', 'ImportController@import');

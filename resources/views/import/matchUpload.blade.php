@@ -9,11 +9,11 @@
 @if ($map_match != '')
 <p>CSV from: {{ $map_match }}</p>
 @endif
-<form action="{{ url('import') }}" method="post">
+<form action="{{ route('storeImport') }}" method="post">
 <table class="table table-striped">
   <thead>
     <tr>
-      <th>Colomn Name</th>
+      <th>Column Name</th>
       <th>Link to</th>
       <th>Value</th>
     </tr>
@@ -27,8 +27,8 @@
       <td>
     	  <select class="form-control" name="{{ $file_header }}">
     	    <option value="">Ignore</option>
-	@foreach ($colomn_names as $colomn_name => $colomn_desc)
-          <option value="{{ $colomn_name }}" {{ ($link_array[$file_header] == $colomn_name) ? 'selected="selected"' : '' }}>{{ $colomn_desc }}</option>
+	@foreach ($column_names as $column_name => $column_desc)
+          <option value="{{ $column_name }}" {{ ($link_array[$file_header] == $column_name) ? 'selected="selected"' : '' }}>{{ $column_desc }}</option>
 	@endforeach
         </select>
       </td>

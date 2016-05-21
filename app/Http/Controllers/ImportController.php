@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Auth;
 use Carbon;
 use Excel;
 use Validator;
@@ -19,8 +21,8 @@ class ImportController extends Controller
 		]);
 		if ($validator->fails()) {
 			return redirect('import')
-						->withErrors($validator)
-						->withInput();
+				->withErrors($validator)
+				->withInput();
 		}
 		$map = [
 			'FitNotes' => [
@@ -71,7 +73,7 @@ class ImportController extends Controller
 				'Box Height' => 'logitem_comment',
 			]
 		];
-		$colomn_names = [
+		$column_names = [
 			'log_date:YYYY-MM-DD' => 'Date (YYYY-MM-DD)',
 			'log_date:DD/MM/YYYY' => 'Date (DD/MM/YYYY)',
 			'log_date:MM/DD/YYYY' => 'Date (MM/DD/YYYY)',
@@ -112,9 +114,81 @@ class ImportController extends Controller
 						break;
 					}
 				}
-				return view('import.matchUpload', compact('colomn_names', 'file_headers', 'first_row', 'link_array', 'map_match'));
+				// store the file
+				$tmpFilePath = '/temp/';
+				$tmpFileName = time() . '-' . $csvfile->getClientOriginalName();
+				$request->session()->put('csvfile', [
+					public_path() . $tmpFilePath,
+					$tmpFileName,
+					$csvfile->getMimeType()
+				]);
+				$csvfile->move(public_path() . $tmpFilePath, $tmpFileName);
+				return view('import.matchUpload', compact('column_names', 'file_headers', 'first_row', 'link_array', 'map_match'));
 			}
 		}
+	}
+
+	public function storeImport(Request $request)
+	{
+		$csv_file_data = $request->session()->get('csvfile');
+		$column_string = '';
+		$extra_sql = '';
+		foreach ($request->input() as $key => $column)
+		{
+			if ($key == '_token')
+				continue;
+			if (!empty($column_string))
+			{
+				$column_string .= ',';
+			}
+			switch ($column)
+			{
+				case 'log_date:YYYY-MM-DD':
+				case 'log_date:DD/MM/YYYY':
+				case 'log_date:MM/DD/YYYY':
+				case 'log_date:other':
+					$parts = explode(':', $column);
+					$column_string .= $parts[0];
+					$extra_sql .= ", log_date_format = '{$parts[1]}'";
+					break;
+				case 'logitem_weight:kg':
+				case 'logitem_weight:lb':
+					$column_string .= 'logitem_weight';
+					$is_kg = intval($column == 'logitem_weight:kg');
+					$extra_sql .= ", logitem_weight_is_kg = '$is_kg'";
+					break;
+				case 'log_weight':
+				case 'exercise_name':
+				case 'logitem_distance':
+				case 'logitem_time':
+				case 'logitem_reps':
+				case 'logitem_sets':
+				case 'logitem_comment':
+				case 'logitem_pre':
+				case 'logex_order':
+				case 'logitem_order':
+					$column_string .= $column;
+					break;
+				default:
+					$column_string .= '@dummy';
+					break;
+			}
+		}
+		$csvfile = new UploadedFile($csv_file_data[0] . $csv_file_data[1], $csv_file_data[1], $csv_file_data[2]);
+		$query = sprintf("LOAD DATA LOCAL INFILE '%s' INTO TABLE import_data 
+				FIELDS TERMINATED BY ','
+				LINES TERMINATED BY '\\n'
+				IGNORE 1 LINES
+				($column_string)
+				SET user_id = %d $extra_sql", addslashes($csv_file_data[0] . $csv_file_data[1]), Auth::user()->user_id);
+
+
+		//\DB::connection()->getpdo()->exec($query);
+
+		// delete the file
+		unlink($csv_file_data[0] . $csv_file_data[1]);
+
+		dd([$request->input(), $csvfile, $query]);
 	}
 
 	public function importForm()
