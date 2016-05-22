@@ -8,6 +8,7 @@ use DB;
 use App\Exercise;
 use App\Exercise_record;
 use App\Log;
+use App\User;
 
 class Log_control
 {
