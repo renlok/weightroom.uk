@@ -25,11 +25,11 @@ class Exercise_goal extends Model
     }
 
     /**
-     * Goals should have a completed percentage
+     * Goals should have a best value if only 0
      *
-     * @returns int
+     * @returns float
      */
-    public function getPercentageAttribute()
+    public function getBestAttribute()
     {
         switch ($this->attributes['goal_type'])
         {
@@ -62,14 +62,24 @@ class Exercise_goal extends Model
                 $value = 0;
                 break;
         }
-        $this->attributes['best'] = round($value, 1);
-        if ($this->attributes['goal_value_one'] <= $value)
+        return $this->attributes['best'] = round($value, 1);
+    }
+  
+    /**
+     * Goals should have a completed percentage
+     *
+     * @returns int
+     */
+    public function getPercentageAttribute()
+    {
+        $this->attributes['best'] = $this->getBestAttribute();
+        if ($this->attributes['goal_value_one'] <= $this->attributes['best'])
         {
             return $this->attributes['percentage'] = 100;
         }
         else
         {
-            return $this->attributes['percentage'] = round(($value/ $this->attributes['goal_value_one']) * 100, 1);
+            return $this->attributes['percentage'] = round(($this->attributes['best']/ $this->attributes['goal_value_one']) * 100, 1);
         }
     }
 
