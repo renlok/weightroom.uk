@@ -94,6 +94,7 @@ class Exercise_record extends Model
                 ->where('exercise_records.user_id', $user_id)
                 ->where('exercises.exercise_name', $exercise_name)
                 ->where('exercises.is_time', false)
+				->where('exercises.is_distance', false)
                 ->where('is_est1rm', 1);
         if ($range > 0)
         {

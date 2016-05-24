@@ -182,4 +182,38 @@ class Log_control
 			->update(['log_text' => $log_text, 'log_update_text' => 0]);
 		return $log_text;
 	}
+	
+	// returns array 0: inol, 1: warmup inol
+	public static function calculateINOL($date, $new_1rm, $exercise_name, $exercise_items)
+	{
+		$current_1rm = Exercise_record::join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
+            ->where('exercise_records.user_id', $user_id)
+            ->where('exercises.exercise_name', $exercise_name)
+            ->where('exercises.is_time', false)
+			->where('exercises.is_distance', false)
+            ->where('is_est1rm', 1)
+			->where('log_date', '<', $date)
+			->orderBy('pr_1rm', 'desc')
+			->value('pr_1rm');
+		if ($current_1rm == null && $current_1rm < $new_1rm)
+		{
+			$current_1rm = $new_1rm;
+		}
+		$inol = 0;
+		$warmup_inol = 0;
+		foreach ($exercise_items as $item)
+		{
+			if ($item->is_time == false && $item->is_distance == false && $item->is_endurance == false && $item->logitem_reps > 0)
+			{
+				$intensity = ($item->logitem_abs_weight / $current_1rm) * 100;
+				$set_inol = ($item->logitem_reps * $item->logitem_sets) / (100 - $intensity);
+				$inol += $set_inol;
+				if ($item->is_warmup)
+				{
+					$warmup_inol =+ $set_inol;
+				}
+			}
+		}
+		return [$inol, $warmup_inol];
+	}
 }
