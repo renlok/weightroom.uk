@@ -182,9 +182,9 @@ class Log_control
 			->update(['log_text' => $log_text, 'log_update_text' => 0]);
 		return $log_text;
 	}
-	
+
 	// returns array 0: inol, 1: warmup inol
-	public static function calculateINOL($date, $new_1rm, $exercise_name, $exercise_items)
+	public static function calculateINOL($date, $user_id, $new_1rm, $exercise_name, $exercise_items)
 	{
 		$current_1rm = Exercise_record::join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
             ->where('exercise_records.user_id', $user_id)
