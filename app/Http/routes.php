@@ -122,6 +122,13 @@ Route::group(['prefix' => 'tools'], function () {
     Route::get('wlratios', 'ToolsController@idealWLRatios')->name('wlratios');
 });
 
+// import
+Route::group(['middleware' => 'auth'], function () {
+    Route::get('import', 'ImportController@importForm')->name('import');
+    Route::post('import/store', 'ImportController@storeImport')->name('storeImport');
+    Route::post('import', 'ImportController@import');
+});
+
 // Misc
 //Route::get('/', 'MiscController@index');
 Route::group(['middleware' => 'auth'], function () {
@@ -135,6 +142,11 @@ Route::get('plans', 'MiscController@plans')->name('plans');
 // legal guff
 Route::get('help/privacypolicy', 'MiscController@privacyPolicy')->name('privacyPolicy');
 
+Route::group(['prefix' => 'comment', 'middleware' => 'auth'], function () {
+    Route::get('{comment_id}/delete', 'CommentController@delete')->name('deleteComment');
+    Route::post('{log_id}', 'CommentController@store')->name('saveComment');
+});
+
 Route::get('/', function () {
     return view('landing');
 })->name('home');
@@ -144,13 +156,3 @@ Route::get('/', function () {
 Route::resource('blog', 'BlogController', ['names' => [
     'create' => 'photo.build'
 ]]);
-
-Route::group(['prefix' => 'comment', 'middleware' => 'auth'], function () {
-    Route::get('{comment_id}/delete', 'CommentController@delete')->name('deleteComment');
-    Route::post('{log_id}', 'CommentController@store')->name('saveComment');
-});
-
-// import
-Route::get('import', 'ImportController@importForm')->name('import');
-Route::post('import/store', 'ImportController@storeImport')->name('storeImport');
-Route::post('import', 'ImportController@import');

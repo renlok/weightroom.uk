@@ -3,7 +3,12 @@
 @section('title', 'Workout Reports')
 
 @section('headerstyle')
-
+<link href="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.3/nv.d3.min.css" rel="stylesheet">
+<style>
+#reportChart .nv-lineChart circle.nv-point {
+  fill-opacity: 2;
+}
+</style>
 @endsection
 
 @section('content')
@@ -13,10 +18,10 @@
 	<div class="row">
 		<div class="col-md-6">
 			<select class="form-control" name="view_type">
-				<option>Volume</option>
-				<option>Intensity</option>
-				<option>Sets/Week</option>
-				<option>Workouts/Week</option>
+				<option value="volume">Volume</option>
+				<option value="intensity">Intensity</option>
+				<option value="setsweek">Sets/Week</option>
+				<option value="workoutsweek">Workouts/Week</option>
 			</select>
 		</div>
 		<div class="col-md-6">
@@ -31,18 +36,18 @@
 			<option value="powerlifting">Powerlifting</option>
 			<option value="weightlifting">Weightlifting</option>
 		@foreach ($exercises as $exercise)
-	        <option value="{{ $exercise->exercise_id }}" {{ (strtolower($exercise->exercise_name == $exercise_names) ? 'selected' : '' }}>{{ $exercise->exercise_name }}</option>
+	        <option value="{{ $exercise->exercise_id }}" {{ (strtolower($exercise->exercise_name == old('exercise_view')) ? 'selected' : '') }}>{{ $exercise->exercise_name }}</option>
 	    @endforeach
 		</select>
 	</div>
 	<div>
 		<label for="n">Moving Average</label>
 		<select class="form-control" id="n" name="n">
-		  <option value="0" {{ $n == 0 ? 'selected' : '' }}>Disable</option>
-		  <option value="3" {{ $n == 3 ? 'selected' : '' }}>3</option>
-		  <option value="5" {{ $n == 5 ? 'selected' : '' }}>5</option>
-		  <option value="7" {{ $n == 7 ? 'selected' : '' }}>7</option>
-		  <option value="9" {{ $n == 9 ? 'selected' : '' }}>9</option>
+		  <option value="0" {{ old('n') == 0 ? 'selected' : '' }}>Disable</option>
+		  <option value="3" {{ old('n') == 3 ? 'selected' : '' }}>3</option>
+		  <option value="5" {{ old('n') == 5 ? 'selected' : '' }}>5</option>
+		  <option value="7" {{ old('n') == 7 ? 'selected' : '' }}>7</option>
+		  <option value="9" {{ old('n') == 9 ? 'selected' : '' }}>9</option>
 		</select>
 	</div>
 </div>
@@ -55,27 +60,30 @@
 @section('endjs')
 <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js" charset="utf-8"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.14/d3.min.js" charset="utf-8"></script>
-<script src="{{ asset('js/nv.d3.js') }}"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.3/nv.d3.min.js"></script>
 
 <script>
     function prHistoryData() {
 		var prHistoryChartData = [];
-@foreach ($prs as $rep_name => $graph_data)
 		var dataset = [];
-	@foreach ($graph_data as $data)
-        @if ($type == 'monthly')
-            dataset.push({x: moment('{{ $data->log_date->startOfMonth()->toDateString() }}','YYYY-MM-DD').toDate(), y: {{ $data->pr_value }}, shape:'circle'});
-        @elseif ($type == 'weekly')
-            dataset.push({x: moment('{{ $data->log_date->startOfWeek()->toDateString() }}','YYYY-MM-DD').toDate(), y: {{ $data->pr_value }}, shape:'circle'});
-        @else
-            dataset.push({x: moment('{{ $data->log_date->toDateString() }}','YYYY-MM-DD').toDate(), y: {{ $data->pr_value }}, shape:'circle'});
-        @endif
+@foreach ($graph_values as $data)
+        dataset.push({x: moment('{{ $data['log_date'] }}','YYYY-MM-DD').toDate(), y: {{ $data['graph_value'] }}, shape:'circle'});
+@endforeach
+		prHistoryChartData.push({
+			values: dataset,
+			"bar": true,
+			key: '{{ $key_label }}'
+		});
+@if ($show_moving_average)
+		var dataset = [];
+	@foreach ($moving_avg as $data)
+        dataset.push({x: moment('{{ $data['log_date'] }}','YYYY-MM-DD').toDate(), y: {{ $data['graph_value'] }}, shape:'circle'});
 	@endforeach
 		prHistoryChartData.push({
 			values: dataset,
-			key: '{{ $rep_name }} rep max'
+			key: 'Moving Average'
 		});
-@endforeach
+@endif
 		return prHistoryChartData;
     }
 
@@ -88,35 +96,29 @@
 		var height = Math.round(width/2);
         var chart = nv.models.linePlusBarChart()
 			.margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
-			.useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
 			.duration(350)  //how fast do you want the lines to transition?
-			.showLegend(true)       //Show the legend, allowing users to turn on/off line series.
-			.showYAxis(true)        //Show the y-axis
-			.showXAxis(true)        //Show the x-axis
+			.showLegend(true);      //Show the legend, allowing users to turn on/off line series.
 
-	chart.noData("Not enough data to generate PR graph");
+		chart.noData("Not enough data to generate PR graph");
 
-    chart.xAxis
-        .axisLabel('Date')
-    @if ($type == 'monthly')
-        .tickFormat(function(d) { return d3.time.format('%b %y')(new Date(d)); });
-    @else
-        .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); });
-    @endif
+	    chart.xAxis
+	    @if (false)
+	        .tickFormat(function(d) { return d3.time.format('%b %y')(new Date(d)); }).showMaxMin(true);
+	    @else
+	        .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); }).showMaxMin(true);
+	    @endif
 
-    chart.yAxis
-        .axisLabel('{{ $graph_label }}')
-        .tickFormat(d3.format('.02f'));
+	    chart.y1Axis.tickFormat(d3.format('.02f')).showMaxMin(true);
 
-	d3.select('#prHistoryChart')
-		.attr('style', "width: " + width + "px; height: " + height + "px;" );
+		d3.select('#reportChart')
+			.attr('style', "width: " + width + "px; height: " + height + "px;" );
 
         var data = prHistoryData();
-        d3.select('#prHistoryChart svg')
-		.datum(data)
-		.transition().duration(500)
-		.attr('perserveAspectRatio', 'xMinYMin meet')
-		.call(chart);
+        d3.select('#reportChart svg')
+			.datum(data)
+			.transition().duration(500)
+			.attr('perserveAspectRatio', 'xMinYMin meet')
+			.call(chart);
 
         nv.utils.windowResize(resizeChart);
         function resizeChart() {
@@ -126,7 +128,7 @@
 				width = 1150;
 			}
 			var height = Math.round(width/2);
-			d3.select('#prHistoryChart')
+			d3.select('#reportChart')
 				.attr('style', "width: " + width + "px; height: " + height + "px;" );
 			chart.update();
         }
@@ -136,7 +138,7 @@
 
     $(function()
     {
-        $('#prHistoryChart .nv-lineChart circle.nv-point').attr("r", "3.5");
+        $('#reportChart .nv-lineChart circle.nv-point').attr("r", "3.5");
     });
 </script>
 @endsection
