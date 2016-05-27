@@ -21,6 +21,10 @@ blockquote.small {
   <a href="{{ route('dashboardAll') }}" class="btn btn-default">View all</a>
 </div>
 </div>
+@if ($random)
+<h3>You aren't currently following anyone</h3>
+<h4>We think a blank page is boring so here is a random selection of users you can check out</h4>
+@endif
 <table class="table">
 <tbody>
 @forelse ($logs as $log)
