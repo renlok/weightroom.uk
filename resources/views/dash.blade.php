@@ -31,7 +31,7 @@ blockquote.small {
 	<tr>
 		<td class="logrow">
 			<a href="{{ route('viewUser', ['user_name' => $log->user->user_name]) }}">{{ $log->user->user_name }}</a> posted a log {{ $log->log_date->diffForHumans() }}. <a href="{{ route('viewLog', ['date' => $log->log_date->toDateString(), 'user_name' => $log->user->user_name]) }}">View log</a>
-            <blockquote class="small">{!! nl2br($log->log_text) !!}</blockquote>
+            <blockquote class="small">{!! nl2br(htmlentities($log->log_text)) !!}</blockquote>
 		</td>
 	</tr>
 @empty
