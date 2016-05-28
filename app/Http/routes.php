@@ -87,7 +87,7 @@ Route::group(['prefix' => 'exercise', 'middleware' => 'auth'], function () {
     Route::post('{exercise_name}/edit', 'ExercisesController@postEdit');
     Route::post('{exercise_name}/editname', 'ExercisesController@postEditName')->name('editExerciseName');
 
-    Route::post('{exercise_name}/updategoal', 'ExercisesController@postUpdateGoal')->name('updateGoal');
+    Route::post('{exercise_name}/goal/update', 'GoalController@postUpdateExerciseGoals')->name('updateExerciseGoals');
     // history
     Route::get('{exercise_name}/history/{from_date?}/{to_date?}', 'ExercisesController@history')->name('exerciseHistory');
     // volume
@@ -111,8 +111,10 @@ Route::group(['prefix' => 'tools'], function () {
         // WL tools
         Route::get('sinclair/{range?}', 'ToolsController@sinclair')->name('sinclairGraph');
         // goals
-        Route::get('goals', 'ExercisesController@getGlobalGoals')->name('globalGoals');
-        Route::post('goalsNew', 'ExercisesController@postNewGoal')->name('newGoal');
+        Route::get('goals', 'GoalController@getGlobalGoals')->name('globalGoals');
+        Route::post('goal/new', 'GoalController@postNewGoal')->name('newGoal');
+        Route::post('goal/update', 'GoalController@postUpdateGoal')->name('updateGoal');
+        Route::post('goal/delete', 'GoalController@postDeleteGoal')->name('deleteGoal');
         // reports
         Route::get('reports', 'LogsController@getReports')->name('viewReports');
     });

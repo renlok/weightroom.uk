@@ -43,7 +43,7 @@
             <option value="time" {{ ($current_type == 'time') ? 'selected="selected"' : '' }}>Time: for speed</option>
             <option value="enduracne" {{ ($current_type == 'enduracne') ? 'selected="selected"' : '' }}>Time: endurance</option>
             <option value="distance" {{ ($current_type == 'distance') ? 'selected="selected"' : '' }}>Distance</option>
-          </select>
+        </select>
     </div>
   </div>
   <div class="form-group">
@@ -55,7 +55,7 @@
 </form>
 
 <h3>Exercise Goals:</h3>
-<form action="{{ route('updateGoal', ['exercise_name' => $exercise_name]) }}" method="post">
+<form action="{{ route('updateExerciseGoals', ['exercise_name' => $exercise_name]) }}" method="post">
 <div class="form-inline">
   <div class="form-group" id="new_goal">
     <label for="goalType" class="control-label">New goal:</label>
