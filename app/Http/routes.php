@@ -117,6 +117,7 @@ Route::group(['prefix' => 'tools'], function () {
         Route::post('goal/delete', 'GoalController@postDeleteGoal')->name('deleteGoal');
         // reports
         Route::get('reports', 'LogsController@getReports')->name('viewReports');
+        Route::post('reports', 'LogsController@ajaxGetReport')->name('ajaxPullReports');
     });
     // guest friendly tools
     Route::get('rpeestimator', 'ToolsController@RPECalculator')->name('rpeestimator');

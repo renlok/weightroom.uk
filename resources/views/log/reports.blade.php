@@ -5,8 +5,12 @@
 @section('headerstyle')
 <link href="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.3/nv.d3.min.css" rel="stylesheet">
 <style>
-#reportChart .nv-lineChart circle.nv-point {
-  fill-opacity: 2;
+svg {
+    display: block;
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    width: 100%;
 }
 </style>
 @endsection
@@ -17,7 +21,7 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-6">
-			<select class="form-control" name="view_type">
+			<select class="form-control reportform" name="view_type" id="view_type">
 				<option value="volume">Volume</option>
 				<option value="intensity">Intensity</option>
 				<option value="setsweek">Sets/Week</option>
@@ -25,13 +29,13 @@
 			</select>
 		</div>
 		<div class="col-md-6">
-			<p><input type="checkbox" name="ignore_warmups" value="1" aria-label="Ignore Warmups"> Ignore Warmups</p>
-			<p><input type="checkbox" name="view_horizontal" value="1" aria-label="View Horizontal"> View Horizontal</p>
+			<p><input type="checkbox" name="ignore_warmups" class="reportform" value="1" aria-label="Ignore Warmups"> Ignore Warmups</p>
+			<p><input type="checkbox" name="view_horizontal" id="view_horizontal" value="1" aria-label="View Horizontal"> View Horizontal</p>
 		</div>
 	</div>
 	<div>
 		<label for="n">Limit to</label>
-		<select class="form-control" name="exercise_view">
+		<select class="form-control reportform" name="exercise_view" id="exercise_view">
 			<option value="everything">Everything</option>
 			<option value="powerlifting">Powerlifting</option>
 			<option value="weightlifting">Weightlifting</option>
@@ -63,82 +67,170 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.3/nv.d3.min.js"></script>
 
 <script>
-    function prHistoryData() {
+    var chart = null;
+    var stored_data = [];
+    var data_length = 0;
+    var maxY = 0,
+        minDate = 0,
+        maxDate = 0;
+    callAjax();
+    function prHistoryData(raw_data, ma) {
 		var prHistoryChartData = [];
 		var dataset = [];
-@foreach ($graph_values as $data)
-        dataset.push({x: moment('{{ $data['log_date'] }}','YYYY-MM-DD').toDate(), y: {{ $data['graph_value'] }}, shape:'circle'});
-@endforeach
+        $.each(raw_data, function(date, value) {
+            if (maxY < value) maxY = value;
+            if (value > 0)
+            {
+                if (minDate == 0) minDate = moment(date,'YYYY-MM-DD').unix();
+                maxDate = moment(date,'YYYY-MM-DD').unix();
+            }
+            dataset.push({x: moment(date,'YYYY-MM-DD').toDate(), y: value, shape:'circle'});
+        });
 		prHistoryChartData.push({
 			values: dataset,
 			"bar": true,
 			key: '{{ $key_label }}'
 		});
-@if ($show_moving_average)
-		var dataset = [];
-	@foreach ($moving_avg as $data)
-        dataset.push({x: moment('{{ $data['log_date'] }}','YYYY-MM-DD').toDate(), y: {{ $data['graph_value'] }}, shape:'circle'});
-	@endforeach
-		prHistoryChartData.push({
-			values: dataset,
-			key: 'Moving Average'
-		});
-@endif
+        if (ma > 0)
+        {
+    		prHistoryChartData.push({
+    			values: simpleMovingAverage(dataset, ma),
+    			key: 'Moving Average'
+    		});
+        }
 		return prHistoryChartData;
     }
 
-    nv.addGraph(function() {
-		var width = $(document).width() - 50;
-        if (width > 1150)
-        {
-            width = 1150;
-        }
-		var height = Math.round(width/2);
-        var chart = nv.models.linePlusBarChart()
-			.margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
-			.duration(350)  //how fast do you want the lines to transition?
-			.showLegend(true);      //Show the legend, allowing users to turn on/off line series.
+    function updateGraph() {
+        // clean old graph
+        if (chart != null)
+            d3.select("#reportChart svg").datum([]).transition().duration(500).call(chart);
+        d3.select("#reportChart svg").remove();
+        d3.select("#reportChart").append("svg");
+        nv.addGraph(function() {
+    		var width = $(document).width() - 50;
+            if (width > 1150)
+            {
+                width = 1150;
+            }
+    		var height = Math.round(width/2);
+            var chart = nv.models.linePlusBarChart()
+    			.margin({top: 30, right: 60, bottom: 50, left: 70})
+    			.duration(350)
+    			.showLegend(true);
 
-		chart.noData("Not enough data to generate PR graph");
+    		chart.noData("Not enough data to generate Report");
 
-	    chart.xAxis
-	    @if (false)
-	        .tickFormat(function(d) { return d3.time.format('%b %y')(new Date(d)); }).showMaxMin(true);
-	    @else
-	        .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); }).showMaxMin(true);
-	    @endif
+    	    chart.xAxis.tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); }).showMaxMin(true);
+            chart.x2Axis.tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); }).showMaxMin(true);
+    	    chart.y1Axis.tickFormat(d3.format('.02f')).showMaxMin(true);
 
-	    chart.y1Axis.tickFormat(d3.format('.02f')).showMaxMin(true);
+    		d3.select('#reportChart')
+    			.attr('style', "width: " + width + "px; height: " + height + "px;" );
 
-		d3.select('#reportChart')
-			.attr('style', "width: " + width + "px; height: " + height + "px;" );
+            maxY = 0;
+            var sorted_data = prHistoryData(stored_data, $("#n").find(":selected").val());
 
-        var data = prHistoryData();
-        d3.select('#reportChart svg')
-			.datum(data)
-			.transition().duration(500)
-			.attr('perserveAspectRatio', 'xMinYMin meet')
-			.call(chart);
+            chart.bars.forceY([0, maxY]);
+            chart.bars2.forceY([0, maxY]);
+            chart.lines.forceY([0, maxY]);
+            chart.lines2.forceY([0, maxY]);
+            //chart.bars.forceY([0]).padData(false);
 
-        nv.utils.windowResize(resizeChart);
-        function resizeChart() {
-			var width = $(document).width() - 50;
-			if (width > 1150)
-			{
-				width = 1150;
-			}
-			var height = Math.round(width/2);
-			d3.select('#reportChart')
-				.attr('style', "width: " + width + "px; height: " + height + "px;" );
-			chart.update();
-        }
+            d3.select('#reportChart svg')
+    			.datum(sorted_data)
+    			.transition().duration(500)
+    			.attr('perserveAspectRatio', 'xMinYMin meet')
+    			.call(chart);
+            //resetBarSize();
 
-        return chart;
+            var range = Math.ceil((maxDate - minDate) / 604800);
+            /*d3.selectAll("rect")
+                .attr("width", (width) / range);*/
+
+            nv.utils.windowResize(resizeChart);
+            function resizeChart() {
+    			var width = $(document).width() - 50;
+    			if (width > 1150)
+    			{
+    				width = 1150;
+    			}
+    			var height = Math.round(width/2);
+    			d3.select('#reportChart')
+    				.attr('style', "width: " + width + "px; height: " + height + "px;" );
+                //d3.selectAll("rect")
+                //    .attr("width", (width - 230) / range);
+    			chart.update();
+            }
+
+            return chart;
+        });
+    }
+
+    $(".reportform").change(function() {
+        callAjax();
     });
 
-    $(function()
+    function callAjax()
     {
-        $('#reportChart .nv-lineChart circle.nv-point').attr("r", "3.5");
+        $.ajax({
+            url: '{{ route('ajaxPullReports') }}',
+            method: "POST",
+            data: {
+                view_type: $("#view_type").find(":selected").val(),
+                ignore_warmups: $("#ignore_warmups:checked").length,
+                exercise_view: $("#exercise_view").find(":selected").val(),
+                '_token': '{!! csrf_token() !!}'
+            },
+            dataType: "json"
+        }).done(function(data) {
+            stored_data = data;
+            data_length = Object.size(stored_data);
+            updateGraph(data);
+        });
+    }
+
+    $("#n").change(function() {
+        updateGraph(stored_data);
     });
+
+    $("#view_horizontal").change(function() {
+        // TODO
+    });
+
+    function simpleMovingAverage(values, n) {
+        var return_data = [],
+            counter = 0,
+            selection = [];
+        $.each(values, function(date, value) {
+            counter++;
+            selection[counter % n] = value;
+            if (counter >= n) {
+                var sum = 0,
+                    value_date = 0;
+                $.each(selection, function(n, value) {
+                    sum += value.y;
+                    value.x > value_date && (value_date = value.x)
+                });
+                return_data.push({
+                    x: value_date,
+                    y: sum / n
+                })
+            }
+        });
+        return return_data
+    }
+
+    Object.size = function(obj) {
+        var size = 0, key;
+        for (key in obj) {
+            if (obj.hasOwnProperty(key)) size++;
+        }
+        return size;
+    };
+
+    function resetBarSize() {
+        //$('.nv-bars rect.nv-bar').attr("width", $('.nv-bars rect.nv-bar').attr('width') / 2);
+    }
 </script>
 @endsection

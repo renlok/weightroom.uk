@@ -86,6 +86,7 @@
 					}).done(function() {
 						this.goal_hidden = false;
 					});
+					this.goal_hidden = false;
 				},
 				edit_goal: function() {
 					this.edit_hidden = !this.edit_hidden;

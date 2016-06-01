@@ -355,4 +355,70 @@ class LogsController extends Controller
 		$graph_label = 'something';
 		return view('log.reports', compact('exercises', 'key_label', 'graph_values', 'moving_avg', 'graph_label', 'show_moving_average'));
 	}
+
+	public function ajaxGetReport(Request $request)
+	{
+		$view_type = $request->input('view_type', 'volume');
+		$exercise_view = $request->input('exercise_view', 'everything');
+		// load graph type
+		DB::enableQueryLog();
+		$main_table = 'logs';
+		if ($view_type == 'volume')
+		{
+			$graph_value = 'logs.log_total_volume';
+			if ($request->old('ignore_warmups', 0))
+			{
+				$graph_value = 'logs.log_total_volume - logs.log_warmup_volume';
+			}
+			$graph_values = Log::select(DB::raw('SUBDATE(' . $main_table . '.log_date, WEEKDAY(' . $main_table . '.log_date)) as value_date, SUM(' . $graph_value . ') as graph_value'));
+		}
+		else if ($view_type == 'intensity')
+		{
+			$main_table = 'log_exercises';
+			$graph_value = 'log_exercises.logex_inol';
+			if ($request->old('ignore_warmups', 0))
+			{
+				$graph_value = 'log_exercises.logex_inol - log_exercises.logex_inol_warmup';
+			}
+			$graph_values = Log_exercise::select(DB::raw('SUBDATE(' . $main_table . '.log_date, WEEKDAY(' . $main_table . '.log_date)) as value_date, SUM(' . $graph_value . ') as graph_value'));
+		}
+		else if ($view_type == 'setsweek')
+		{
+			$graph_values = Log::select(DB::raw('SUBDATE(' . $main_table . '.log_date, WEEKDAY(' . $main_table . '.log_date)) as value_date, SUM(logs.log_total_sets) as graph_value'));
+		}
+		else if ($view_type == 'workoutsweek')
+		{
+			$graph_values = Log::select(DB::raw('SUBDATE(' . $main_table . '.log_date, WEEKDAY(' . $main_table . '.log_date)) as value_date, COUNT(logs.log_id) as graph_value'));
+		}
+		// limit to exercises
+		if ($exercise_view != 'everything')
+		{
+			if ($main_table != 'log_exercises')
+			{
+				$graph_values = $graph_values->join('log_exercises', "$main_table.log_id", '=', 'log_exercises.log_id');
+			}
+			$graph_values = $graph_values->join('exercises', 'log_exercises.exercise_id', '=', 'exercises.exercise_id');
+			if ($exercise_view == 'powerlifting')
+			{
+				$graph_values = $graph_values->whereIn('exercises.exercise_id', [Auth::user()->user_squatid, Auth::user()->user_deadliftid, Auth::user()->user_benchid]);;
+			}
+			elseif ($exercise_view == 'weightlifting')
+			{
+				$graph_values = $graph_values->whereIn('exercises.exercise_id', [Auth::user()->user_snatchid, Auth::user()->user_cleanjerkid]);
+			}
+			elseif(intval($exercise_view) == $exercise_view)
+			{
+				$graph_values = $graph_values->where('exercises.exercise_id', $exercise_view);
+			}
+		}
+		$graph_values = $graph_values->where("$main_table.user_id", Auth::user()->user_id)
+						->groupBy(DB::raw('YEAR(value_date), WEEK(value_date)'))
+						->get();
+		$return_values = [];
+		foreach ($graph_values as $value)
+		{
+			$return_values[$value->value_date] = (float)$value->graph_value;
+		}
+		return response()->json($return_values);
+	}
 }
