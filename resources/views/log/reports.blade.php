@@ -6,7 +6,6 @@
 <link href="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.3/nv.d3.min.css" rel="stylesheet">
 <style>
 svg {
-    display: block;
     margin: 0px;
     padding: 0px;
     height: 100%;
@@ -70,20 +69,13 @@ svg {
     var chart = null;
     var stored_data = [];
     var data_length = 0;
-    var maxY = 0,
-        minDate = 0,
-        maxDate = 0;
+    var maxY = 0;
     callAjax();
     function prHistoryData(raw_data, ma) {
 		var prHistoryChartData = [];
 		var dataset = [];
         $.each(raw_data, function(date, value) {
             if (maxY < value) maxY = value;
-            if (value > 0)
-            {
-                if (minDate == 0) minDate = moment(date,'YYYY-MM-DD').unix();
-                maxDate = moment(date,'YYYY-MM-DD').unix();
-            }
             dataset.push({x: moment(date,'YYYY-MM-DD').toDate(), y: value, shape:'circle'});
         });
 		prHistoryChartData.push({
@@ -116,8 +108,8 @@ svg {
     		var height = Math.round(width/2);
             var chart = nv.models.linePlusBarChart()
     			.margin({top: 30, right: 60, bottom: 50, left: 70})
-    			.duration(350)
-    			.showLegend(true);
+                .color(d3.scale.category10().range())
+                .width(width).height(height);
 
     		chart.noData("Not enough data to generate Report");
 
@@ -135,18 +127,12 @@ svg {
             chart.bars2.forceY([0, maxY]);
             chart.lines.forceY([0, maxY]);
             chart.lines2.forceY([0, maxY]);
-            //chart.bars.forceY([0]).padData(false);
 
             d3.select('#reportChart svg')
     			.datum(sorted_data)
     			.transition().duration(500)
     			.attr('perserveAspectRatio', 'xMinYMin meet')
     			.call(chart);
-            //resetBarSize();
-
-            var range = Math.ceil((maxDate - minDate) / 604800);
-            /*d3.selectAll("rect")
-                .attr("width", (width) / range);*/
 
             nv.utils.windowResize(resizeChart);
             function resizeChart() {
@@ -158,8 +144,6 @@ svg {
     			var height = Math.round(width/2);
     			d3.select('#reportChart')
     				.attr('style', "width: " + width + "px; height: " + height + "px;" );
-                //d3.selectAll("rect")
-                //    .attr("width", (width - 230) / range);
     			chart.update();
             }
 
@@ -228,9 +212,5 @@ svg {
         }
         return size;
     };
-
-    function resetBarSize() {
-        //$('.nv-bars rect.nv-bar').attr("width", $('.nv-bars rect.nv-bar').attr('width') / 2);
-    }
 </script>
 @endsection

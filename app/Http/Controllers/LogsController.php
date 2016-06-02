@@ -415,10 +415,15 @@ class LogsController extends Controller
 						->groupBy(DB::raw('YEAR(value_date), WEEK(value_date)'))
 						->get();
 		$return_values = [];
+		$min_date = 0;
+		$max_date = 0;
 		foreach ($graph_values as $value)
 		{
+			if ($min_date == 0) $min_date = $value->value_date;
+			$max_date = $value->value_date;
 			$return_values[$value->value_date] = (float)$value->graph_value;
 		}
-		return response()->json($return_values);
+		$blanks = DB::table('weeks')->whereBetween('week', [$min_date, $max_date])->pluck('empty', 'week');
+		return response()->json(array_merge($blanks, $return_values));
 	}
 }
