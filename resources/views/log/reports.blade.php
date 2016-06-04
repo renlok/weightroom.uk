@@ -70,6 +70,8 @@ svg {
     var stored_data = [];
     var data_length = 0;
     var maxY = 0;
+    var key_label = '{{ $key_label }}';
+    var unit = 'kg';
     callAjax();
     function prHistoryData(raw_data, ma) {
 		var prHistoryChartData = [];
@@ -77,11 +79,12 @@ svg {
         $.each(raw_data, function(date, value) {
             if (maxY < value) maxY = value;
             dataset.push({x: moment(date,'YYYY-MM-DD').toDate(), y: value, shape:'circle'});
+            minDate = date;
         });
 		prHistoryChartData.push({
 			values: dataset,
 			"bar": true,
-			key: '{{ $key_label }}'
+			key: key_label
 		});
         if (ma > 0)
         {
@@ -109,13 +112,27 @@ svg {
             var chart = nv.models.linePlusBarChart()
     			.margin({top: 30, right: 60, bottom: 50, left: 70})
                 .color(d3.scale.category10().range())
+                .useVoronoi(false) // not working so lets disable it for now
+                .clipEdge(true)
                 .width(width).height(height);
 
     		chart.noData("Not enough data to generate Report");
 
     	    chart.xAxis.tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); }).showMaxMin(true);
             chart.x2Axis.tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); }).showMaxMin(true);
-    	    chart.y1Axis.tickFormat(d3.format('.02f')).showMaxMin(true);
+    	    chart.y1Axis.tickFormat(yTickFormat).showMaxMin(true);
+            chart.y2Axis.tickFormat(yTickFormat).showMaxMin(true);
+            chart.y3Axis.tickFormat(yTickFormat).showMaxMin(true);
+            chart.y4Axis.tickFormat(yTickFormat).showMaxMin(true);
+
+            function yTickFormat(d) {
+                var suffix = '';
+                if (unit)
+                {
+                    suffix = ' ' + unit;
+                }
+                return d3.format(',.2r')(d) + suffix;
+            }
 
     		d3.select('#reportChart')
     			.attr('style', "width: " + width + "px; height: " + height + "px;" );
@@ -168,6 +185,7 @@ svg {
             },
             dataType: "json"
         }).done(function(data) {
+            key_label = getKeyLabal($("#view_type").find(":selected").val());
             stored_data = data;
             data_length = Object.size(stored_data);
             updateGraph(data);
@@ -181,6 +199,26 @@ svg {
     $("#view_horizontal").change(function() {
         // TODO
     });
+
+    function getKeyLabal(view_type) {
+        if (view_type == 'setsweek') {
+            unit = 'sets';
+            return 'Sets/Week';
+        }
+        else if (view_type == 'workoutsweek') {
+            unit = 'workouts';
+            return 'Workouts/Week';
+        }
+        else if (view_type == 'intensity') {
+            unit = '';
+            return 'Intensity';
+        }
+        else
+        {
+            unit = 'kg';
+            return 'Volume';
+        }
+    }
 
     function simpleMovingAverage(values, n) {
         var return_data = [],

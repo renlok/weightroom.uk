@@ -33,6 +33,18 @@
     <p>Set different goals for different exercises and see how close you are to hitting them</p>
   </div>
 </div>
+<div class="row padding">
+  <div class="col-md-4">
+	<a href="{{ route('viewReports') }}">Reports</a>
+	<p>View your volume/intensity/sets per week/workouts per week has changed over time. Can be used as a useful indicator of improvement</p>
+  </div>
+  <div class="col-md-4">
+    &nbsp;
+  </div>
+  <div class="col-md-4">
+    &nbsp;
+  </div>
+</div>
 <h2>Weightlifting</h2>
 <small>Like gymnastics with heavy weights.</small>
 <div class="row padding">
