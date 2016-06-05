@@ -492,7 +492,7 @@ class Parser
 			}
 			$this->log_exercises[$i]->logex_1rm = $max_estimate_rm;
 			// generate INoL values
-			$inol_values = Log_control::calculateINOL($this->log_date, $this->user->user_id, $max_estimate_rm, $exercise,  $this->log_items[$i]);
+			$inol_values = Log_control::calculateINOL($this->log_date, $this->user->user_id, $max_estimate_rm, $exercise_name,  $this->log_items[$i]);
 			$this->log_exercises[$i]->logex_inol = $inol_values[0];
 			$this->log_exercises[$i]->logex_inol_warmup = $inol_values[1];
 			// check goals

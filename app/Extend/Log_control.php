@@ -206,7 +206,14 @@ class Log_control
 			if ($item->is_time == false && $item->is_distance == false && $item->is_endurance == false && $item->logitem_reps > 0)
 			{
 				$intensity = ($item->logitem_abs_weight / $current_1rm) * 100;
-				$set_inol = ($item->logitem_reps * $item->logitem_sets) / (100 - $intensity);
+				if ($intensity >= 100)
+				{
+					$set_inol = ($item->logitem_reps * $item->logitem_sets);
+				}
+				else
+				{
+					$set_inol = ($item->logitem_reps * $item->logitem_sets) / (100 - $intensity);
+				}
 				$inol += $set_inol;
 				if ($item->is_warmup)
 				{
