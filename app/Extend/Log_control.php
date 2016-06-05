@@ -217,7 +217,7 @@ class Log_control
 				$inol += $set_inol;
 				if ($item->is_warmup)
 				{
-					$warmup_inol =+ $set_inol;
+					$warmup_inol += $set_inol;
 				}
 			}
 		}

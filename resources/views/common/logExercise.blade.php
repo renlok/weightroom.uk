@@ -13,6 +13,9 @@
     @if (Auth::user()->user_showintensity != 'h')
          - Avg. Intensity: <span class="heavy">{{ $log_exercise->average_intensity }}</span>
     @endif
+    @if (Auth::user()->user_showinol)
+         - INoL: <span class="heavy">{{ round((Auth::user()->user_inolincwarmup) ? $log_exercise->logex_inol : ($log_exercise->logex_inol - $log_exercise->logex_inol_warmup), 1) }}</span>
+    @endif
 @endif
 @if ($log_exercise->logex_time > 0)
     <p class="logrow">
