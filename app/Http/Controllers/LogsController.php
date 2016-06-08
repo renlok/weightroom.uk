@@ -233,15 +233,15 @@ class LogsController extends Controller
 						->where('log_items.user_id', $user->user_id);
 			if ($request->old('valuetype') == 'distance')
 			{
-				$query = $query->where('log_items.logitem_distance', $request->old('weightoperator'), Format::correct_distance($request->old('weight'), 'km', 'm'));
+				$query = $query->where('log_items.logitem_distance', $request->old('weightoperator'), Format::correct_distance($request->old('weight'), $request->old('valueunit', 'km'), 'm'));
 			}
 			elseif ($request->old('valuetype') == 'time')
 			{
-				$query = $query->where('log_items.logitem_time', $request->old('weightoperator'), Format::correct_time($request->old('weight'), 'h', 's'));
+				$query = $query->where('log_items.logitem_time', $request->old('weightoperator'), Format::correct_time($request->old('weight'), $request->old('valueunit', 'h'), 's'));
 			}
 			else
 			{
-				$query = $query->where('log_items.logitem_weight', $request->old('weightoperator'), Format::correct_weight($request->old('weight'), $user->user_unit, 'kg'));
+				$query = $query->where('log_items.logitem_weight', $request->old('weightoperator'), Format::correct_weight($request->old('weight'), $request->old('valueunit', $user->user_unit), 'kg'));
 			}
 			$query = $query->where('exercises.exercise_name', $request->old('exercise'));
 			if ($request->old('reps') != 'any' && $request->old('reps') != '')
@@ -253,7 +253,7 @@ class LogsController extends Controller
 			{
 				$query = $query->take($request->old('show'));
 			}
-			$query = $query->lists('logex_id');
+			$query = $query->take(50)->lists('logex_id');
 			$log_exercises = Log_exercise::whereIn('logex_id', $query)->orderBy('log_date', $request->old('orderby'))->get();
 		}
 		else

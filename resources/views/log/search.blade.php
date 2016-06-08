@@ -44,13 +44,18 @@
   </div>
   <div class="form-group" id="type_changer">
     <label for="weight" class="col-sm-2 control-label labeldd">
-        <select class="form-control" name="valuetype" id="valuetype" v-on:change="change_type" v-model="selected">
+		<select class="form-control" name="valuetype" id="valuetype" v-on:change="change_type" v-model="selected">
             <option value="weight"{{ ('weight' == old('valuetype')) ? ' selected="selected"' : '' }}>Weight</option>
             <option value="distance"{{ ('distance' == old('valuetype')) ? ' selected="selected"' : '' }}>Distacne</option>
             <option value="time"{{ ('time' == old('valuetype')) ? ' selected="selected"' : '' }}>Time</option>
         </select>
     </label>
-    <div class="col-sm-10">
+	<label for="weight" class="col-sm-1 control-label labeldd">
+        <select class="form-control" name="valueunit" id="valueunit">
+            <option value="@{{ unit }}"{{ ('weight_kg' == old('valueunit')) ? ' selected="selected"' : '' }} v-for="unit in units">@{{ unit }}</option>
+        </select>
+    </label>
+    <div class="col-sm-9">
         <div class="row">
             <div class="col-md-2">
                 <div class="input-group">
@@ -99,7 +104,11 @@
     @if (old('show') > 0)
         <h3>Showing {{ old('show') }} matching logs</h3>
     @else
-        <h3>Search returned {{ count($log_exercises) }} results</h3>
+		@if (count($log_exercises) == 50)
+			<h3>Search returned over 50 results <small>Showing only the first 50 results</small></h3>
+		@else
+			<h3>Search returned {{ count($log_exercises) }} results</h3>
+		@endif
     @endif
 @endif
 
@@ -114,27 +123,36 @@
 new Vue({
     el: '#type_changer',
     data: {
-        selected: '{{ old('weightoperator', 'weight') }}',
+        selected: '{{ old('valuetype', 'weight') }}',
         type_unit: '{{ $user->user_unit }}',
-        type_placeholder: 'Weight'
+        type_placeholder: 'Weight',
+@if (old('valuetype', 'weight') == 'weight')
+		units: {!! (Auth::user()->user_unit == 'lb') ? "['lb', 'kg']" : "['kg', 'lb']" !!}
+@elseif  (old('valuetype', 'weight') == 'distance')
+		units: ['km', 'm', 'mile']
+@else
+		units: ['h', 'm', 's']
+@endif
     },
     methods: {
         change_type: function () {
-            console.log(this.selected);
             if (this.selected == 'weight')
             {
                 this.type_unit = '{{ $user->user_unit }}';
                 this.type_placeholder = 'Weight';
+				this.units = {!! (Auth::user()->user_unit == 'lb') ? "['lb', 'kg']" : "['kg', 'lb']" !!};
             }
             else if (this.selected == 'distance')
             {
                 this.type_unit = 'km';
                 this.type_placeholder = 'Distance';
+				this.units = ['km', 'm', 'mile'];
             }
             else
             {
                 this.type_unit = 'hr';
                 this.type_placeholder = 'Time';
+				this.units = ['h', 'm', 's'];
             }
         }
     }
