@@ -361,7 +361,6 @@ class LogsController extends Controller
 		$view_type = $request->input('view_type', 'volume');
 		$exercise_view = $request->input('exercise_view', 'everything');
 		// load graph type
-		DB::enableQueryLog();
 		$main_table = 'logs';
 		if ($view_type == 'volume')
 		{

@@ -945,6 +945,20 @@ class Parser
 		$new_1rm = $this->generate_rm ($set_weight, $set_reps);
 		$is_est1rm = (($old_1rm < $new_1rm) || ($is_time == 1 && $is_endurance == 0 && $old_1rm > $new_1rm)) ? true : false;
 
+		// prepare the new pr data for insertion
+		$new_pr_data = [
+			'exercise_id' => $exercise_id,
+			'user_id' => $this->user->user_id,
+			'log_date' => $this->log_date,
+			'pr_value' => $set_weight,
+			'pr_reps' => $set_reps,
+			'pr_1rm' => $new_1rm,
+			'is_est1rm' => $is_est1rm,
+			'is_time' => $is_time,
+			'is_endurance' => $is_endurance,
+			'is_distance' => $is_distance
+		];
+
 		// delete future logs that have lower prs
 		DB::table('exercise_records')
 			->where('user_id', $this->user->user_id)
@@ -1076,18 +1090,7 @@ class Parser
 		}
 
 		// insert new entry
-		Exercise_record::create([
-			'exercise_id' => $exercise_id,
-			'user_id' => $this->user->user_id,
-			'log_date' => $this->log_date,
-			'pr_value' => $set_weight,
-			'pr_reps' => $set_reps,
-			'pr_1rm' => $new_1rm,
-			'is_est1rm' => $is_est1rm,
-			'is_time' => $is_time,
-			'is_endurance' => $is_endurance,
-			'is_distance' => $is_distance
-		]);
+		Exercise_record::create($new_pr_data);
 	}
 
 	private function construct_globals ()
