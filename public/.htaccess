@@ -16,4 +16,8 @@ AddHandler application/x-httpd-php55 .php
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
+
+    # force weightroom.uk
+    RewriteCond %{HTTP_HOST} ^www\.weightroom\.uk [NC]
+    RewriteRule ^(.*)$ http://weightroom.uk/$1 [L,R=301]
 </IfModule>
