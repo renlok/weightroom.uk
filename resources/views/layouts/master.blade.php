@@ -132,6 +132,7 @@
             cache: false
         });
         $('#notification_bubble').hide();
+        return false;
     });
 @endif
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
