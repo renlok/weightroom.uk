@@ -124,6 +124,7 @@ class Parser
 		$multiline = 0;
 		$multiline_max = 0;
 		$output_data = array();
+		$line = $this->clean_line ($line);
 		$string_array = str_split($line);
 		foreach($string_array as $chr)
 		{
@@ -180,7 +181,7 @@ class Parser
 						if (in_array($format_chr, $this->next_values))
 						{
 							// find what block comes next
-							$this->current_blocks = array_keys ($this->next_values, $chr);
+							$this->current_blocks = array_keys ($this->next_values, $format_chr);
 							// reset $format_type + next values
 							$this->build_next_formats ();
 							// rebuild everything
@@ -1341,8 +1342,7 @@ class Parser
 		return false;
 	}
 
-	// TODO: add all the possible characters that will be accpected
-	private function format_character($chr)
+	private function format_character ($chr)
 	{
 		$output_chr = $chr;
 		// is number
@@ -1351,12 +1351,15 @@ class Parser
 			$output_chr = '0';
 		}
 		$output_chr = strtolower($output_chr);
-		// is x
-		if ($chr == '*' || $chr == '×')
-		{
-			$output_chr = 'x';
-		}
 		return $output_chr;
+	}
+
+	// TODO: add all the possible characters that will be accpected
+	private function clean_line ($line)
+	{
+		// search x
+		$line = str_replace (['*', '×'], 'x', $line);
+		return $line;
 	}
 
 	public static function generate_rm ($weight, $reps, $rm = 1)
