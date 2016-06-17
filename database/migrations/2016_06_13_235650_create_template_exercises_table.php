@@ -15,8 +15,8 @@ class CreateTemplateExercisesTable extends Migration
         Schema::create('template_exercises', function (Blueprint $table) {
             $table->increments('texercise_id');
             $table->string('texercise_name');
-            $table->string('tain_action');
-            $table->string('tinor_action');
+            $table->string('tmain_action');
+            $table->string('tminor_action');
             $table->string('texercise_type');
             $table->boolean('is_stretch');
             $table->timestamps();
@@ -30,6 +30,6 @@ class CreateTemplateExercisesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('master_exercises');
+        Schema::drop('template_exercises');
     }
 }
