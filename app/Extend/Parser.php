@@ -55,7 +55,7 @@ class Parser
 		// load the user
 		$this->user = Auth::user();
 		// build the initial startup data
-		$this->log_text = $log_text;
+		$this->log_text = $log_text . ' '; // TODO: fix last character check properly
 		$this->log_date = $log_date;
 		$this->user_weight = ($user_weight == '') ? 0 : floatval($user_weight);
 		$this->construct_globals ();

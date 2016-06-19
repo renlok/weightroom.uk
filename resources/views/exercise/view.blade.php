@@ -144,6 +144,24 @@
         <td>18-30</td>
     </tr>
 </table>
+
+<h3>Percent Max table</h3>
+<table class="table">
+    <tr>
+        <th>Percent</th>
+        <th>True Max</th>
+        <th>Estimate Max</th>
+    </tr>
+@for ($i = 20; $i > 0; $i--)
+    @if (!($i < 10 && $i % 2 == 1))
+    <tr>
+        <td>{{ $i*5 }}%</td>
+        <td>{{ (isset($current_prs[1])) ? Format::$format_func($current_prs[1][0]['pr_value'] * (($i*5) / 100)) : '-' }}</td>
+        <td>{{ Format::$format_func($approx1rm * (($i*5) / 100)) }}</td>
+    </tr>
+    @endif
+@endfor
+</table>
 @endif
 @endsection
 
