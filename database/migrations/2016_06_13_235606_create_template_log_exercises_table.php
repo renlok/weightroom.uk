@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLogTemplateExercisesTable extends Migration
+class CreateTemplateLogExercisesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,10 +12,11 @@ class CreateLogTemplateExercisesTable extends Migration
      */
     public function up()
     {
-        Schema::create('log_template_exercises', function (Blueprint $table) {
+        Schema::create('template_log_exercises', function (Blueprint $table) {
             $table->increments('logtempex_id');
-            $table->integer('log_template_id')->unsigned()->index();
+            $table->integer('template_log_id')->unsigned()->index();
             $table->integer('texercise_id')->unsigned()->index();
+            $table->string('texercise_name');
             $table->boolean('is_volume')->default(0);
             $table->double('logtempex_volume', 25, 7)->default(0);
             $table->boolean('is_time')->default(0);
@@ -35,6 +36,6 @@ class CreateLogTemplateExercisesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('log_template_exercises');
+        Schema::drop('template_log_exercises');
     }
 }

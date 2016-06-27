@@ -118,9 +118,9 @@ class Log_item extends Model
     }
 
     /**
-     * a user can many log exercises
+     * Log_item belongs to a single Log_exercise
      *
-     * @returns Illuminate\Database\Eloquent\Relations\hasMany
+     * @returns Illuminate\Database\Eloquent\Relations\belongsTo
      */
     public function log_exercise()
     {

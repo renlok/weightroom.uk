@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLogTemplateItemsTable extends Migration
+class CreateTemplateLogItemsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,14 +12,16 @@ class CreateLogTemplateItemsTable extends Migration
      */
     public function up()
     {
-        Schema::create('log_template_items', function (Blueprint $table) {
+        Schema::create('template_log_items', function (Blueprint $table) {
             $table->increments('logtempitem_id');
-            $table->integer('log_template_id')->unsigned();
+            $table->integer('template_log_id')->unsigned();
             $table->integer('logtempex_id')->unsigned()->index();
             $table->integer('texercise_id')->unsigned()->index();
             $table->boolean('is_percent_1rm')->default(0);
             $table->boolean('is_weight')->default(1);
             $table->double('logtempitem_weight', 25, 7);
+            $table->boolean('is_current_rm')->default(0);
+            $table->double('logtempitem_plus_weight', 25, 7)->default(0);
             $table->boolean('is_time')->default(0);
             $table->double('logtempitem_time', 25, 7);
             $table->boolean('is_distance')->default(0);
@@ -42,6 +44,6 @@ class CreateLogTemplateItemsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('log_template_items');
+        Schema::drop('template_log_items');
     }
 }

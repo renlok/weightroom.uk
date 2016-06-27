@@ -126,10 +126,21 @@ Route::group(['prefix' => 'tools'], function () {
 });
 
 // import
-Route::group(['middleware' => 'auth'], function () {
-    Route::get('import', 'ImportController@importForm')->name('import');
-    Route::post('import/store', 'ImportController@storeImport')->name('storeImport');
-    Route::post('import', 'ImportController@import');
+Route::group(['middleware' => 'auth', 'prefix' => 'import'], function () {
+    Route::get('/', 'ImportController@importForm')->name('import');
+    Route::post('/', 'ImportController@import');
+    Route::post('store', 'ImportController@storeImport')->name('storeImport');
+});
+
+// templates
+Route::group(['middleware' => 'auth', 'prefix' => 'templates'], function () {
+    Route::get('/', 'TemplateController@home')->name('templatesHome');
+    Route::get('view/{template_id}', 'TemplateController@viewTemplate')->name('viewTemplate');
+});
+
+// admin
+Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
+    Route::get('/', 'AdminController@home')->name('adminHome');
 });
 
 // Misc

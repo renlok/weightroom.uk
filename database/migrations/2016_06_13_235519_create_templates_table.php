@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLogTemplatesTable extends Migration
+class CreateTemplatesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,10 +12,10 @@ class CreateLogTemplatesTable extends Migration
      */
     public function up()
     {
-        Schema::create('log_templates', function (Blueprint $table) {
-            $table->increments('log_template_id');
-            $table->string('log_template_name')
-            $table->text('log_template_description');
+        Schema::create('templates', function (Blueprint $table) {
+            $table->increments('template_id');
+            $table->string('template_name')
+            $table->text('template_description');
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ class CreateLogTemplatesTable extends Migration
      */
     public function down()
     {
-        Schema::drop('log_templates');
+        Schema::drop('templates');
     }
 }
