@@ -18,9 +18,12 @@ class CreateTemplateLogItemsTable extends Migration
             $table->integer('logtempex_id')->unsigned()->index();
             $table->integer('texercise_id')->unsigned()->index();
             $table->boolean('is_percent_1rm')->default(0);
+            $table->integer('percent_1rm')->default(0);
             $table->boolean('is_weight')->default(1);
             $table->double('logtempitem_weight', 25, 7);
             $table->boolean('is_current_rm')->default(0);
+            $table->integer('current_rm')->default(0);
+			$table->boolean('has_plus_weight')->default(0);
             $table->double('logtempitem_plus_weight', 25, 7)->default(0);
             $table->boolean('is_time')->default(0);
             $table->double('logtempitem_time', 25, 7);

@@ -19,9 +19,7 @@ class TemplateController extends Controller
 
 	public function viewTemplate($template_id)
 	{
-		DB::enableQueryLog();
 		$template = Template::with('template_logs.template_log_exercises.template_log_items')->where('template_id', $template_id)->firstorfail();
-		print_r(DB::getQueryLog());
 		return view('templates.view', compact('template'));
 	}
 

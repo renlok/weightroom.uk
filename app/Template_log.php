@@ -16,6 +16,16 @@ class Template_log extends Model
      */
     public function template_log_exercises()
     {
-        return $this->hasMany('App\Template_log_exercise', 'logtempex_id');
+        return $this->hasMany('App\Template_log_exercise', 'template_log_id');
+    }
+
+    /**
+     * Template_log belongs to a single Template
+     *
+     * @returns Illuminate\Database\Eloquent\Relations\belongsTo
+     */
+    public function template_log()
+    {
+        return $this->belongsTo('App\Template', 'template_id', 'template_id');
     }
 }
