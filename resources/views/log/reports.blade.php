@@ -70,7 +70,7 @@ svg {
     var stored_data = [];
     var data_length = 0;
     var maxY = 0;
-    var key_label = '{{ $key_label }}';
+    var key_label = 'volume';
     var unit = 'kg';
     callAjax();
     function prHistoryData(raw_data, ma) {

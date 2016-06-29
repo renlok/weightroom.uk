@@ -1,6 +1,12 @@
 # Use PHP5.6 as default
 AddHandler application/x-httpd-php55 .php
 
+# Disallow embedding
+Content-Security-Policy: frame-ancestors 'none'
+
+# limit access
+Options -Indexes
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews

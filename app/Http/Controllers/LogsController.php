@@ -337,23 +337,8 @@ class LogsController extends Controller
 
 	public function getReports(Request $request)
 	{
-		if ($request->old('view_type') == '' || $request->old('view_type') == 'volume')
-		{
-			$graph_values = Log::select(DB::raw('SUBDATE(log_date, WEEKDAY(log_date)) as log_date, SUM(log_total_volume) as graph_value'))
-								->where('user_id', Auth::user()->user_id)
-								->groupBy(DB::raw('YEAR(log_date), WEEK(log_date)'))
-								->get()->toArray();
-			$key_label = 'volume';
-		}
-		$show_moving_average = false;
-		if ($request->old('n') > 0)
-		{
-			$show_moving_average = true;
-			$moving_avg = Log_control::calculate_moving_average($graph_values, ['graph_value'], intval($request->old('n')));
-		}
 		$exercises = Exercise::listexercises(true)->get();
-		$graph_label = 'something';
-		return view('log.reports', compact('exercises', 'key_label', 'graph_values', 'moving_avg', 'graph_label', 'show_moving_average'));
+		return view('log.reports', compact('exercises'));
 	}
 
 	public function ajaxGetReport(Request $request)
