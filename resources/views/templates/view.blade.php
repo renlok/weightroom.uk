@@ -2,6 +2,10 @@
 
 @section('title', 'View Template: ' . $template->template_name)
 
+@section('headerstyle')
+
+@endsection
+
 @section('content')
 <h2>{{ $template->template_name }}</h2>
 <p class="small"><a href="{{ route('templatesHome') }}">← Back to templates</a></p>
@@ -9,18 +13,37 @@
 	<p>{{ $template->template_description }}</p>
 @endif
 
+@include('common.flash')
+
 @foreach ($template->template_logs as $log)
-	<h3>{{ $log->template_log_name }}</h3>
-	@if ($template->template_description != '')
-		<p>{{ $template->template_log_description }}</p>
+<form method="post" action="{{ route('buildTemplate') }}">
+	<input type="hidden" name="log_id" value="{{ $log->template_log_id }}">
+	<div class="row">
+		<div class="col-md-6">
+			<h3>{{ $log->template_log_name }}</h3>
+		</div>
+		<div class="col-md-6 form-inline">
+			<button type="submit" class="btn btn-default">Generate {{ $log->template_log_name }}</button>
+		</div>
+	</div>
+	@if ($log->template_log_description != '')
+		<p>{{ $log->template_log_description }}</p>
 	@endif
-	@if ($template->template_log_week != '')
-		<p>Week: {{ $template->template_log_week }}, Day: {{ $template->template_log_day }}</p>
+	@if ($log->template_log_week != '')
+		<p>Week: {{ $log->template_log_week }}, Day: {{ $log->template_log_day }}</p>
 	@endif
 	@foreach ($log->template_log_exercises as $log_exercises)
-		<h4>{{ $log_exercises->texercise_name }}</h4>
-		@if ($log_exercises->logtempex_comment != '')
-			<p>{{ $log_exercises->logtempex_comment }}</p>
+		@if ($log->has_fixed_values)
+			<h4>{{ $log_exercises->texercise_name }}</h4>
+		@else
+			<div class="row">
+				<div class="col-md-6"><h4>{{ $log_exercises->texercise_name }}</h4></div>
+				<div class="col-md-6 form-inline">
+					@include('common.exerciseDropdown', ['dropownName' => $log_exercises->logtempex_order, 'selected' => $log_exercises->texercise_name])
+					Or 1RM:
+					<input type="text" name="weight[{{ $log_exercises->logtempex_order }}]" class="form-control" placeholder="kg">
+				</div>
+			</div>
 		@endif
 		@if ($log_exercises->is_volume)
 			<p>Total volume: {{ $log_exercises->logtempex_volume }}</p>
@@ -62,5 +85,7 @@
 			@endif
 		@endforeach
 	@endforeach
+	{!! csrf_field() !!}
+</form>
 @endforeach
 @endsection

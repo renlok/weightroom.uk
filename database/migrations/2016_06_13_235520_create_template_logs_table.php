@@ -17,6 +17,7 @@ class CreateTemplateLogsTable extends Migration
             $table->integer('template_id');
             $table->string('template_log_name')
             $table->text('template_log_description');
+            $table->boolean('has_fixed_values')->default(0);
             $table->integer('template_log_week');
             $table->integer('template_log_day');
             $table->timestamps();

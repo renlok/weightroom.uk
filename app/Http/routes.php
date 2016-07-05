@@ -136,6 +136,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'import'], function () {
 Route::group(['middleware' => 'auth', 'prefix' => 'templates'], function () {
     Route::get('/', 'TemplateController@home')->name('templatesHome');
     Route::get('view/{template_id}', 'TemplateController@viewTemplate')->name('viewTemplate');
+    Route::post('build', 'TemplateController@postBuildTemplate')->name('buildTemplate');
 });
 
 // admin
