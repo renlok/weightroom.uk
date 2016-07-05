@@ -103,7 +103,7 @@
 				point_value = Math.round((point_value / 3600) * 100) / 100;
 				units = 'h';
 			}
-			if (key.point.color == '#b84a68')
+			if (key.point.color == '#b84a67')
 			{
 				var tool_type = 'Distance';
 				point_value = Math.round((point_value / 1000) * 100) / 100;
