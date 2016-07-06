@@ -5,7 +5,8 @@ namespace App\Extend;
 use DB;
 use App\Exercise_record;
 
-class PRs {
+class PRs
+{
 	public static function rebuildPRsTable ()
 	{
 		//prepare everything
@@ -151,5 +152,35 @@ class PRs {
 		{
 			return $prs;
 		}
+	}
+
+	public static function generateRM ($weight, $reps, $rm = 1)
+	{
+		if ($reps == $rm)
+		{
+			return $weight;
+		}
+		//for all reps > 1 calculate the 1RMs
+		$lomonerm = $weight * pow($reps, 1 / 10);
+		$brzonerm = $weight * (36 / (37 - $reps));
+		$eplonerm = $weight * (1 + ($reps / 30));
+		$mayonerm = ($weight * 100) / (52.2 + (41.9 * exp(-1 * ($reps * 0.055))));
+		$ocoonerm = $weight * (1 + $reps * 0.025);
+		$watonerm = ($weight * 100) / (48.8 + (53.8 * exp(-1 * ($reps * 0.075))));
+		$lanonerm = $weight * 100 / (101.3 - 2.67123 * $reps);
+		if ($rm == 1)
+		{
+			// get the average
+			return ($lomonerm + $brzonerm + $eplonerm + $mayonerm + $ocoonerm + $watonerm + $lanonerm) / 7;
+		}
+		$lomrm = floor($lomonerm / (pow($rm, 1 / 10)));
+		$brzrm = floor(($brzonerm * (37 - $rm)) / 36);
+		$eplrm = floor($eplonerm / ((1 + ($rm / 30))));
+		$mayrm = floor(($mayonerm * (52.2 + (41.9 * exp(-1 * ($rm * 0.055))))) / 100);
+		$ocorm = floor(($ocoonerm / (1 + $rm * 0.025)));
+		$watrm = floor(($watonerm * (48.8 + (53.8 * exp(-1 * ($rm * 0.075))))) / 100);
+		$lanrm = floor((($lanonerm * (101.3 - 2.67123 * $rm)) / 100));
+		// return the average value
+		return floor(($lomrm + $brzrm + $eplrm + $mayrm + $ocorm + $watrm + $lanrm) / 7);
 	}
 }

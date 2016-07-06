@@ -14,6 +14,7 @@ use App\Exercise;
 use App\Exercise_goal;
 use App\Exercise_record;
 use App\Extend\Format;
+use App\Extend\PRs;
 
 class Parser
 {
@@ -466,7 +467,7 @@ class Parser
 					$this->exercises[$i]['distance'] = $this->log_items[$i][$j]->is_distance;
 					$this->new_exercises[] = [$exercise_name, $this->exercises[$i]['time'], $this->exercises[$i]['endurance'], $this->exercises[$i]['distance']];
 				}
-				$this->log_items[$i][$j]->logitem_1rm = $this->generate_rm ($this->log_items[$i][$j]->logitem_abs_weight, $set['R']);
+				$this->log_items[$i][$j]->logitem_1rm = PRs::generateRM ($this->log_items[$i][$j]->logitem_abs_weight, $set['R']);
 				// get estimate 1rm
 				if ($max_estimate_rm < $this->log_items[$i][$j]->logitem_1rm)
 				{
@@ -943,7 +944,7 @@ class Parser
 					->where('is_distance', $is_distance)
 					->orderBy('log_date', 'desc')
 					->value('pr_1rm');
-		$new_1rm = $this->generate_rm ($set_weight, $set_reps);
+		$new_1rm = PRs::generateRM ($set_weight, $set_reps);
 		$is_est1rm = (($old_1rm < $new_1rm) || ($is_time == 1 && $is_endurance == 0 && $old_1rm > $new_1rm)) ? true : false;
 
 		// prepare the new pr data for insertion
@@ -1066,7 +1067,7 @@ class Parser
 						->update(['is_pr' => 1]);
 
 					// check if new 1rm has been set
-					$new_1rm = $this->generate_rm ($set->logitem_abs_weight, $set_reps);
+					$new_1rm = PRs::generateRM ($set->logitem_abs_weight, $set_reps);
 					$is_est1rm = (($old_1rm < $new_1rm) || ($is_time == 1 && $is_endurance == 0 && $old_1rm > $new_1rm)) ? true : false;
 					if ($is_est1rm)
 					{
@@ -1360,36 +1361,6 @@ class Parser
 		// search x
 		$line = str_replace (['*', '×'], 'x', $line);
 		return $line;
-	}
-
-	public static function generate_rm ($weight, $reps, $rm = 1)
-	{
-		if ($reps == $rm)
-		{
-			return $weight;
-		}
-		//for all reps > 1 calculate the 1RMs
-		$lomonerm = $weight * pow($reps, 1 / 10);
-		$brzonerm = $weight * (36 / (37 - $reps));
-		$eplonerm = $weight * (1 + ($reps / 30));
-		$mayonerm = ($weight * 100) / (52.2 + (41.9 * exp(-1 * ($reps * 0.055))));
-		$ocoonerm = $weight * (1 + $reps * 0.025);
-		$watonerm = ($weight * 100) / (48.8 + (53.8 * exp(-1 * ($reps * 0.075))));
-		$lanonerm = $weight * 100 / (101.3 - 2.67123 * $reps);
-		if ($rm == 1)
-		{
-			// get the average
-			return ($lomonerm + $brzonerm + $eplonerm + $mayonerm + $ocoonerm + $watonerm + $lanonerm) / 7;
-		}
-		$lomrm = floor($lomonerm / (pow($rm, 1 / 10)));
-		$brzrm = floor(($brzonerm * (37 - $rm)) / 36);
-		$eplrm = floor($eplonerm / ((1 + ($rm / 30))));
-		$mayrm = floor(($mayonerm * (52.2 + (41.9 * exp(-1 * ($rm * 0.055))))) / 100);
-		$ocorm = floor(($ocoonerm / (1 + $rm * 0.025)));
-		$watrm = floor(($watonerm * (48.8 + (53.8 * exp(-1 * ($rm * 0.075))))) / 100);
-		$lanrm = floor((($lanonerm * (101.3 - 2.67123 * $rm)) / 100));
-		// return the average value
-		return floor(($lomrm + $brzrm + $eplrm + $mayrm + $ocorm + $watrm + $lanrm) / 7);
 	}
 
 	public function getUserWeight ()

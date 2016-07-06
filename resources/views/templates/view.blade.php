@@ -18,6 +18,7 @@
 @foreach ($template->template_logs as $log)
 <form method="post" action="{{ route('buildTemplate') }}">
 	<input type="hidden" name="log_id" value="{{ $log->template_log_id }}">
+	<input type="hidden" name="has_fixed_values" value="{{ $log->has_fixed_values }}">
 	<div class="row">
 		<div class="col-md-6">
 			<h3>{{ $log->template_log_name }}</h3>
