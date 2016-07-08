@@ -138,6 +138,7 @@ class TemplateController extends Controller
 				}
 			}
 		}
-		return view('templates.build', compact('log', 'exercise_values', 'exercise_names'));
+		$template_name = Template::where('template_id', $log->template_id)->value('template_name');
+		return view('templates.build', compact('template_name', 'log', 'exercise_values', 'exercise_names'));
 	}
 }
