@@ -16,6 +16,7 @@ class CreateTemplatesTable extends Migration
             $table->increments('template_id');
             $table->string('template_name')
             $table->text('template_description');
+            $table->string('template_type')
             $table->timestamps();
         });
     }
