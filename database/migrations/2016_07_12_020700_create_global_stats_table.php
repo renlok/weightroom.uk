@@ -13,11 +13,15 @@ class CreateGlobalStatsTable extends Migration
     public function up()
     {
         Schema::create('global_stats', function (Blueprint $table) {
-            $table->string('gstat_name');
-            $table->string('gstat_value');
-            $table->timestamps();
-			
-			$table->primary('gstat_name');
+			$table->increments('gstat_id');
+            $table->date('gstat_date');
+            $table->integer('total_users');
+            $table->integer('active_users_1m');
+            $table->integer('active_users_3m');
+            $table->integer('ever_active_users');
+            $table->integer('total_comments');
+            $table->integer('total_comment_replys');
+            $table->integer('total_logs');
         });
     }
 
