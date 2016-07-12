@@ -14,13 +14,15 @@ class CreateImportDataTable extends Migration
     {
         Schema::create('import_data', function (Blueprint $table) {
             $table->increments('import_id');
+			$table->integer('priority')->default(5);
+			$table->string('hash');
             $table->integer('user_id')->unsigned()->index();
             $table->string('log_date');
             $table->string('log_date_format');
             $table->double('log_weight', 7, 2);
             $table->string('exercise_name');
             $table->double('logitem_weight', 7, 2);
-            $table->boolean('logitem_weight_is_kg')->default('1');
+            $table->boolean('logitem_weight_is_kg')->default(1);
             $table->double('logitem_distance', 7, 2);
             $table->double('logitem_time', 7, 2);
             $table->integer('logitem_reps');

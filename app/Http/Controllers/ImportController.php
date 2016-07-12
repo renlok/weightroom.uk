@@ -175,13 +175,13 @@ class ImportController extends Controller
 			}
 		}
 		$csvfile = new UploadedFile($csv_file_data[0] . $csv_file_data[1], $csv_file_data[1], $csv_file_data[2]);
+		$hash = sha1(Auth::user()->user_id . microtime())
 		$query = sprintf("LOAD DATA LOCAL INFILE '%s' INTO TABLE import_data 
 				FIELDS TERMINATED BY ','
 				LINES TERMINATED BY '\\n'
 				IGNORE 1 LINES
 				($column_string)
-				SET user_id = %d $extra_sql", addslashes($csv_file_data[0] . $csv_file_data[1]), Auth::user()->user_id);
-
+				SET user_id = %d, hash = %s $extra_sql", addslashes($csv_file_data[0] . $csv_file_data[1]), Auth::user()->user_id, $hash);
 
 		//\DB::connection()->getpdo()->exec($query);
 
