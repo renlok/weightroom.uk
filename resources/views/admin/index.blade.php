@@ -7,6 +7,6 @@
 <p>We love you, you're rad.</p>
 <p>Things to click</p>
 <ul>
-	<li>Nothing yet</li>
+	<li><a href="{{ route('adminUserStats') }}">User Stats</a></li>
 </ul>
 @endsection

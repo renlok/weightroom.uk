@@ -142,6 +142,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'templates'], function () {
 // admin
 Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
     Route::get('/', 'AdminController@home')->name('adminHome');
+	Route::get('user/stats', 'AdminController@userStats')->name('adminUserStats');
 });
 
 // Misc
