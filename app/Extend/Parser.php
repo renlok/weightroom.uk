@@ -23,7 +23,7 @@ class Parser
 	private $format_types_all; // all possible formats for all possible blocks
 	private $next_values_all; // flags that show a certain type of block is coming up
 	private $format_follows; // what should come after each block type
-	private $user; // load User class
+	protected $user; // load User class
 	// the working variables
 	private $accepted_char;
 	private $accepted_chars;
@@ -34,11 +34,11 @@ class Parser
 	private $format_dump;
 	private $chunk_dump;
 	// final array
-	private $log_data;
-	private $log_text;
+	protected $log_data;
+	protected $log_text;
 	// useful data for saving the log
-	private $user_weight;
-	private $log_date;
+	protected $user_weight;
+	protected $log_date;
 	// formatted data
 	private $log;
 	private $log_exercises = [];
