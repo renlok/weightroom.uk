@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         \App\Console\Commands\Inspire::class,
 		\App\Console\Commands\GlobalStats::class,
+		\App\Console\Commands\ImportFiles::class,
     ];
 
     /**
@@ -27,8 +28,10 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
 		$schedule->command('inspire')->hourly();
-		
+
 		$schedule->command('globalstats')->monthly();
+
+		$schedule->command('importfiles')->hourly();
 
         $schedule->call(function () {
             DB::table('exercises')

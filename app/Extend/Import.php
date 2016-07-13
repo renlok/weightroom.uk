@@ -2,6 +2,7 @@
 
 namespace App\Extend;
 
+use DB;
 use Carbon\Carbon;
 
 use App\Extend\Parser;
@@ -20,16 +21,17 @@ class Import extends Parser
 		$setup = false;
 		$exercise_keys = [];
 		$key_counter = 0;
-		foreach ($log_data => $log_line)
+		foreach ($log_data as $log_line)
 		{
 			if (!$setup)
 			{
 				// setup initial data
+				$this->log_update_text = 1;
 				$this->log_text = '';
-				$this->user = User::where('user_id', $log_line->user_id)->get();
+				$this->user = User::where('user_id', $log_line->user_id)->first();
 				$this->log_data = array('comment' => '', 'exercises' => array());
-								$date_format = str_replace(['YYYY', 'YY', 'MM', 'DD'], ['Y', 'y', 'n', 'j'], $log_line->log_date_format);
-				$this->log_date = ($log_line->log_date_format == 'YYYY-MM-DD') ? $log_line->log_date : Carbon::createFromFormat($date_format, $log_line->log_date);
+				$date_format = str_replace(['YYYY', 'YY', 'MM', 'DD'], ['Y', 'y', 'n', 'j'], $log_line->log_date_format);
+				$this->log_date = ($log_line->log_date_format == 'YYYY-MM-DD') ? $log_line->log_date : Carbon::createFromFormat($date_format, $log_line->log_date)->toDateString();
 				$this->user_weight = ($log_line->log_weight == '') ? 0 : $log_line->log_weight;
 				$setup = true;
 			}
@@ -72,9 +74,10 @@ class Import extends Parser
 			{
 				$item_data['C'] = $log_line->logitem_comment;
 			}
-			$this->log_data['exercises'][$exercise_keys[$log_line->exercise_name]][] = $item_data;
+			$this->log_data['exercises'][$exercise_keys[$log_line->exercise_name]]['data'][] = $item_data;
 			// add to delete array
 			$to_delete[] = $log_line->import_id;
 		}
+		DB::table('import_data')->whereIn('import_id', $to_delete)->delete();
 	}
 }

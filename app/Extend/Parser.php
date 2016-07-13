@@ -50,6 +50,8 @@ class Parser
 	private $new_exercises = [];
 	private $warnings = [];
 	private $goals_hit = [];
+	// set some defaul values
+	protected $log_update_text = 0;
 
 	public function __construct($log_text, $log_date, $user_weight)
 	{
@@ -365,6 +367,7 @@ class Parser
 			$this->log->user_id = $this->user->user_id;
 		}
 		// set log values
+		$this->log->log_update_text = $this->log_update_text;
 		$this->log->log_text = $this->log_text;
 		$this->log->log_comment = trim($this->log_data['comment']);
 		$this->log->log_weight = $this->user_weight;
