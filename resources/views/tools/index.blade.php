@@ -75,6 +75,21 @@
 	&nbsp;
   </div>
 </div>
+<h2>Beta Tools</h2>
+<small>Don't trust them</small>
+<div class="row padding">
+  <div class="col-md-4">
+    <a href="{{ route('templatesHome') }}">Workout Templates</a>
+    <p>Find workout templates</p>
+  </div>
+  <div class="col-md-4">
+	<a href="{{ route('import') }}">Import workouts</a>
+    <p>Import workouts via CSV</p>
+  </div>
+  <div class="col-md-4">
+	&nbsp;
+  </div>
+</div>
 @else
 <p class="lead">Access more handy tools by <a href="{{ route('register') }}">creating an account</a></p>
 <div class="row padding">

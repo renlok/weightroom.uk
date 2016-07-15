@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 
+use DB;
 use App\Extend\Import;
 
 class ImportFiles extends Command
