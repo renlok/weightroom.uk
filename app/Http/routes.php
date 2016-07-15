@@ -130,6 +130,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'import'], function () {
     Route::get('/', 'ImportController@importForm')->name('import');
     Route::post('/', 'ImportController@import');
     Route::post('store', 'ImportController@storeImport')->name('storeImport');
+    Route::get('success', 'ImportController@importSuccess')->name('successImport');
 });
 
 // templates

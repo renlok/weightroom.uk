@@ -21,6 +21,7 @@ class Import extends Parser
 		$setup = false;
 		$exercise_keys = [];
 		$key_counter = 0;
+		$to_delete = [];
 		foreach ($log_data as $log_line)
 		{
 			if (!$setup)

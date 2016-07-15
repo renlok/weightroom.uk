@@ -8,6 +8,7 @@ use App\Http\Requests;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Auth;
 use Carbon;
+use DB;
 use Excel;
 use Validator;
 
@@ -15,6 +16,12 @@ class ImportController extends Controller
 {
 	public function import(Request $request)
 	{
+		// can the user import a file yet?
+		$has_log_data = DB::table('import_data')->where('user_id', Auth::user()->user_id)->first();
+		if ($has_log_data != null)
+		{
+			return redirect('import')->with('flash_message', 'You still have a file in the queue. Please wait for that to be processed first.');
+		}
 		// check its a valid file
 		$validator = Validator::make($request->all(), [
 			'csvfile' => 'required|mimes:csv,xls,txt'
@@ -131,6 +138,8 @@ class ImportController extends Controller
 	public function storeImport(Request $request)
 	{
 		$csv_file_data = $request->session()->get('csvfile');
+		$hash = sha1(Auth::user()->user_id . microtime());
+		/* TODO: on transfer to diigital ocean move to use this
 		$column_string = '';
 		$extra_sql = '';
 		foreach ($request->input() as $key => $column)
@@ -175,20 +184,115 @@ class ImportController extends Controller
 			}
 		}
 		$csvfile = new UploadedFile($csv_file_data[0] . $csv_file_data[1], $csv_file_data[1], $csv_file_data[2]);
-		$hash = sha1(Auth::user()->user_id . microtime())
-		$query = sprintf("LOAD DATA LOCAL INFILE '%s' INTO TABLE import_data 
+		$query = sprintf("LOAD DATA LOCAL INFILE '%s' INTO TABLE import_data
 				FIELDS TERMINATED BY ','
 				LINES TERMINATED BY '\\n'
 				IGNORE 1 LINES
 				($column_string)
-				SET user_id = %d, hash = %s $extra_sql", addslashes($csv_file_data[0] . $csv_file_data[1]), Auth::user()->user_id, $hash);
+				SET user_id = %d, hash = %s $extra_sql", addslashes($csv_file_data[0] . $csv_file_data[1]), Auth::user()->user_id, $hash);*/
 
-		//\DB::connection()->getpdo()->exec($query);
+		$column_string = '';
+		$column_order = [];
+		$end_values = [];
+		$i = 0;
+		foreach ($request->input() as $key => $column)
+		{
+			if ($key == '_token')
+				continue;
+			switch ($column)
+			{
+				case 'log_date:YYYY-MM-DD':
+				case 'log_date:DD/MM/YYYY':
+				case 'log_date:MM/DD/YYYY':
+				case 'log_date:other':
+					if (!empty($column_string))
+						$column_string .= ',';
+					$parts = explode(':', $column);
+					$column_string .= $parts[0];
+					$column_order[$i] = $key;
+					$end_values['log_date_format'] = $parts[1];
+					break;
+				case 'logitem_weight:kg':
+				case 'logitem_weight:lb':
+					if (!empty($column_string))
+						$column_string .= ',';
+					$column_string .= 'logitem_weight';
+					$column_order[$i] = $key;
+					$is_kg = intval($column == 'logitem_weight:kg');
+					$end_values['logitem_weight_is_kg'] = $is_kg;
+					break;
+				case 'log_weight':
+				case 'exercise_name':
+				case 'logitem_distance':
+				case 'logitem_time':
+				case 'logitem_reps':
+				case 'logitem_sets':
+				case 'logitem_comment':
+				case 'logitem_pre':
+				case 'logex_order':
+				case 'logitem_order':
+					if (!empty($column_string))
+						$column_string .= ',';
+					$column_string .= $column;
+					$column_order[$i] = $key;
+					break;
+				default:
+					break;
+			}
+			$i++;
+		}
+		$end_values['user_id'] = Auth::user()->user_id;
+		$end_values['hash'] = $hash;
+		$handle = fopen(addslashes($csv_file_data[0] . $csv_file_data[1]), 'r');
+		$data = false;
+		$first_line = true;
+		$end_data = '';
+		$colomn_count = 0;
+		foreach ($end_values as $colomn => $value)
+		{
+			$column_string .= ',' . $colomn;
+			$end_data .= "','" . $value;
+		}
+		$query = "INSERT INTO import_data ($column_string) VALUES ";
+		if ($handle)
+		{
+		    while ($line = fgetcsv($handle))
+			{
+				if (!$data)
+				{
+					$data = true;
+					$colomn_count = count($line);
+				}
+				else
+				{
+					if ($colomn_count != count($line))
+					{
+						return redirect()->route('import')->with('flash_message', 'File contained missing colomns.');
+					}
+					if (!$first_line)
+					{
+						$query .= ',';
+					}
+					else
+					{
+						$first_line = false;
+					}
+					$query .= '(\'' . implode("','", array_intersect_key($line, $column_order)) . $end_data . '\')';
+				}
+		    }
+		}
+
+		\DB::connection()->getpdo()->exec($query);
 
 		// delete the file
 		unlink($csv_file_data[0] . $csv_file_data[1]);
 
-		dd([$request->input(), $csvfile, $query]);
+		return redirect()->route('successImport');
+	}
+
+	public function importSuccess()
+	{
+		return view('import.success');
 	}
 
 	public function importForm()

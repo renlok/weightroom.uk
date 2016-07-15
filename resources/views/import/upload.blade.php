@@ -6,6 +6,10 @@
 @endsection
 
 @section('content')
+<h2>Import Workouts</h2>
+<p>Import workouts via <a href="https://en.wikipedia.org/wiki/Comma-separated_values">csv file</a>. The file needs to be set up with a header row and each set as a new line.</p>
+@include('common.beta')
+@include('common.flash')
 @include('errors.validation')
 <form action="{{ url('import') }}" method="post" enctype="multipart/form-data">
   <div class="form-group">
