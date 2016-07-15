@@ -45,18 +45,18 @@
 <pre id="formattinghelp" class="cm-s-default" style="display: block;">
 @foreach ($log->template_log_exercises as $log_exercises)
 {!! ($log->has_fixed_values || !isset($exercise_names[$log_exercises->logtempex_order])) ? '<span class="cm-ENAME">#' . $log_exercises->texercise_name . '</span>' : '<span class="cm-ENAME">#' . $exercise_names[$log_exercises->logtempex_order] . '</span>' !!}
+@foreach ($log_exercises->template_log_items as $log_items)
+<span class="cm-W">{{ ($log_items->is_distance) ? Format::format_distance($exercise_values[$log_items->logtempitem_id]) : ($log_items->is_time ? Format::format_time($exercise_values[$log_items->logtempitem_id]) : Format::format_weight($exercise_values[$log_items->logtempitem_id])) }}</span>{!! ($log_items->logtempitem_reps > 1 || $log_items->logtempitem_sets > 1) ? '<span class="cm-R"> x ' . $log_items->logtempitem_reps . '</span>' : '' !!}{!! ($log_items->logtempitem_sets > 1) ? '<span class="cm-S"> x ' . $log_items->logtempitem_sets . '</span>' : '' !!}{!! ($log_items->is_pre) ? '<span class="cm-RPE"> @' . $log_items->logtempitem_pre . '</span>' : '' !!}{!! ($log_items->logtempitem_comment != '') ? '<span class="cm-C"> ' . $log_items->logtempitem_comment . '</span>' : '' !!}
+@endforeach
 @if ($log_exercises->is_volume)
-Total volume: {{ $log_exercises->logtempex_volume }}
+Total volume: {{ Format::format_weight($log_exercises->logtempex_volume) }}
 @endif
 @if ($log_exercises->is_time)
-Total Time: {{ $log_exercises->logtempex_time }}
+Total Time: {{ Format::format_time($log_exercises->logtempex_time) }}
 @endif
 @if ($log_exercises->is_distance)
-Total volume: {{ $log_exercises->logtempex_distance }}
+Total volume: {{ Format::format_distance($log_exercises->logtempex_distance) }}
 @endif
-@foreach ($log_exercises->template_log_items as $log_items)
-<span class="cm-W">{{ $exercise_values[$log_items->logtempitem_id] }}{{ ($log_items->is_distance) ? 'm' : ($log_items->is_time ? 's' : 'kg') }}</span>{!! ($log_items->logtempitem_reps > 1 || $log_items->logtempitem_sets > 1) ? '<span class="cm-R"> x ' . $log_items->logtempitem_reps . '</span>' : '' !!}{!! ($log_items->logtempitem_sets > 1) ? '<span class="cm-S"> x ' . $log_items->logtempitem_sets . '</span>' : '' !!}{!! ($log_items->is_pre) ? '<span class="cm-RPE"> @' . $log_items->logtempitem_pre . '</span>' : '' !!}{!! ($log_items->logtempitem_comment != '') ? '<span class="cm-C"> ' . $log_items->logtempitem_comment . '</span>' : '' !!}
-@endforeach
 
 @endforeach
 </pre>

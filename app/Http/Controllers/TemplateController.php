@@ -77,64 +77,64 @@ class TemplateController extends Controller
 					}
 				}
 			}
-			foreach ($log->template_log_exercises as $log_exercises)
+		}
+		foreach ($log->template_log_exercises as $log_exercises)
+		{
+			$loaded = [];
+			$entered_1rm = ($request->weight[$log_exercises->logtempex_order] != '' && intval($request->weight[$log_exercises->logtempex_order]) > 0) ? true : false;
+			foreach ($log_exercises->template_log_items as $log_items)
 			{
-				$loaded = [];
-				$entered_1rm = ($request->weight[$log_exercises->logtempex_order] != '' && intval($request->weight[$log_exercises->logtempex_order]) > 0) ? true : false;
-				foreach ($log_exercises->template_log_items as $log_items)
+				if ($log_items->is_weight)
 				{
-					if ($log_items->is_weight)
+					$exercise_values[$log_items->logtempitem_id] = $log_items->logtempitem_weight;
+				}
+				elseif ($log_items->is_time)
+				{
+					$exercise_values[$log_items->logtempitem_id] = $log_items->logtempitem_time;
+				}
+				elseif ($log_items->is_distance)
+				{
+					$exercise_values[$log_items->logtempitem_id] = $log_items->logtempitem_distance;
+				}
+				if ($log_items->is_percent_1rm)
+				{
+					if (!isset($loaded[1]))
 					{
-						$exercise_values[$log_items->logtempitem_id] = $log_items->logtempitem_weight;
-					}
-					elseif ($log_items->is_time)
-					{
-						$exercise_values[$log_items->logtempitem_id] = $log_items->logtempitem_time;
-					}
-					elseif ($log_items->is_distance)
-					{
-						$exercise_values[$log_items->logtempitem_id] = $log_items->logtempitem_distance;
-					}
-					if ($log_items->is_percent_1rm)
-					{
-						if (!isset($loaded[1]))
+						if ($entered_1rm)
 						{
-							if ($entered_1rm)
-							{
-								$loaded[1] = $request->weight[$log_exercises->logtempex_order];
-							}
-							else
-							{
-								$query = Exercise_record::getlastest1rm(Auth::user()->user_id, $exercise_names[$log_exercises->logtempex_order]);
-								$loaded[1] = $query->pr_1rm;
-							}
+							$loaded[1] = $request->weight[$log_exercises->logtempex_order];
 						}
-						$exercise_values[$log_items->logtempitem_id] = $loaded[1] * ($log_items->percent_1rm/100);
-					}
-					elseif ($log_items->is_current_rm)
-					{
-						if (!isset($loaded[$log_items->current_rm]))
+						else
 						{
-							if ($entered_1rm)
-							{
-								$loaded[$log_items->current_rm] = PRs::generateRM($request->weight[$log_exercises->logtempex_order], 1, $log_items->current_rm);
-							}
-							else
-							{
-								$loaded[$log_items->current_rm] = Exercise_record::join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
-											->where('exercise_records.user_id', Auth::user()->user_id)
-											->where('exercises.exercise_name', $exercise_names[$log_exercises->logtempex_order])
-											->where('pr_reps', $log_items->current_rm)
-											->orderBy('pr_value', 'DESC')
-											->value('pr_value');
-							}
+							$query = Exercise_record::getlastest1rm(Auth::user()->user_id, $exercise_names[$log_exercises->logtempex_order]);
+							$loaded[1] = $query->pr_1rm;
 						}
-						$exercise_values[$log_items->logtempitem_id] = $loaded[$log_items->current_rm];
 					}
-					if ($log_items->has_plus_weight)
+					$exercise_values[$log_items->logtempitem_id] = $loaded[1] * ($log_items->percent_1rm/100);
+				}
+				elseif ($log_items->is_current_rm)
+				{
+					if (!isset($loaded[$log_items->current_rm]))
 					{
-						$exercise_values[$log_items->logtempitem_id] += $log_items->logtempitem_plus_weight;
+						if ($entered_1rm)
+						{
+							$loaded[$log_items->current_rm] = PRs::generateRM($request->weight[$log_exercises->logtempex_order], 1, $log_items->current_rm);
+						}
+						else
+						{
+							$loaded[$log_items->current_rm] = Exercise_record::join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
+										->where('exercise_records.user_id', Auth::user()->user_id)
+										->where('exercises.exercise_name', $exercise_names[$log_exercises->logtempex_order])
+										->where('pr_reps', $log_items->current_rm)
+										->orderBy('pr_value', 'DESC')
+										->value('pr_value');
+						}
 					}
+					$exercise_values[$log_items->logtempitem_id] = $loaded[$log_items->current_rm];
+				}
+				if ($log_items->has_plus_weight)
+				{
+					$exercise_values[$log_items->logtempitem_id] += $log_items->logtempitem_plus_weight;
 				}
 			}
 		}

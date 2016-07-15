@@ -72,6 +72,20 @@ class Format
 		}
 	}
 
+	public static function format_weight($weight, $units = 'kg', $span = false)
+	{
+		$value = Format::correct_weight($weight, $units);
+		$unit = ' ' . Auth::user()->user_unit;
+		if ($span)
+		{
+			return '<span class="heavy">' . $value . '</span>' . $unit;
+		}
+		else
+		{
+			return $value . $unit;
+		}
+	}
+
 	public static function correct_time($time, $unit_used = 's', $unit_want = 's', $round = 2) // $unit_used = s/m/h $unit_want = s/m/h
 	{
 		$unit_used = ($unit_used == 's') ? 1 : (($unit_used == 'm') ? 2 : 3);

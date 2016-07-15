@@ -47,13 +47,13 @@
 			</div>
 		@endif
 		@if ($log_exercises->is_volume)
-			<p>Total volume: {{ $log_exercises->logtempex_volume }}</p>
+			<p>Total volume: {{ Format::format_weight($log_exercises->logtempex_volume) }}</p>
 		@endif
 		@if ($log_exercises->is_time)
-			<p>Total Time: {{ $log_exercises->logtempex_time }}</p>
+			<p>Total Time: {{ Format::format_time($log_exercises->logtempex_time) }}</p>
 		@endif
 		@if ($log_exercises->is_distance)
-			<p>Total volume: {{ $log_exercises->logtempex_distance }}</p>
+			<p>Total volume: {{ Format::format_distance($log_exercises->logtempex_distance) }}</p>
 		@endif
 		@foreach ($log_exercises->template_log_items as $log_items)
 			<p>
@@ -62,14 +62,14 @@
 			@elseif ($log_items->is_current_rm)
 				{{ $log_items->current_rm }}RM
 			@elseif ($log_items->is_weight)
-				{{ $log_items->logtempitem_weight }}kg
+				{{ Format::format_weight($log_items->logtempitem_weight) }}
 			@elseif ($log_items->is_time)
-				{{ $log_items->logtempitem_time }}s
+				{{ Format::format_time($log_items->logtempitem_time) }}
 			@elseif ($log_items->is_distance)
-				{{ $log_items->logtempitem_distance }}m
+				{{ Format::format_distance($log_items->logtempitem_distance) }}
 			@endif
 			@if ($log_items->has_plus_weight)
-				+ {{ $log_items->logtempitem_plus_weight }}kg
+				+ {{ Format::format_weight($log_items->logtempitem_plus_weight) }}
 			@endif
 			@if ($log_items->logtempitem_reps > 1 || $log_items->logtempitem_sets > 1)
 				x {{ $log_items->logtempitem_reps }}
