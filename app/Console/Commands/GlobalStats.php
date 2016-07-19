@@ -33,17 +33,17 @@ class GlobalStats extends Command
 		$users_with_logs = DB::table('logs')
 			->select(DB::raw('COUNT(log_id) as log_count'))
 			->groupBy('user_id')
-			->count();
+			->value('log_count');
 		$active_users_3m = DB::table('logs')
 			->select(DB::raw('COUNT(log_id) as log_count'))
 			->where('log_date', '>=', Carbon::now()->subMonths(3)->toDateString())
 			->groupBy('user_id')
-			->count();
+			->value('log_count');
 		$active_users_1m = DB::table('logs')
 			->select(DB::raw('COUNT(log_id) as log_count'))
 			->where('log_date', '>=', Carbon::now()->subMonths(1)->toDateString())
 			->groupBy('user_id')
-			->count();
+			->value('log_count');
 		$all_users = DB::table('users')->select(DB::raw('COUNT(user_id) as user_count'))->value('user_count');
 		$all_comments = DB::table('comments')->select(DB::raw('COUNT(comment_id) as comment_count'))->value('comment_count');
 		$all_replys = DB::table('comments')->select(DB::raw('COUNT(comment_id) as comment_count'))->whereNotNull('parent_id')->value('comment_count');
