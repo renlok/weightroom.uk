@@ -8,5 +8,8 @@
 <p>Things to click</p>
 <ul>
 	<li><a href="{{ route('adminStats') }}">User Stats</a></li>
+	<li><a href="{{ route('adminSettings') }}">Settings</a></li>
+	<li><a href="{{ route('cronImport') }}">Force Cron Import</a></li>
+	
 </ul>
 @endsection

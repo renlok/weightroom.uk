@@ -13,7 +13,7 @@
 
 @section('content')
 <h2>Admin Land: stats</h2>
-<p><a href="{{ route('adminHome) }}">Admin Home</a></p>
+<p><a href="{{ route('adminHome') }}">Admin Home</a></p>
 
 <div id="statsGraph">
     <svg></svg>

@@ -144,8 +144,10 @@ Route::group(['middleware' => 'auth', 'prefix' => 'templates'], function () {
 Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
     Route::get('/', 'AdminController@home')->name('adminHome');
 	Route::get('stats', 'AdminController@getStats')->name('adminStats');
+	Route::get('settings', 'AdminController@getSettings')->name('adminSettings');
+	Route::post('settings', 'AdminController@postSettings');
 
-    Route::get('cron/import', 'AdminController@cronImport');
+    Route::get('cron/import', 'AdminController@cronImport')->name('cronImport');
 });
 
 // Misc
