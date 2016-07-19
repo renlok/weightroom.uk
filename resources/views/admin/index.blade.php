@@ -9,7 +9,7 @@
 <ul>
 	<li><a href="{{ route('adminStats') }}">User Stats</a></li>
 	<li><a href="{{ route('adminSettings') }}">Settings</a></li>
-	<li><a href="{{ route('cronImport') }}">Force Cron Import</a></li>
+	<li><a href="{{ route('cronImport') }}">Force Cron Import</a><span class="badge">{{ $cron_count }}</span></li>
 	
 </ul>
 @endsection

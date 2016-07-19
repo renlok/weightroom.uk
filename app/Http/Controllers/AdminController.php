@@ -27,7 +27,8 @@ class AdminController extends Controller
 
 	public function home()
 	{
-		return view('admin.index');
+		$cron_count = DB::table('import_data')->select(DB::raw('COUNT(import_id) as cron_count'))->value('cron_count');
+		return view('admin.index', compact('cron_count'));
 	}
 
 	public function getStats()
