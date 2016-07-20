@@ -29,6 +29,11 @@ class MiscController extends Controller
 		return view('plans');
 	}
 
+	public function faq()
+	{
+		return view('help.faq');
+	}
+
 	public function privacyPolicy()
 	{
 		return view('help.privacypolicy');

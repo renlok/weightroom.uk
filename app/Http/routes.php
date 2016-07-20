@@ -159,6 +159,7 @@ Route::group(['middleware' => 'auth'], function () {
 
 Route::get('demo', 'MiscController@demo')->name('demo');
 Route::get('plans', 'MiscController@plans')->name('plans');
+Route::get('faq', 'MiscController@faq')->name('faq');
 
 // legal guff
 Route::get('help/privacypolicy', 'MiscController@privacyPolicy')->name('privacyPolicy');

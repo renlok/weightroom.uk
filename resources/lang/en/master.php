@@ -26,6 +26,7 @@ return [
 	'inviteCodes' => 'Invite codes',
 	'bugs' => 'Submit a bug',
 	'blog' => 'Blog',
+    'faq' => 'F.A.Q.',
 	'settings' => 'Settings',
 	'logout' => 'Logout',
 
