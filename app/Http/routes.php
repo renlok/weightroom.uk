@@ -147,6 +147,9 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
 	Route::get('settings', 'AdminController@getSettings')->name('adminSettings');
 	Route::post('settings', 'AdminController@postSettings');
 
+    Route::get('template/add', 'AdminController@getAddTemplate')->name('adminAddTemplate');
+    Route::post('template/add', 'AdminController@postAddTemplate');
+
     Route::get('cron/import', 'AdminController@cronImport')->name('cronImport');
 });
 

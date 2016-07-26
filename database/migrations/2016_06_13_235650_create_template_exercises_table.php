@@ -18,7 +18,7 @@ class CreateTemplateExercisesTable extends Migration
             $table->string('tmain_action');
             $table->string('tminor_action');
             $table->string('texercise_type');
-            $table->boolean('is_stretch');
+            $table->boolean('is_stretch')->default(0);
             $table->timestamps();
         });
     }
