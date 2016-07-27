@@ -32,34 +32,39 @@
 <form action="{{ route('adminAddTemplate') }}" method="post">
 	<label for="templateName">Template name</label>
 	<input type="text" value="" id="templateName" name="template_name" placeholder="Template name">
-	<label for="templateDesc">Template description</label>
-	<input type="text" value="" id="templateDesc" name="template_description" placeholder="Template description">
-	<label for="templateName">Template type</label>
-	<select name="template_type">
-		<option value="powerlifting">powerlifting</option>
-		<option value="running">running</option>
-		<option value="weightlifting">weightlifting</option>
-	</select>
+	<div>
+		<label for="templateDesc">Template description</label>
+		<input type="text" value="" id="templateDesc" name="template_description" placeholder="Template description">
+		<label for="templateName">Template type</label>
+		<select name="template_type">
+			<option value="powerlifting">powerlifting</option>
+			<option value="running">running</option>
+			<option value="weightlifting">weightlifting</option>
+		</select>
+	</div>
 	<div id="app">
 		<template v-for="(log_index, log) in log_data">
 			<div class="log">
 				<label>Log</label>
 				<input type="text" value="@{{ log.log_name }}" name="log_name[@{{ log_index }}]" placeholder="Log name"><button type="button" v-on:click="deleteLog(log_index)">x</button>
-				<input type="text" value="@{{ log.log_week }}" name="log_week[@{{ log_index }}]" placeholder="Log week">
-				<select name="log_day[@{{ log_index }}]" v-model="log.log_day">
-					<option value="1">Monday</option>
-					<option value="2">Tuesday</option>
-					<option value="3">Wednesday</option>
-					<option value="4">Thursday</option>
-					<option value="5">Friday</option>
-					<option value="6">Saturday</option>
-					<option value="7">Sunday</option>
-				</select>
+				<div>
+					<label>Week #:</label>
+					<input type="text" value="@{{ log.log_week }}" name="log_week[@{{ log_index }}]" placeholder="Log week">
+					<select name="log_day[@{{ log_index }}]" v-model="log.log_day">
+						<option value="1">Monday</option>
+						<option value="2">Tuesday</option>
+						<option value="3">Wednesday</option>
+						<option value="4">Thursday</option>
+						<option value="5">Friday</option>
+						<option value="6">Saturday</option>
+						<option value="7">Sunday</option>
+					</select>
+				</div>
 				<div>Exercises:</div>
 				<div v-for="(exercise_index, exercise) in log.exercise_data" class="exercise">
 					<input type="text" value="@{{ exercise.exercise_name }}" name="exercise_name[@{{ log_index }}][@{{ exercise_index }}]" placeholder="Exercise name"><button type="button" v-on:click="deleteExercise(exercise_index, log_index)">x</button>
 					<div v-for="(item_index, item) in exercise.item_data" class="logItem">
-						<input type="text" value="@{{ item.value }}" name="item_value[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]"> + <input type="text" value="@{{ item.value }}" name="item_plus[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]">
+						<input type="text" value="@{{ item.value }}" name="item_value[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]"> + <input type="text" value="@{{ item.plus }}" name="item_plus[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]">
 						 x <input type="text" value="@{{ item.reps }}" name="item_reps[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]"> x <input type="text" value="@{{ item.sets }}" name="item_sets[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]">
 						@<input type="text" value="@{{ item.rpe }}" name="item_rpe[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]">
 						<input type="text" value="@{{ item.comment }}" name="item_comment[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]" placeholder="Comment">
@@ -89,6 +94,7 @@
 <script>
 var default_item = {
 	value: 0,
+	plus: 0,
 	reps: 0,
 	sets: 0,
 	rpe: 0,
@@ -115,6 +121,7 @@ new Vue({
             item_data: [
             	{
 					value: 50,
+					plus: 0,
 					reps: 5,
 					sets: 5,
 					rpe: 0,
@@ -135,6 +142,7 @@ new Vue({
             item_data: [
             	{
 					value: 50,
+					plus: 0,
 					reps: 5,
 					sets: 5,
 					rpe: 0,
@@ -149,7 +157,7 @@ new Vue({
   },
   methods: {
     addLog: function(){
-		this.log_data.push({log_name: '', log_week:1, log_day:1, exercise_data: Object.assign({}, deafult_exercise)});
+		this.log_data.push({log_name: '', log_week:1, log_day:1, exercise_data: [Object.assign({}, deafult_exercise)}]);
     },
     addExercise: function(index_id) {
     	this.log_data[index_id].exercise_data.push(Object.assign({}, deafult_exercise));

@@ -66,6 +66,7 @@ class AdminController extends Controller
 
 	public function postAddTemplate(Request $request)
 	{
+		// TODO: validate inputs
 		// save the template
 		$template = new \App\Template;
 		$template->template_name = $request->input('template_name');
@@ -90,9 +91,9 @@ class AdminController extends Controller
 				$exercise = new \App\Template_log_exercise;
 				$exercise->template_log_id = $log_id;
 				// find exercise
-				$exercise_data = \App\Template_exercises::firstOrCreate(['texercise_name' => $request->input('exercise_name')[$i]]);
+				$exercise_data = \App\Template_exercises::firstOrCreate(['texercise_name' => $request->input('exercise_name')[$i][$j]]);
 				$exercise->texercise_id = $exercise_data->texercise_id;
-				$exercise->texercise_name = $request->input('exercise_name')[$i];
+				$exercise->texercise_name = $request->input('exercise_name')[$i][$j];
 				$exercise->logtempex_order = $j;
 				$exercise->save();
 				$exercise_id = $exercise->logtempex_id;
@@ -136,12 +137,12 @@ class AdminController extends Controller
 							$item->logtempitem_distance = $request->input('item_value')[$i][$j][$k];
 						break;
 					}
-					if (float($request->input('item_plus')[$i][$j][$k]) > 0)
+					if (floatval($request->input('item_plus')[$i][$j][$k]) > 0)
 					{
 						$item->has_plus_weight = true;
 						$item->logtempitem_plus_weight = $request->input('item_plus')[$i][$j][$k];
 					}
-					if (float($request->input('item_rpe')[$i][$j][$k]) > 0)
+					if (floatval($request->input('item_rpe')[$i][$j][$k]) > 0)
 					{
 						$item->is_pre = true;
 						$item->logtempitem_pre = $request->input('item_rpe')[$i][$j][$k];
