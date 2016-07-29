@@ -102,7 +102,7 @@ var default_item = {
 	value: 0,
 	plus: 0,
 	reps: 0,
-	sets: 0,
+	sets: 1,
 	rpe: 0,
 	comment: '',
 	warmup: 0,

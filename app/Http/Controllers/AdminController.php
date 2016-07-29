@@ -87,6 +87,9 @@ class AdminController extends Controller
 		$template->save();
 		$template_id = $template->template_id;
 		AdminController::saveTemplateLogs($request, $template_id);
+		return redirect()
+			->route('adminListTemplates')
+			->with(['flash_message' => "Template added"]);
 	}
 
 	public function getEditTemplate($template_id)
@@ -170,6 +173,9 @@ class AdminController extends Controller
 			'template_type' => $request->input('template_type'),
 		]);
 		AdminController::saveTemplateLogs($request, $template_id);
+		return redirect()
+			->route('adminListTemplates')
+			->with(['flash_message' => "Template updated"]);
 	}
 
 	private static function saveTemplateLogs($request, $template_id)

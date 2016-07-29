@@ -6,6 +6,7 @@
 <h2>List Templates</h2>
 <p><a href="{{ route('adminHome') }}">Admin Home</a></p>
 
+@include('common.flash')
 @foreach ($templates as $tempalte)
 <ul>
 	<li><a href="{{ route('adminEditTemplate', ['template_id' => $tempalte->template_id]) }}">{{ $tempalte->template_name }}</a></li>
