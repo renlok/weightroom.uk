@@ -11,6 +11,7 @@ use Carbon\Carbon;
 
 use App\Console\Commands\ImportFiles;
 use App\Admin;
+use App\Template;
 
 class AdminController extends Controller
 {
@@ -59,9 +60,20 @@ class AdminController extends Controller
 			->with(['flash_message' => "Settings updated"]);
 	}
 
+	public function getListTemplates()
+	{
+		$templates = Template::all();
+		return view('admin.listTemplates', compact('templates'));
+	}
+
 	public function getAddTemplate()
 	{
-		return view('admin.editLogTemplate');
+		$json_data = json_encode([]);
+		$template_id = 0;
+		$template_name = '';
+		$template_description = '';
+		$template_type = '';
+		return view('admin.editLogTemplate', compact('json_data', 'template_id', 'template_name', 'template_description', 'template_type'));
 	}
 
 	public function postAddTemplate(Request $request)
@@ -74,6 +86,94 @@ class AdminController extends Controller
 		$template->template_type = $request->input('template_type');
 		$template->save();
 		$template_id = $template->template_id;
+		AdminController::saveTemplateLogs($request, $template_id);
+	}
+
+	public function getEditTemplate($template_id)
+	{
+		$template = Template::with('template_logs.template_log_exercises.template_log_items')->where('template_id', $template_id)->firstorfail();
+		$json_data = [];
+		foreach ($template->template_logs as $log)
+		{
+			$log_data = [
+				'log_name' => $log->template_log_name,
+				'log_week' => $log->template_log_week,
+				'log_day' => $log->template_log_day,
+				'exercise_data' => []
+			];
+			foreach ($log->template_log_exercises as $log_exercises)
+			{
+				$exercise_data = [
+					'exercise_name' => $log_exercises->texercise_name,
+					'item_data' => []
+				];
+				foreach ($log_exercises->template_log_items as $log_items)
+				{
+					if ($log_items->is_distance)
+					{
+						$type = 'D';
+						$value = $log_items->logtempitem_distance;
+					}
+					elseif ($log_items->is_time)
+					{
+						$type = 'T';
+						$value = $log_items->logtempitem_time;
+					}
+					elseif ($log_items->is_current_rm)
+					{
+						$type = 'RM';
+						$value = $log_items->current_rm;
+					}
+					elseif ($log_items->is_percent_1rm)
+					{
+						$type = 'P';
+						$value = $log_items->percent_1rm;
+					}
+					else
+					{
+						$type = 'W';
+						$value = $log_items->logtempitem_weight;
+					}
+					$exercise_data['item_data'][] = [
+						'value' => $value,
+						'plus' => $log_items->logtempitem_plus_weight,
+						'reps' => $log_items->logtempitem_reps,
+						'sets' => $log_items->logtempitem_sets,
+						'rpe' => $log_items->logtempitem_rpe,
+						'comment' => $log_items->logtempitem_comment,
+						'warmup' => $log_items->is_warmup,
+						'type' => $type
+					];
+				}
+				$log_data['exercise_data'][] = $exercise_data;
+			}
+			$json_data[] = $log_data;
+		}
+		$json_data = json_encode($json_data);
+		$template_name = $template->template_name;
+		$template_description = $template->template_description;
+		$template_type = $template->template_type;
+		return view('admin.editLogTemplate', compact('json_data', 'template_id', 'template_name', 'template_description', 'template_type'));
+	}
+
+	public function postEditTemplate(Request $request, $template_id)
+	{
+		// delete old data
+		$template_logs = DB::table('template_logs')->where('template_id', $template_id)->lists('template_log_id');
+		DB::table('template_logs')->whereIn('template_log_id', $template_logs)->delete();
+		DB::table('template_log_exercises')->whereIn('template_log_id', $template_logs)->delete();
+		DB::table('template_log_items')->whereIn('template_log_id', $template_logs)->delete();
+		// update template
+		$template = Template::where('template_id', $template_id)->update([
+			'template_name' => $request->input('template_name'),
+			'template_description' => $request->input('template_description'),
+			'template_type' => $request->input('template_type'),
+		]);
+		AdminController::saveTemplateLogs($request, $template_id);
+	}
+
+	private static function saveTemplateLogs($request, $template_id)
+	{
 		for ($i = 0; $i < count($request->input('log_name')); $i++)
 		{
 			// save the log
@@ -144,12 +244,13 @@ class AdminController extends Controller
 					}
 					if (floatval($request->input('item_rpe')[$i][$j][$k]) > 0)
 					{
-						$item->is_pre = true;
-						$item->logtempitem_pre = $request->input('item_rpe')[$i][$j][$k];
+						$item->is_rpe = true;
+						$item->logtempitem_rpe = $request->input('item_rpe')[$i][$j][$k];
 					}
 					$item->logtempitem_reps = $request->input('item_reps')[$i][$j][$k];
 					$item->logtempitem_sets = $request->input('item_sets')[$i][$j][$k];
 					$item->logtempitem_comment = $request->input('item_comment')[$i][$j][$k];
+					$item->is_warmup = (isset($request->input('item_warmup')[$i][$j][$k]) ? true : false);
 					$item->logtempitem_order = $k;
 					$item->logtempex_order = $j;
 					$item->save();

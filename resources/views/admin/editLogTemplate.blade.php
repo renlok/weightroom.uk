@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'Admin: Edit Log Template')
+@section('title', 'Admin: ' . (($template_id == 0) ? 'Add' : 'Edit') . ' Log Template')
 
 @section('headerstyle')
 <style>
@@ -21,25 +21,29 @@
 	margin: 3px;
 	padding: 0 0 5px 20px;
 }
+.inputNumber {
+	width: 30px;
+}
 </style>
 @endsection
 
 @section('content')
-<h2>Admin Land: Edit Log Template</h2>
+<h2>Admin Land: {{ ($template_id == 0) ? 'Add' : 'Edit' }} Log Template</h2>
 <p><a href="{{ route('adminHome') }}">Admin Home</a></p>
 
 @include('common.flash')
-<form action="{{ route('adminAddTemplate') }}" method="post">
+<form action="{{ ($template_id == 0) ? route('adminAddTemplate') : route('adminEditTemplate', ['template_id' => $template_id]) }}" method="post">
+	<input type="hidden" name="template_id" value="{{ $template_id }}">
 	<label for="templateName">Template name</label>
-	<input type="text" value="" id="templateName" name="template_name" placeholder="Template name">
+	<input type="text" id="templateName" name="template_name" placeholder="Template name" value="{{ $template_name }}">
 	<div>
 		<label for="templateDesc">Template description</label>
-		<input type="text" value="" id="templateDesc" name="template_description" placeholder="Template description">
+		<input type="text" id="templateDesc" name="template_description" placeholder="Template description" value="{{ $template_description }}">
 		<label for="templateName">Template type</label>
 		<select name="template_type">
-			<option value="powerlifting">powerlifting</option>
-			<option value="running">running</option>
-			<option value="weightlifting">weightlifting</option>
+			<option value="powerlifting" {{ ($template_type == 'powerlifting') ? 'selected="selected"' : '' }}>powerlifting</option>
+			<option value="running" {{ ($template_type == 'running') ? 'selected="selected"' : '' }}>running</option>
+			<option value="weightlifting" {{ ($template_type == 'weightlifting') ? 'selected="selected"' : '' }}>weightlifting</option>
 		</select>
 	</div>
 	<div id="app">
@@ -64,9 +68,9 @@
 				<div v-for="(exercise_index, exercise) in log.exercise_data" class="exercise">
 					<input type="text" value="@{{ exercise.exercise_name }}" name="exercise_name[@{{ log_index }}][@{{ exercise_index }}]" placeholder="Exercise name"><button type="button" v-on:click="deleteExercise(exercise_index, log_index)">x</button>
 					<div v-for="(item_index, item) in exercise.item_data" class="logItem">
-						<input type="text" value="@{{ item.value }}" name="item_value[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]"> + <input type="text" value="@{{ item.plus }}" name="item_plus[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]">
-						 x <input type="text" value="@{{ item.reps }}" name="item_reps[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]"> x <input type="text" value="@{{ item.sets }}" name="item_sets[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]">
-						@<input type="text" value="@{{ item.rpe }}" name="item_rpe[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]">
+						<input type="text" value="@{{ item.value }}" name="item_value[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]" class="inputNumber"> + <input type="text" value="@{{ item.plus }}" name="item_plus[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]" class="inputNumber">
+						 x <input type="text" value="@{{ item.reps }}" name="item_reps[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]" class="inputNumber"> x <input type="text" value="@{{ item.sets }}" name="item_sets[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]" class="inputNumber">
+						@<input type="text" value="@{{ item.rpe }}" name="item_rpe[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]" class="inputNumber">
 						<input type="text" value="@{{ item.comment }}" name="item_comment[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]" placeholder="Comment">
 						<select name="item_type[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]" v-model="item.type">
 							<option value="W">Weight</option>
@@ -75,6 +79,8 @@
 							<option value="D">Distance</option>
 							<option value="T">Time</option>
 						</select>
+						<label>warmup?</label>
+						<input type="checkbox" value="1" name="item_warmup[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]" v-model="item.warmup">
 						<button type="button" v-on:click="deleteItem(item_index, exercise_index, log_index)">x</button>
 					</div>
 					<button type="button" v-on:click="addItem(exercise_index, log_index)">Add Item</button>
@@ -99,6 +105,7 @@ var default_item = {
 	sets: 0,
 	rpe: 0,
 	comment: '',
+	warmup: 0,
 	type: 'W'
 }
 
@@ -110,54 +117,11 @@ var deafult_exercise = {
 new Vue({
   el: '#app',
   data: {
-    log_data: [
-    	{
-		log_name: 'woop',
-		log_week: 1,
-		log_day: 1,
-        exercise_data: [
-        	{
-        	exercise_name: 'Jam',
-            item_data: [
-            	{
-					value: 50,
-					plus: 0,
-					reps: 5,
-					sets: 5,
-					rpe: 0,
-					comment: '',
-					type: 'T'
-				}
-            ]
-          }
-        ]
-      },
-      {
-      	log_name: 'poop',
-		log_week: 1,
-        log_day: 2,
-        exercise_data: [
-        	{
-			exercise_name: 'Ham',
-            item_data: [
-            	{
-					value: 50,
-					plus: 0,
-					reps: 5,
-					sets: 5,
-					rpe: 0,
-					comment: '',
-					type: 'W'
-				}
-            ]
-          }
-        ]
-      },
-    ]
+    log_data: {!! $json_data !!}
   },
   methods: {
     addLog: function(){
-		this.log_data.push({log_name: '', log_week:1, log_day:1, exercise_data: [Object.assign({}, deafult_exercise)}]);
+		this.log_data.push({log_name: '', log_week:1, log_day:1, exercise_data: [Object.assign({}, deafult_exercise)]});
     },
     addExercise: function(index_id) {
     	this.log_data[index_id].exercise_data.push(Object.assign({}, deafult_exercise));

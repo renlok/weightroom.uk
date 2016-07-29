@@ -77,8 +77,8 @@
 			@if ($log_items->logtempitem_sets > 1)
 				x {{ $log_items->logtempitem_sets }}
 			@endif
-			@if ($log_items->is_pre)
-				@{{ $log_items->logtempitem_pre }}
+			@if ($log_items->is_rpe)
+				@{{ $log_items->logtempitem_rpe }}
 			@endif
 			</p>
 			@if ($log_items->logtempitem_comment != '')

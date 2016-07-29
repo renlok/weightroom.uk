@@ -147,6 +147,9 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
 	Route::get('settings', 'AdminController@getSettings')->name('adminSettings');
 	Route::post('settings', 'AdminController@postSettings');
 
+    Route::get('template', 'AdminController@getListTemplates')->name('adminListTemplates');
+    Route::get('template/edit/{template_id}', 'AdminController@getEditTemplate')->name('adminEditTemplate');
+    Route::post('template/edit/{template_id}', 'AdminController@postEditTemplate');
     Route::get('template/add', 'AdminController@getAddTemplate')->name('adminAddTemplate');
     Route::post('template/add', 'AdminController@postAddTemplate');
 

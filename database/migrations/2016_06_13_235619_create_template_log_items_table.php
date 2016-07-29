@@ -31,9 +31,10 @@ class CreateTemplateLogItemsTable extends Migration
             $table->double('logtempitem_distance', 25, 7);
             $table->integer('logtempitem_reps');
             $table->integer('logtempitem_sets');
-            $table->boolean('is_pre')->default(0);
-            $table->double('logtempitem_pre', 3, 1)->nullable()->default(NULL);
+            $table->boolean('is_rpe')->default(0);
+            $table->double('logtempitem_rpe', 3, 1)->nullable()->default(NULL);
             $table->text('logtempitem_comment');
+            $table->boolean('is_warmup')->default(0);
             $table->smallInteger('logtempitem_order');
             $table->smallInteger('logtempex_order');
             $table->timestamps();

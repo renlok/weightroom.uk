@@ -10,6 +10,7 @@
 	<li><a href="{{ route('adminStats') }}">User Stats</a></li>
 	<li><a href="{{ route('adminSettings') }}">Settings</a></li>
 	<li><a href="{{ route('cronImport') }}">Force Cron Import</a><span class="badge"> {{ $cron_count }}</span></li>
+	<li><a href="{{ route('adminListTemplates') }}">List Templates</a></li>
 	<li><a href="{{ route('adminAddTemplate') }}">Add Workout Template</a></li>
 </ul>
 @endsection
