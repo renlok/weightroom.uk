@@ -6,13 +6,13 @@
 			<h6><a href="{{ route('viewUser', ['user_name' => ${"comment$token"}->user_name]) }}">{{ ${"comment$token"}->user_name }}</a> <small>{{ ${"comment$token"}->comment_date->diffForHumans() }}</small></h6>
 			@if (!${"comment$token"}->trashed())
 				<span id="c{{ ${"comment$token"}->comment_id }}">{{ ${"comment$token"}->comment }}</span>
+				<p class="small"><a href="#" class="reply">reply</a> <a href="#" class="delete" c-id="{{ ${"comment$token"}->comment_id }}">delete</a></p>
+				<div class="comment-reply-box" style="display:none;">
+					@include('common.commentForm', ['parent_id' => ${"comment$token"}->comment_id])
+				</div>
 			@else
 				[Deleted]
 			@endif
-			<p class="small"><a href="#" class="reply">reply</a> <a href="#" class="delete" c-id="{{ ${"comment$token"}->comment_id }}">delete</a></p>
-			<div class="comment-reply-box" style="display:none;">
-				@include('common.commentForm', ['parent_id' => ${"comment$token"}->comment_id])
-			</div>
 			@include('common.commentChild', ['children_comments' . ($token + 1) => ${"comment$token"}->children()->get(), 'token' => ($token + 1)])
 		</div>
 	</li>

@@ -32,14 +32,4 @@ class Comment extends Model
     {
         return $this->hasMany('App\Comment','parent_id')->withTrashed();
     }
-
-    /**
-     * get display value
-     *
-     * @returns bool
-     */
-    public function getUserNameAttribute()
-    {
-        return User::find($this->attributes['user_id'])->value('user_name');
-    }
 }
