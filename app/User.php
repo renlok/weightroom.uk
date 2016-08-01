@@ -41,6 +41,7 @@ class User extends Model implements AuthenticatableContract,
     protected $dates = ['user_joined'];
 
     protected $casts = [
+        'user_firstlog' => 'boolean',
         'user_beta' => 'boolean',
         'user_admin' => 'boolean',
         'user_showreps' => 'array',

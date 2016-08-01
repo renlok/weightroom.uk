@@ -37,6 +37,7 @@ class CreateUsersTable extends Migration
             $table->enum('user_showintensity', ['h', 'p', 'a'])->default('p'); // h = hide, p = percent, a = absolute
             $table->boolean('user_showinol')->default('0');
             $table->boolean('user_inolincwarmup')->default('0');
+            $table->boolean('user_firstlog')->default('1');
             $table->boolean('user_beta')->default('0');
             $table->boolean('user_admin')->default('0');
             $table->integer('user_don_level')->default('0');

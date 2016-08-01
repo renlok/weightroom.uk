@@ -324,6 +324,12 @@ class Parser
 
 		// as array_walk doesn't work :(
 		DB::table('log_items')->where('log_date', $this->log_date)->where('user_id', $this->user->user_id)->update(['log_id' => $log_id]);
+
+		// update first log flag
+		if ($this->user->user_firstlog)
+		{
+			DB::table('users')->where('user_id', $this->user->user_id)->update(['user_firstlog' => 0]);
+		}
 	}
 
 	private function updateLogId (&$log_item, $key, $log_id)
@@ -507,6 +513,11 @@ class Parser
 			}
 		}
 
+		// warning no exercises
+		if (count($this->log_data['exercises']) == 0 && $this->user->user_firstlog)
+		{
+			$this->warnings['no_exercises'] = true;
+		}
 		//return goals hit
 		if (count($this->goals_hit) > 0)
 		{

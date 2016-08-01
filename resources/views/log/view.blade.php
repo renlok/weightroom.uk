@@ -120,6 +120,9 @@ blockquote.small {
 		@if ($warning == 'blank_bodyweight')
 			<p>You have entered a bodyweight exercise but have no entered your bodyweight</p>
 		@endif
+		@if ($warning == 'no_exercises')
+			<p>You don't seem to have added any exercises to your log. Remember an exercise must be on its own line and start with a # like #squat or #run. If you're stuck click formatting help under the log entry box for help.</p>
+		@endif
 	@endforeach
 </div>
 @endif
