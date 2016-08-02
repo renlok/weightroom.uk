@@ -22,13 +22,17 @@ class PRs
 		foreach ($exercises as $exercise)
 		{
 			$items = DB::table('log_items')
-						->select('logitem_id', 'logitem_abs_weight', 'logitem_reps', 'log_date', 'is_time', 'is_endurance')
+						->select('logitem_id', 'logitem_abs_weight', 'logitem_reps', 'log_date', 'is_time', 'is_endurance', 'is_distance')
 						->where('exercise_id', $exercise->exercise_id)
-						->where('logitem_reps', '<=', 10)
+						->where('logitem_reps', '<=', 100)
 						->where('logitem_reps', '>', 0)
 						->orderBy('log_date', 'asc')
 						->get();
-			$pr = array(1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0, 7 => 0, 8 => 0, 9 => 0, 10 => 0);
+			$pr = [];
+			for ($x = 1; $x <= 100; $x++)
+			{
+				$pr[$x] = 0;
+			}
 			$est1rm = 0;
 			foreach ($items as $item)
 			{
@@ -45,7 +49,7 @@ class PRs
 						$new1rm = 0;
 					}
 					$is_est1rm = false;
-					if ($est1rm < $new1rm)
+					if (($est1rm < $new1rm && !$item->is_time) || ($est1rm > $new1rm && $item->is_time))
 					{
 						$est1rm = $new1rm;
 						$is_est1rm = true;
@@ -59,7 +63,8 @@ class PRs
 						'pr_1rm' => $new1rm,
 						'is_est1rm' => $is_est1rm,
 						'is_time' => $item->is_time,
-						'is_endurance' => $item->is_endurance
+						'is_endurance' => $item->is_endurance,
+						'is_distance' => $item->is_distance
 					];
 				}
 			}
@@ -82,22 +87,42 @@ class PRs
 			->update(['is_pr' => 0]);
 
 		$log_items = DB::table('log_items')
-			->select('logitem_id', 'logitem_abs_weight', 'logitem_reps', 'log_date', 'user_id', 'is_time')
+			->select('logitem_id', 'logitem_abs_weight', 'logitem_reps', 'log_date', 'user_id', 'is_time', 'is_distance', 'is_endurance')
 			->where('exercise_id', $exercise_id)
+			->where('logitem_reps', '<=', 100)
+			->where('logitem_reps', '>', 0)
 			->orderBy('log_date', 'asc')
 			->get();
-		$pr_time = array(1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0, 7 => 0, 8 => 0, 9 => 0, 10 => 0);
-		$pr_value = array(1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0, 7 => 0, 8 => 0, 9 => 0, 10 => 0);
+		$pr_value = [];
+		$pr_distance = [];
+		$pr_endurance = [];
+		$pr_time = [];
+		for ($x = 1; $x <= 100; $x++)
+		{
+			$pr_value[$x] = 0;
+			$pr_distance[$x] = 0;
+			$pr_endurance[$x] = 0;
+			$pr_time[$x] = 0;
+		}
 		foreach ($log_items as $log_item)
 		{
-			if ($log_item->logitem_reps <= 10 && $log_item->logitem_reps > 0
-			 && (($pr_time[$log_item->logitem_reps] < $log_item->logitem_abs_weight && $log_item->is_time == 1)
-			 || ($pr_value[$log_item->logitem_reps] < $log_item->logitem_abs_weight && $log_item->is_time == 0)))
+			if (($pr_time[$log_item->logitem_reps] < $log_item->logitem_abs_weight && !$log_item->is_time)
+			 || (($pr_value[$log_item->logitem_reps] > $log_item->logitem_abs_weight || $pr_value[$log_item->logitem_reps] == 0) && $log_item->is_time))
 			{
 				if ($log_item->is_time)
 				{
 					$pr_time[$log_item->logitem_reps] = $log_item->logitem_abs_weight;
-				} else {
+				}
+				elseif ($log_item->is_distance)
+				{
+					$pr_distance[$log_item->logitem_reps] = $log_item->logitem_abs_weight;
+				}
+				elseif ($log_item->is_endurance)
+				{
+					$pr_endurance[$log_item->logitem_reps] = $log_item->logitem_abs_weight;
+				}
+				else
+				{
 					$pr_value[$log_item->logitem_reps] = $log_item->logitem_abs_weight;
 				}
 				DB::table('log_items')
@@ -109,7 +134,9 @@ class PRs
 					'log_date' => $log_item->log_date,
 					'pr_value' => $log_item->logitem_abs_weight,
 					'pr_reps' => $log_item->logitem_reps,
-					'is_time' => $log_item->is_time
+					'is_time' => $log_item->is_time,
+					'is_endurance' => $log_item->is_endurance,
+					'is_distance' => $log_item->is_distance
 				]);
 			}
 		}
@@ -125,7 +152,22 @@ class PRs
 					->where('exercises.exercise_name', $exercise_name)
 					->where('log_date', '<=', $log_date)
 					->groupBy(function ($item, $key) {
-						return ($item['is_time']) ? 'T' : 'W';
+						if ($item['is_time'])
+						{
+							return 'T';
+						}
+						elseif ($item['is_endurance'])
+						{
+							return 'E';
+						}
+						elseif ($item['is_distance'])
+						{
+							return 'D';
+						}
+						else
+						{
+							return 'W';
+						}
 					})
 					->groupBy('pr_reps');
 		if ($return_date)
@@ -133,11 +175,26 @@ class PRs
 			$records = $records->addSelect(DB::raw('MAX(log_date) as log_date'));
 		}
 		$records = $records->get();
-		$prs = array('W' => array(), 'T' => array());
-		$date = array('W' => array(), 'T' => array());
+		$prs = ['W' => [], 'T' => [], 'D' => [], 'E' => []];
+		$date = ['W' => [], 'T' => [], 'D' => [], 'E' => []];
 		while ($row = $db->fetch())
 		{
-			$type = ($row['is_time'] == 1) ? 'T' : 'W';
+			if ($item['is_time'])
+			{
+				$type = 'T';
+			}
+			elseif ($item['is_endurance'])
+			{
+				$type = 'E';
+			}
+			elseif ($item['is_distance'])
+			{
+				$type = 'D';
+			}
+			else
+			{
+				$type = 'W';
+			}
 			if ($return_date)
 			{
 				$date[$type][$row['pr_reps']] = $row['log_date'];
