@@ -186,15 +186,16 @@ class ExercisesController extends Controller
 		$query = Exercise_record::getexerciseprs(Auth::user()->user_id, Carbon::now()->toDateString(), $exercise_name, $exercise, true)->get();
 		$current_prs = $query->groupBy('pr_reps')->toArray();
 		$filtered_prs = Exercise_record::filterPrs($query);
+		$reps_to_load = array_merge(Auth::user()->user_showreps, Auth::user()->user_showextrareps);
 		if ($type == 'weekly' || $type == 'monthly' || $type == 'daily')
 		{
-			$prs = Log_item::getexercisemaxes(Auth::user()->user_id, $range, $exercise_name, $exercise, Auth::user()->user_showreps, $type)->get()->groupBy('logitem_reps');
+			$prs = Log_item::getexercisemaxes(Auth::user()->user_id, $range, $exercise_name, $exercise, $reps_to_load, $type)->get()->groupBy('logitem_reps');
 			$prs['Approx. 1'] = Log_item::getestimatedmaxes(Auth::user()->user_id, $range, $exercise_name, $exercise, $type)->get();
 			$approx1rm = Exercise_record::getlastest1rm(Auth::user()->user_id, $exercise_name)->value('pr_1rm');
 		}
 		else
 		{
-			$prs = Exercise_record::getexerciseprsall(Auth::user()->user_id, $range, $exercise_name, $exercise, false, Auth::user()->user_showreps)->get()->groupBy('pr_reps');
+			$prs = Exercise_record::getexerciseprsall(Auth::user()->user_id, $range, $exercise_name, $exercise, false, $reps_to_load)->get()->groupBy('pr_reps');
 			$approx1rm = 0;
 			if (!($exercise->is_time || $exercise->is_distance))
 			{
@@ -228,7 +229,7 @@ class ExercisesController extends Controller
 	public function getViewExercisePRHistory($exercise_name)
 	{
 		$exercise = Exercise::getexercise($exercise_name, Auth::user()->user_id)->firstOrFail();
-		$prs = Exercise_record::getexerciseprsall(Auth::user()->user_id, 0, $exercise_name, $exercise)->get()->groupBy(function ($item, $key) {
+		$prs = Exercise_record::getexerciseprsall(Auth::user()->user_id, 0, $exercise_name, $exercise, true, array_merge([1,2,3,4,5,6,7,8,9,10], Auth::user()->user_showextrareps))->get()->groupBy(function ($item, $key) {
 			return $item['log_date']->toDateString();
 		})->toArray();
 		$prs = array_map(function($collection) {
