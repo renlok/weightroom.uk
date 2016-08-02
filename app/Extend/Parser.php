@@ -888,9 +888,9 @@ class Parser
 		}
 		elseif ($this->log_items[$i][$j]->is_distance)
 		{
-			// time
+			// distance
 			if (!isset($prs['D'][$set['R']]) ||
-				floatval($prs['D'][$set['R']]) > $this->log_items[$i][$j]->logitem_abs_weight)
+				floatval($prs['D'][$set['R']]) < $this->log_items[$i][$j]->logitem_abs_weight)
 			{
 				return true;
 			}
@@ -941,8 +941,8 @@ class Parser
 		$is_endurance = $this->log_items[$i][$j]->is_endurance;
 		$is_distance = $this->log_items[$i][$j]->is_distance;
 
-		// dont log reps over 10
-		if ($set_reps > 10 || $set_reps < 1)
+		// dont log reps over 100
+		if ($set_reps > 100 || $set_reps < 1)
 		{
 			return false;
 		}
