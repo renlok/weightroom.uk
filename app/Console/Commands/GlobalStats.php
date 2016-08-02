@@ -30,10 +30,10 @@ class GlobalStats extends Command
      */
     public function handle()
     {
-		$users_with_logs = DB::table('logs')
-			->select(DB::raw('COUNT(log_id) as log_count'))
+		$users_with_logs = count(DB::table('logs')
+			->select('user_id')
 			->groupBy('user_id')
-			->value('log_count');
+			->get());
 		$active_users_3m = DB::table('logs')
 			->select(DB::raw('COUNT(log_id) as log_count'))
 			->where('log_date', '>=', Carbon::now()->subMonths(3)->toDateString())
@@ -48,7 +48,7 @@ class GlobalStats extends Command
 		$all_comments = DB::table('comments')->select(DB::raw('COUNT(comment_id) as comment_count'))->value('comment_count');
 		$all_replys = DB::table('comments')->select(DB::raw('COUNT(comment_id) as comment_count'))->whereNotNull('parent_id')->value('comment_count');
 		$all_logs = DB::table('logs')->select(DB::raw('COUNT(log_id) as log_count'))->value('log_count');
-		
+
 		DB::table('global_stats')->insert([
 			'gstat_date' => Carbon::now()->toDateString(),
 			'total_users' => $all_users,

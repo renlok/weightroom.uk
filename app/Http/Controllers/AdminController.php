@@ -10,6 +10,8 @@ use DB;
 use Carbon\Carbon;
 
 use App\Console\Commands\ImportFiles;
+use App\Console\Commands\GlobalStats;
+
 use App\Admin;
 use App\Template;
 
@@ -36,6 +38,12 @@ class AdminController extends Controller
 	{
 		$stats = DB::table('global_stats')->orderBy('gstat_date', 'desc')->get();
 		return view('admin.stats', compact('stats'));
+	}
+
+	public function forceStats()
+	{
+		$stats = new GlobalStats;
+		$stats->handle();
 	}
 
 	public function cronImport()
