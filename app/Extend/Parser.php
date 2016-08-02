@@ -577,7 +577,7 @@ class Parser
 			}
 			if ($input[1] == '')
 			{
-				return $input[0];
+				return Format::correct_time($input[0], 'm', 's', 0);
 			}
 			else
 			{
