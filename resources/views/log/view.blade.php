@@ -123,6 +123,9 @@ blockquote.small {
 		@if ($warning == 'no_exercises')
 			<p>You don't seem to have added any exercises to your log. Remember an exercise must be on its own line and start with a # like #squat or #run. If you're stuck click formatting help under the log entry box for help.</p>
 		@endif
+		@if ($warning == 'no_text')
+			<p>You have entered a blank log, did you mean to do this or do you need some <a href="{{ route('faq') }}">help</a>?</p>
+		@endif
 	@endforeach
 </div>
 @endif

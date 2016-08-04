@@ -328,7 +328,14 @@ class Parser
 		// update first log flag
 		if ($this->user->user_firstlog)
 		{
-			DB::table('users')->where('user_id', $this->user->user_id)->update(['user_firstlog' => 0]);
+			if (trim($this->log_text) == '')
+			{
+				$this->warnings['no_text'] = true;
+			}
+			elseif (!isset($this->warnings['no_exercises']))
+			{
+				DB::table('users')->where('user_id', $this->user->user_id)->update(['user_firstlog' => 0]);
+			}
 		}
 	}
 
