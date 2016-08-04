@@ -8,6 +8,10 @@ td:first-child, td:nth-child(2) {
     white-space: nowrap;
 	width: 1%;
 }
+td small {
+	color: #909090;
+	font-style: italic;
+}
 </style>
 @endsection
 
@@ -40,7 +44,7 @@ td:first-child, td:nth-child(2) {
 			<td>{{ $date }}</td>
 			<td class="small">{{ $pr['BW'] }} {{ Auth::user()->user_unit }}</td>
 		@for ($i = 1; $i <= 10; $i++)
-			<td>{{ (isset($pr[$i])) ? Format::$format_func($pr[$i]) . ' ' . Auth::user()->user_unit : '' }}</td>
+			<td>{!! (isset($pr[$i])) ? Format::$format_func($pr[$i]) . ' ' . (($format_func == 'correct_weight') ? Auth::user()->user_unit : '') : (($format_func == 'correct_weight') ? '<small>' . Format::correct_weight(\App\Extend\PRs::generateRM($pr['highest'], $pr['highest_reps'], $i)) . ' ' . Auth::user()->user_unit . '</small>' : '') !!}</td>
 		@endfor
 	    @foreach (Auth::user()->user_showextrareps as $j)
 	        @if ($j != '')

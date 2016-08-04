@@ -234,14 +234,23 @@ class ExercisesController extends Controller
 		})->toArray();
 		$prs = array_map(function($collection) {
 			$temp = [];
+			$highest = 0;
+			$highest_reps = 0;
 			foreach ($collection as $item)
 			{
 				if (!isset($temp['BW']))
 				{
 					$temp['BW'] = $item['log_weight'];
 				}
+				if ($item['pr_value'] > $highest)
+				{
+					$highest = $item['pr_value'];
+					$highest_reps = $item['pr_reps'];
+				}
 				$temp[$item['pr_reps']] = $item['pr_value'];
 			}
+			$temp['highest'] = $highest;
+			$temp['highest_reps'] = $highest_reps;
 			return $temp;
 		}, $prs);
 		krsort ($prs);
