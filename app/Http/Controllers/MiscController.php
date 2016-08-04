@@ -51,13 +51,13 @@ class MiscController extends Controller
 			});
 			$random = true;
 		}
-		$logs = Log::whereIn('user_id', $followed_users)->orderBy('log_date', 'desc')->paginate(50);
+		$logs = Log::whereIn('user_id', $followed_users)->whereRaw("TRIM(log_text) != ''")->orderBy('log_date', 'desc')->paginate(50);
 		return view('dash', compact('logs', 'random'));
 	}
 
 	public function dashAll()
 	{
-		$logs = Log::orderBy('log_date', 'desc')->paginate(50);
+		$logs = Log::orderBy('log_date', 'desc')->whereRaw("TRIM(log_text) != ''")->paginate(50);
 		$random = false;
 		return view('dash', compact('logs', 'random'));
 	}

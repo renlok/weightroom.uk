@@ -55,6 +55,9 @@ td small {
 @endforeach
 	</tbody>
 </table>
+@if (isset(Auth::user()->user_showextrareps[0]) && Auth::user()->user_showextrareps[0] != '')
+<em>Only reps up to 10 are given estimate vaules as calculations for reps over this often wildly inaccurate.</em>
+@endif
 @endsection
 
 @section('endjs')
