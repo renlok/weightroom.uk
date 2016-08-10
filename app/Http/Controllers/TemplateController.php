@@ -48,7 +48,15 @@ class TemplateController extends Controller
 	{
 		// check inputs
 		//check log_id is valid
-		$log = Template_log::with('template_log_exercises.template_log_items')
+		$log = Template_log::with([
+				'template_log_exercises' => function($query) {
+					$query->orderBy('template_log_exercises.logtempex_order', 'asc');
+				},
+				'template_log_exercises.template_log_items' => function($query) {
+					$query->orderBy('template_log_items.logtempex_order', 'asc')
+						->orderBy('template_log_items.logtempitem_order', 'asc');
+				}
+			])
 			->where('template_log_id', $request->log_id)->where('has_fixed_values', $request->has_fixed_values)->firstOrFail();
 		$exercise_values = [];
 		$exercise_names = [];

@@ -199,75 +199,81 @@ class AdminController extends Controller
 			$log->has_fixed_values = true;
 			$log->save();
 			$log_id = $log->template_log_id;
-			for ($j = 0; $j < count($request->input('exercise_name')[$i]); $j++)
+			if (isset($request->input('exercise_name')[$i]))
 			{
-				// save the exercise
-				$exercise = new \App\Template_log_exercise;
-				$exercise->template_log_id = $log_id;
-				// find exercise
-				$exercise_data = \App\Template_exercises::firstOrCreate(['texercise_name' => $request->input('exercise_name')[$i][$j]]);
-				$exercise->texercise_id = $exercise_data->texercise_id;
-				$exercise->texercise_name = $request->input('exercise_name')[$i][$j];
-				$exercise->logtempex_order = $j;
-				$exercise->save();
-				$exercise_id = $exercise->logtempex_id;
-				for ($k = 0; $k < count($request->input('item_type')[$i][$j]); $k++)
+				for ($j = 0; $j < count($request->input('exercise_name')[$i]); $j++)
 				{
-					// save the item
-					$item = new \App\Template_log_items;
-					$item->template_log_id = $log_id;
-					$item->logtempex_id = $exercise_id;
-					$item->texercise_id = $exercise_data->texercise_id;
-					switch ($request->input('item_type')[$i][$j][$k])
+					// save the exercise
+					$exercise = new \App\Template_log_exercise;
+					$exercise->template_log_id = $log_id;
+					// find exercise
+					$exercise_data = \App\Template_exercises::firstOrCreate(['texercise_name' => $request->input('exercise_name')[$i][$j]]);
+					$exercise->texercise_id = $exercise_data->texercise_id;
+					$exercise->texercise_name = $request->input('exercise_name')[$i][$j];
+					$exercise->logtempex_order = $j;
+					$exercise->save();
+					$exercise_id = $exercise->logtempex_id;
+					if (isset($request->input('item_type')[$i][$j]))
 					{
-						case 'W':
-							$item->is_weight = true;
-							$item->logtempitem_weight = $request->input('item_value')[$i][$j][$k];
-							break;
-						case 'P':
-							$item->is_percent_1rm = true;
-							$item->percent_1rm = $request->input('item_value')[$i][$j][$k];
-							if ($log->has_fixed_values)
+						for ($k = 0; $k < count($request->input('item_type')[$i][$j]); $k++)
+						{
+							// save the item
+							$item = new \App\Template_log_items;
+							$item->template_log_id = $log_id;
+							$item->logtempex_id = $exercise_id;
+							$item->texercise_id = $exercise_data->texercise_id;
+							switch ($request->input('item_type')[$i][$j][$k])
 							{
-								$log->has_fixed_values = false;
-								$log->save();
+								case 'W':
+									$item->is_weight = true;
+									$item->logtempitem_weight = $request->input('item_value')[$i][$j][$k];
+									break;
+								case 'P':
+									$item->is_percent_1rm = true;
+									$item->percent_1rm = $request->input('item_value')[$i][$j][$k];
+									if ($log->has_fixed_values)
+									{
+										$log->has_fixed_values = false;
+										$log->save();
+									}
+									break;
+								case 'RM':
+									$item->is_current_rm = true;
+									$item->current_rm = $request->input('item_value')[$i][$j][$k];
+									if ($log->has_fixed_values)
+									{
+										$log->has_fixed_values = false;
+										$log->save();
+									}
+								break;
+								case 'T':
+									$item->is_time = true;
+									$item->logtempitem_time = $request->input('item_value')[$i][$j][$k];
+								break;
+								case 'D':
+									$item->is_distance = true;
+									$item->logtempitem_distance = $request->input('item_value')[$i][$j][$k];
+								break;
 							}
-							break;
-						case 'RM':
-							$item->is_current_rm = true;
-							$item->current_rm = $request->input('item_value')[$i][$j][$k];
-							if ($log->has_fixed_values)
+							if (floatval($request->input('item_plus')[$i][$j][$k]) > 0)
 							{
-								$log->has_fixed_values = false;
-								$log->save();
+								$item->has_plus_weight = true;
+								$item->logtempitem_plus_weight = $request->input('item_plus')[$i][$j][$k];
 							}
-						break;
-						case 'T':
-							$item->is_time = true;
-							$item->logtempitem_time = $request->input('item_value')[$i][$j][$k];
-						break;
-						case 'D':
-							$item->is_distance = true;
-							$item->logtempitem_distance = $request->input('item_value')[$i][$j][$k];
-						break;
+							if (floatval($request->input('item_rpe')[$i][$j][$k]) > 0)
+							{
+								$item->is_rpe = true;
+								$item->logtempitem_rpe = $request->input('item_rpe')[$i][$j][$k];
+							}
+							$item->logtempitem_reps = $request->input('item_reps')[$i][$j][$k];
+							$item->logtempitem_sets = $request->input('item_sets')[$i][$j][$k];
+							$item->logtempitem_comment = $request->input('item_comment')[$i][$j][$k];
+							$item->is_warmup = (isset($request->input('item_warmup')[$i][$j][$k]) ? true : false);
+							$item->logtempitem_order = $k;
+							$item->logtempex_order = $j;
+							$item->save();
+						}
 					}
-					if (floatval($request->input('item_plus')[$i][$j][$k]) > 0)
-					{
-						$item->has_plus_weight = true;
-						$item->logtempitem_plus_weight = $request->input('item_plus')[$i][$j][$k];
-					}
-					if (floatval($request->input('item_rpe')[$i][$j][$k]) > 0)
-					{
-						$item->is_rpe = true;
-						$item->logtempitem_rpe = $request->input('item_rpe')[$i][$j][$k];
-					}
-					$item->logtempitem_reps = $request->input('item_reps')[$i][$j][$k];
-					$item->logtempitem_sets = $request->input('item_sets')[$i][$j][$k];
-					$item->logtempitem_comment = $request->input('item_comment')[$i][$j][$k];
-					$item->is_warmup = (isset($request->input('item_warmup')[$i][$j][$k]) ? true : false);
-					$item->logtempitem_order = $k;
-					$item->logtempex_order = $j;
-					$item->save();
 				}
 			}
 		}

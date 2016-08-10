@@ -48,7 +48,7 @@
 	</div>
 	<div id="app">
 		<template v-for="(log_index, log) in log_data">
-			<div class="log">
+			<div class="log" style="@{{ ((log_index % 2) == 1 ? 'background-color: #ddd;' : '') }}">
 				<label>Log</label>
 				<input type="text" value="@{{ log.log_name }}" name="log_name[@{{ log_index }}]" placeholder="Log name"><button type="button" v-on:click="deleteLog(log_index)">x</button>
 				<div>
@@ -72,7 +72,7 @@
 						 x <input type="text" value="@{{ item.reps }}" name="item_reps[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]" class="inputNumber"> x <input type="text" value="@{{ item.sets }}" name="item_sets[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]" class="inputNumber">
 						@<input type="text" value="@{{ item.rpe }}" name="item_rpe[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]" class="inputNumber">
 						<input type="text" value="@{{ item.comment }}" name="item_comment[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]" placeholder="Comment">
-						<select name="item_type[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]" v-model="item.type">
+						<select name="item_type[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]" v-model="exercise.item_data[item_index].type">
 							<option value="W">Weight</option>
 							<option value="RM">Rep Max</option>
 							<option value="P">Percent</option>
@@ -101,7 +101,7 @@
 var default_item = {
 	value: 0,
 	plus: 0,
-	reps: 0,
+	reps: 1,
 	sets: 1,
 	rpe: 0,
 	comment: '',
