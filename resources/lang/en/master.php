@@ -24,6 +24,7 @@ return [
 	'exerciseList' => 'Exercise List',
 	'tools' => 'Tools',
 	'inviteCodes' => 'Invite codes',
+    'plans' => 'Planned Features',
 	'bugs' => 'Submit a bug',
 	'blog' => 'Blog',
     'faq' => 'F.A.Q.',

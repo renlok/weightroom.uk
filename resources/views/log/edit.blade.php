@@ -4,8 +4,8 @@
 
 @section('headerstyle')
 <link href="{{ asset('css/pickmeup.css') }}" rel="stylesheet">
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.11.0/codemirror.min.css">
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.11.0/addon/hint/show-hint.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/codemirror.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/addon/hint/show-hint.min.css">
 <style>
 .cm-ENAME { color:#3338B7;}
 .cm-W, .cm-WW { color:#337AB7;}
@@ -53,7 +53,7 @@
 <form action="{{ url('log/' . $date . '/' . $type) }}" method="post">
 <div class="form-group">
     <label for="log">Log Data:</label>
-	<textarea rows="30" cols="50" name="log" id="log" class="form-control">{{ $log['log_text'] }}</textarea>
+	<textarea rows="30" cols="50" name="log" id="log" class="form-control" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">{{ $log['log_text'] }}</textarea>
 	<a href="#formattinghelp" id="openhelp">Formatting help</a>
 	<pre id="formattinghelp" class="cm-s-default"></pre>
 	<textarea id='formattinghelptext' style="display:none;">
@@ -103,10 +103,10 @@ you can also have the same exercise multiple times
 @section('endjs')
 <script src="{{ asset('js/jquery.pickmeup.js') }}"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js" charset="utf-8"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.11.0/codemirror.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.11.0/addon/mode/overlay.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.11.0/addon/hint/show-hint.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.11.0/addon/runmode/runmode.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/codemirror.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/addon/mode/overlay.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/addon/hint/show-hint.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/addon/runmode/runmode.min.js"></script>
 <script>
 var arDates = {!! $calender['dates'] !!};
 var calMonths = {!! $calender['cals'] !!};
@@ -342,7 +342,7 @@ $(document).ready(function(){
         $("#log").get(0),
         {
             mode: "logger",
-            lineWrapping: true,
+            lineWrapping: false,
             extraKeys: {"Ctrl": "autocomplete"}
         });
 	editor.on("keyup", function(cm, event) {
