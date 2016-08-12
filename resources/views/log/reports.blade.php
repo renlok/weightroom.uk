@@ -215,7 +215,7 @@ svg {
         }
         else
         {
-            unit = 'kg';
+            unit = '{{ Auth::user()->user_unit }}';
             return 'Volume';
         }
     }

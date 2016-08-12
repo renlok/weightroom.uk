@@ -10,7 +10,7 @@
 <h3>Import Workouts</h3>
 <p>Mostly working now to upload csv formatted workout logs, needs some more testing before considered complete</p>
 <div class="progress">
-  <div class="progress-bar" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;">
+  <div class="progress-bar" role="progressbar" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100" style="min-width: 90em;">
     90%
   </div>
 </div>
@@ -18,7 +18,7 @@
 <p>Basic workout templates in place, can generate log text for each log</p>
 <p>Creating a workout template is very bare bones right now, needs more work and much more prttying up before being public</p>
 <div class="progress">
-  <div class="progress-bar" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;">
+  <div class="progress-bar" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="min-width: 50em;">
     50%
   </div>
 </div>
@@ -40,7 +40,7 @@
 <h3>Better UX</h3>
 <p>The site has a learning curve, I want that to be as low as possible</p>
 <div class="progress">
-  <div class="progress-bar" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;">
+  <div class="progress-bar" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100" style="min-width: 10em;">
     10%
   </div>
 </div>

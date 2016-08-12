@@ -58,6 +58,8 @@
 <h3>My sinclair/wilks graphs aren't showing anything?</h3>
   <p>First make sure you have set which exercises to use in your <a href="{{ route('userSettings') }}">settings</a> page.</p>
   <p>Secondly make sure you have actually entered some logs using those exercises. We can't know how strong you are if you don't tell us.</p>
+<h3>Is there a list of upcoming features?</h3>
+  <p>Sure checkout our <a href="{{ route('plans') }}">todo page</a></p>
 </div>
 
 @endsection

@@ -405,7 +405,14 @@ class LogsController extends Controller
 		{
 			if ($min_date == 0) $min_date = $value->value_date;
 			$max_date = $value->value_date;
-			$return_values[$value->value_date] = (float)$value->graph_value;
+			if ($view_type == 'volume')
+			{
+				$return_values[$value->value_date] = Format::correct_weight($value->graph_value);
+			}
+			else
+			{
+				$return_values[$value->value_date] = (float)$value->graph_value;
+			}#
 		}
 		$blanks = DB::table('weeks')->whereBetween('week', [$min_date, $max_date])->pluck('empty', 'week');
 		return response()->json(array_merge($blanks, $return_values));
