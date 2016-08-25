@@ -167,6 +167,7 @@ Route::group(['middleware' => 'auth'], function () {
 Route::get('demo', 'MiscController@demo')->name('demo');
 Route::get('plans', 'MiscController@plans')->name('plans');
 Route::get('faq', 'MiscController@faq')->name('faq');
+Route::get('/', 'MiscController@landing')->name('home');
 
 // legal guff
 Route::get('help/privacypolicy', 'MiscController@privacyPolicy')->name('privacyPolicy');
@@ -176,12 +177,12 @@ Route::group(['prefix' => 'comment', 'middleware' => 'auth'], function () {
     Route::post('{log_id}', 'CommentController@store')->name('saveComment');
 });
 
-Route::get('/', function () {
-    return view('landing');
-})->name('home');
-
 // check routes with artisan routes:list
 //http://laravel.com/docs/master/controllers#restful-resource-controllers
 Route::resource('blog', 'BlogController', ['names' => [
     'create' => 'photo.build'
 ]]);
+
+Route::get('test', function () {
+    return view('landing_new');
+})->name('test');
