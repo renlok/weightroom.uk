@@ -3,7 +3,15 @@
 @section('title', 'View Template: ' . $template->template_name)
 
 @section('headerstyle')
-
+<style>
+blockquote.small {
+    margin: 0 !important;
+	padding: 0 5px !important;
+}
+.template-log p {
+	margin-left: 10px;
+}
+</style>
 @endsection
 
 @section('content')
@@ -34,6 +42,7 @@
 		<p>Week: {{ $log->template_log_week }}, Day: {{ $log->template_log_day }}</p>
 	@endif
 	@foreach ($log->template_log_exercises as $log_exercises)
+		<div class="template-log">
 		@if ($log->has_fixed_values)
 			<h4>{{ $log_exercises->texercise_name }}</h4>
 		@else
@@ -84,9 +93,10 @@
 			@endif
 			</p>
 			@if ($log_items->logtempitem_comment != '')
-				<small>{{ $log_items->logtempitem_comment }}</small>
+				<blockquote class="small">{{ $log_items->logtempitem_comment }}</blockquote>
 			@endif
 		@endforeach
+		</div>
 	@endforeach
 	{!! csrf_field() !!}
 </form>
