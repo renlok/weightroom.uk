@@ -7,7 +7,7 @@
 @endsection
 
 @section('content')
-<h2>Admin Land: stats</h2>
+<h2>Admin Land: settings</h2>
 <p><a href="{{ route('adminHome') }}">Admin Home</a></p>
 
 @include('common.flash')

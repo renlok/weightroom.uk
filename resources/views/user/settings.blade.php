@@ -99,7 +99,6 @@
 	  </select>
   </div>
   <div class="form-group">
-    <label for="inputEmail3" class="control-label">&nbsp;</label>
     <h3>For the Sinclair Calculator</h3>
   </div>
   <div class="form-group">
@@ -119,6 +118,21 @@
 			<option value="{{ $exercise->exercise_id }}"@if($exercise->exercise_id == $user->user_cleanjerkid) selected @endif>{{ $exercise->exercise_name }}</option>
 @endforeach
 	  </select>
+  </div>
+  <div class="form-group">
+    <h3>Privacy Settings</h3>
+  </div>
+  <div class="form-group">
+    <div>
+  		<label for="privacy">Make logs private</label>
+  		<p><small><i>Means only people <strong>you follow</strong> will be able to see your logs</i></small></p>
+  	</div>
+	<label class="radio-inline">
+	  <input type="radio" id="privacy" name="privacy" value="0" {{ $user->user_private == '0' ? 'checked' : '' }}> No
+	</label>
+	<label class="radio-inline">
+	  <input type="radio" id="privacy" name="privacy" value="1" {{ $user->user_private == '1' ? 'checked' : '' }}> Yes
+	</label>
   </div>
   <div class="form-group">
       <button type="submit" class="btn btn-default" name="action">Save</button>

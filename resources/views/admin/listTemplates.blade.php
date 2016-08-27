@@ -6,6 +6,7 @@
 <h2>List Templates</h2>
 <p><a href="{{ route('adminHome') }}">Admin Home</a></p>
 
+<p><a href="{{ route('adminAddTemplate') }}">Add Workout Template</a></p>
 @include('common.flash')
 @foreach ($templates as $tempalte)
 <ul>
