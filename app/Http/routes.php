@@ -152,6 +152,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
     Route::post('template/edit/{template_id}', 'AdminController@postEditTemplate');
     Route::get('template/add', 'AdminController@getAddTemplate')->name('adminAddTemplate');
     Route::post('template/add', 'AdminController@postAddTemplate');
+    Route::get('template/delete/{template_id}', 'AdminController@getDeleteTemplate')->name('adminDeleteTemplate');
 
     Route::get('cron/import', 'AdminController@cronImport')->name('cronImport');
     Route::get('stats/force', 'AdminController@forceStats')->name('forceStats');

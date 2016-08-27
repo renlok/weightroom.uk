@@ -57,7 +57,9 @@
 		@endif
 		@foreach ($log_exercises->template_log_items as $log_items)
 			<p>
-			@if ($log_items->is_percent_1rm)
+			@if ($log_items->is_bw)
+				BW
+			@elseif ($log_items->is_percent_1rm)
 				{{ $log_items->percent_1rm }}%
 			@elseif ($log_items->is_current_rm)
 				{{ $log_items->current_rm }}RM

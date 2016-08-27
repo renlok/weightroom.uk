@@ -23,7 +23,16 @@ class TemplateController extends Controller
 
 	public function viewTemplate($template_id)
 	{
-		$template = Template::with('template_logs.template_log_exercises.template_log_items')->where('template_id', $template_id)->firstorfail();
+		$template = Template::with([
+				'template_logs.template_log_exercises' => function($query) {
+					$query->orderBy('template_log_exercises.logtempex_order', 'asc');
+				},
+				'template_logs.template_log_exercises.template_log_items' => function($query) {
+					$query->orderBy('template_log_items.logtempex_order', 'asc')
+						->orderBy('template_log_items.logtempitem_order', 'asc');
+				}
+			])
+			->where('template_id', $template_id)->firstorfail();
 		$template_exercises = [];
 		foreach ($template->template_logs as $log)
 		{
@@ -92,7 +101,11 @@ class TemplateController extends Controller
 			$entered_1rm = ($request->weight[$log_exercises->logtempex_order] != '' && intval($request->weight[$log_exercises->logtempex_order]) > 0) ? true : false;
 			foreach ($log_exercises->template_log_items as $log_items)
 			{
-				if ($log_items->is_weight)
+				if ($log_items->is_bw)
+				{
+					$exercise_values[$log_items->logtempitem_id] = 'BW';
+				}
+				elseif ($log_items->is_weight)
 				{
 					$exercise_values[$log_items->logtempitem_id] = $log_items->logtempitem_weight;
 				}
@@ -104,7 +117,7 @@ class TemplateController extends Controller
 				{
 					$exercise_values[$log_items->logtempitem_id] = $log_items->logtempitem_distance;
 				}
-				if ($log_items->is_percent_1rm)
+				elseif ($log_items->is_percent_1rm)
 				{
 					if (!isset($loaded[1]))
 					{
@@ -142,7 +155,21 @@ class TemplateController extends Controller
 				}
 				if ($log_items->has_plus_weight)
 				{
-					$exercise_values[$log_items->logtempitem_id] += $log_items->logtempitem_plus_weight;
+					if ($log_items->is_bw)
+					{
+						if ($log_items->logtempitem_plus_weight > 0)
+						{
+							$exercise_values[$log_items->logtempitem_id] .= ' + ' . $log_items->logtempitem_plus_weight;
+						}
+						else
+						{
+							$exercise_values[$log_items->logtempitem_id] .= ' - ' . $log_items->logtempitem_plus_weight;
+						}
+					}
+					else
+					{
+						$exercise_values[$log_items->logtempitem_id] += $log_items->logtempitem_plus_weight;
+					}
 				}
 			}
 		}

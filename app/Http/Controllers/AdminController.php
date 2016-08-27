@@ -102,7 +102,16 @@ class AdminController extends Controller
 
 	public function getEditTemplate($template_id)
 	{
-		$template = Template::with('template_logs.template_log_exercises.template_log_items')->where('template_id', $template_id)->firstorfail();
+		$template = Template::with([
+				'template_logs.template_log_exercises' => function($query) {
+					$query->orderBy('template_log_exercises.logtempex_order', 'asc');
+				},
+				'template_logs.template_log_exercises.template_log_items' => function($query) {
+					$query->orderBy('template_log_items.logtempex_order', 'asc')
+						->orderBy('template_log_items.logtempitem_order', 'asc');
+				}
+			])
+			->where('template_id', $template_id)->firstorfail();
 		$json_data = [];
 		foreach ($template->template_logs as $log)
 		{
@@ -143,7 +152,14 @@ class AdminController extends Controller
 					else
 					{
 						$type = 'W';
-						$value = $log_items->logtempitem_weight;
+						if ($log_items->is_bw)
+						{
+							$value = 'BW';
+						}
+						else
+						{
+							$value = $log_items->logtempitem_weight;
+						}
 					}
 					$exercise_data['item_data'][] = [
 						'value' => $value,
@@ -226,7 +242,14 @@ class AdminController extends Controller
 							{
 								case 'W':
 									$item->is_weight = true;
-									$item->logtempitem_weight = $request->input('item_value')[$i][$j][$k];
+									if ($request->input('item_value')[$i][$j][$k] == 'BW')
+									{
+										$item->is_bw = true;
+									}
+									else
+									{
+										$item->logtempitem_weight = $request->input('item_value')[$i][$j][$k];
+									}
 									break;
 								case 'P':
 									$item->is_percent_1rm = true;
@@ -277,5 +300,20 @@ class AdminController extends Controller
 				}
 			}
 		}
+	}
+
+	public function getDeleteTemplate($template_id)
+	{
+		DB::table('templates')->where('template_id', $template_id)->delete();
+		$template_logs = DB::table('template_logs')->where('template_id', $template_id)->lists('template_log_id');
+		DB::table('template_log_items')->whereIn('template_log_id', $template_logs)->delete();
+		DB::table('template_log_exercises')->whereIn('template_log_id', $template_logs)->delete();
+		DB::table('template_logs')->where('template_id', $template_id)->delete();
+		return redirect()
+				->route('adminListTemplates')
+				->with([
+					'flash_message' => 'Template deleted.',
+					'flash_message_type' => 'danger'
+				]);
 	}
 }

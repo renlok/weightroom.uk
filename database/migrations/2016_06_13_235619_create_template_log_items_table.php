@@ -21,6 +21,7 @@ class CreateTemplateLogItemsTable extends Migration
             $table->integer('percent_1rm')->default(0);
             $table->boolean('is_weight')->default(0);
             $table->double('logtempitem_weight', 25, 7);
+            $table->boolean('is_bw')->default('0');
             $table->boolean('is_current_rm')->default(0);
             $table->integer('current_rm')->default(0);
 			$table->boolean('has_plus_weight')->default(0);

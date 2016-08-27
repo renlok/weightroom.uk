@@ -95,11 +95,30 @@
 	{!! csrf_field() !!}
 	<button type="submit" class="btn btn-default">Submit</button>
 </form>
+
+@if ($template_id > 0)
+<button type="button" class="btn btn-danger deleteLink">Delete Template</button>
+<div class="alert alert-danger margintb collapse" role="alert" id="deleteWarning" aria-expanded="false">
+	<button type="button" class="close deleteLink"><span aria-hidden="true">&times;</span></button>
+	<h4>You sure?</h4>
+	<p>You are about to delete this template this cannot be undone</p>
+	<p>
+		<a href="{{ route('adminDeleteTemplate', ['template_id' => $template_id]) }}" class="btn btn-danger">Yeah delete it</a>
+		<button type="button" class="btn btn-default deleteLink">Nah leave it be</button>
+	</p>
+</div>
+@endif
 @endsection
 
 @section('endjs')
 <script src="//cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.min.js"></script>
 <script>
+@if ($template_id > 0)
+$('.deleteLink').click(function() {
+	$('#deleteWarning').collapse('toggle');
+});
+@endif
+
 var default_item = {
 	value: 0,
 	plus: 0,
