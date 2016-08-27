@@ -44,6 +44,8 @@
 			<option value="powerlifting" {{ ($template_type == 'powerlifting') ? 'selected="selected"' : '' }}>powerlifting</option>
 			<option value="running" {{ ($template_type == 'running') ? 'selected="selected"' : '' }}>running</option>
 			<option value="weightlifting" {{ ($template_type == 'weightlifting') ? 'selected="selected"' : '' }}>weightlifting</option>
+			<option value="crossfit" {{ ($template_type == 'crossfit') ? 'selected="selected"' : '' }}>crossfit</option>
+			<option value="bodybuilding" {{ ($template_type == 'bodybuilding') ? 'selected="selected"' : '' }}>bodybuilding</option>
 		</select>
 	</div>
 	<div id="app">
