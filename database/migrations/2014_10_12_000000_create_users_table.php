@@ -39,6 +39,7 @@ class CreateUsersTable extends Migration
             $table->boolean('user_inolincwarmup')->default('0');
             $table->boolean('user_firstlog')->default('1');
             $table->boolean('user_private')->default('0');
+            $table->string('user_invitedcode', 6)->default('');
             $table->boolean('user_beta')->default('0');
             $table->boolean('user_admin')->default('0');
             $table->integer('user_don_level')->default('0');

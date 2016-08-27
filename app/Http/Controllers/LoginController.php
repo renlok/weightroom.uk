@@ -54,7 +54,8 @@ class LoginController extends Controller
 	public function getRegister(Request $request)
 	{
 		$invcode = $request->input('invcode', (($request->old('invcode') != null) ? $request->old('invcode') : ''));
-		return view('user.register', compact('invcode'));
+		$email = $request->input('user_email', (($request->old('user_email') != null) ? $request->old('user_email') : ''));
+		return view('user.register', compact('invcode', 'email'));
 	}
 
 	public function postRegister(RegisterRequest $request)
@@ -78,6 +79,7 @@ class LoginController extends Controller
 			'user_email' => $input['user_email'],
 			'email' => $input['user_email'],
 			'user_password' => bcrypt($input['password']),
+			'user_invitedcode' => $input['invcode']
 		]);
 
 		// Account created remove use from invite code

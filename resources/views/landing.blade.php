@@ -7,108 +7,184 @@
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <meta name="viewport" content="width=device-width" />
 
-    <title>Weightroom.uk - Coming soon</title>
-	<link rel="icon" type="image/x-icon" href="favicon.ico">
+    <title>Weightroom.uk - Workout tracker</title>
+	<!-- <link rel="icon" type="image/x-icon" href="favicon.ico"> -->
 	<meta http-equiv="Content-Language" content="en">
 
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.css" rel="stylesheet" />
-	<link href="css/coming-sssoon.css" rel="stylesheet" />
 
     <!--     Fonts     -->
-    <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
-    <link href='//fonts.googleapis.com/css?family=Grand+Hotel' rel='stylesheet' type='text/css'>
+    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
 
+<style>
+#background-box {
+	background-image: url('http://weightroom.uk/img/background-1.jpg');
+	background-position: 0 -100px;
+	height: 600px;
+}
+#dark-background {
+	background-color:rgba(0,0,0,0.30);
+	height: 100%;
+}
+#logscreen {
+	background-image: url('http://weightroom.uk/img/landing/log.png');
+}
+#volumescreen {
+	background-image: url('http://weightroom.uk/img/landing/volume.png');
+}
+#goalscreen {
+	background-image: url('http://weightroom.uk/img/landing/goal.png');
+}
+#logscreen, #volumescreen, #goalscreen {
+	width: 500px;
+	height: 300px;
+}
+#logscreen, #goalscreen {
+	margin-left: 80px;
+}
+#volumescreen {
+	margin-right: 80px;
+}
+.center-box, .main-box {
+	margin: 0 auto 0 auto;
+	text-align: center;
+}
+#header-text {
+	color: #FFFFFF;
+	padding: 5em;
+}
+#header-text h1, #header-text h2 {
+	color: #FFFFFF;
+	padding: 0;
+}
+#header-text h1 {
+	font-size: 48px;
+}
+#header-text h2 {
+	font-size: 34px;
+	padding: 0.5em;
+}
+.main-box h1 {
+	font-size: 48px;
+	padding: 50px;
+}
+.navbar-default {
+	background-color: #171717;
+    border-color: #000000;
+}
+.navbar-default .navbar-nav li a, .navbar-default .navbar-text, .navbar-default .navbar-brand {
+	color: #c3c3c3;
+	margin-right: 2px;
+}
+.navbar-default .navbar-nav li a:hover, .navbar-default a.navbar-brand:hover {
+	color: #adadad;
+	background-color: #2f2f2f;
+}
+.row {
+	width: 1200px;
+	margin: 30px auto 0 auto;
+}
+.footer {
+	margin-top: 50px;
+}
+.lead {
+	text-align: left;
+}
+</style>
 </head>
 
 <body>
-<nav class="navbar navbar-transparent navbar-fixed-top" role="navigation">
+<div id="background-box">
+	<div id="dark-background">
+		<nav class="navbar navbar-default">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a class="navbar-brand" href="#">weightroom.uk</a> <p class="navbar-text">[beta]</p>
+				</div>
+
+				<div class="collapse navbar-collapse navbar-right">
+					<ul class="nav navbar-nav">
+						<li><a href="{{ route('demo') }}">Demo</a></il>
+						<li><a href="//weightroom.uk/blog/">Blog</a></il>
+						<li><a href="{{ route('login') }}">Login</a></il>
+					</ul>
+				</div>
+			</div>
+		</nav>
+		<div class="container-fluid center-box">
+			<div id="header-text">
+				<h1>Track and analyse your training.</h1>
+				<h2>Become the strongest and fittest you can be.</h2>
+			</div>
+			<form class="form-inline" action="{{ route('register') }}" method="get">
+				<div class="form-group">
+					<label class="sr-only" for="user_email">Email address</label>
+					<input type="email" class="form-control" id="user_email" name="user_email" placeholder="Email">
+				</div>
+				{{ csrf_field() }}
+				<button type="submit" class="btn btn-default">Sign me up</button>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="container-fluid main-box">
+	<h1>Why should I use weightroom.uk?</h1>
+	<div class="row">
+		<div class="col-md-6">
+			<h2>Intuative and simple text based logging</h2>
+			<p class="lead">
+				Quickly enter your workouts on any device with our simple to learn workout markup.
+				Never again will you have to fill out hundreds of boxes, log your workouts as fast as you can type.
+			</p>
+		</div>
+		<div class="col-md-6" id="logscreen">
+			&nbsp;
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6" id="volumescreen">
+			&nbsp;
+		</div>
+		<div class="col-md-6">
+			<h2>Anaylse everything</h2>
+			<p class="lead">
+				Receive the analytics you <em>need</em> to optimise your fitness and reach your goals.
+				We will give you all the information you could need to make sure your training is on track and progressing well.
+				<a href="{{ route('demo') }}">[more examples]</a>
+			</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<h2>Set goals</h2>
+			<p class="lead">
+				The best way to achieve something is to set measurable goals, and we will help you with just that.
+				See you goals neatly arranged so you can see what needs work and where you are excelling.
+			</p>
+		</div>
+		<div class="col-md-6" id="goalscreen">
+			&nbsp;
+		</div>
+	</div>
+</div>
+
+<footer class="footer">
   <div class="container">
-    <!-- Brand and toggle get grouped for better mobile display -->
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-    </div>
+	<p class="text-muted">2015 &#169; weightroom.uk.<span class="hidden-xs"> Use of this site constitutes acceptance of the site's <a href="{{ route('privacyPolicy') }}" target="_blank">Privacy Policy and Terms of Use</a>.</span></p>
+  </div>
+</footer>
 
-    <!-- Collect the nav links, forms, and other content for toggling -->
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav navbar-right">
-			<li>
-				<a href="{{ route('demo') }}">
-					Demo
-				</a>
-			</li>
-            <li>
-                <a href="{{ route('login') }}">
-                    Login
-                </a>
-            </li>
-       </ul>
+<script src="http://code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
+<script src="http://getbootstrap.com/dist/js/bootstrap.min.js" charset="utf-8"></script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-    </div><!-- /.navbar-collapse -->
-  </div><!-- /.container -->
-</nav>
-<div class="main" style="background-image: url('{{ asset('img/background-1.jpg') }}')">
+  ga('create', 'UA-1798088-8', 'auto');
+  ga('send', 'pageview');
 
-<!--    Change the image source '/images/default.jpg' with your favourite image.     -->
-
-    <div class="cover black" data-color="black"></div>
-
-<!--   You can change the black color for the filter with those colors: blue, green, red, orange       -->
-
-    <div class="container">
-        <h1 class="logo cursive">
-            Weight Room
-						<div class="small">Track dem gains</div>
-        </h1>
-
-<!--  H1 can have 2 designs: "logo" and "logo cursive"           -->
-
-        <div class="content">
-            <h4 class="motto">
-							The greatest weightlifting and powerlifting workout tracker on the web
-						</h4>
-            <div class="subscribe">
-                <h5 class="info-text">
-                    Join the waiting list for the beta. We promise to keep you posted.
-                </h5>
-                <div class="row">
-                    <div class="col-md-4 col-md-offset-4 col-sm6-6 col-sm-offset-3 ">
-												<form action="//weightroom.us11.list-manage.com/subscribe/post?u=f52d2c2b457fcf8926bf43659&amp;id=65b4a9727f" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="form-inline" role="form" target="_blank" novalidate>
-                          <div class="form-group">
-                            <label class="sr-only" for="exampleInputEmail2">Email address</label>
-                            <input type="email" class="form-control transparent" name="EMAIL" id="mce-EMAIL" placeholder="Your email here...">
-                          </div>
-                          <button type="submit" class="btn btn-danger btn-fill" name="subscribe">Notify Me</button>
-													<div style="position: absolute; left: -5000px;"><input type="text" name="b_f52d2c2b457fcf8926bf43659_65b4a9727f" tabindex="-1" value=""></div>
-                        </form>
-												<script type='text/javascript' src='//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js'></script><script type='text/javascript'>(function($) {window.fnames = new Array(); window.ftypes = new Array();fnames[0]='EMAIL';ftypes[0]='email';fnames[1]='FNAME';ftypes[1]='text';fnames[2]='LNAME';ftypes[2]='text';}(jQuery));var $mcj = jQuery.noConflict(true);</script>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="footer">
-      <div class="container">
-             Theme by <a href="//www.creative-tim.com">Creative Tim</a>.
-      </div>
-    </div>
- </div>
-
+</script>
 </body>
-	<script src="//code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
-	<script src="//getbootstrap.com/dist/js/bootstrap.min.js" charset="utf-8"></script>
-	<script>
-	  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-	  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-	  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-	  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-	  ga('create', 'UA-1798088-8', 'auto');
-	  ga('send', 'pageview');
-
-	</script>
 </html>
