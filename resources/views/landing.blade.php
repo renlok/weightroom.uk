@@ -58,10 +58,10 @@
 	padding: 0;
 }
 #header-text h1 {
-	font-size: 48px;
+	font-size: 4vw;
 }
 #header-text h2 {
-	font-size: 34px;
+	font-size: 3vw;
 	padding: 0.5em;
 }
 .main-box h1 {
@@ -81,7 +81,7 @@
 	background-color: #2f2f2f;
 }
 .row {
-	width: 1200px;
+	max-width: 1200px;
 	margin: 30px auto 0 auto;
 }
 .footer {
