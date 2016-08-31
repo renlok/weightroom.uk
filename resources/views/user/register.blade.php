@@ -30,12 +30,16 @@
       <input type="password" class="form-control" name="password_confirmation" id="password_confirmation" placeholder="Password">
     </div>
   </div>
+@if (Admin::InvitesEnabled())
   <div class="form-group">
     <label for="invcode" class="col-sm-2 control-label">Invite Code</label>
     <div class="col-sm-10">
       <input type="text" class="form-control" id="invcode" name="invcode" placeholder="Invite Code" value="{{ $invcode }}">
     </div>
   </div>
+@else
+    <input type="hidden"name="invcode" value="{{ $invcode }}">
+@endif
   <div class="form-group">
     <div class="col-sm-offset-2 col-sm-10">
 	  {{ csrf_field() }}

@@ -9,6 +9,7 @@ use App\Http\Requests\RegisterRequest;
 use App\Http\Controllers\Controller;
 use Auth;
 use Validator;
+use App\Admin;
 use App\User;
 use App\Invite_code;
 use Illuminate\Support\Collection;
@@ -62,16 +63,22 @@ class LoginController extends Controller
 	{
 		$input = $request->all();
 
-		// is this a valid invite code?
-		$invite_code = Invite_code::isvalid($input['invcode'])->first();
-		if ($invite_code == null)
+		if (Admin::InvitesEnabled())
 		{
-			return redirect('register')
-				->withInput()
-				->with([
-					'flash_message' => 'Invalid invite code.',
-					'flash_message_type' => 'danger'
-				]);
+			// is this a valid invite code?
+			$invite_code = Invite_code::isvalid($input['invcode'])->first();
+			if ($invite_code == null)
+			{
+				return redirect('register')
+					->withInput()
+					->with([
+						'flash_message' => 'Invalid invite code.',
+						'flash_message_type' => 'danger'
+					]);
+			}
+
+			// Account created remove use from invite code
+			Invite_code::where('code_id', $invite_code->code_id)->decrement('code_uses');
 		}
 
 		User::create([
@@ -81,9 +88,6 @@ class LoginController extends Controller
 			'user_password' => bcrypt($input['password']),
 			'user_invitedcode' => $input['invcode']
 		]);
-
-		// Account created remove use from invite code
-		Invite_code::where('code_id', $invite_code->code_id)->decrement('code_uses');
 
 		if (Auth::attempt(['user_name' => $input['user_name'], 'password' => $input['password']])) {
 			// Authentication passed...

@@ -4,6 +4,11 @@
 
 @section('content')
 <h2>Invite Codes</h2>
+@if (!Admin::InvitesEnabled())
+<div class="alert alert-danger" role="alert">
+    Registration is currently open and invites are not needed to register
+</div>
+@endif
 <p>Invite your lifting buddies to WeightRoom.uk and admire each others sweet lifts</p>
 <table class="table">
   <tbody>

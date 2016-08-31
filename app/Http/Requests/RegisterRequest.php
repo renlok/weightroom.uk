@@ -1,6 +1,7 @@
 <?php namespace App\Http\Requests;
 
 use App\Http\Requests\Request;
+use App\Admin;
 
 class RegisterRequest extends Request
 {
@@ -15,7 +16,7 @@ class RegisterRequest extends Request
 			'user_name' => 'required|unique:users|max:255',
 			'user_email' => 'required|unique:users|max:255',
 			'password' => 'required|confirmed|min:6',
-			'invcode' => 'required|isvalid:invite_codes,code,code_uses,code_expires',
+			'invcode' => (Admin::InvitesEnabled()) ? 'required|isvalid:invite_codes,code,code_uses,code_expires' : '',
         ];
     }
 

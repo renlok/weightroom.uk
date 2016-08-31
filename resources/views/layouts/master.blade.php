@@ -52,7 +52,9 @@
 		  <li class="dropdown {{ (Request::is('user/settings') || Request::is('faq')) ? 'active' : '' }}">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> <span class="caret"></span></a>
 				<ul class="dropdown-menu">
+        @if (Admin::InvitesEnabled())
 					<li role="presentation"><a href="{{ route('invites') }}">{{ trans('master.inviteCodes') }}</a></li>
+        @endif
 					<li role="presentation"><a href="//reddit.com/r/weightroomuk" target="_blank">{{ trans('master.bugs') }}</a></li>
 					<li role="presentation"><a href="//weightroom.uk/blog/" target="_blank">{{ trans('master.blog') }}</a></li>
                     <li role="presentation"><a href="{{ route('faq') }}">{{ trans('master.faq') }}</a></li>
