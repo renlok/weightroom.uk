@@ -104,6 +104,7 @@
 
 				<div class="collapse navbar-collapse navbar-right">
 					<ul class="nav navbar-nav">
+						<li><a href="{{ route('tools') }}">Tools</a></il>
 						<li><a href="{{ route('demo') }}">Demo</a></il>
 						<li><a href="//weightroom.uk/blog/">Blog</a></il>
 						<li><a href="{{ route('login') }}">Login</a></il>

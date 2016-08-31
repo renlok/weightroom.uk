@@ -50,7 +50,7 @@
 	<p>Muscle Snatch: <span id="wlms"></span></p>
 	<p>Sots Press: <span id="wlsp"></span></p>
 </div>
-<small class="text-muted">Ratios lovingly stolen from the <a href="http://www.qwa.org/Resources/Calculators.aspx">Queensland weightlifting association</a></small>
+<small class="text-muted">Ratios lovingly borrowed from the <a href="http://www.qwa.org/Resources/Calculators.aspx">Queensland weightlifting association</a></small>
 @endsection
 
 @section('endjs')

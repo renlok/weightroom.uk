@@ -39,7 +39,7 @@
 	<p>With a lift of <span id="weightspan"></span> x <span id="repspan"></span> @<span id="rpespan"></span></p>
 	<p>Potential Max: <span id="max"></span></p>
 </div>
-<small class="text-muted">Ratios lovingly stolen from Mike Tuchscherer’s <a href="http://www.reactivetrainingsystems.com/">Reactive Training Systems</a></small>
+<small class="text-muted">Ratios lovingly borrowed from Mike Tuchscherer’s <a href="http://www.reactivetrainingsystems.com/">Reactive Training Systems</a></small>
 @endsection
 
 @section('endjs')
