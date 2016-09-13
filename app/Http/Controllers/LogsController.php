@@ -98,7 +98,20 @@ class LogsController extends Controller
 		return view('log.view', compact('date', 'carbon_date', 'user', 'log', 'comments', 'is_following', 'commenting', 'calender', 'log_visible'));
 	}
 
-	public function getEdit($date)
+	public function getTrack()
+	{
+		$today = Carbon::now()->toDateString();
+		if (Log::isValid($today, Auth::user()->user_id))
+		{
+			return LogsController::getEdit($today);
+		}
+		else
+		{
+			return LogsController::getNew($today);
+		}
+	}
+
+	public static function getEdit($date)
 	{
 		$user = Auth::user();
 		$log = Log::select('log_text', 'log_weight', 'log_update_text')
@@ -137,7 +150,7 @@ class LogsController extends Controller
 				]);
 	}
 
-	public function getNew($date)
+	public static function getNew($date)
 	{
 		$user = Auth::user();
 		$log = [

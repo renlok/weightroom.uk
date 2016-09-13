@@ -16,7 +16,7 @@ class RedirectLogifExists
      */
     public function handle($request, Closure $next)
     {
-        if (Log::isvalid($request->route()->parameters()['date'], $request->user()->user_id))
+        if (Log::isValid($request->route()->parameters()['date'], $request->user()->user_id))
         {
             return redirect()
                     ->route('editLog', ['date' => $request->route()->parameters()['date']]);

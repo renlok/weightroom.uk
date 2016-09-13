@@ -53,7 +53,7 @@ class Log extends Model
         return $query->where('log_date', $date)->where('user_id', $user);
     }
 
-    public static function isvalid($date, $user)
+    public static function isValid($date, $user)
     {
         return (Log::where('log_date', $date)->where('user_id', $user)->count() > 0);
     }

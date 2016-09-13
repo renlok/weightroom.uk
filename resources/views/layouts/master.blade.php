@@ -36,7 +36,7 @@
 		  <li role="presentation" class="{{ Request::is('demo') ? 'active' : '' }}"><a href="{{ route('demo') }}">{{ trans('master.demo') }}</a></li>
 	  @else
 		  <li role="presentation" class="{{ Request::is('dashboard*') ? 'active' : '' }}"><a href="{{ route('dashboard') }}" class="hidden-xs">{{ trans('master.home') }}</a><a href="{{ route('dashboard') }}" class="visible-xs"><span class="glyphicon glyphicon-home" aria-hidden="true"></span></a></li>
-		  <li role="presentation" class="{{ (Request::is('log/*/new') || Request::is('log/*/edit')) ? 'active' : '' }}"><a href="{{ route('newLog', ['date' => Carbon\Carbon::now()->format('Y-m-d')]) }}">{{ trans('master.track') }}</a></li>
+		  <li role="presentation" class="{{ (Request::is('log/*/new') || Request::is('log/*/edit') || Request::is('track')) ? 'active' : '' }}"><a href="{{ route('newLog', ['date' => Carbon\Carbon::now()->format('Y-m-d')]) }}">{{ trans('master.track') }}</a></li>
 			<li class="dropdown visible-xs">
 				<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-menu-hamburger" aria-hidden="true"></span> <span class="caret"></span></a>
 				<ul class="dropdown-menu">
