@@ -25,7 +25,18 @@ class ToolsController extends Controller
 	{
 		$from_date = ($range > 0) ? Carbon::now()->subMonths($range)->toDateString() : 0;
 		$graphs = [];
-		$graphs['Bodyweight'] = Log::getbodyweight(Auth::user()->user_id, $from_date)->get()->unique('log_weight')->toArray();
+		$bodyweight_data = Log::getbodyweight(Auth::user()->user_id, $from_date)->get()->toArray();
+		// clear duplicates
+		$last_weight = 0;
+		$graphs['Bodyweight'] = [];
+		foreach ($bodyweight_data as $bodyweight)
+		{
+			if ($last_weight != $bodyweight['log_weight'])
+			{
+				$graphs['Bodyweight'][] = $bodyweight;
+				$last_weight = $bodyweight['log_weight'];
+			}
+		}
 		return view('tools.bodyweight', compact('range', 'graphs'));
 	}
 
