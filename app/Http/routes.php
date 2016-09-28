@@ -46,7 +46,9 @@ Route::group(['prefix' => 'user'], function () {
 });
 
 // Log controller
-Route::get('track', 'LogsController@getTrack')->name('track');
+Route::group(['middleware' => 'auth'], function () {
+  Route::get('track', 'LogsController@getTrack')->name('track');
+});
 Route::group(['prefix' => 'log'], function () {
     // ajax
     Route::get('{date}/cal/{user_name}', 'LogsController@getAjaxcal')->name('ajaxCal');
