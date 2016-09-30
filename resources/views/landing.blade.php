@@ -26,18 +26,9 @@
 	background-color:rgba(0,0,0,0.30);
 	height: 100%;
 }
-#logscreen {
-	background-image: url('http://weightroom.uk/img/landing/log.png');
-}
-#volumescreen {
-	background-image: url('http://weightroom.uk/img/landing/volume.png');
-}
-#goalscreen {
-	background-image: url('http://weightroom.uk/img/landing/goal.png');
-}
 #logscreen, #volumescreen, #goalscreen {
-	width: 500px;
-	height: 300px;
+	max-width: 500px;
+	max-height: 300px;
 }
 #logscreen, #goalscreen {
 	margin-left: 80px;
@@ -99,10 +90,16 @@
 		<nav class="navbar navbar-default">
 			<div class="container-fluid">
 				<div class="navbar-header">
-					<a class="navbar-brand" href="#">weightroom.uk</a> <p class="navbar-text">[beta]</p>
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-content" aria-expanded="false">
+		        <span class="sr-only">Toggle navigation</span>
+		        <span class="icon-bar"></span>
+		        <span class="icon-bar"></span>
+		        <span class="icon-bar"></span>
+		      </button>
+					<a class="navbar-brand" href="//weightroom.uk/">weightroom.uk</a> <p class="navbar-text">[beta]</p>
 				</div>
 
-				<div class="collapse navbar-collapse navbar-right">
+				<div class="collapse navbar-collapse navbar-right" id="navbar-content">
 					<ul class="nav navbar-nav">
 						<li><a href="{{ route('tools') }}">Tools</a></il>
 						<li><a href="{{ route('demo') }}">Demo</a></il>
@@ -139,20 +136,20 @@
 			</p>
 		</div>
 		<div class="col-md-6" id="logscreen">
-			&nbsp;
+			<img src="http://weightroom.uk/img/landing/log.png" class="img-responsive" alt="Log workout screen">
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-md-6" id="volumescreen">
-			&nbsp;
-		</div>
-		<div class="col-md-6">
+		<div class="col-md-6 pull-right">
 			<h2>Anaylse everything</h2>
 			<p class="lead">
 				Receive the analytics you <em>need</em> to optimise your fitness and reach your goals.
 				We will give you all the information you could need to make sure your training is on track and progressing well.
 				<a href="{{ route('demo') }}">[more examples]</a>
 			</p>
+		</div>
+		<div class="col-md-6 pull-left" id="volumescreen">
+			<img src="http://weightroom.uk/img/landing/volume.png" class="img-responsive" alt="View workout volume">
 		</div>
 	</div>
 	<div class="row">
@@ -164,7 +161,7 @@
 			</p>
 		</div>
 		<div class="col-md-6" id="goalscreen">
-			&nbsp;
+			<img src="http://weightroom.uk/img/landing/goal.png" class="img-responsive" alt="Create goals">
 		</div>
 	</div>
 </div>
