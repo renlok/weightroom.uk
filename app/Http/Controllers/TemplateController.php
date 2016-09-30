@@ -17,8 +17,8 @@ class TemplateController extends Controller
 {
 	public function home()
 	{
-		$templates = Template::all();
-		return view('templates.index', compact('templates'));
+		$template_groups = Template::all()->groupBy('template_type');
+		return view('templates.index', compact('template_groups'));
 	}
 
 	public function viewTemplate($template_id)
@@ -46,11 +46,6 @@ class TemplateController extends Controller
 		}
 		$exercises = Exercise::listexercises(true)->get();
 		return view('templates.view', compact('template', 'template_exercises', 'exercises'));
-	}
-
-	public function getBuildTemplate()
-	{
-
 	}
 
 	public function postBuildTemplate(Request $request)
