@@ -243,7 +243,7 @@ class Parser
 			}
 		}
 
-		// clean up the given data
+		// clean up the multiline data if needed
 		if ($multiline_max > 0)
 		{
 			// temporarly remove the comment
@@ -255,21 +255,42 @@ class Parser
 			// the first line should always be complete so find what was given
 			$blocks = array_keys($output_data[0]);
 			$last_values = array();
+			$last_row = 0;
 			for ($i = 0; $i <= $multiline_max; $i++)
 			{
 				// check each block
-				// TODO: merge simliar rows the are next to each other
 				foreach ($blocks as $block)
 				{
 					if (!isset($output_data[$i][$block]))
 					{
-						$output_data[$i][$block] = $last_values[$block];
+						$output_data[$i][$block] = trim($last_values[$block]);
+					}
+					else
+					{
+						$output_data[$i][$block] = trim($output_data[$i][$block]);
 					}
 				}
-				$last_values = $output_data[$i];
+				// merge identical rows the are next to each other
+				if (count(array_diff_assoc($output_data[$i], $last_values)) == 0)
+				{
+					if (!isset($output_data[$last_row]['S']))
+					{
+						$output_data[$last_row]['S'] = 2;
+					}
+					else
+					{
+						$output_data[$last_row]['S'] += 1;
+					}
+					unset($output_data[$i]);
+				}
+				else
+				{
+					$last_values = $output_data[$i];
+					$last_row = $i;
+				}
 			}
 			// re add the comment to the end
-			$output_data[$multiline_max]['C'] = (isset($comment)) ? $comment : '';
+			$output_data[$last_row]['C'] = (isset($comment)) ? $comment : '';
 		}
 
 		// check isn't just a comment
