@@ -114,7 +114,7 @@ class Format
 
 	public static function correct_weight($weight, $unit_used = 'kg', $unit_want = 0, $round = 20) // $unit_used = kg/lb $unit_want = kg/lb
 	{
-		$unit_want = ($unit_want == 0) ? Auth::user()->user_unit : $unit_want;
+		$unit_want = (is_int($unit_want) && $unit_want == 0) ? Auth::user()->user_unit : $unit_want;
 		if ($unit_used == 'kg' && $unit_want == 'lb')
 		{
 			$value = ($weight * 2.20462); // convert to lb

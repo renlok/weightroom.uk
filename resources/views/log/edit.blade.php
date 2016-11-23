@@ -90,7 +90,7 @@ you can also have the same exercise multiple times
 </div>
 <label for="weight">Bodyweight:</label>
 <div class="input-group">
-	<input type="text" class="form-control" placeholder="User's Weight" aria-describedby="basic-addon2" name="weight" value="{{ $log['log_weight'] }}">
+	<input type="text" class="form-control" placeholder="User's Weight" aria-describedby="basic-addon2" name="weight" value="{{ Format::correct_weight($log['log_weight']) }}">
 	<span class="input-group-addon" id="basic-addon2">{{ $user->user_unit }}</span>
 </div>
 <div class="input-group margintb">
