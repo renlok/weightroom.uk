@@ -13,16 +13,16 @@
 <form>
   <div class="form-group">
     <label for="rpe">RPE:</label>
-	<select class="form-control" id="rpe">
-	  <option value="10">10</option>
-	  <option value="9.5">9.5</option>
-	  <option value="9">9</option>
-	  <option value="8.5">8.5</option>
-	  <option value="8">8</option>
-	  <option value="7.5">7.5</option>
-	  <option value="7">7</option>
-	  <option value="6.">6.5</option>#
-	</select>
+  	<select class="form-control" id="rpe">
+  	  <option value="10">10</option>
+  	  <option value="9.5">9.5</option>
+  	  <option value="9">9</option>
+  	  <option value="8.5">8.5</option>
+  	  <option value="8">8</option>
+  	  <option value="7.5">7.5</option>
+  	  <option value="7">7</option>
+  	  <option value="6.5">6.5</option>
+  	</select>
   </div>
   <div class="form-group">
     <label for="weight">Weight:</label>
