@@ -86,13 +86,13 @@ blockquote.small {
 			@elseif ($goal['exersice']->is_distance)
 				{{ Format::format_distance($goal['goal_value_one'], true) }}
 			@else
-				<strong>{{ Format::correct_weight($goal['goal_value_one']) }}</strong>{{ Auth::user()->user_unit }}
+				<strong>{{ Format::correct_weight($goal['goal_value_one']) }}</strong>{{ (Auth::check()) ? Auth::user()->user_unit : 'kg' }}
 			@endif
 			for {{$goal['goal_value_two']}}
 		@elseif ($goal['goal_type'] == 'rm')
-			getting an estimate 1rm of <strong>Format::correct_weight({{$goal['goal_value_one']}})</strong>{{ Auth::user()->user_unit }}
+			getting an estimate 1rm of <strong>Format::correct_weight({{$goal['goal_value_one']}})</strong>{{ (Auth::check()) ? Auth::user()->user_unit : 'kg' }}
 		@elseif ($goal['goal_type'] == 'tv')
-			hitting a total volume of <strong>Format::correct_weight({{$goal['goal_value_one']}})</strong>{{ Auth::user()->user_unit }}
+			hitting a total volume of <strong>Format::correct_weight({{$goal['goal_value_one']}})</strong>{{ (Auth::check()) ? Auth::user()->user_unit : 'kg' }}
 		@else
 			hitting <strong>{{$goal['goal_value_one']}}</strong> total reps
 		@endif
@@ -135,7 +135,7 @@ blockquote.small {
 			<div class="user-info">
 				<h4>{{ $user->user_name }} @include('common.userBadges')</h4>
 				<p><small>Member since: {{ $user->created_at->toDateString() }}</small></p>
-@if ($user->user_id != Auth::user()->user_id)
+@if (Auth::check() && $user->user_id != Auth::user()->user_id)
 	@if ($is_following)
 				<p class="btn btn-default"><a href="{{ route('unfollowUser', ['user' => $user->user_name, 'date' => $date]) }}">Unfollow <img src="{{ asset('img/user_delete.png') }}"></a></p>
 	@else
@@ -152,7 +152,7 @@ blockquote.small {
     					<a class="btn btn-default" role="button" href="{{ route('viewLog', ['date' => $carbon_date->subDay()->toDateString(),'user_name' => $user->user_name]) }}"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></a>
     					<a class="btn btn-default" role="button" href="{{ route('viewLog', ['date' => $carbon_date->addDay(2)->toDateString(),'user' => $user->user_name]) }}"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
     				</span>
-	@if ($user->user_id == Auth::user()->user_id)
+	@if (Auth::check() && $user->user_id == Auth::user()->user_id)
 		@if ($log != null)
                     <a href="{{ route('editLog', ['date' => $date]) }}" class="btn btn-default">Edit Log</a>
                 	<button type="button" class="btn btn-danger deleteLink">Delete Log</button>
@@ -167,7 +167,7 @@ blockquote.small {
 	</div>
 </div>
 
-@if ($user->user_id == Auth::user()->user_id && $log != null)
+@if (Auth::check() && $user->user_id == Auth::user()->user_id && $log != null)
 <div class="alert alert-danger margintb collapse" role="alert" id="deleteWarning" aria-expanded="false">
 	<button type="button" class="close deleteLink"><span aria-hidden="true">&times;</span></button>
 	<h4>You sure?</h4>
@@ -182,8 +182,8 @@ blockquote.small {
 	<h2>Workout summary</h2>
 	@if (($log->log_total_volume + ($log->log_failed_volume * $user->user_volumeincfails) - ($log->log_warmup_volume * $user->user_volumewarmup)) > 0)
 		<p class="logrow">
-			Volume: <span class="heavy">{{ Format::correct_weight($log->log_total_volume + ($log->log_failed_volume * $user->user_volumeincfails) - ($log->log_warmup_volume * $user->user_volumewarmup)) }}</span>{{ Auth::user()->user_unit }} - Reps: <span class="heavy">{{ $log->log_total_reps }}</span> - Sets: <span class="heavy">{{ $log->log_total_reps }}</span>
-		@if (Auth::user()->user_showintensity != 'h')
+			Volume: <span class="heavy">{{ Format::correct_weight($log->log_total_volume + ($log->log_failed_volume * $user->user_volumeincfails) - ($log->log_warmup_volume * $user->user_volumewarmup)) }}</span>{{ (Auth::check()) ? Auth::user()->user_unit : 'kg' }} - Reps: <span class="heavy">{{ $log->log_total_reps }}</span> - Sets: <span class="heavy">{{ $log->log_total_reps }}</span>
+		@if (Auth::check() && Auth::user()->user_showintensity != 'h')
 			- Avg. Intensity: <span class="heavy">{{ $log->average_intensity }}</span>
 		@endif
 		</p>
@@ -199,7 +199,7 @@ blockquote.small {
 		</p>
 	@endif
 	@if ($log->log_weight > 0)
-		<p class="logrow marginl"><small>Bodyweight: <span class="heavy">{{ Format::correct_weight($log->log_weight) }}</span>{{ Auth::user()->user_unit }}</small></p>
+		<p class="logrow marginl"><small>Bodyweight: <span class="heavy">{{ Format::correct_weight($log->log_weight) }}</span>{{ (Auth::check()) ? Auth::user()->user_unit : 'kg' }}</small></p>
 	@endif
 	@if ($log->log_comment != '')
 		<blockquote>

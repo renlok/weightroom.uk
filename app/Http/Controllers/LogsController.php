@@ -41,14 +41,21 @@ class LogsController extends Controller
 	{
 		if ($user_name == '')
 		{
-			$user_name = Auth::user()->user_name;
+			if (Auth::check())
+			{
+				$user_name = Auth::user()->user_name;
+			}
+			else
+			{
+				return redirect('login');
+			}
 		}
 		$user = User::with('logs.log_exercises.log_items', 'logs.log_exercises.exercise')
 				->where('user_name', $user_name)->firstOrFail();
 		$log = $user->logs()->where('log_date', $date)->first();
 		if ($log != null)
 		{
-			if (Auth::user()->user_showintensity != 'h')
+			if (Auth::check() && Auth::user()->user_showintensity != 'h')
 			{
 				$log->average_intensity = 0;
 				$count = 0;
@@ -82,7 +89,7 @@ class LogsController extends Controller
 		{
 			$comments = null;
 		}
-		$is_following = (DB::table('user_follows')->where('user_id', Auth::user()->user_id)->where('follow_user_id', $user->user_id)->first() == null) ? false : true;
+		$is_following = (Auth::check() && DB::table('user_follows')->where('user_id', Auth::user()->user_id)->where('follow_user_id', $user->user_id)->first() == null) ? false : true;
 		if (!isset($commenting))
 		{
 			$commenting = false;
