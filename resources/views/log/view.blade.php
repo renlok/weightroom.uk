@@ -182,7 +182,7 @@ blockquote.small {
 	<h2>Workout summary</h2>
 	@if (($log->log_total_volume + ($log->log_failed_volume * $user->user_volumeincfails) - ($log->log_warmup_volume * $user->user_volumewarmup)) > 0)
 		<p class="logrow">
-			Volume: <span class="heavy">{{ Format::correct_weight($log->log_total_volume + ($log->log_failed_volume * $user->user_volumeincfails) - ($log->log_warmup_volume * $user->user_volumewarmup)) }}</span>{{ (Auth::check()) ? Auth::user()->user_unit : 'kg' }} - Reps: <span class="heavy">{{ $log->log_total_reps }}</span> - Sets: <span class="heavy">{{ $log->log_total_reps }}</span>
+			Volume: <span class="heavy">{{ Format::correct_weight($log->log_total_volume + ($log->log_failed_volume * $user->user_volumeincfails) - ($log->log_warmup_volume * $user->user_volumewarmup)) }}</span>{{ (Auth::check()) ? Auth::user()->user_unit : 'kg' }} - Reps: <span class="heavy">{{ $log->log_total_reps }}</span> - Sets: <span class="heavy">{{ $log->log_total_sets }}</span>
 		@if (Auth::check() && Auth::user()->user_showintensity != 'h')
 			- Avg. Intensity: <span class="heavy">{{ $log->average_intensity }}</span>
 		@endif
