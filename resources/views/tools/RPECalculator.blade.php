@@ -36,11 +36,27 @@
   <button type="button" class="btn btn-default" id="calculate">Calculate</button>
 </form>
 <div id="rpemax" style="display:none;">
-    <h2>Estimated Max Lifts:</h2>
-	<p>With a lift of <span id="weightspan"></span> x <span id="repspan"></span> @<span id="rpespan"></span></p>
-	<p>Potential Max: <span id="max"></span></p>
+  <h2>Estimated Max Lifts:</h2>
+  <p>With a lift of <span id="weightspan"></span> x <span id="repspan"></span> @<span id="rpespan"></span></p>
+  <p>Potential Max: <span id="max"></span></p>
 </div>
 <small class="text-muted">Ratios lovingly borrowed from Mike Tuchscherer’s <a href="http://www.reactivetrainingsystems.com/">Reactive Training Systems</a></small>
+<h3>What is Rate of Perceived Exertion (RPE)?</h3>
+<div class="container-fluid">
+  <p>RPE is a method to give a subjective measurement of how difficult any given set was. This is often useful as your bodies ability to perform is not consistent and RPE can give a good indicator of how you are performing on a given day.</p>
+  <p>The main draw back with this method is the fact that it is subjective, which means there is room for error.</p>
+  <p>To help you be more consistent with your RPE values here is a basic description of what each number means:</p>
+  <ul class="list-unstyled">
+    <li><b>10</b>: Maximal effort</li>
+    <li><b>9.5</b>: Maybe could of done one more set</li>
+    <li><b>9</b>: Definitely could do one more set</li>
+    <li><b>8.5</b>: Maybe could do two more sets</li>
+    <li><b>8</b>: Definitely could do two more sets</li>
+    <li><b>7.5</b>: Maybe could of done three more sets</li>
+    <li><b>7</b>: Fairly easy with quick speed</li>
+    <li><b>6.5</b>: Borderline warmup set</li>
+  </ul>
+</div>
 @endsection
 
 @section('endjs')
