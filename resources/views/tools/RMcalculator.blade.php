@@ -1,6 +1,7 @@
 @extends('layouts.master')
 
 @section('title', 'Rep Max Calculator')
+@section('description', 'Max rep calculator. Calculate your potential max lifts based off past lifts.')
 
 @section('headerstyle')
 <style>

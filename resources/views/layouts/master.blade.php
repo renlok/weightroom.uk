@@ -8,8 +8,8 @@
   	<base href="//weightroom.uk/">
   	<link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
   	<meta http-equiv="Content-Language" content="en">
-  	<meta name="description" content="The ultimate weightlifting and powerlifting workout tracker. Track each of your workouts with beautiful logging and analysis tools">
-  	<meta name="keywords" content="workout tracker, workout journal, training journal, weight training, strength training, powerlifting, weightlifting, strongman">
+  	<meta name="description" content="@yield('description', 'The ultimate weightlifting and powerlifting workout tracker. Track each of your workouts with beautiful logging and analysis tools')">
+  	<meta name="keywords" content="@yield('keywords', 'workout tracker, workout journal, training journal, weight training, strength training, powerlifting, weightlifting, strongman')">
 
     <!-- Bootstrap -->
     <link href='//fonts.googleapis.com/css?family=Open+Sans&subset=latin,latin-ext' rel='stylesheet' type='text/css'>

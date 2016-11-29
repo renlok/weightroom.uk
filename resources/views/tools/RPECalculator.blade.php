@@ -1,6 +1,7 @@
 @extends('layouts.master')
 
 @section('title', 'RPE Max rep estimator')
+@section('description', 'Rated Perceived Exertion Max rep estimator. Calculate your potential max lifts based off RPE values.')
 
 @section('headerstyle')
 <style>

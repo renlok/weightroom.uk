@@ -1,6 +1,7 @@
 @extends('layouts.master')
 
 @section('title', 'Weightlifting Ratio Calculator')
+@section('description', 'Weightlifting ratio calculator. Get an idea of what your ideal number could be based off other lifts to see where your weaknesses lie.')
 
 @section('headerstyle')
 <style>
