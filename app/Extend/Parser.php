@@ -262,15 +262,24 @@ class Parser
 				{
 					if (!isset($output_data[$i][$block]))
 					{
-						$output_data[$i][$block] = trim($last_values[$block]);
+						$output_data[$i][$block] = $last_values[$block];
 					}
 					else
 					{
+						$output_data[$i][$block] = $output_data[$i][$block];
+					}
+					if (!is_array($output_data[$i][$block]))
+					{
 						$output_data[$i][$block] = trim($output_data[$i][$block]);
+					}
+					else
+					{
+						$output_data[$i][$block][0] = trim($output_data[$i][$block][0]);
+						$output_data[$i][$block][1] = trim($output_data[$i][$block][1]);
 					}
 				}
 				// merge identical rows the are next to each other
-				if (count(array_diff_assoc($output_data[$i], $last_values)) == 0)
+				if (count(array_diff_assoc_recursive($output_data[$i], $last_values)) == 0)
 				{
 					if (!isset($output_data[$last_row]['S']))
 					{
@@ -1446,4 +1455,31 @@ class Parser
 	{
 		echo $error;
 	}
+}
+
+// useful functions
+function array_diff_assoc_recursive($array1, $array2)
+{
+	$difference = array();
+	foreach($array1 as $key => $value)
+	{
+		if(is_array($value))
+		{
+			if(!isset($array2[$key]) || !is_array($array2[$key]))
+			{
+				$difference[$key] = $value;
+			}
+			else
+			{
+				$new_diff = array_diff_assoc_recursive($value, $array2[$key]);
+				if(!empty($new_diff))
+					$difference[$key] = $new_diff;
+			}
+		}
+		else if(!array_key_exists($key,$array2) || $array2[$key] !== $value)
+		{
+			$difference[$key] = $value;
+		}
+	}
+	return $difference;
 }
