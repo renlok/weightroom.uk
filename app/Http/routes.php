@@ -146,9 +146,9 @@ Route::group(['middleware' => 'auth', 'prefix' => 'templates'], function () {
 // admin
 Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
     Route::get('/', 'AdminController@home')->name('adminHome');
-	Route::get('stats', 'AdminController@getStats')->name('adminStats');
-	Route::get('settings', 'AdminController@getSettings')->name('adminSettings');
-	Route::post('settings', 'AdminController@postSettings');
+    Route::get('stats', 'AdminController@getStats')->name('adminStats');
+    Route::get('settings', 'AdminController@getSettings')->name('adminSettings');
+    Route::post('settings', 'AdminController@postSettings');
 
     Route::get('template', 'AdminController@getListTemplates')->name('adminListTemplates');
     Route::get('template/edit/{template_id}', 'AdminController@getEditTemplate')->name('adminEditTemplate');
@@ -159,6 +159,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
 
     Route::get('cron/import', 'AdminController@cronImport')->name('cronImport');
     Route::get('stats/force', 'AdminController@forceStats')->name('forceStats');
+    Route::get('exercise/rebuild/{exercise_id}', 'AdminController@forceRebuildExercisePRTable')->name('adminRebuildExercisePRTable');
 });
 
 // Misc

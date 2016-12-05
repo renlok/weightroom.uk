@@ -87,7 +87,7 @@ class PRs
 			->update(['is_pr' => 0]);
 
 		$log_items = DB::table('log_items')
-			->select('logitem_id', 'logitem_abs_weight', 'logitem_reps', 'log_date', 'user_id', 'is_time', 'is_distance', 'is_endurance')
+			->select('logitem_id', 'logitem_abs_weight', 'logitem_1rm', 'logitem_reps', 'log_date', 'user_id', 'is_time', 'is_distance', 'is_endurance')
 			->where('exercise_id', $exercise_id)
 			->where('logitem_reps', '<=', 100)
 			->where('logitem_reps', '>', 0)
@@ -97,6 +97,7 @@ class PRs
 		$pr_distance = [];
 		$pr_endurance = [];
 		$pr_time = [];
+		$est_1rm = 0;
 		for ($x = 1; $x <= 100; $x++)
 		{
 			$pr_value[$x] = 0;
@@ -106,8 +107,11 @@ class PRs
 		}
 		foreach ($log_items as $log_item)
 		{
-			if (($pr_time[$log_item->logitem_reps] < $log_item->logitem_abs_weight && !$log_item->is_time)
-			 || (($pr_value[$log_item->logitem_reps] > $log_item->logitem_abs_weight || $pr_value[$log_item->logitem_reps] == 0) && $log_item->is_time))
+			$is_est1rm = 0;
+			if (($pr_value[$log_item->logitem_reps] < $log_item->logitem_abs_weight && !$log_item->is_time && !$log_item->is_distance && !$log_item->is_endurance)
+			 || ($pr_distance[$log_item->logitem_reps] < $log_item->logitem_abs_weight && $log_item->is_distance)
+			 || ($pr_endurance[$log_item->logitem_reps] < $log_item->logitem_abs_weight && $log_item->is_endurance)
+			 || ($pr_time[$log_item->logitem_reps] > $log_item->logitem_abs_weight && $log_item->is_time))
 			{
 				if ($log_item->is_time)
 				{
@@ -124,6 +128,11 @@ class PRs
 				else
 				{
 					$pr_value[$log_item->logitem_reps] = $log_item->logitem_abs_weight;
+					if ($est_1rm < $log_item->logitem_1rm)
+					{
+						$est_1rm = $log_item->logitem_1rm;
+						$is_est1rm = 1;
+					}
 				}
 				DB::table('log_items')
 					->where('logitem_id', $log_item->logitem_id)
@@ -133,6 +142,8 @@ class PRs
 					'user_id' => $log_item->user_id,
 					'log_date' => $log_item->log_date,
 					'pr_value' => $log_item->logitem_abs_weight,
+					'pr_1rm' => $log_item->logitem_1rm,
+					'is_est1rm' => $is_est1rm,
 					'pr_reps' => $log_item->logitem_reps,
 					'is_time' => $log_item->is_time,
 					'is_endurance' => $log_item->is_endurance,

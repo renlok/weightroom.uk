@@ -46,6 +46,12 @@ class AdminController extends Controller
 		$stats->handle();
 	}
 
+	public function forceRebuildExercisePRTable($exercise_id)
+	{
+		\App\Extend\PRs::rebuildExercisePRs($exercise_id);
+		echo 'done';
+	}
+
 	public function cronImport()
 	{
 		$import = new ImportFiles;
