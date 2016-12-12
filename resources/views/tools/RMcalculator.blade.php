@@ -27,6 +27,7 @@
 			<label for="formula">Formula</label>
 			<select class="form-control" name="formula" id="formula">
 				<option value="average">Average</option>
+				<option value="compare">Compare All</option>
 				<option value="epley">Epley</option>
 				<option value="brzycki">Brzycki</option>
 				<option value="lander">Lander</option>
@@ -45,6 +46,7 @@
     <table class="table">
 		<thead>
 			<tr>
+				<th>&nbsp;</th>
 				<th>1 RM</th>
 				<th>2 RM</th>
 				<th>3 RM</th>
@@ -57,19 +59,8 @@
 				<th>10 RM</th>
 			</tr>
 		</thead>
-		<tbody>
-			<tr>
-				<td id="1rm"></td>
-				<td id="2rm"></td>
-				<td id="3rm"></td>
-				<td id="4rm"></td>
-				<td id="5rm"></td>
-				<td id="6rm"></td>
-				<td id="7rm"></td>
-				<td id="8rm"></td>
-				<td id="9rm"></td>
-				<td id="10rm"></td>
-			</tr>
+		<tbody id="rmbody">
+
 		</tbody>
 	</table>
 </div>
@@ -90,25 +81,38 @@ $('#calculate').click(function(){
 	}
 	var formula = $('#formula option:selected').attr('value');
 	var weight = $('#weight').val();
+	if (formula != 'compare')
+	{
+		var formulas = [formula];
+	}
+	else
+	{
+		var formulas = ['average','epley','brzycki','lander','lombardi','mayhew','o_conner','wathan'];
+	}
+	var clean_formulas = {
+		average: 'Average',
+		epley: 'Epley',
+		brzycki: 'Brzycki',
+		lander: 'Lander',
+		lombardi: 'Lombardi',
+		mayhew: 'Mayhew',
+		o_conner: 'O\'Conner',
+		wathan: 'Wathan'
+	};
 
-	var rep_maxes = getRMValues(reps, weight, formula);
-
-	// set all values
-	$('#1rm').text(rep_maxes[0]);
-	$('#2rm').text(rep_maxes[1]);
-	$('#3rm').text(rep_maxes[2]);
-	$('#4rm').text(rep_maxes[3]);
-	$('#5rm').text(rep_maxes[4]);
-	$('#6rm').text(rep_maxes[5]);
-	$('#7rm').text(rep_maxes[6]);
-	$('#8rm').text(rep_maxes[7]);
-	$('#9rm').text(rep_maxes[8]);
-	$('#10rm').text(rep_maxes[9]);
+	$("#rmbody").html('');
+	for (var i = 0; i < formulas.length; i++)
+	{
+		var rep_maxes = getRMValues(reps, weight, formulas[i]);
+		// set all values
+		var extra_class = (formulas[i] == 'average')?' class="active"':'';
+		$("#rmbody").append('<tr'+extra_class+'><td class="formula">'+clean_formulas[formulas[i]]+'</td><td class="1rm">'+rep_maxes[0]+'</td><td class="2rm">'+rep_maxes[1]+'</td><td class="3rm">'+rep_maxes[2]+'</td><td class="4rm">'+rep_maxes[3]+'</td><td class="5rm">'+rep_maxes[4]+'</td><td class="6rm">'+rep_maxes[5]+'</td><td class="7rm">'+rep_maxes[6]+'</td><td class="8rm">'+rep_maxes[7]+'</td><td class="9rm">'+rep_maxes[8]+'</td><td class="10rm">'+rep_maxes[9]+'</td></tr>');
+	}
 
 	// set bold
 	if (reps <= 10)
 	{
-		$( "#" + reps + "rm" ).addClass( "bold" );
+		$( "." + reps + "rm" ).addClass( "bold" );
 	}
 });
 
