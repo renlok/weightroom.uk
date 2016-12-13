@@ -25,6 +25,7 @@
 #dark-background {
 	background-color:rgba(0,0,0,0.30);
 	height: 100%;
+	border-bottom: #171717 1px solid;
 }
 #logscreen, #volumescreen, #goalscreen {
 	max-width: 500px;
@@ -81,6 +82,37 @@
 .lead {
 	text-align: left;
 }
+#background-box:after, #background-box:before {
+	left: 50%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+#background-box:after {
+	border-color: rgba(0, 0, 0, 0);
+	border-top-color: #171717;
+	border-width: 30px;
+	margin-left: -30px;
+}
+#background-box:before {
+	border-color: rgba(0, 0, 0, 0);
+	border-top-color: #171717;
+	border-width: 36px;
+	margin-left: -36px;
+}
+button.btn-default {
+	color: #171717;
+	background-color: #F90;
+	font-weight: bold;
+}
+button.btn-default:hover {
+	background-color: #E68A00;
+	color: #171717;
+	font-weight: bold;
+}
 </style>
 </head>
 
@@ -126,7 +158,7 @@
 	</div>
 </div>
 <div class="container-fluid main-box">
-	<h1>Why should I use weightroom.uk?</h1>
+	<h1>Why should you use us?</h1>
 	<div class="row">
 		<div class="col-md-6">
 			<h2>Intuative and simple text based logging</h2>
