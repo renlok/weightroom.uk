@@ -27,14 +27,24 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-		$schedule->command('globalstats')->monthly();
+        $schedule->command('globalstats')->monthly();
 
-		$schedule->command('importfiles')->hourly();
+        $schedule->command('importfiles')->hourly();
 
         $schedule->call(function () {
             DB::table('exercises')
                 ->whereNotIn('exercise_id', DB::table('log_exercises')->groupBy('log_exercises.exercise_id')->pluck('exercise_id')->all())
                 ->delete();
         })->monthly();
+    }
+
+    /**
+     * Register the Closure based commands for the application.
+     *
+     * @return void
+     */
+    protected function commands()
+    {
+        require base_path('routes/console.php');
     }
 }
