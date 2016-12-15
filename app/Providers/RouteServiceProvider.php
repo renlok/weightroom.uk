@@ -34,7 +34,7 @@ class RouteServiceProvider extends ServiceProvider
         Route::pattern('from_date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
         Route::pattern('to_date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
 
-        parent::boot($router);
+        parent::boot();
     }
 
     /**
