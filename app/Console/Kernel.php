@@ -33,7 +33,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->call(function () {
             DB::table('exercises')
-                ->whereNotIn('exercise_id', DB::table('log_exercises')->groupBy('log_exercises.exercise_id')->pluck('exercise_id'))
+                ->whereNotIn('exercise_id', DB::table('log_exercises')->groupBy('log_exercises.exercise_id')->pluck('exercise_id')->all())
                 ->delete();
         })->monthly();
     }

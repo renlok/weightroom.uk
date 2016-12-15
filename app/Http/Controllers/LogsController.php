@@ -221,7 +221,7 @@ class LogsController extends Controller
 		$month = Carbon::createFromFormat('Y-m', $date);
 		$log_dates = Log::where('user_id', $user->user_id)
 						->whereBetween('log_date', [$month->startOfMonth()->toDateString(), $month->endOfMonth()->toDateString()])
-						->pluck('log_date');
+						->pluck('log_date')->all();
 		return response()->json(['dates' => $log_dates, 'cals' => $date]);
 	}
 
@@ -279,7 +279,7 @@ class LogsController extends Controller
 			{
 				$query = $query->take($request->old('show'));
 			}
-			$query = $query->take(50)->pluck('logex_id');
+			$query = $query->take(50)->pluck('logex_id')->all();
 			$log_exercises = Log_exercise::whereIn('logex_id', $query)->orderBy('log_date', $request->old('orderby'))->get();
 		}
 		else
@@ -440,7 +440,7 @@ class LogsController extends Controller
 				$return_values[$value->value_date] = (float)$value->graph_value;
 			}#
 		}
-		$blanks = DB::table('weeks')->whereBetween('week', [$min_date, $max_date])->pluck('empty', 'week');
+		$blanks = DB::table('weeks')->whereBetween('week', [$min_date, $max_date])->pluck('empty', 'week')->all();
 		return response()->json(array_merge($blanks, $return_values));
 	}
 }

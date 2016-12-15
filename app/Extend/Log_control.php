@@ -124,7 +124,7 @@ class Log_control
 		$nextmonth = Carbon::createFromFormat('Y-m-d', $date)->addMonth();
 		$log_dates = Log::where('user_id', $user_id)
 						->whereBetween('log_date', [$lastmonth->startOfMonth()->toDateString(), $nextmonth->endOfMonth()->toDateString()])
-						->pluck('log_date');
+						->pluck('log_date')->all();
 		$cal_log_dates = json_encode($log_dates);
 		$cal_loaded = json_encode([$lastmonth->format('Y-m'), $month, $nextmonth->format('Y-m')]);
 		return ['dates' => $cal_log_dates, 'cals' => $cal_loaded];
