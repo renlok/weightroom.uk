@@ -192,7 +192,7 @@ class AdminController extends Controller
 	public function postEditTemplate(Request $request, $template_id)
 	{
 		// delete old data
-		$template_logs = DB::table('template_logs')->where('template_id', $template_id)->lists('template_log_id');
+		$template_logs = DB::table('template_logs')->where('template_id', $template_id)->pluck('template_log_id');
 		DB::table('template_logs')->whereIn('template_log_id', $template_logs)->delete();
 		DB::table('template_log_exercises')->whereIn('template_log_id', $template_logs)->delete();
 		DB::table('template_log_items')->whereIn('template_log_id', $template_logs)->delete();
@@ -311,7 +311,7 @@ class AdminController extends Controller
 	public function getDeleteTemplate($template_id)
 	{
 		DB::table('templates')->where('template_id', $template_id)->delete();
-		$template_logs = DB::table('template_logs')->where('template_id', $template_id)->lists('template_log_id');
+		$template_logs = DB::table('template_logs')->where('template_id', $template_id)->pluck('template_log_id');
 		DB::table('template_log_items')->whereIn('template_log_id', $template_logs)->delete();
 		DB::table('template_log_exercises')->whereIn('template_log_id', $template_logs)->delete();
 		DB::table('template_logs')->where('template_id', $template_id)->delete();

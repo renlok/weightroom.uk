@@ -198,7 +198,7 @@ class LogsController extends Controller
 							->where('log_date', $date)
 							->where('user_id', Auth::user()->user_id)
 							->distinct()
-							->lists('exercise_id');
+							->pluck('exercise_id');
 		DB::table('log_items')->where('log_date', $date)->where('user_id', Auth::user()->user_id)->delete();
 		DB::table('log_exercises')->where('log_date', $date)->where('user_id', Auth::user()->user_id)->delete();
 		DB::table('exercise_records')->where('log_date', $date)->where('user_id', Auth::user()->user_id)->delete();
@@ -221,7 +221,7 @@ class LogsController extends Controller
 		$month = Carbon::createFromFormat('Y-m', $date);
 		$log_dates = Log::where('user_id', $user->user_id)
 						->whereBetween('log_date', [$month->startOfMonth()->toDateString(), $month->endOfMonth()->toDateString()])
-						->lists('log_date');
+						->pluck('log_date');
 		return response()->json(['dates' => $log_dates, 'cals' => $date]);
 	}
 
@@ -279,7 +279,7 @@ class LogsController extends Controller
 			{
 				$query = $query->take($request->old('show'));
 			}
-			$query = $query->take(50)->lists('logex_id');
+			$query = $query->take(50)->pluck('logex_id');
 			$log_exercises = Log_exercise::whereIn('logex_id', $query)->orderBy('log_date', $request->old('orderby'))->get();
 		}
 		else

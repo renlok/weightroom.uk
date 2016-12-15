@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Routing\Router;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Route;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -22,16 +23,16 @@ class RouteServiceProvider extends ServiceProvider
      * @param  \Illuminate\Routing\Router  $router
      * @return void
      */
-    public function boot(Router $router)
+    public function boot()
     {
         // set standard route patterns
-		$router->pattern('id', '[0-9]+');
-		$router->pattern('template_id', '[0-9]+');
-		$router->pattern('comment_id', '[0-9]+');
-		$router->pattern('log_id', '[0-9]+');
-		$router->pattern('date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
-		$router->pattern('from_date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
-		$router->pattern('to_date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
+        Route::pattern('id', '[0-9]+');
+        Route::pattern('template_id', '[0-9]+');
+        Route::pattern('comment_id', '[0-9]+');
+        Route::pattern('log_id', '[0-9]+');
+        Route::pattern('date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
+        Route::pattern('from_date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
+        Route::pattern('to_date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
 
         parent::boot($router);
     }
@@ -44,7 +45,7 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function map(Router $router)
     {
-        $router->group(['namespace' => $this->namespace], function ($router) {
+        Route::group(['namespace' => $this->namespace], function ($router) {
             require app_path('Http/routes.php');
         });
     }

@@ -41,13 +41,13 @@ class MiscController extends Controller
 
 	public function dash()
 	{
-		$followed_users = User_follow::where('user_id', Auth::user()->user_id)->lists('follow_user_id');
+		$followed_users = User_follow::where('user_id', Auth::user()->user_id)->pluck('follow_user_id');
 		$random = false;
 		if ($followed_users == null || $followed_users->count() == 0)
 		{
 			$followed_users = Cache::remember('random_users_dash', 360, function()
 			{
-			    return User::select(DB::raw('DISTINCT(users.user_id)'))->join('logs', 'users.user_id', '=', 'logs.user_id')->orderBy(\DB::raw('RAND()'))->take(10)->lists('users.user_id');
+			    return User::select(DB::raw('DISTINCT(users.user_id)'))->join('logs', 'users.user_id', '=', 'logs.user_id')->orderBy(\DB::raw('RAND()'))->take(10)->pluck('users.user_id');
 			});
 			$random = true;
 		}

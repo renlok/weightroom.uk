@@ -164,7 +164,7 @@ button.btn-default:hover {
 			<h2>Intuative and simple text based logging</h2>
 			<p class="lead">
 				Quickly enter your workouts on any device with our simple to learn workout markup.
-				Never again will you have to fill out hundreds of boxes, log your workouts as fast as you can type.
+				Never again will you have to fill out hundreds of boxes. Now you can log your workouts as fast as you can type.
 			</p>
 		</div>
 		<div class="col-md-6" id="logscreen">
@@ -176,7 +176,7 @@ button.btn-default:hover {
 			<h2>Anaylse everything</h2>
 			<p class="lead">
 				Receive the analytics you <em>need</em> to optimise your fitness and reach your goals.
-				We will give you all the information you could need to make sure your training is on track and progressing well.
+				We will give you all the information you need to make sure your training is on track and you are progressing well.
 				<a href="{{ route('demo') }}">[more examples]</a>
 			</p>
 		</div>
@@ -189,7 +189,7 @@ button.btn-default:hover {
 			<h2>Set goals</h2>
 			<p class="lead">
 				The best way to achieve something is to set measurable goals, and we will help you with just that.
-				See you goals neatly arranged so you can see what needs work and where you are excelling.
+				See you goals neatly arranged so that you can see what needs work and where you are excelling.
 			</p>
 		</div>
 		<div class="col-md-6" id="goalscreen">
@@ -200,7 +200,7 @@ button.btn-default:hover {
 
 <footer class="footer">
   <div class="container">
-	<p class="text-muted">2015 &#169; weightroom.uk.<span class="hidden-xs"> Use of this site constitutes acceptance of the site's <a href="{{ route('privacyPolicy') }}" target="_blank">Privacy Policy and Terms of Use</a>.</span></p>
+	<p class="text-muted">2016 &#169; weightroom.uk.<span class="hidden-xs"> Use of this site constitutes acceptance of the site's <a href="{{ route('privacyPolicy') }}" target="_blank">Privacy Policy and Terms of Use</a>.</span></p>
   </div>
 </footer>
 
