@@ -15,6 +15,9 @@ class CreateTemplateExercisesTable extends Migration
         Schema::create('template_exercises', function (Blueprint $table) {
             $table->increments('texercise_id');
             $table->string('texercise_name');
+            $table->string('texercise_description');
+            $table->string('texercise_image');
+            $table->string('texercise_video');
             $table->string('tmain_action');
             $table->string('tminor_action');
             $table->string('texercise_type');

@@ -82,7 +82,7 @@
 <tbody>
   <tr>
 @for ($i = 1; $i <= 10; $i++)
-    <td>{{ (isset($filtered_prs[$i])) ? Format::$format_func($filtered_prs[$i][0]['pr_value']) : '-' }}</td>
+    <td>{{ (isset($filtered_prs[$i])) ? Format::$format_func($filtered_prs[$i][0]['pr_value'][0]) . ($filtered_prs[$i][0]['pr_value'][1] ? '*' : '') : '-' }}</td>
 @endfor
   </tr>
   <tr>

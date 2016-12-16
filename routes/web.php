@@ -51,7 +51,7 @@ Route::group(['middleware' => 'auth'], function () {
 });
 Route::group(['prefix' => 'log'], function () {
     // ajax
-    Route::get('{date}/cal/{user_name}', 'LogsController@getAjaxcal')->name('ajaxCal');
+    Route::get('{short_date}/cal/{user_name}', 'LogsController@getAjaxcal')->name('ajaxCal');
     // view log
     Route::get('{date}/view/{user_name?}', 'LogsController@view')->name('viewLog');
 

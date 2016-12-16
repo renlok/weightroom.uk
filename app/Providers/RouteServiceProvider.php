@@ -28,6 +28,7 @@ class RouteServiceProvider extends ServiceProvider
         Route::pattern('template_id', '[0-9]+');
         Route::pattern('comment_id', '[0-9]+');
         Route::pattern('log_id', '[0-9]+');
+        Route::pattern('short_date', '[0-9]{4}-[0-9]{2}');
         Route::pattern('date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
         Route::pattern('from_date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');
         Route::pattern('to_date', '[0-9]{4}-[0-9]{2}-[0-9]{2}');

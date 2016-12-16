@@ -215,14 +215,14 @@ class LogsController extends Controller
 				]);
 	}
 
-	public function getAjaxcal($date, $user_name)
+	public function getAjaxcal($short_date, $user_name)
 	{
 		$user = User::where('user_name', $user_name)->firstOrFail();
-		$month = Carbon::createFromFormat('Y-m', $date);
+		$month = Carbon::createFromFormat('Y-m', $short_date);
 		$log_dates = Log::where('user_id', $user->user_id)
 						->whereBetween('log_date', [$month->startOfMonth()->toDateString(), $month->endOfMonth()->toDateString()])
 						->pluck('log_date')->all();
-		return response()->json(['dates' => $log_dates, 'cals' => $date]);
+		return response()->json(['dates' => $log_dates, 'cals' => $short_date]);
 	}
 
 	public function postSearch(Request $request)
@@ -241,6 +241,7 @@ class LogsController extends Controller
 			return redirect()
 					->route('searchLog')
 					->withErrors($validator)
+					->with('fail', true)
 					->withInput();
 		}
 
@@ -252,7 +253,7 @@ class LogsController extends Controller
 	public function getSearch(Request $request)
 	{
 		$user = Auth::user();
-		if ($request->old('exercise') != null)
+		if ($request->old('exercise') != null && !session('fail', false))
 		{
 			$query = DB::table('log_items')
 						->join('exercises', 'exercises.exercise_id', '=', 'log_items.exercise_id')
@@ -324,7 +325,7 @@ class LogsController extends Controller
 			'log_total_reps' => floor($max_volume / $query->max('log_total_reps')),
 			'log_total_sets' => floor($max_volume / $query->max('log_total_sets')),
 		];
-		$graph_data = $query->orderBy('log_date', 'asc')->get();
+		$graph_data = $query->orderBy('log_date', 'asc')->get()->all();
 		$graph_names = [
 			'log_total_volume' => 'Volume',
 			'log_total_reps' => 'Total reps',

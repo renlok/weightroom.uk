@@ -26,8 +26,8 @@ class CreateLogExercisesTable extends Migration
             $table->double('logex_warmup_volume', 25, 7);
             $table->integer('logex_warmup_reps');
             $table->integer('logex_warmup_sets');
-			$table->double('logex_inol', 25, 7);
-			$table->double('logex_inol_warmup', 25, 7);
+            $table->double('logex_inol', 25, 7);
+            $table->double('logex_inol_warmup', 25, 7);
             $table->double('logex_time', 25, 7);
             $table->double('logex_distance', 25, 7);
             $table->string('logex_comment');

@@ -147,15 +147,11 @@ class Exercise_record extends Model
     {
         $last_pr = 0;
         return $collection->reverse()->map(function ($item, $key) use (&$last_pr) {
-            if ($item->pr_value < $last_pr)
-            {
-                $item->pr_value = $last_pr . '*';
-            }
-            else
-            {
-                $item->pr_value = (float)$item->pr_value;
-            }
-            $last_pr = (float)$item->pr_value;
+            $item->pr_value = [
+                (float)$item->pr_value,
+                ($item->pr_value < $last_pr)
+            ];
+            $last_pr = (float)$item->pr_value[0];
             return $item;
         })->reverse()->groupBy('pr_reps')->toArray();
     }
