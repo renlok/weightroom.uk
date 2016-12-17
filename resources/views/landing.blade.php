@@ -161,7 +161,7 @@ button.btn-default:hover {
 	<h1>Why should you use us?</h1>
 	<div class="row">
 		<div class="col-md-6">
-			<h2>Intuative and simple text based logging</h2>
+			<h2>Intuitive and simple text based logging</h2>
 			<p class="lead">
 				Quickly enter your workouts on any device with our simple to learn workout markup.
 				Never again will you have to fill out hundreds of boxes. Now you can log your workouts as fast as you can type.
@@ -173,7 +173,7 @@ button.btn-default:hover {
 	</div>
 	<div class="row">
 		<div class="col-md-6 pull-right">
-			<h2>Anaylse everything</h2>
+			<h2>Analyse everything</h2>
 			<p class="lead">
 				Receive the analytics you <em>need</em> to optimise your fitness and reach your goals.
 				We will give you all the information you need to make sure your training is on track and you are progressing well.
