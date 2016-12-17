@@ -221,7 +221,9 @@ class LogsController extends Controller
 		$month = Carbon::createFromFormat('Y-m', $short_date);
 		$log_dates = Log::where('user_id', $user->user_id)
 						->whereBetween('log_date', [$month->startOfMonth()->toDateString(), $month->endOfMonth()->toDateString()])
-						->pluck('log_date')->all();
+						->pluck('log_date')->map(function($item){
+							return $item->toDateString();
+						});
 		return response()->json(['dates' => $log_dates, 'cals' => $short_date]);
 	}
 
