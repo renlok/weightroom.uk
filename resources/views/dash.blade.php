@@ -18,7 +18,7 @@ blockquote.small {
 <div class="padding-sb">
 	<div class="row">
 		<div class="pull-left">
-			Recent Activity
+			<h3>Recent Activity</h3>
 		</div>
 		<div class="pull-right" style="margin-top: 20px;">
 			<div class="btn-group btn-group-sm" role="group" aria-label="type">
