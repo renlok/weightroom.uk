@@ -58,6 +58,11 @@ class PasswordController extends Controller
         }
     }
 
+    public function getReset()
+    {
+        return view('auth.reset');
+    }
+
     protected function resetPassword($user, $password)
     {
         $user->user_password = bcrypt($password);
