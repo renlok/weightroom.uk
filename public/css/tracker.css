@@ -16,6 +16,12 @@ body {
 	padding-left: 25px;
 	max-width: 1200px;
 }
+.narrow-centre-block {
+	display: block;
+	max-width: 585px;
+	margin: 0 auto;
+	position: relative;
+}
 .footer {
 	position: absolute;
 	bottom: 0;

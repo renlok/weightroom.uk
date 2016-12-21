@@ -149,10 +149,10 @@ button.btn-default:hover {
 			<form class="form-inline" action="{{ route('register') }}" method="get">
 				<div class="form-group">
 					<label class="sr-only" for="user_email">Email address</label>
-					<input type="email" class="form-control" id="user_email" name="user_email" placeholder="Email">
+					<input type="email" class="form-control input-lg" id="user_email" name="user_email" placeholder="Email">
 				</div>
 				{{ csrf_field() }}
-				<button type="submit" class="btn btn-default">Sign me up</button>
+				<button type="submit" class="btn btn-default btn-lg">Sign me up</button>
 			</form>
 		</div>
 	</div>
