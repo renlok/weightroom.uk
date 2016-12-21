@@ -36,6 +36,11 @@ class PasswordController extends Controller
         $this->middleware('guest');
     }
 
+    public function getEmail()
+    {
+        return view('auth.password');
+    }
+
     public function postEmail(Request $request)
     {
         $this->validate($request, ['email' => 'required|email']);
