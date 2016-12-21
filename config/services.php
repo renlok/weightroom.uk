@@ -15,8 +15,8 @@ return [
     */
 
     'mailgun' => [
-        'domain' => env('MAILGUN_DOMAIN'),
-        'secret' => env('MAILGUN_SECRET'),
+        'domain' => env('https://api.mailgun.net/v3/weightroom.uk'),
+        'secret' => env('key-0f8f3ea44242bd3915dbec963a54067d'),
     ],
 
     'mandrill' => [
