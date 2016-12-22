@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/codemirror.min.css">
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/addon/hint/show-hint.min.css">
 @if ($user->user_firstlog)
-<script src="//cdnjs.cloudflare.com/ajax/libs/intro.js/2.4.0/introjs.min.css"></script>
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/intro.js/2.4.0/introjs.min.css">
 @endif
 <style>
 .cm-ENAME { color:#3338B7;}
