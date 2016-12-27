@@ -1,20 +1,20 @@
 <!doctype html>
 <html lang="en">
 <head>
-	<meta charset="utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <meta name="viewport" content="width=device-width" />
 
     <title>Weightroom.uk - Workout tracker</title>
-	<!-- <link rel="icon" type="image/x-icon" href="favicon.ico"> -->
-	<meta http-equiv="Content-Language" content="en">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <meta http-equiv="Content-Language" content="en">
 
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.css" rel="stylesheet" />
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.css" rel="stylesheet" />
 
     <!--     Fonts     -->
-    <link href="http://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
+    <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
 
 <style>
 #background-box {
@@ -168,7 +168,7 @@ button.btn-default:hover {
 			</p>
 		</div>
 		<div class="col-md-6" id="logscreen">
-			<img src="http://weightroom.uk/img/landing/log.png" class="img-responsive" alt="Log workout screen">
+			<img src="//weightroom.uk/img/landing/log.png" class="img-responsive" alt="Log workout screen">
 		</div>
 	</div>
 	<div class="row">
@@ -181,7 +181,7 @@ button.btn-default:hover {
 			</p>
 		</div>
 		<div class="col-md-6 pull-left" id="volumescreen">
-			<img src="http://weightroom.uk/img/landing/volume.png" class="img-responsive" alt="View workout volume">
+			<img src="//weightroom.uk/img/landing/volume.png" class="img-responsive" alt="View workout volume">
 		</div>
 	</div>
 	<div class="row">
@@ -193,7 +193,7 @@ button.btn-default:hover {
 			</p>
 		</div>
 		<div class="col-md-6" id="goalscreen">
-			<img src="http://weightroom.uk/img/landing/goal.png" class="img-responsive" alt="Create goals">
+			<img src="//weightroom.uk/img/landing/goal.png" class="img-responsive" alt="Create goals">
 		</div>
 	</div>
 </div>
@@ -204,8 +204,8 @@ button.btn-default:hover {
   </div>
 </footer>
 
-<script src="http://code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
-<script src="http://getbootstrap.com/dist/js/bootstrap.min.js" charset="utf-8"></script>
+<script src="//code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
+<script src="//getbootstrap.com/dist/js/bootstrap.min.js" charset="utf-8"></script>
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
