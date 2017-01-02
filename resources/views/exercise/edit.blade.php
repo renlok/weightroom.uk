@@ -105,7 +105,7 @@
 @endsection
 
 @section('endjs')
-<script src="//cdnjs.cloudflare.com/ajax/libs/vue/1.0.17/vue.min.js" charset="utf-8"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/vue/1.0.28/vue.min.js" charset="utf-8"></script>
 <script>
 new Vue({
     el: '#new_goal',

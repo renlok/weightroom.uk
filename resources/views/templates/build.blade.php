@@ -3,7 +3,7 @@
 @section('title', 'Generate Template: ' . $template_name . ' - ' . $log->template_log_name)
 
 @section('headerstyle')
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.17.0/codemirror.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.22.0/codemirror.min.css">
 <style>
 .cm-ENAME { color:#3338B7;}
 .cm-W, .cm-WW { color:#337AB7;}

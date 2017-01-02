@@ -215,7 +215,7 @@ blockquote.small {
 
 @section('endjs')
 <script src="{{ asset('js/jquery.pickmeup.js') }}"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js" charset="utf-8"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js" charset="utf-8"></script>
 <script src="{{ asset('js/jCollapsible.js') }}"></script>
 
 <script>

@@ -1,11 +1,11 @@
 /**
- * @package		PickMeUp - jQuery datepicker plugin
- * @author		Nazar Mokrynskyi <nazar@mokrynskyi.com>
- * @author		Stefan Petre <www.eyecon.ro>
- * @copyright	Copyright (c) 2013-2015, Nazar Mokrynskyi
- * @copyright	Copyright (c) 2008-2009, Stefan Petre
- * @license		MIT License, see license.txt
- * @version		2.8.0 - 16/11/2015 (Modded)
+ * @package   PickMeUp - jQuery datepicker plugin
+ * @author    Nazar Mokrynskyi <nazar@mokrynskyi.com>
+ * @author    Stefan Petre <www.eyecon.ro>
+ * @copyright Copyright (c) 2013-2016, Nazar Mokrynskyi
+ * @copyright Copyright (c) 2008-2009, Stefan Petre
+ * @license   MIT License, see license.txt
+* @version		2.10.0 - 02/01/2017 (Modded)
  */
 
 (function (d) {
@@ -56,6 +56,7 @@
 }(function ($) {
 	var instances_count	= 0;
 	$.pickmeup = $.extend($.pickmeup || {}, {
+		current			: null,
 		date			: new Date,
 		default_date	: new Date,
 		flat			: false,
@@ -69,6 +70,7 @@
 		view			: 'days',
 		calendars		: 1,
 		format			: 'd-m-Y',
+		title_format    : 'B, Y',
 		position		: 'bottom',
 		trigger_event	: 'click touchstart',
 		class_name		: '',
@@ -122,6 +124,13 @@
 				return '<div class="' + container_class_name + '">' + result + '</div>';
 			}
 		};
+	function namespaced_events (events, namespace) {
+		events	= events.split(' ');
+		for (var i = 0; i < events.length; ++i) {
+			events[i]	+= namespace;
+		}
+		return events.join(' ');
+	}
 	function fill () {
 		var options			= $(this).data('pickmeup-options'),
 			pickmeup		= this.pickmeup,
@@ -134,7 +143,6 @@
 			header,
 			html,
 			instance,
-			today		= (new Date).setHours(0,0,0,0).valueOf(),
 			shown_date_from,
 			shown_date_to,
 			tmp_date;
@@ -157,6 +165,7 @@
 		 */
 		for (var i = 0; i < options.calendars; i++) {
 			local_date		= new Date(current_date);
+			reset_time(local_date);
 			instance	= pickmeup.find('.pmu-instance').eq(i);
 			if (pickmeup.hasClass('pmu-view-years')) {
 				local_date.addYears((i - current_cal) * 12);
@@ -166,7 +175,7 @@
 				header = local_date.getFullYear();
 			} else if (pickmeup.hasClass('pmu-view-days')) {
 				local_date.addMonths(i - current_cal);
-				header = formatDate(local_date, 'B, Y', options.locale);
+				header = formatDate(local_date, options.title_format, options.locale);
 			}
 			if (!shown_date_to) {
 				if (max_date) {
@@ -298,8 +307,9 @@
 					min_month		= new Date(options.min).getMonth(),
 					max_year		= new Date(options.max).getFullYear(),
 					max_month		= new Date(options.max).getMonth(),
-					month;
-				for (var j = 0; j < 12; ++j) {
+					month,
+					j;
+				for (j = 0; j < 12; ++j) {
 					month	= {
 						text		: options.locale.monthsShort[j],
 						class_name	: []
@@ -336,14 +346,19 @@
 			(function () {
 				var days			= [],
 					current_month	= local_date.getMonth(),
-					day;
+					today			= reset_time(new Date).valueOf(),
+					day,
+					j,
+					from_user,
+					val,
+					disabled;
 				// Correct first day in calendar taking into account first day of week (Sunday or Monday)
 				(function () {
 					local_date.setDate(1);
 					var day = (local_date.getDay() - options.first_day) % 7;
 					local_date.addDays(-(day + (day < 0 ? 7 : 0)));
 				})();
-				for (var j = 0; j < 42; ++j) {
+				for (j = 0; j < 42; ++j) {
 					day	= {
 						text		: local_date.getDate(),
 						class_name	: []
@@ -356,15 +371,20 @@
 					} else if (local_date.getDay() == 6) {
 						day.class_name.push('pmu-saturday');
 					}
-					var from_user	= options.render(new Date(local_date)) || {},
-						val			= local_date.valueOf(),
-						disabled	= (options.min && options.min > local_date) || (options.max && options.max < local_date);
+					from_user	= options.render(new Date(local_date)) || {};
+					val			= local_date.valueOf();
+					disabled	= (options.min && options.min > local_date) || (options.max && options.max < local_date);
 					if (from_user.disabled || disabled) {
 						day.class_name.push('pmu-disabled');
 					} else if (
 						from_user.selected ||
-						options.date == val ||
-						$.inArray(val, options.date) !== -1 ||
+						options.date.valueOf() == val ||
+						(
+							options.date instanceof Array &&
+							options.date.reduce(function (prev, date) {
+								return prev || val === date.valueOf();
+							}, false)
+						) ||
 						(
 							options.mode == 'range' && val >= options.date[0] && val <= options.date[1]
 						)
@@ -401,10 +421,17 @@
 		options.fill.apply(this);
 	}
 	function parseDate (date, format, separator, locale) {
-		if (date.constructor == Date) {
-			return date;
+		var i;
+		if (date instanceof Date || date instanceof Number) {
+			return reset_time(new Date(date));
 		} else if (!date) {
-			return new Date;
+			return reset_time(new Date);
+		} else if (date instanceof Array) {
+			date = date.slice();
+			for (i = 0; i < date.length; ++i) {
+				date[i] = parseDate(date[i], format, separator, locale);
+			}
+			return date;
 		}
 		var splitted_date	= date.split(separator);
 		if (splitted_date.length > 1) {
@@ -413,9 +440,9 @@
 			});
 			return splitted_date;
 		}
-		var months_text	= locale.monthsShort.join(')(') + ')(' + locale.months.join(')('),
-			separator	= new RegExp('[^0-9a-zA-Z(' + months_text + ')]+'),
-			parts		= date.split(separator),
+		var months_text	= locale.monthsShort.join(')(') + ')(' + locale.months.join(')(');
+		separator	= new RegExp('[^0-9a-zA-Z(' + months_text + ')]+');
+		var parts		= date.split(separator),
 			against		= format.split(separator),
 			d,
 			m,
@@ -423,7 +450,7 @@
 			h,
 			min,
 			now = new Date();
-		for (var i = 0; i < parts.length; i++) {
+		for (i = 0; i < parts.length; i++) {
 			switch (against[i]) {
 				case 'b':
 					m = locale.monthsShort.indexOf(parts[i]);
@@ -473,7 +500,11 @@
 		if (isNaN(parsed_date * 1)) {
 			parsed_date = new Date;
 		}
-		return parsed_date;
+		return reset_time(parsed_date);
+	}
+	function reset_time (date) {
+		date.setHours(0,0,0,0);
+		return date;
 	}
 	function formatDate (date, format, locale) {
 		var m = date.getMonth();
@@ -563,43 +594,41 @@
 		}
 		return parts.join('');
 	}
-	function update_date () {
+	function update_date (new_date) {
 		var	$this			= $(this),
 			options			= $this.data('pickmeup-options'),
-			current_date	= options.current,
-			new_value;
-		switch (options.mode) {
-			case 'multiple':
-				new_value = current_date.setHours(0,0,0,0).valueOf();
-				if ($.inArray(new_value, options.date) !== -1) {
-					$.each(options.date, function (index, value){
-						if (value == new_value) {
-							options.date.splice(index,1);
-							return false;
+			i;
+		reset_time(new_date);
+		(function () {
+			var new_value;
+			switch (options.mode) {
+				case 'multiple':
+					new_value = new_date.valueOf();
+					for (i = 0; i < options.date.length; ++i) {
+						if (options.date[i].valueOf() === new_value) {
+							options.date.splice(i, 1);
+							return;
 						}
-						return true;
-					});
-				} else {
-					options.date.push(new_value);
-				}
-				break;
-			case 'range':
-				if (!options.lastSel) {
-					options.date[0]	= current_date.setHours(0,0,0,0).valueOf();
-				}
-				new_value	= current_date.setHours(0,0,0,0).valueOf();
-				if (new_value <= options.date[0]) {
-					options.date[1]	= options.date[0];
-					options.date[0]	= new_value;
-				} else {
-					options.date[1]	= new_value;
-				}
-				options.lastSel	= !options.lastSel;
-				break;
-			default:
-				options.date	= current_date.valueOf();
-				break;
-		}
+					}
+					options.date.push(new_date);
+					break;
+				case 'range':
+					if (!options.lastSel) {
+						options.date[0]	= new_date;
+					}
+					if (new_date <= options.date[0]) {
+						options.date[1]	= options.date[0];
+						options.date[0]	= new_date;
+					} else {
+						options.date[1]	= new_date;
+					}
+					options.lastSel	= !options.lastSel;
+					break;
+				default:
+					options.date	= new_date.valueOf();
+					break;
+			}
+		})();
 		var prepared_date	= prepareDate(options);
 		if ($this.is('input')) {
 			$this.val(options.mode == 'single' ? prepared_date[0] : prepared_date[0].join(options.separator));
@@ -674,7 +703,7 @@
 					} else if (options.select_day) {
 						root.removeClass('pmu-view-years').addClass('pmu-view-days');
 					} else {
-						options.binded.update_date();
+						options.binded.update_date(options.current);
 					}
 				} else if (root.hasClass('pmu-view-months')) {
 					options.current.setMonth(instance.find('.pmu-months .pmu-button').index(el));
@@ -682,18 +711,19 @@
 					if (options.select_day) {
 						root.removeClass('pmu-view-months').addClass('pmu-view-days');
 					} else {
-						options.binded.update_date();
+						options.binded.update_date(options.current);
 					}
 					// Move current month to the first place
 					options.current.addMonths(Math.floor(options.calendars / 2) - instance_index);
 				} else {
-					var val	= parseInt(el.text(), 10);
-					options.current.addMonths(instance_index - Math.floor(options.calendars / 2));
+					var val	= parseInt(el.text(), 10), new_date;
+					new_date = new Date(options.current);
+					new_date.addMonths(instance_index - Math.floor(options.calendars / 2));
 					if (el.hasClass('pmu-not-in-month')) {
-						options.current.addMonths(val > 15 ? -1 : 1);
+						new_date.addMonths(val > 15 ? -1 : 1);
 					}
-					options.current.setDate(val);
-					options.binded.update_date();
+					new_date.setDate(val);
+					options.binded.update_date(new_date);
 				}
 			}
 			options.binded.fill();
@@ -716,7 +746,8 @@
 		}
 	}
 	function show (force) {
-		var pickmeup	= this.pickmeup;
+		var pickmeup	= this.pickmeup,
+			value;
 		if (force || !pickmeup.is(':visible')) {
 			var $this		= $(this),
 				options		= $this.data('pickmeup-options'),
@@ -731,13 +762,15 @@
 				left		= pos.left;
 			options.binded.fill();
 			if ($this.is('input')) {
-				$this
-					.pickmeup('set_date', parseDate($this.val() ? $this.val() : options.default_date, options.format, options.separator, options.locale))
-					.keydown(function (e) {
-						if (e.which == 9) {
-							$this.pickmeup('hide');
-						}
-					});
+				value = $this.val();
+				if (value) {
+					$this.pickmeup('set_date', parseDate(value, options.format, options.separator, options.locale))
+				}
+				$this.keydown(function (e) {
+					if (e.which == 9) {
+						$this.pickmeup('hide');
+					}
+				});
 				options.lastSel = false;
 			}
 			options.before_show();
@@ -778,7 +811,7 @@
 				});
 				$(document)
 					.on(
-						'mousedown' + options.events_namespace + ' touchstart' + options.events_namespace,
+						namespaced_events(options.trigger_event, options.events_namespace),
 						options.binded.hide
 					)
 					.on(
@@ -795,12 +828,13 @@
 		show.call(this, true);
 	}
 	function hide (e) {
+		//noinspection JSBitwiseOperatorUsage
 		if (
 			!e ||
 			!e.target ||														//Called directly
 			(
 				e.target != this &&												//Clicked not on element itself
-				!(this.pickmeup.get(0).compareDocumentPosition(e.target) & 16)	//And not o its children
+				!(this.pickmeup.get(0).compareDocumentPosition(e.target) & 16)	//And not on its children
 			)
 		) {
 			var pickmeup	= this.pickmeup,
@@ -808,7 +842,7 @@
 			if (options.hide() != false) {
 				pickmeup.hide();
 				$(document)
-					.off('mousedown touchstart', options.binded.hide)
+					.off(namespaced_events(options.trigger_event, options.events_namespace), options.binded.hide)
 					.off('resize', options.binded.forced_show);
 				options.lastSel	= false;
 			}
@@ -817,7 +851,7 @@
 	function update () {
 		var	options	= $(this).data('pickmeup-options');
 		$(document)
-			.off('mousedown', options.binded.hide)
+			.off(namespaced_events(options.trigger_event, options.events_namespace), options.binded.hide)
 			.off('resize', options.binded.forced_show);
 		options.binded.forced_show();
 	}
@@ -879,47 +913,72 @@
 			return prepared_date[formatted ? 0 : 1];
 		}
 	}
-	function set_date (date) {
+	function set_date (date, current) {
 		var $this	= $(this),
-			options = $this.data('pickmeup-options');
-		options.date = date;
-		if (typeof options.date === 'string') {
-			options.date = parseDate(options.date, options.format, options.separator, options.locale).setHours(0,0,0,0);
-		} else if (options.date.constructor == Date) {
-			options.date.setHours(0,0,0,0);
-		}
-		if (!options.date) {
-			options.date = new Date;
-			options.date.setHours(0,0,0,0);
-		}
-		if (options.mode != 'single') {
-			if (options.date.constructor != Array) {
-				options.date = [options.date.valueOf()];
-				if (options.mode == 'range') {
-					options.date.push(((new Date(options.date[0])).setHours(0,0,0,0)).valueOf());
+			options = $this.data('pickmeup-options'),
+			i;
+		if (!(date instanceof Array) || date.length > 0) {
+			options.date = parseDate(date, options.format, options.separator, options.locale);
+			if (options.mode != 'single') {
+				if (options.date instanceof Array) {
+					options.date[0] = options.date[0] || parseDate(new Date, options.format, options.separator, options.locale);
+					if (options.mode == 'range') {
+						options.date[1] = options.date[1] || parseDate(options.date[0], options.format, options.separator, options.locale);
+					}
+				} else {
+					options.date = [options.date];
+					if (options.mode == 'range') {
+						options.date.push(parseDate(options.date[0], options.format, options.separator, options.locale));
+					}
+				}
+				for (i = 0; i < options.date.length; ++i) {
+					options.date[i] = correct_date_outside_of_limit(options.date[i], options.min, options.max);
 				}
 			} else {
-				for (var i = 0; i < options.date.length; i++) {
-					options.date[i] = (parseDate(options.date[i], options.format, options.separator, options.locale).setHours(0,0,0,0)).valueOf();
+				if(options.date instanceof Array) {
+					options.date = options.date[0];
 				}
-				if (options.mode == 'range') {
-					options.date[1] = ((new Date(options.date[1])).setHours(0,0,0,0)).valueOf();
-				}
+				options.date = correct_date_outside_of_limit(options.date, options.min, options.max);
 			}
 		} else {
-			if($this.val() || options.default_date !== false) {
-				options.date = options.date.constructor == Array ? options.date[0].valueOf() : options.date.valueOf();
+			options.date = [];
+		}
+		if (!options.select_day) {
+			if (options.date instanceof Array) {
+				for (i = 0; i < options.date.length; ++i) {
+					options.date[i].setDate(1);
+				}
+			} else {
+				options.date.setDate(1);
 			}
 		}
-		options.current = new Date (options.mode != 'single' ? options.date[0] : options.date);
+		// Remove duplicates
+		if (options.mode == 'multiple') {
+			for (i = 0; i < options.date.length; ++i) {
+				if (options.date.indexOf(options.date[i]) !== i) {
+					options.date.splice(i, 1);
+					--i;
+				}
+			}
+		}
+		if (current) {
+			options.current	= parseDate(current, options.format, options.separator, options.locale);
+		} else {
+			current	= options.mode === 'single' ? options.date : options.date[options.date.length -1];
+			options.current	= current ? new Date(current) : new Date;
+		}
+		options.current.setDate(1);
 		options.binded.fill();
-		if ($this.is('input')) {
-			var prepared_date	= prepareDate(options);
-			$this.val(
-				options.mode == 'single'
-					? (options.default_date === false ? $this.val() : prepared_date[0])
-					: prepared_date[0].join(options.separator)
-			);
+		if ($this.is('input') && options.default_date !== false) {
+			var prepared_date	= prepareDate(options),
+				current_value	= $this.val(),
+				new_value		= options.mode == 'single' ? prepared_date[0] : prepared_date[0].join(options.separator);
+			if (!current_value) {
+				options.change.apply(this, prepared_date);
+			}
+			if (current_value != new_value) {
+				$this.val(new_value);
+			}
 		}
 	}
 	function destroy () {
@@ -929,6 +988,14 @@
 		$this.off(options.events_namespace);
 		$(document).off(options.events_namespace);
 		$(this.pickmeup).remove();
+	}
+	function correct_date_outside_of_limit (date, min, max) {
+		if (min && min > date) {
+			return new Date(min);
+		} else if (max && max < date) {
+			return new Date(max);
+		}
+		return date;
 	}
 	$.fn.pickmeup	= function (initial_options) {
 		if (typeof initial_options === 'string') {
@@ -974,7 +1041,7 @@
 			}
 			var i,
 				option,
-				options	= $.extend({}, $.pickmeup, initial_options || {});
+				options	= $.extend(true, {}, $.pickmeup, initial_options || {});
 			for (i in options) {
 				option	= $this.data('pmu-' + i);
 				if (typeof option !== 'undefined') {
@@ -996,79 +1063,18 @@
 			}
 			options.calendars	= Math.max(1, parseInt(options.calendars, 10) || 1);
 			options.mode		= /single|multiple|range/.test(options.mode) ? options.mode : 'single';
-			if (typeof options.min === 'string') {
-				options.min = parseDate(options.min, options.format, options.separator, options.locale).setHours(0,0,0,0);
-			} else if (options.min && options.min.constructor == Date) {
-				options.min.setHours(0,0,0,0);
-			}
-			if (typeof options.max === 'string') {
-				options.max = parseDate(options.max, options.format, options.separator, options.locale).setHours(0,0,0,0);
-			} else if (options.max && options.max.constructor == Date) {
-				options.max.setHours(0,0,0,0);
-			}
-			if (!options.select_day) {
-				if (options.min) {
-					options.min	= new Date(options.min);
+			if (options.min) {
+				options.min = parseDate(options.min, options.format, options.separator, options.locale);
+				if (!options.select_day) {
 					options.min.setDate(1);
-					options.min	= options.min.valueOf();
 				}
-				if (options.max) {
-					options.max	= new Date(options.max);
+			}
+			if (options.max) {
+				options.max = parseDate(options.max, options.format, options.separator, options.locale);
+				if (!options.select_day) {
 					options.max.setDate(1);
-					options.max	= options.max.valueOf();
 				}
 			}
-			if (typeof options.date === 'string') {
-				options.date = parseDate(options.date, options.format, options.separator, options.locale).setHours(0,0,0,0);
-			} else if (options.date.constructor == Date) {
-				options.date.setHours(0,0,0,0);
-			}
-			if (!options.date) {
-				options.date = new Date;
-				options.date.setHours(0,0,0,0);
-			}
-			if (options.mode != 'single') {
-				if (options.date.constructor != Array) {
-					options.date = [options.date.valueOf()];
-					if (options.mode == 'range') {
-						options.date.push(((new Date(options.date[0])).setHours(0,0,0,0)).valueOf());
-					}
-				} else {
-					for (i = 0; i < options.date.length; i++) {
-						options.date[i] = (parseDate(options.date[i], options.format, options.separator, options.locale).setHours(0,0,0,0)).valueOf();
-					}
-					if (options.mode == 'range') {
-						options.date[1] = ((new Date(options.date[1])).setHours(0,0,0,0)).valueOf();
-					}
-				}
-				options.current	= new Date(options.date[0]);
-				// Set days to 1 in order to handle them consistently
-				if (!options.select_day) {
-					for (i = 0; i < options.date.length; ++i) {
-						options.date[i]	= new Date(options.date[i]);
-						options.date[i].setDate(1);
-						options.date[i]	= options.date[i].valueOf();
-						// Remove duplicates
-						if (
-							options.mode != 'range' &&
-							options.date.indexOf(options.date[i]) !== i
-						) {
-							delete options.date.splice(i, 1);
-							--i;
-						}
-					}
-				}
-			} else {
-				options.date	= options.date.valueOf();
-				options.current	= new Date(options.date);
-				if (!options.select_day) {
-					options.date	= new Date(options.date);
-					options.date.setDate(1);
-					options.date	= options.date.valueOf();
-				}
-			}
-			options.current.setDate(1);
-			options.current.setHours(0,0,0,0);
 			var cnt,
 				pickmeup = $(tpl.wrapper);
 			this.pickmeup	= pickmeup;
@@ -1117,7 +1123,7 @@
 			};
 			options.events_namespace	= '.pickmeup-' + (++instances_count);
 			pickmeup
-				.on('click touchstart', options.binded.click)
+				.on(namespaced_events(options.trigger_event, options.events_namespace), options.binded.click)
 				.addClass(views[options.view])
 				.append(html)
 				.on(
@@ -1126,7 +1132,6 @@
 						e.preventDefault();
 					}
 				);
-			options.binded.fill();
 			if (options.flat) {
 				pickmeup.appendTo(this).css({
 					position	: 'relative',
@@ -1134,14 +1139,14 @@
 				});
 			} else {
 				pickmeup.appendTo(document.body);
-				// Multiple events support
-				var trigger_event	= options.trigger_event.split(' ');
-				for (i = 0; i < trigger_event.length; ++i) {
-					trigger_event[i]	+= options.events_namespace;
-				}
-				trigger_event	= trigger_event.join(' ');
-				$this.on(trigger_event, options.binded.show);
+				$this.on(
+					namespaced_events(options.trigger_event, options.events_namespace),
+					function () {
+						options.binded.show();
+					}
+				);
 			}
+			options.binded.set_date(options.date, options.current);
 		});
 	};
 }));

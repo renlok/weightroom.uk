@@ -13,10 +13,10 @@
 
     <!-- Bootstrap -->
     <link href='//fonts.googleapis.com/css?family=Open+Sans&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ asset('css/tracker.css') }}">
-    <script src="//code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
-    <script src="//getbootstrap.com/dist/js/bootstrap.min.js" charset="utf-8"></script>
+    <script src="//code.jquery.com/jquery-3.1.1.min.js" charset="utf-8"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" charset="utf-8"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
