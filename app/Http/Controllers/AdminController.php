@@ -11,6 +11,7 @@ use Carbon\Carbon;
 
 use App\Console\Commands\ImportFiles;
 use App\Console\Commands\GlobalStats;
+use App\Console\Commands\CleanJunk;
 
 use App\Admin;
 use App\Template;
@@ -47,18 +48,35 @@ class AdminController extends Controller
     {
         $stats = new GlobalStats;
         $stats->handle();
+        return redirect()
+            ->route('adminHome')
+            ->with(['flash_message' => "Collected stats new data"]);
+    }
+
+    public function cleanJunk()
+    {
+        $stats = new CleanJunk;
+        $stats->handle();
+        return redirect()
+            ->route('adminHome')
+            ->with(['flash_message' => "Cleaned database"]);
     }
 
     public function forceRebuildExercisePRTable($exercise_id)
     {
         \App\Extend\PRs::rebuildExercisePRs($exercise_id);
-        echo 'done';
+        return redirect()
+            ->route('adminHome')
+            ->with(['flash_message' => "Exercise ID: $exercise_id PR history rebuilt"]);
     }
 
     public function cronImport()
     {
         $import = new ImportFiles;
         $import->handle();
+        return redirect()
+            ->route('adminHome')
+            ->with(['flash_message' => "Import Completed"]);
     }
 
     public function getSettings()

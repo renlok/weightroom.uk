@@ -159,6 +159,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
 
     Route::get('cron/import', 'AdminController@cronImport')->name('cronImport');
     Route::get('stats/force', 'AdminController@forceStats')->name('forceStats');
+    Route::get('clean', 'AdminController@cleanJunk')->name('cleanJunk');
     Route::get('exercise/rebuild/{exercise_id}', 'AdminController@forceRebuildExercisePRTable')->name('adminRebuildExercisePRTable');
 });
 
