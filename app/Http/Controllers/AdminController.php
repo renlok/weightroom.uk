@@ -39,7 +39,7 @@ class AdminController extends Controller
 
     public function getStats()
     {
-        $stats = DB::table('global_stats')->orderBy('gstat_date', 'desc')->get();
+        $stats = DB::table('global_stats')->orderBy('gstat_date', 'asc')->get();
         return view('admin.stats', compact('stats'));
     }
 

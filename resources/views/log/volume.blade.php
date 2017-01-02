@@ -109,20 +109,19 @@
     nv.addGraph(function() {
         var chart = nv.models.lineWithFocusChart();
 		chart.margin({left: -50});
-		chart.tooltipContent(function(key, y, e, graph)
+		chart.tooltip.contentGenerator(function (obj)
 		{
-			//console.log(key);
 			var units = '{{ Auth::user()->user_unit }}';
-			var point_value = key.point.y;
-			if (key.point.color == '#b84a68')
+			var point_value = obj.point.y;
+			if (obj.point.color == '#b84a68')
 				var tool_type = 'Volume';
-			if (key.point.color == '#a6bf50')
+			if (obj.point.color == '#a6bf50')
 			{
 				var tool_type = 'Total reps';
 				point_value = Math.round(point_value / {{ $scales['log_total_reps'] }});
 				units = '';
 			}
-			if (key.point.color == '#56c5a6')
+			if (obj.point.color == '#56c5a6')
 			{
 				var tool_type = 'Total sets';
 				point_value = Math.round(point_value / {{ $scales['log_total_sets'] }});
