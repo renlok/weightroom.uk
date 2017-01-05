@@ -4,7 +4,7 @@
 
 @section('headerstyle')
 <link href="{{ asset('css/pickmeup.css') }}" rel="stylesheet">
-<link href="{{ asset('css/nv.d3.css') }}" rel="stylesheet">
+<link href="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.5/nv.d3.min.css" rel="stylesheet">
 <style>
 .leftspace {
 	margin-left: 10px;
@@ -61,9 +61,9 @@
 
 @section('endjs')
 <script src="{{ asset('js/jquery.pickmeup.js') }}"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js" charset="utf-8"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.14/d3.min.js" charset="utf-8"></script>
-<script src="{{ asset('js/nv.d3.js') }}"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js" charset="utf-8"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js" charset="utf-8"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.5/nv.d3.min.js" charset="utf-8"></script>
 <script>
     $('#from_date').pickmeup({
     	date		: moment('{{ $from_date }}','YYYY-MM-DD').format(),
@@ -109,20 +109,19 @@
     nv.addGraph(function() {
         var chart = nv.models.lineWithFocusChart();
 		chart.margin({left: -50});
-		chart.tooltipContent(function(key, y, e, graph)
+		chart.tooltip.contentGenerator(function (obj)
 		{
-			//console.log(key);
 			var units = '{{ Auth::user()->user_unit }}';
-			var point_value = key.point.y;
-			if (key.point.color == '#b84a68')
+			var point_value = obj.point.y;
+			if (obj.point.color == '#b84a68')
 				var tool_type = 'Volume';
-			if (key.point.color == '#a6bf50')
+			if (obj.point.color == '#a6bf50')
 			{
 				var tool_type = 'Total reps';
 				point_value = Math.round(point_value / {{ $scales['log_total_reps'] }});
 				units = '';
 			}
-			if (key.point.color == '#56c5a6')
+			if (obj.point.color == '#56c5a6')
 			{
 				var tool_type = 'Total sets';
 				point_value = Math.round(point_value / {{ $scales['log_total_sets'] }});

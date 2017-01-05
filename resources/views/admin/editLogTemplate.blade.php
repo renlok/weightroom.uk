@@ -111,7 +111,7 @@
 @endsection
 
 @section('endjs')
-<script src="//cdnjs.cloudflare.com/ajax/libs/vue/1.0.26/vue.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/vue/1.0.28/vue.min.js"></script>
 <script>
 @if ($template_id > 0)
 $('.deleteLink').click(function() {

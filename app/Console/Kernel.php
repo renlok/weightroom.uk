@@ -15,8 +15,9 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         \App\Console\Commands\Inspire::class,
-		\App\Console\Commands\GlobalStats::class,
-		\App\Console\Commands\ImportFiles::class,
+        \App\Console\Commands\GlobalStats::class,
+        \App\Console\Commands\ImportFiles::class,
+        \App\Console\Commands\CleanJunk::class,
     ];
 
     /**
@@ -31,11 +32,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('importfiles')->hourly();
 
-        $schedule->call(function () {
-            DB::table('exercises')
-                ->whereNotIn('exercise_id', DB::table('log_exercises')->groupBy('log_exercises.exercise_id')->pluck('exercise_id')->all())
-                ->delete();
-        })->monthly();
+        $schedule->command('cleanjunk')->monthly();
     }
 
     /**

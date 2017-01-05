@@ -1,3 +1,12 @@
+@section('headerstyle')
+<link href="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.5/nv.d3.min.css" rel="stylesheet">
+<style>
+#prHistoryChart .nv-lineChart circle.nv-point {
+  fill-opacity: 2;
+}
+</style>
+@endsection
+
 @section('content')
 <h2>{{ $type }}</h2>
 <h3>Viewing: @if($range == 0) All @else Last {{ $range }} months @endif</h3>
@@ -36,16 +45,10 @@
 @endsection
 
 @section('endjs')
-<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.14/d3.min.js" charset="utf-8"></script>
-<link href="{{ asset('css/nv.d3.css') }}" rel="stylesheet">
-<script src="{{ asset('js/nv.d3.js') }}"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js" charset="utf-8"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js" charset="utf-8"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.5/nv.d3.min.js" charset="utf-8"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js" charset="utf-8"></script>
 
-<style>
-#prHistoryChart .nv-lineChart circle.nv-point {
-  fill-opacity: 2;
-}
-</style>
 <script>
     function prHistoryData() {
 		var prHistoryChartData = [];
