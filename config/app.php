@@ -145,7 +145,8 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
-        'Maatwebsite\Excel\ExcelServiceProvider'
+        'Maatwebsite\Excel\ExcelServiceProvider',
+        'GrahamCampbell\Markdown\MarkdownServiceProvider'
 
     ],
 
@@ -201,6 +202,7 @@ return [
         'Carbon'    => 'Carbon\Carbon',
         'Format'    => 'App\Extend\Format',
         'Excel'     => 'Maatwebsite\Excel\Facades\Excel',
+        'Markdown'  => 'GrahamCampbell\Markdown\Facades\Markdown'
 
     ],
 

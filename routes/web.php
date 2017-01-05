@@ -182,11 +182,10 @@ Route::group(['prefix' => 'comment', 'middleware' => 'auth'], function () {
     Route::post('{log_id}', 'CommentController@store')->name('saveComment');
 });
 
-// check routes with artisan routes:list
-//http://laravel.com/docs/master/controllers#restful-resource-controllers
-Route::resource('blog', 'BlogController', ['names' => [
-    'create' => 'photo.build'
-]]);
+Route::group(['prefix' => 'blog'], function () {
+    Route::get('/', 'BlogController@viewBlog')->name('viewBlog');
+    Route::post('{url}', 'BlogController@viewBlogPost')->name('viewBlogPost');
+});
 
 Route::get('test', function () {
     return view('landing_new');

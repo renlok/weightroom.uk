@@ -13,7 +13,7 @@ class CreateGlobalStatsTable extends Migration
     public function up()
     {
         Schema::create('global_stats', function (Blueprint $table) {
-			$table->increments('gstat_id');
+            $table->increments('gstat_id');
             $table->date('gstat_date');
             $table->integer('total_users');
             $table->integer('active_users_1m');
