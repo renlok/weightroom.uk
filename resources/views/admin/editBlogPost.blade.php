@@ -51,7 +51,7 @@
 @endsection
 
 @section('endjs')
-@if ($template_id > 0)
+@if ($blog_id > 0)
 <script>
 $('.deleteLink').click(function() {
 	$('#deleteWarning').collapse('toggle');
