@@ -14,6 +14,7 @@
     <a class="btn btn-primary" href="{{ route('viewBlogPost', ['url' => $post->url]) }}">Read More</a>
   </div>
 @endforeach
+{!! $posts->render() !!}
 </div>
 @endsection
 

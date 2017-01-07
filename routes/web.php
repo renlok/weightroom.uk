@@ -192,7 +192,7 @@ Route::group(['prefix' => 'comment', 'middleware' => 'auth'], function () {
 
 Route::group(['prefix' => 'blog'], function () {
     Route::get('/', 'BlogController@viewBlog')->name('viewBlog');
-    Route::post('{url}', 'BlogController@viewBlogPost')->name('viewBlogPost');
+    Route::get('{url}', 'BlogController@viewBlogPost')->name('viewBlogPost');
 });
 
 Route::get('test', function () {
