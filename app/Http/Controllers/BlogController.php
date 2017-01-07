@@ -13,7 +13,7 @@ class BlogController extends Controller
 {
     public function viewBlog()
     {
-        $posts = Post::where('id', '>', 0)->paginate(5);
+        $posts = Post::where('post_id', '>', 0)->paginate(5);
         return view('blog.blog', compact('posts'));
     }
 

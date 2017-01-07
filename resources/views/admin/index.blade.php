@@ -12,6 +12,8 @@
 	<li><a href="{{ route('adminSettings') }}">Settings</a></li>
 	<li><a href="{{ route('adminListTemplates') }}">List Templates</a></li>
 	<li><a href="{{ route('adminAddTemplate') }}">Add Workout Template</a></li>
+	<li><a href="{{ route('adminListBlogPosts') }}">List Blog Posts</a></li>
+	<li><a href="{{ route('adminAddBlogPost') }}">Add Blog Post</a></li>
 	<li><a href="{{ route('forceStats') }}">Force Stats Count</a></li>
 	<li><a href="{{ route('cleanJunk') }}">Force Clean Junk</a></li>
 	<li><a href="{{ route('cronImport') }}">Force Cron Import</a><span class="badge"> {{ $cron_count }}</span></li>
