@@ -12,6 +12,11 @@ use Markdown;
 
 class BlogController extends Controller
 {
+    public static function adminCheck()
+    {
+        if (Auth::user()->user_id != 1) abort(404);
+    }
+
     public function viewBlog()
     {
         $posts = Post::orderBy('post_id', 'desc')->paginate(10);
@@ -29,6 +34,7 @@ class BlogController extends Controller
 
     public function getAddBlogPost()
     {
+        BlogController::adminCheck();
         $blog_id = 0;
         $blog_name = '';
         $blog_description = '';
@@ -39,6 +45,7 @@ class BlogController extends Controller
 
     public function postAddBlogPost(Request $request)
     {
+        BlogController::adminCheck();
         $blog = new Post;
         $blog->title = $request->input('blog_name');
         $blog->url = str_slug($request->input('blog_name'));
@@ -56,6 +63,7 @@ class BlogController extends Controller
 
     public function getEditBlogPost($post_id)
     {
+        BlogController::adminCheck();
         $blog = Post::where('post_id', $post_id)->firstorfail();
         $blog_id = $post_id;
         $blog_name = $blog->title;
@@ -67,6 +75,7 @@ class BlogController extends Controller
 
     public function postEditBlogPost($post_id, Request $request)
     {
+        BlogController::adminCheck();
         $blog = Post::where('post_id', $post_id)
                 ->update([
                     'title' => $request->input('blog_name'),
@@ -84,6 +93,7 @@ class BlogController extends Controller
 
     public function getDeleteBlogPost($post_id)
     {
+        BlogController::adminCheck();
         Post::where('post_id', $post_id)->delete();
         return redirect()
             ->route('adminListBlogPosts')
@@ -92,6 +102,7 @@ class BlogController extends Controller
 
     public function getListBlogPosts()
     {
+        BlogController::adminCheck();
         $posts = Post::orderBy('post_id', 'desc')->get();
         return view('admin.listBlogPosts', compact('posts'));
     }

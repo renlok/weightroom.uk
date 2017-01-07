@@ -35,7 +35,27 @@
     <button type="submit" class="btn btn-default">Submit</button>
   </div>
 </form>
+
+@if ($blog_id > 0)
+<button type="button" class="btn btn-danger deleteLink">Delete Blog</button>
+<div class="alert alert-danger margintb collapse" role="alert" id="deleteWarning" aria-expanded="false">
+	<button type="button" class="close deleteLink"><span aria-hidden="true">&times;</span></button>
+	<h4>You sure?</h4>
+	<p>You are about to delete this blog post this cannot be undone</p>
+	<p>
+		<a href="{{ route('adminDeleteBlogPost', ['post_id' => $blog_id]) }}" class="btn btn-danger">Yeah delete it</a>
+		<button type="button" class="btn btn-default deleteLink">Nah leave it be</button>
+	</p>
+</div>
+@endif
 @endsection
 
 @section('endjs')
+@if ($template_id > 0)
+<script>
+$('.deleteLink').click(function() {
+	$('#deleteWarning').collapse('toggle');
+});
+</script>
+@endif
 @endsection
