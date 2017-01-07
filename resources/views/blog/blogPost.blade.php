@@ -13,7 +13,7 @@
     <p>{{ $post->content }}</p>
     <div class="pull-right" style="margin-top: 20px;">
       <div class="btn-group btn-group-sm" role="group" aria-label="type">
-        <a href="{{ $previous_url }}" class="btn btn-default">Previous</a>
+        <a href="{{ $prev_url }}" class="btn btn-default">Previous</a>
         <a href="{{ $next_url }}" class="btn btn-default">Next</a>
       </div>
     </div>
