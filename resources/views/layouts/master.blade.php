@@ -56,7 +56,7 @@
           <li role="presentation"><a href="{{ route('invites') }}">{{ trans('master.inviteCodes') }}</a></li>
         @endif
           <li role="presentation"><a href="//reddit.com/r/weightroomuk" target="_blank">{{ trans('master.bugs') }}</a></li>
-          <li role="presentation"><a href="//weightroom.uk/blog/" target="_blank">{{ trans('master.blog') }}</a></li>
+          <li role="presentation"><a href="//weightroom.uk/blog/">{{ trans('master.blog') }}</a></li>
           <li role="presentation"><a href="{{ route('faq') }}">{{ trans('master.faq') }}</a></li>
           <li role="presentation"><a href="{{ route('userSettings') }}">{{ trans('master.settings') }}</a></li>
           <li role="presentation"><a href="{{ route('logout') }}">{{ trans('master.logout') }}</a></li>
