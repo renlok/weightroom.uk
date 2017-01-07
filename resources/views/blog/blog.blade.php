@@ -6,16 +6,16 @@
 @endsection
 
 @section('content')
-<div class="container">
+<ul class="list-group">
 @foreach ($posts as $post)
-  <div class="single-blog-post">
+  <li class="list-group-item">
     <h2>{{ $post->title }}</h2>
     <p>{{ $post->description }}</p>
     <a class="btn btn-primary" href="{{ route('viewBlogPost', ['url' => $post->url]) }}">Read More</a>
-  </div>
+  </li>
 @endforeach
+</ul>
 {!! $posts->render() !!}
-</div>
 @endsection
 
 @section('endjs')

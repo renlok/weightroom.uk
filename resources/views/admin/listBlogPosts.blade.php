@@ -12,10 +12,10 @@
 <p><a href="{{ route('adminHome') }}">Admin Home</a></p>
 
 @include('common.flash')
-<ul>
-  <li><a href="{{ route('adminAddBlogPost') }}">Add Post</a></li>
+<ul class="list-group">
+  <li class="list-group-item"><a href="{{ route('adminAddBlogPost') }}">Add Post</a></li>
 @foreach ($posts as $post)
-  <li><a href="{{ route('adminEditBlogPost', ['post_id' => $post->post_id]) }}">{{ $post->title }}</a> - <a href="{{ route('adminDeleteBlogPost', ['post_id' => $post->post_id]) }}">delete?</a></li>
+  <li class="list-group-item"><a href="{{ route('adminEditBlogPost', ['post_id' => $post->post_id]) }}">{{ $post->title }}</a> - <a href="{{ route('adminDeleteBlogPost', ['post_id' => $post->post_id]) }}">delete?</a></li>
 @endforeach
 </ul>
 @endsection

@@ -16,19 +16,19 @@
   <div class="form-group">
     <input type="hidden" name="blog_id" value="{{ $blog_id }}">
     <label for="blogName">Blog name</label>
-    <input type="text" id="blogName" name="blog_name" placeholder="Blog name" value="{{ $blog_name }}">
+    <input type="text" id="blogName" class="form-control" name="blog_name" placeholder="Blog name" value="{{ $blog_name }}">
   </div>
   <div class="form-group">
     <label for="blogDesc">Template description</label>
-    <input type="text" id="blogDesc" name="blog_description" placeholder="Blog description" value="{{ $blog_description }}">
+    <input type="text" id="blogDesc" class="form-control" name="blog_description" placeholder="Blog description" value="{{ $blog_description }}">
   </div>
   <div class="form-group">
     <label for="blogContent">Blog content</label>
-    <textarea id="blogContent" name="blog_content">{{ $blog_content }}</textarea>
+    <textarea id="blogContent" class="form-control" rows="25" name="blog_content">{{ $blog_content }}</textarea>
   </div>
   <div class="form-group">
     <label for="blogPublishedAt">Published at:</label>
-    <input type="text" id="blogPublishedAt" name="blog_published_at" placeholder="Published At" value="{{ $blog_published_at }}">
+    <input type="text" id="blogPublishedAt" class="form-control" name="blog_published_at" placeholder="Published At" value="{{ $blog_published_at }}">
   </div>
   <div class="form-group">
     {!! csrf_field() !!}

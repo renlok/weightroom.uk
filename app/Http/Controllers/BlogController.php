@@ -21,8 +21,8 @@ class BlogController extends Controller
     public function viewBlogPost($url)
     {
         $post = Post::where('url', $url)->first();
-        $prev_url = Post::prevBlogPostUrl($post->id);
-        $next_url = Post::nextBlogPostUrl($post->id);
+        $prev_url = Post::prevBlogPostUrl($post->post_id);
+        $next_url = Post::nextBlogPostUrl($post->post_id);
 
         return view('blog.blogPost', compact('prev_url', 'next_url', 'post'));
     }
