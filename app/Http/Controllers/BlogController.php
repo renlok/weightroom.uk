@@ -25,7 +25,7 @@ class BlogController extends Controller
 
     public function viewBlogPost($url)
     {
-        $post = Post::where('url', $url)->first();
+        $post = Post::where('url', $url)->firstOrFail();
         $prev_url = Post::prevBlogPostUrl($post->post_id);
         $next_url = Post::nextBlogPostUrl($post->post_id);
 
@@ -64,7 +64,7 @@ class BlogController extends Controller
     public function getEditBlogPost($post_id)
     {
         BlogController::adminCheck();
-        $blog = Post::where('post_id', $post_id)->firstorfail();
+        $blog = Post::where('post_id', $post_id)->firstOrFail();
         $blog_id = $post_id;
         $blog_name = $blog->title;
         $blog_description = $blog->description;
