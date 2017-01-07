@@ -14,7 +14,7 @@ class BlogController extends Controller
 {
     public function viewBlog()
     {
-        $posts = Post::paginate(5);
+        $posts = Post::orderBy('post_id', 'desc')->paginate(10);
         return view('blog.blog', compact('posts'));
     }
 
@@ -92,7 +92,7 @@ class BlogController extends Controller
 
     public function getListBlogPosts()
     {
-        $posts = Post::all();
+        $posts = Post::orderBy('post_id', 'desc')->get();
         return view('admin.listBlogPosts', compact('posts'));
     }
 }
