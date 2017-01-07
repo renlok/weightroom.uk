@@ -8,6 +8,7 @@ use App\Http\Requests;
 use Auth;
 use App\Post;
 use Carbon\Carbon;
+use Markdown;
 
 class BlogController extends Controller
 {
