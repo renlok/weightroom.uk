@@ -157,6 +157,13 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
     Route::post('template/add', 'AdminController@postAddTemplate');
     Route::get('template/delete/{template_id}', 'AdminController@getDeleteTemplate')->name('adminDeleteTemplate');
 
+    Route::get('blog', 'BlogController@getListBlogPosts')->name('adminListBlogPosts');
+    Route::get('blog/edit/{post_id}', 'BlogController@getEditBlogPost')->name('adminEditBlogPost');
+    Route::post('blog/edit/{post_id}', 'BlogController@postEditBlogPost');
+    Route::get('blog/add', 'BlogController@getAddBlogPost')->name('adminAddBlogPost');
+    Route::post('blog/add', 'BlogController@postAddBlogPost');
+    Route::get('blog/delete/{post_id}', 'BlogController@getDeleteBlogPost')->name('adminDeleteBlogPost');
+
     Route::get('cron/import', 'AdminController@cronImport')->name('cronImport');
     Route::get('stats/force', 'AdminController@forceStats')->name('forceStats');
     Route::get('clean', 'AdminController@cleanJunk')->name('cleanJunk');

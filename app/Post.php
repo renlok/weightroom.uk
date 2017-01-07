@@ -7,24 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 class Post extends Model
 {
 
-    protected $fillable = [
-        'url',
-        'title',
-        'description',
-        'content',
-        'category_id'
-    ];
+    protected $guarded = ['post_id'];
 
     public static function prevBlogPostUrl($id)
     {
-        $blog = Post::where('id', '<', $id)->orderBy('id', 'desc')->first();
+        $blog = Post::where('post_id', '<', $id)->orderBy('post_id', 'desc')->first();
 
         return $blog ? $blog->url : '#';
     }
 
     public static function nextBlogPostUrl($id)
     {
-        $blog = Post::where('id', '>', $id)->orderBy('id', 'asc')->first();
+        $blog = Post::where('post_id', '>', $id)->orderBy('post_id', 'asc')->first();
 
         return $blog ? $blog->url : '#';
     }

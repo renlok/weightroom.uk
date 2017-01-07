@@ -13,12 +13,14 @@ class CreatePostsTable extends Migration
     public function up()
     {
         Schema::create('posts', function ($table) {
-            $table->increments('id');
+            $table->increments('post_id');
             $table->string('url', 255)->unique();
             $table->string('title', 140);
             $table->string('description', 170);
             $table->text('content');
+            $table->text('markdown');
             $table->integer('category_id');
+            $table->dateTime('published_at');
             $table->timestamps();
         });
     }
