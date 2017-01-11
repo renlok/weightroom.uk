@@ -90,38 +90,38 @@
     nv.addGraph(function() {
         var chart = nv.models.lineWithFocusChart();
 		chart.margin({left: -50});
-		chart.tooltipContent(function(key, y, e, graph)
+		chart.tooltip.contentGenerator(function (obj)
 		{
 			//console.log(key);
 			var units = '{{ $user->user_unit }}';
-			var point_value = key.point.y;
-			if (key.point.color == '#b84a68')
+			var point_value = obj.point.y;
+			if (obj.point.color == '#b84a68')
 				var tool_type = 'Volume';
-			if (key.point.color == '#b84a66')
+			if (obj.point.color == '#b84a66')
 			{
 				var tool_type = 'Time';
 				point_value = Math.round((point_value / 3600) * 100) / 100;
 				units = 'h';
 			}
-			if (key.point.color == '#b84a67')
+			if (obj.point.color == '#b84a67')
 			{
 				var tool_type = 'Distance';
 				point_value = Math.round((point_value / 1000) * 100) / 100;
 				units = 'km';
 			}
-			if (key.point.color == '#a6bf50')
+			if (obj.point.color == '#a6bf50')
 			{
 				var tool_type = 'Total reps';
 				point_value = Math.round(point_value / {{ $scales['logex_reps'] }});
 				units = '';
 			}
-			if (key.point.color == '#56c5a6')
+			if (obj.point.color == '#56c5a6')
 			{
 				var tool_type = 'Total sets';
 				point_value = Math.round(point_value / {{ $scales['logex_sets'] }});
 				units = '';
 			}
-			if (key.point.color == '#765dcb')
+			if (obj.point.color == '#765dcb')
 			{
 				var tool_type = '1RM';
 				point_value = (point_value / {{ $scales['logex_1rm'] }}).toFixed(2);
