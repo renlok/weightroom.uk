@@ -327,13 +327,13 @@ class LogsController extends Controller
 			'log_total_reps' => floor($max_volume / $query->max('log_total_reps')),
 			'log_total_sets' => floor($max_volume / $query->max('log_total_sets')),
 		];
-		$graph_data = $query->orderBy('log_date', 'asc')->get();
+		$graph_data = $query->orderBy('log_date', 'asc')->get()->all();
 		$graph_names = [
 			'log_total_volume' => 'Volume',
 			'log_total_reps' => 'Total reps',
 			'log_total_sets' => 'Total sets',
 		];
-		if ($n > 0 && $graph_data->count() > $n)
+		if ($n > 0 && count($graph_data) > $n)
 		{
 			$graph_data = Log_control::calculate_moving_average($graph_data, array_keys($graph_names), $n);
 		}
