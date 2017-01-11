@@ -126,7 +126,7 @@
 				var tool_type = '1RM';
 				point_value = (point_value / {{ $scales['logex_1rm'] }}).toFixed(2);
 			}
-			return '<pre>' + tool_type + ': ' + point_value + units + '</pre>';
+			return '<pre><strong>' + moment(obj.point.x).format('DD-MM-YYYY') + '</strong><br>' + tool_type + ': ' + point_value + units + '</pre>';
 		})
 							//.margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
 							//.useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
