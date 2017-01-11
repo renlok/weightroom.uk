@@ -86,7 +86,7 @@ class Parser
 				$exercise = substr($line, 1); // set exercise marker
 				// add new exercise group to array
 				$this->log_data['exercises'][$position] = array(
-						'name' => $exercise,
+						'name' => trim($exercise),
 						'comment' => '',
 						'data' => array());
 				continue; // end this loop
@@ -422,7 +422,7 @@ class Parser
 			$this->log_exercises[$i] = new Log_exercise;
 			$this->log_items[$i] = [];
 			// set exercise name
-			$exercise_name = trim($item['name']);
+			$exercise_name = $item['name'];
 
 			// get exercise information
 			$exercise = Exercise::getexercise($exercise_name, $this->user->user_id)->first();
@@ -474,7 +474,7 @@ class Parser
 				$this->log_items[$i][$j]->is_endurance = $this->exercises[$i]['endurance'];
 				$this->log_items[$i][$j]->is_distance = $this->exercises[$i]['distance'];
 				// check comment for special tags
-				$set['C'] = (isset($set['C'])) ? $set['C'] : '';
+				$set['C'] = (isset($set['C'])) ? trim($set['C']) : '';
 				$this->checkSpecialTags ($set['C'], $i, $j);
 				// clean up set data (+ converts units ready for db insertion)
 				$set = $this->cleanSetData ($set, $i, $j);
@@ -738,7 +738,7 @@ class Parser
 		{
 			return 0;
 		}
-		$string = trim(strtolower($string));
+		$string = strtolower($string);
 		$this->is_speed = null;
 		// line is warmup
 		if ($this->isWarmupTag ($string))
