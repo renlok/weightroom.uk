@@ -38,7 +38,7 @@ blockquote.small {
 @forelse ($logs as $log)
 	<tr>
 		<td class="logrow">
-			<a href="{{ route('viewUser', ['user_name' => $log->user->user_name]) }}">{{ $log->user->user_name }}</a> posted a log at {{ $log->created_at->format('M j Y g:i a') }} for {{ (Carbon::now()->startOfDay()->eq($log->log_date)) ? 'Today' : $log->log_date->diffForHumans() }}. <a href="{{ route('viewLog', ['date' => $log->log_date->toDateString(), 'user_name' => $log->user->user_name]) }}">View log</a>
+			<a href="{{ route('viewUser', ['user_name' => $log->user->user_name]) }}">{{ $log->user->user_name }}</a> posted a log at <code>{{ $log->created_at->format('M j Y g:i a') }}</code> for {{ (Carbon::now()->startOfDay()->eq($log->log_date)) ? 'Today' : $log->log_date->diffForHumans() }}. <a href="{{ route('viewLog', ['date' => $log->log_date->toDateString(), 'user_name' => $log->user->user_name]) }}">View log</a>
       <blockquote class="small">{!! nl2br(htmlentities($log->log_text)) !!}</blockquote>
 		</td>
 	</tr>

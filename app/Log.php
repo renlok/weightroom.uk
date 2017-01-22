@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Log extends Model
@@ -56,6 +57,11 @@ class Log extends Model
     public static function isValid($date, $user)
     {
         return (Log::where('log_date', $date)->where('user_id', $user)->count() > 0);
+    }
+
+    public function getCreatedAtAttribute($date)
+    {
+        return Carbon::createFromFormat('Y-m-d H:i:s', $date);
     }
 
     /**
