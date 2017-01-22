@@ -22,7 +22,7 @@ class SubscriptionController extends Controller
     public function postPremium(Request $request)
     {
         Auth::user()->newSubscription('weightroom_gold', 'weightroom_gold')->create($request->input('stripeToken'));
-        if ($user->subscribed('weightroom_gold'))
+        if (Auth::user()->subscribed('weightroom_gold'))
         {
             Mail::to(Auth::user())->send(new SubscriptionSuccess());
             $message = 'Your are now a premium member.';
@@ -60,7 +60,7 @@ class SubscriptionController extends Controller
                     'flash_message' => 'Your primium subscription has been restarted.'
                 ]);
       } else {
-        return redirect()->route('userPremium');
+          return redirect()->route('userPremium');
       }
     }
 }
