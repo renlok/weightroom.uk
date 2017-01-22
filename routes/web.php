@@ -50,6 +50,12 @@ Route::group(['prefix' => 'user'], function () {
     });
 });
 
+// stripe failed payment route
+Route::post(
+    'stripe/webhook',
+    '\Laravel\Cashier\Http\Controllers\WebhookController@handleWebhook'
+);
+
 // Log controller
 Route::group(['middleware' => 'auth'], function () {
     Route::get('track', 'LogsController@getTrack')->name('track');
