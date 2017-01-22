@@ -3,11 +3,6 @@
 namespace App\Http\Controllers;
 
 use Auth;
-use Cache;
-use DB;
-use App\Log;
-use App\User;
-use App\User_follow;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -21,7 +16,7 @@ class SubscriptionController extends Controller
 
     public function postPremium(Request $request)
     {
-        Auth::user->newSubscription('weightroom_gold', 'monthly')->create($request->input('stripeToken'));
+        Auth::user()->newSubscription('weightroom_gold', 'monthly')->create($request->input('stripeToken'));
         // TODO send email
         return redirect()
               ->route('userPremium')
@@ -32,7 +27,7 @@ class SubscriptionController extends Controller
 
     public function getCancelPremium()
     {
-        Auth::user->subscription('weightroom_gold')->cancel();
+        Auth::user()->subscription('weightroom_gold')->cancel();
         // TODO send email
         return redirect()
               ->route('userPremium')
@@ -43,8 +38,8 @@ class SubscriptionController extends Controller
 
     public function getResumePremium()
     {
-      if (Auth::user->subscription('weightroom_gold')->onGracePeriod()) {
-          Auth::user->subscription('weightroom_gold')->resume();
+      if (Auth::user()->subscription('weightroom_gold')->onGracePeriod()) {
+          Auth::user()->subscription('weightroom_gold')->resume();
           // TODO send email
           return redirect()
                 ->route('userPremium')

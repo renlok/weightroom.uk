@@ -8,10 +8,10 @@
   @include('common.flash')
   <p>Some info about why premium is totally rad</p>
   <div class="subscription-box">
-    @if (Auth::user->subscription('weightroom_gold')->onGracePeriod())
+    @if (Auth::user()->subscription('weightroom_gold')->onGracePeriod())
     <p>We are sorry you don't want your premium account any more. If you change your mind it is as easy as one click away.</p>
     <a class="btn btn-default" href="{{ route('userResumePremium') }}" role="button">Resume Premium</a>
-    @elseif (Auth::user->subscribed('weightroom_gold'))
+    @elseif (Auth::user()->subscribed('weightroom_gold'))
     <p>We hope you are finding WeightRoom premium useful if not we would love if you would let us know why by sending us an <a href="mailto:chris@weightroom.uk">email</a>.</p>
     <a class="btn btn-default" href="{{ route('userCancelPremium') }}" role="button">Cancel Premium</a>
     @else
