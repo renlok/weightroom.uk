@@ -44,10 +44,13 @@ class CreateUsersTable extends Migration
             $table->boolean('user_admin')->default('0');
             $table->integer('user_don_level')->default('0');
             // payment data
+            $table->boolean('stripe_active')->default('0');
             $table->string('stripe_id')->nullable();
+            $table->string('stripe_plan')->nullable();
             $table->string('card_brand')->nullable();
             $table->string('card_last_four')->nullable();
             $table->timestamp('trial_ends_at')->nullable();
+            $table->timestamp('subscription_ends_at')->nullable();
         });
     }
 

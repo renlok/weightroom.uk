@@ -42,12 +42,23 @@ Route::group(['prefix' => 'user'], function () {
         Route::get('follow/{user_name}/{date?}', 'UserController@follow')->name('followUser');
         Route::get('unfollow/{user_name}/{date?}', 'UserController@unfollow')->name('unfollowUser');
         Route::get('notifications/clear', 'UserController@clearNotifications')->name('clearNotifications');
+        // subscription routes
+        Route::get('premium', 'SubscriptionController@getPremium')->name('userPremium');
+        Route::post('premium', 'SubscriptionController@postPremium');
+        Route::get('premium/cancel', 'SubscriptionController@getCancelPremium')->name('userCancelPremium');
+        Route::get('premium/resume', 'SubscriptionController@getResumePremium')->name('userResumePremium');
     });
 });
 
+// stripe failed payment route
+Route::post(
+    'stripe/webhook',
+    '\Laravel\Cashier\Http\Controllers\WebhookController@handleWebhook'
+);
+
 // Log controller
 Route::group(['middleware' => 'auth'], function () {
-  Route::get('track', 'LogsController@getTrack')->name('track');
+    Route::get('track', 'LogsController@getTrack')->name('track');
 });
 Route::group(['prefix' => 'log'], function () {
     // ajax
