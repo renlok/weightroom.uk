@@ -16,12 +16,20 @@ class SubscriptionController extends Controller
 
     public function postPremium(Request $request)
     {
-        Auth::user()->newSubscription('weightroom_gold', 'monthly')->create($request->input('stripeToken'));
-        // TODO send email
+        Auth::user()->newSubscription('weightroom_gold', 'weightroom_gold')->create($request->input('stripeToken'));
+        if ($user->subscribed('weightroom_gold'))
+        {
+            // TODO send email
+            $message = 'Your are now a premium member.';
+        }
+        else
+        {
+            $message = 'Something went wrong with your payment.';
+        }
         return redirect()
               ->route('userPremium')
               ->with([
-                  'flash_message' => 'Your are now a premium member.'
+                  'flash_message' => $message
               ]);
     }
 
