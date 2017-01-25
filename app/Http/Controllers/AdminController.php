@@ -347,7 +347,7 @@ class AdminController extends Controller
 
     public function getListUsers()
     {
-        $users = User::all()->paginate(50);
+        $users = User::paginate(50);
         return view('admin.listUsers', compact('users'));
     }
 }
