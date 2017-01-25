@@ -64,6 +64,11 @@ class Log extends Model
         return Carbon::createFromFormat('Y-m-d H:i:s', $date);
     }
 
+    public function setCreatedAtAttribute($value)
+    {
+        $this->attributes['created_at'] = Carbon::now()->format('Y-m-d H:i:s');
+    }
+
     /**
      * a log can many log exercises
      *
