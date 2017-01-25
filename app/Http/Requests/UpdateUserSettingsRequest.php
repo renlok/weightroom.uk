@@ -26,9 +26,9 @@ class UpdateUserSettingsRequest extends Request
             'volumeincfails' => 'required|boolean',
             'viewintensityabs' => 'required|in:p,a,h',
             'limitintensity' => 'required|between:0,100',
-			'showinol' => 'required|boolean',
-			'inolincwarmup' => 'required|boolean',
-			'volumeincwarmup' => 'required|boolean',
+            'showinol' => 'required|boolean',
+            'inolincwarmup' => 'required|boolean',
+            'volumeincwarmup' => 'required|boolean',
         ];
     }
 

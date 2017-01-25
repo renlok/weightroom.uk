@@ -12,8 +12,8 @@ class LogRequest extends Request
     public function rules()
     {
         return [
-			'log' => 'max:2000',
-			'weight' => 'numeric',
+            'log' => 'max:2000',
+            'weight' => 'numeric',
         ];
     }
 

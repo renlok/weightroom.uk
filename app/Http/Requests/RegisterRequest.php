@@ -13,10 +13,10 @@ class RegisterRequest extends Request
     public function rules()
     {
         return [
-			'user_name' => 'required|unique:users|max:255',
-			'user_email' => 'required|unique:users|max:255',
-			'password' => 'required|confirmed|min:6',
-			'invcode' => (Admin::InvitesEnabled()) ? 'required|isvalid:invite_codes,code,code_uses,code_expires' : '',
+            'user_name' => 'required|unique:users|max:255',
+            'user_email' => 'required|unique:users|max:255',
+            'password' => 'required|confirmed|min:6',
+            'invcode' => (Admin::InvitesEnabled()) ? 'required|isvalid:invite_codes,code,code_uses,code_expires' : '',
         ];
     }
 

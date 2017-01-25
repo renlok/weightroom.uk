@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests;
 
 use Auth;
-use DB;
 use Carbon\Carbon;
+use DB;
 
 use App\Console\Commands\ImportFiles;
 use App\Console\Commands\GlobalStats;
@@ -15,6 +15,7 @@ use App\Console\Commands\CleanJunk;
 
 use App\Admin;
 use App\Template;
+use App\User;
 
 class AdminController extends Controller
 {
@@ -342,5 +343,11 @@ class AdminController extends Controller
                     'flash_message' => 'Template deleted.',
                     'flash_message_type' => 'danger'
                 ]);
+    }
+
+    public function getListUsers()
+    {
+        $users = User::all()->paginate(50);
+        return view('admin.listUsers', compact('users'));
     }
 }
