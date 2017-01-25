@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'List Exercises')
+@section('title', 'List Users')
 
 @section('content')
 <h2>Admin Land: List Blog Posts</h2>
@@ -15,7 +15,7 @@
     </tr>
   </thead>
   <tbody>
-@forelse ($users as $user)
+@foreach ($users as $user)
   @if ($user->user_firstlog)
     <tr class="danger"> <!-- user has posted no logs -->
   @elseif ($user->subscribed('weightroom_gold'))
@@ -27,7 +27,7 @@
       <td>{{ $user->user_name }}</td>
       <td><a href="#">Edit</a></td>
     </tr>
-@endforelse
+@endforeach
   </tbody>
 </table>
 
