@@ -698,6 +698,10 @@ class Parser
             {
                 $this->log_items[$i][$j]->is_bw = true;
                 $set['W'][0] = substr($set['W'][0], 2);
+                if ($set['W'][0] == '')
+                {
+                    $set['W'][0] = 0;
+                }
             }
             $set['W'] = $this->correctUnitsDatabase ($set['W'], 'W');
             $set['T'] = 0;
@@ -840,14 +844,7 @@ class Parser
     {
         if ($this->log_items[$i][$j]->is_bw)
         {
-            if ($set['W'] == '' || $set['W'] == 0)
-            {
-                $this->log_items[$i][$j]->logitem_abs_weight = floatval($this->user_weight);
-            }
-            else
-            {
-                $this->log_items[$i][$j]->logitem_abs_weight = floatval($set['W'] + $this->user_weight);
-            }
+            $this->log_items[$i][$j]->logitem_abs_weight = floatval($set['W'] + $this->user_weight);
         }
         elseif ($this->log_items[$i][$j]->is_time)
         {
