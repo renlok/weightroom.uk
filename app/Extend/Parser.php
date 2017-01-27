@@ -840,7 +840,14 @@ class Parser
     {
         if ($this->log_items[$i][$j]->is_bw)
         {
-            $this->log_items[$i][$j]->logitem_abs_weight = floatval($set['W'] + $this->user_weight);
+            if ($set['W'] == '' || $set['W'] == 0)
+            {
+                $this->log_items[$i][$j]->logitem_abs_weight = floatval($this->user_weight);
+            }
+            else
+            {
+                $this->log_items[$i][$j]->logitem_abs_weight = floatval($set['W'] + $this->user_weight);
+            }
         }
         elseif ($this->log_items[$i][$j]->is_time)
         {
