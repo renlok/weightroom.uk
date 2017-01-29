@@ -322,8 +322,8 @@ class LogsController extends Controller
             $to_date = Carbon::now()->toDateString();
         }
         $max_volume = Format::correct_weight($query->max('log_total_volume'));
-        $scales = ['log_total_volume'] = 1;
-        $graph_names = ['log_total_volume'] = 'Volume';
+        $scales['log_total_volume'] = 1;
+        $graph_names['log_total_volume'] = 'Volume';
         if ($query->max('log_total_reps') > 0)
         {
             $scales['log_total_reps'] = floor($max_volume / $query->max('log_total_reps'));
