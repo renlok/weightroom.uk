@@ -322,21 +322,29 @@ class LogsController extends Controller
             $to_date = Carbon::now()->toDateString();
         }
         $max_volume = Format::correct_weight($query->max('log_total_volume'));
-        $scales = [
-            'log_total_volume' => 1,
-            'log_total_reps' => floor($max_volume / $query->max('log_total_reps')),
-            'log_total_sets' => floor($max_volume / $query->max('log_total_sets')),
-            'log_total_distance' => floor($max_volume / $query->max('log_total_distance')),
-            'log_total_time' => floor($max_volume / $query->max('log_total_time')),
-        ];
+        $scales = ['log_total_volume'] = 1;
+        $graph_names = ['log_total_volume'] = 'Volume';
+        if ($query->max('log_total_reps') > 0)
+        {
+            $scales['log_total_reps'] = floor($max_volume / $query->max('log_total_reps'));
+            $graph_names['log_total_reps'] = 'Total reps';
+        }
+        if ($query->max('log_total_sets') > 0)
+        {
+            $scales['log_total_sets'] = floor($max_volume / $query->max('log_total_sets'));
+            $graph_names['log_total_sets'] = 'Total sets';
+        }
+        if ($query->max('log_total_distance') > 0)
+        {
+            $scales['log_total_distance'] = floor($max_volume / $query->max('log_total_distance'));
+            $graph_names['log_total_distance'] = 'Total distance';
+        }
+        if ($query->max('log_total_time') > 0)
+        {
+            $scales['log_total_time'] = floor($max_volume / $query->max('log_total_time'));
+            $graph_names['log_total_time'] = 'Total time';
+        }
         $graph_data = $query->orderBy('log_date', 'asc')->get()->all();
-        $graph_names = [
-            'log_total_volume' => 'Volume',
-            'log_total_reps' => 'Total reps',
-            'log_total_sets' => 'Total sets',
-            'log_total_distance' => 'Total Distance',
-            'log_total_time' => 'Total Time',
-        ];
         if ($n > 0 && count($graph_data) > $n)
         {
             $graph_data = Log_control::calculate_moving_average($graph_data, array_keys($graph_names), $n);
