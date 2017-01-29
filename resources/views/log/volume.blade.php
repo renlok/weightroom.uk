@@ -119,30 +119,38 @@
 			var point_value = obj.point.y;
 			if (obj.point.color == '#b84a68')
 				var tool_type = 'Volume';
+    @if (isset($scales['log_total_reps']))
 			if (obj.point.color == '#a6bf50')
 			{
 				var tool_type = 'Total reps';
 				point_value = Math.round(point_value / {{ $scales['log_total_reps'] }});
 				units = '';
 			}
+    @endif
+    @if (isset($scales['log_total_sets']))
 			if (obj.point.color == '#56c5a6')
 			{
 				var tool_type = 'Total sets';
 				point_value = Math.round(point_value / {{ $scales['log_total_sets'] }});
 				units = '';
 			}
+    @endif
+    @if (isset($scales['log_total_time']))
 			if (obj.point.color == '#614DF2')
 			{
 				var tool_type = 'Total time';
 				point_value = Math.round(point_value / {{ $scales['log_total_time'] }});
 				units = '';
 			}
+    @endif
+    @if (isset($scales['log_total_distance']))
 			if (obj.point.color == '#9F85C7')
 			{
 				var tool_type = 'Total distance';
 				point_value = Math.round(point_value / {{ $scales['log_total_distance'] }});
 				units = '';
 			}
+    @endif
 			return '<pre><strong>' + moment(obj.point.x).format('DD-MM-YYYY') + '</strong><br>' + tool_type + ': ' + point_value + units + '</pre>';
 		})
 							//.margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
