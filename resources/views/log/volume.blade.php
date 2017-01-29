@@ -150,7 +150,7 @@
             {
                 var tool_type = 'Total time';
                 point_value = Math.round(point_value / {{ $scales['log_total_time'] }});
-                units = '';
+                units = 'hr';
             }
     @endif
     @if (isset($scales['log_total_distance']))
@@ -158,7 +158,7 @@
             {
                 var tool_type = 'Total distance';
                 point_value = Math.round(point_value / {{ $scales['log_total_distance'] }});
-                units = '';
+                units = 'km';
             }
     @endif
             return '<pre><strong>' + moment(obj.point.x).format('DD-MM-YYYY') + '</strong><br>' + tool_type + ': ' + point_value + units + '</pre>';
