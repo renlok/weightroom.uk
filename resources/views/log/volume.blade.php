@@ -98,8 +98,12 @@
 			color: '#a6bf50'
 	@elseif ($table_name == 'log_total_sets')
 			color: '#56c5a6'
-	@else
+	@elseif ($table_name == 'log_total_volume')
 			color: '#b84a68'
+  @elseif ($table_name == 'log_total_distance')
+			color: '#9F85C7'
+  @else
+      color: '#614DF2'
 	@endif
 		});
 @endforeach
@@ -108,7 +112,7 @@
 
     nv.addGraph(function() {
         var chart = nv.models.lineWithFocusChart();
-		chart.margin({left: -50});
+		chart.margin({left: -1});
 		chart.tooltip.contentGenerator(function (obj)
 		{
 			var units = '{{ Auth::user()->user_unit }}';
@@ -125,6 +129,18 @@
 			{
 				var tool_type = 'Total sets';
 				point_value = Math.round(point_value / {{ $scales['log_total_sets'] }});
+				units = '';
+			}
+			if (obj.point.color == '#614DF2')
+			{
+				var tool_type = 'Total time';
+				point_value = Math.round(point_value / {{ $scales['log_total_time'] }});
+				units = '';
+			}
+			if (obj.point.color == '#9F85C7')
+			{
+				var tool_type = 'Total distance';
+				point_value = Math.round(point_value / {{ $scales['log_total_distance'] }});
 				units = '';
 			}
 			return '<pre><strong>' + moment(obj.point.x).format('DD-MM-YYYY') + '</strong><br>' + tool_type + ': ' + point_value + units + '</pre>';

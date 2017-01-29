@@ -326,12 +326,16 @@ class LogsController extends Controller
             'log_total_volume' => 1,
             'log_total_reps' => floor($max_volume / $query->max('log_total_reps')),
             'log_total_sets' => floor($max_volume / $query->max('log_total_sets')),
+            'log_total_distance' => floor($max_volume / $query->max('log_total_distance')),
+            'log_total_time' => floor($max_volume / $query->max('log_total_time')),
         ];
         $graph_data = $query->orderBy('log_date', 'asc')->get()->all();
         $graph_names = [
             'log_total_volume' => 'Volume',
             'log_total_reps' => 'Total reps',
             'log_total_sets' => 'Total sets',
+            'log_total_distance' => 'Total Distance',
+            'log_total_time' => 'Total Time',
         ];
         if ($n > 0 && count($graph_data) > $n)
         {
