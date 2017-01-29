@@ -7,7 +7,7 @@
 <link href="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.5/nv.d3.min.css" rel="stylesheet">
 <style>
 .leftspace {
-	margin-left: 10px;
+  margin-left: 10px;
 }
 #HistoryChart .nv-lineChart circle.nv-point {
   fill-opacity: 2;
@@ -17,10 +17,10 @@
 }
 .nv-axisMaxMin, .nv-y text { display: none; }
 .pmu-not-in-month.cal_log_date{
-	background-color:#7F4C00;
+  background-color:#7F4C00;
 }
 .cal_log_date{
-	background-color:#F90;
+  background-color:#F90;
 }
 </style>
 @endsection
@@ -43,12 +43,12 @@
   </div>
   <div class="form-group">
     <label for="n">Moving Average</label>
-	<select class="form-control" id="n" name="n">
-	  <option value="0" {{ $n == 0 ? 'selected' : '' }}>Disable</option>
-	  <option value="3" {{ $n == 3 ? 'selected' : '' }}>3</option>
-	  <option value="5" {{ $n == 5 ? 'selected' : '' }}>5</option>
-	  <option value="7" {{ $n == 7 ? 'selected' : '' }}>7</option>
-	</select>
+  <select class="form-control" id="n" name="n">
+    <option value="0" {{ $n == 0 ? 'selected' : '' }}>Disable</option>
+    <option value="3" {{ $n == 3 ? 'selected' : '' }}>3</option>
+    <option value="5" {{ $n == 5 ? 'selected' : '' }}>5</option>
+    <option value="7" {{ $n == 7 ? 'selected' : '' }}>7</option>
+  </select>
   </div>
   {{ csrf_field() }}
   <button type="submit" class="btn btn-default">Update</button>
@@ -66,100 +66,95 @@
 <script src="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.5/nv.d3.min.js" charset="utf-8"></script>
 <script>
     $('#from_date').pickmeup({
-    	date		: moment('{{ $from_date }}','YYYY-MM-DD').format(),
-    	format  	: 'Y-m-d',
-    	calendars	: 1,
-    	first_day	: {{ Auth::user()->user_weekstart }},
-    	hide_on_select	: true
+        date           : moment('{{ $from_date }}','YYYY-MM-DD').format(),
+        format         : 'Y-m-d',
+        calendars      : 1,
+        first_day      : {{ Auth::user()->user_weekstart }},
+        hide_on_select : true
     });
     $('#to_date').pickmeup({
-    	date		: moment('{{ $to_date }}','YYYY-MM-DD').format(),
-    	format  	: 'Y-m-d',
-    	calendars	: 1,
-    	first_day	: {{ Auth::user()->user_weekstart }},
-    	hide_on_select	: true
+        date           : moment('{{ $to_date }}','YYYY-MM-DD').format(),
+        format         : 'Y-m-d',
+        calendars      : 1,
+        first_day      : {{ Auth::user()->user_weekstart }},
+        hide_on_select : true
     });
 
     function HistoryData() {
-		var HistoryChartData = [];
+        var HistoryChartData = [];
 @foreach ($graph_names as $table_name => $graph_name)
-		var dataset{{ $table_name }} = [];
+        var dataset{{ $table_name }} = [];
 @endforeach
 @foreach ($graph_data as $item)
-		@foreach ($graph_names as $table_name => $graph_name)
-			dataset{{ $table_name }}.push({x: moment('{{ (is_object($item)) ? $item->log_date : $item['log_date'] }}','YYYY-MM-DD').toDate(), y: {{ (($table_name == 'log_total_volume') ? Format::correct_weight((is_object($item) ? $item->$table_name : $item[$table_name])) : (is_object($item) ? $item->$table_name : $item[$table_name])) * $scales[$table_name] }}, shape:'circle'});
-		@endforeach
+    @foreach ($graph_names as $table_name => $graph_name)
+        @if ($item->$table_name > 0)
+        dataset{{ $table_name }}.push({x: moment('{{ $item->log_date }}','YYYY-MM-DD').toDate(), y: {{ (($table_name == 'log_total_volume') ? Format::correct_weight($item->$table_name) : $item->$table_name) * $scales[$table_name] }}, shape:'circle'});
+        @endif
+    @endforeach
 @endforeach
 @foreach ($graph_names as $table_name => $graph_name)
-		HistoryChartData.push({
-			values: dataset{{ $table_name }},
-			key: '{{ $graph_name }}',
-	@if ($table_name == 'log_total_reps')
-			color: '#a6bf50'
-	@elseif ($table_name == 'log_total_sets')
-			color: '#56c5a6'
-	@elseif ($table_name == 'log_total_volume')
-			color: '#b84a68'
+        HistoryChartData.push({
+            values: dataset{{ $table_name }},
+            key: '{{ $graph_name }}',
+    @if ($table_name == 'log_total_reps')
+            color: '#a6bf50'
+    @elseif ($table_name == 'log_total_sets')
+            color: '#56c5a6'
+    @elseif ($table_name == 'log_total_volume')
+            color: '#b84a68'
   @elseif ($table_name == 'log_total_distance')
-			color: '#9F85C7'
+            color: '#9F85C7'
   @else
       color: '#614DF2'
-	@endif
-		});
+    @endif
+        });
 @endforeach
-		return HistoryChartData;
+        return HistoryChartData;
     }
 
     nv.addGraph(function() {
         var chart = nv.models.lineWithFocusChart();
-		chart.margin({left: -1});
-		chart.tooltip.contentGenerator(function (obj)
-		{
-			var units = '{{ Auth::user()->user_unit }}';
-			var point_value = obj.point.y;
-			if (obj.point.color == '#b84a68')
-				var tool_type = 'Volume';
+        chart.margin({left: -1});
+        chart.tooltip.contentGenerator(function (obj)
+        {
+            var units = '{{ Auth::user()->user_unit }}';
+            var point_value = obj.point.y;
+            if (obj.point.color == '#b84a68')
+                var tool_type = 'Volume';
     @if (isset($scales['log_total_reps']))
-			if (obj.point.color == '#a6bf50')
-			{
-				var tool_type = 'Total reps';
-				point_value = Math.round(point_value / {{ $scales['log_total_reps'] }});
-				units = '';
-			}
+            if (obj.point.color == '#a6bf50')
+            {
+                var tool_type = 'Total reps';
+                point_value = Math.round(point_value / {{ $scales['log_total_reps'] }});
+                units = '';
+            }
     @endif
     @if (isset($scales['log_total_sets']))
-			if (obj.point.color == '#56c5a6')
-			{
-				var tool_type = 'Total sets';
-				point_value = Math.round(point_value / {{ $scales['log_total_sets'] }});
-				units = '';
-			}
+            if (obj.point.color == '#56c5a6')
+            {
+                var tool_type = 'Total sets';
+                point_value = Math.round(point_value / {{ $scales['log_total_sets'] }});
+                units = '';
+            }
     @endif
     @if (isset($scales['log_total_time']))
-			if (obj.point.color == '#614DF2')
-			{
-				var tool_type = 'Total time';
-				point_value = Math.round(point_value / {{ $scales['log_total_time'] }});
-				units = '';
-			}
+            if (obj.point.color == '#614DF2')
+            {
+                var tool_type = 'Total time';
+                point_value = Math.round(point_value / {{ $scales['log_total_time'] }});
+                units = '';
+            }
     @endif
     @if (isset($scales['log_total_distance']))
-			if (obj.point.color == '#9F85C7')
-			{
-				var tool_type = 'Total distance';
-				point_value = Math.round(point_value / {{ $scales['log_total_distance'] }});
-				units = '';
-			}
+            if (obj.point.color == '#9F85C7')
+            {
+                var tool_type = 'Total distance';
+                point_value = Math.round(point_value / {{ $scales['log_total_distance'] }});
+                units = '';
+            }
     @endif
-			return '<pre><strong>' + moment(obj.point.x).format('DD-MM-YYYY') + '</strong><br>' + tool_type + ': ' + point_value + units + '</pre>';
-		})
-							//.margin({left: 100})  //Adjust chart margins to give the x-axis some breathing room.
-							//.useInteractiveGuideline(true)  //We want nice looking tooltips and a guideline!
-							//.transitionDuration(350)  //how fast do you want the lines to transition?
-							//.showLegend(true)       //Show the legend, allowing users to turn on/off line series.
-							//.showYAxis(true)        //Show the y-axis
-							//.showXAxis(true)        //Show the x-axis
-		//var chart = nv.models.lineWithFocusChart();
+            return '<pre><strong>' + moment(obj.point.x).format('DD-MM-YYYY') + '</strong><br>' + tool_type + ': ' + point_value + units + '</pre>';
+        });
 
         chart.xAxis
             .tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); });

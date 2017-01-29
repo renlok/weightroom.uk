@@ -327,21 +327,29 @@ class LogsController extends Controller
         if ($query->max('log_total_reps') > 0)
         {
             $scales['log_total_reps'] = floor($max_volume / $query->max('log_total_reps'));
+            if ($scales['log_total_reps'] == 0)
+                $scales['log_total_reps'] = 1;
             $graph_names['log_total_reps'] = 'Total reps';
         }
         if ($query->max('log_total_sets') > 0)
         {
             $scales['log_total_sets'] = floor($max_volume / $query->max('log_total_sets'));
+            if ($scales['log_total_sets'] == 0)
+                $scales['log_total_sets'] = 1;
             $graph_names['log_total_sets'] = 'Total sets';
         }
         if ($query->max('log_total_distance') > 0)
         {
             $scales['log_total_distance'] = floor($max_volume / $query->max('log_total_distance'));
+            if ($scales['log_total_distance'] == 0)
+                $scales['log_total_distance'] = 1;
             $graph_names['log_total_distance'] = 'Total distance';
         }
         if ($query->max('log_total_time') > 0)
         {
             $scales['log_total_time'] = floor($max_volume / $query->max('log_total_time'));
+            if ($scales['log_total_time'] == 0)
+                $scales['log_total_time'] = 1;
             $graph_names['log_total_time'] = 'Total time';
         }
         $graph_data = $query->orderBy('log_date', 'asc')->get()->all();
