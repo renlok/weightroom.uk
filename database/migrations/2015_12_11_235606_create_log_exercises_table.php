@@ -30,7 +30,7 @@ class CreateLogExercisesTable extends Migration
             $table->double('logex_inol_warmup', 25, 7);
             $table->double('logex_time', 25, 7);
             $table->double('logex_distance', 25, 7);
-            $table->string('logex_comment');
+            $table->text('logex_comment');
             $table->double('logex_1rm', 25, 7);
             $table->smallInteger('logex_order');
             $table->timestamps();
