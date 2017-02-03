@@ -36,13 +36,29 @@ class UserController extends Controller
                 ->route('viewLog', ['user_name' => $user_name, 'date' => $date]);
     }
 
-    public function unfollow($user_name, $date)
+    public function unfollow($user_name, $date = null)
     {
         User_follow::where('user_id', Auth::user()->user_id)
                     ->where('follow_user_id', User::where('user_name', $user_name)->firstOrFail()->user_id)
                     ->delete();
-        return redirect()
-                ->route('viewLog', ['user_name' => $user_name, 'date' => $date]);
+        if ($date == null)
+        {
+            return redirect()
+                  ->route('followList')
+                  ->with('flash_message', 'User unfollowed.');
+        }
+        else
+        {
+            return redirect()
+                  ->route('viewLog', ['user_name' => $user_name, 'date' => $date])
+                  ->with('flash_message', 'User unfollowed.');
+        }
+    }
+
+    public function getFollowList()
+    {
+        $followed_users = User_follow::with('users')->where('user_id', Auth::user()->user_id)->paginate(50);
+        return view('user.followList', compact('followed_users'));
     }
 
     public function getSettings()
