@@ -58,9 +58,9 @@ class PasswordController extends Controller
         }
     }
 
-    public function getReset()
+    public function getReset($token)
     {
-        return view('auth.reset');
+        return view('auth.reset', compact('token'));
     }
 
     protected function resetPassword($user, $password)
