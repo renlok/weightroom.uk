@@ -113,7 +113,7 @@
     @elseif ($table_name == 'log_total_distance')
             color: '#9F85C7'
     @elseif ($table_name == 'log_total_intensity')
-            color: '#C07000'
+            color: '#68b84a'
     @else
             color: '#614DF2'
     @endif
@@ -164,7 +164,7 @@
             }
     @endif
     @if (isset($scales['log_total_intensity']))
-            if (obj.point.color == '#C07000')
+            if (obj.point.color == '#68b84a')
             {
                 var tool_type = 'Intensity';
                 point_value = Math.round(point_value / {{ $scales['log_total_intensity'] }});

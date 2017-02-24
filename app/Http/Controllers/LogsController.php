@@ -352,7 +352,7 @@ class LogsController extends Controller
                 $scales['log_total_time'] = 1;
             $graph_names['log_total_time'] = 'Total time';
         }
-        $graph_data = $query->orderBy('log_date', 'asc')->get()->all();
+        $graph_data = $query->orderBy('log_date', 'asc')->get();
         if ($graph_data->max('log_total_intensity') > 0)
         {
             $scales['log_total_intensity'] = floor($max_volume / $graph_data->max('log_total_intensity'));
@@ -360,6 +360,7 @@ class LogsController extends Controller
                 $scales['log_total_intensity'] = 1;
             $graph_names['log_total_intensity'] = 'Intensity';
         }
+        $graph_data = $graph_data->all();
         if ($n > 0 && count($graph_data) > $n)
         {
             $graph_data = Log_control::calculate_moving_average($graph_data, array_keys($graph_names), $n);
