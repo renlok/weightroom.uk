@@ -87,15 +87,15 @@
 @endforeach
 @foreach ($graph_data as $item)
     @foreach ($graph_names as $table_name => $graph_name)
-        @if ($item->$table_name > 0)
+        @if ((is_object($item)) ? ($item->$table_name > 0) : ($item[$table_name] > 0))
             @if ($table_name == 'log_total_volume')
-        dataset{{ $table_name }}.push({x: moment('{{ $item->log_date }}','YYYY-MM-DD').toDate(), y: {{ Format::correct_weight($item->$table_name) * $scales[$table_name] }}, shape:'circle'});
+        dataset{{ $table_name }}.push({x: moment('{{ is_object($item) ? $item->log_date : $item['log_date'] }}','YYYY-MM-DD').toDate(), y: {{ Format::correct_weight(is_object($item) ? $item->$table_name : $item[$table_name]) * $scales[$table_name] }}, shape:'circle'});
             @elseif ($table_name == 'log_total_distance')
-        dataset{{ $table_name }}.push({x: moment('{{ $item->log_date }}','YYYY-MM-DD').toDate(), y: {{ Format::correct_distance($item->$table_name, 'm', 'km') * $scales[$table_name] }}, shape:'circle'});
+        dataset{{ $table_name }}.push({x: moment('{{ is_object($item) ? $item->log_date : $item['log_date'] }}','YYYY-MM-DD').toDate(), y: {{ Format::correct_distance(is_object($item) ? $item->$table_name : $item[$table_name], 'm', 'km') * $scales[$table_name] }}, shape:'circle'});
             @elseif ($table_name == 'log_total_time')
-        dataset{{ $table_name }}.push({x: moment('{{ $item->log_date }}','YYYY-MM-DD').toDate(), y: {{ Format::correct_time($item->$table_name, 's', 'h') * $scales[$table_name] }}, shape:'circle'});
+        dataset{{ $table_name }}.push({x: moment('{{ is_object($item) ? $item->log_date : $item['log_date'] }}','YYYY-MM-DD').toDate(), y: {{ Format::correct_time(is_object($item) ? $item->$table_name : $item[$table_name], 's', 'h') * $scales[$table_name] }}, shape:'circle'});
             @else
-        dataset{{ $table_name }}.push({x: moment('{{ $item->log_date }}','YYYY-MM-DD').toDate(), y: {{ $item->$table_name * $scales[$table_name] }}, shape:'circle'});
+        dataset{{ $table_name }}.push({x: moment('{{ is_object($item) ? $item->log_date : $item['log_date'] }}','YYYY-MM-DD').toDate(), y: {{ is_object($item) ? $item->$table_name : $item[$table_name] * $scales[$table_name] }}, shape:'circle'});
             @endif
         @endif
     @endforeach

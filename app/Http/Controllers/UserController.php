@@ -57,7 +57,7 @@ class UserController extends Controller
 
     public function getFollowList()
     {
-        $followed_users = User_follow::with('users')->where('user_id', Auth::user()->user_id)->paginate(50);
+        $followed_users = User_follow::with('user')->where('user_id', Auth::user()->user_id)->paginate(50);
         return view('user.followList', compact('followed_users'));
     }
 

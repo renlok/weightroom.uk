@@ -32,6 +32,8 @@ blockquote.small {
 @if ($random)
 <h3>You aren't currently following anyone</h3>
 <h4>We think a blank page is boring so here is a random selection of users you can check out</h4>
+@else
+<p><a href="{{ route('followList') }}">Who am I following?</a></p>
 @endif
 <table class="table">
 <tbody>
