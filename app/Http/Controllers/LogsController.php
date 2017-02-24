@@ -338,13 +338,6 @@ class LogsController extends Controller
                 $scales['log_total_sets'] = 1;
             $graph_names['log_total_sets'] = 'Total sets';
         }
-        if ($query->max('log_total_intensity') > 0)
-        {
-            $scales['log_total_intensity'] = floor($max_volume / $query->max('log_total_intensity'));
-            if ($scales['log_total_intensity'] == 0)
-                $scales['log_total_intensity'] = 1;
-            $graph_names['log_total_intensity'] = 'Intensity';
-        }
         if ($query->max('log_total_distance') > 0)
         {
             $scales['log_total_distance'] = floor($max_volume / Format::correct_distance($query->max('log_total_distance'), 'm', 'km'));
@@ -360,6 +353,13 @@ class LogsController extends Controller
             $graph_names['log_total_time'] = 'Total time';
         }
         $graph_data = $query->orderBy('log_date', 'asc')->get()->all();
+        if ($graph_data->max('log_total_intensity') > 0)
+        {
+            $scales['log_total_intensity'] = floor($max_volume / $graph_data->max('log_total_intensity'));
+            if ($scales['log_total_intensity'] == 0)
+                $scales['log_total_intensity'] = 1;
+            $graph_names['log_total_intensity'] = 'Intensity';
+        }
         if ($n > 0 && count($graph_data) > $n)
         {
             $graph_data = Log_control::calculate_moving_average($graph_data, array_keys($graph_names), $n);
