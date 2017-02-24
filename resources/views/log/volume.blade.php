@@ -110,10 +110,12 @@
             color: '#56c5a6'
     @elseif ($table_name == 'log_total_volume')
             color: '#b84a68'
-  @elseif ($table_name == 'log_total_distance')
+    @elseif ($table_name == 'log_total_distance')
             color: '#9F85C7'
-  @else
-      color: '#614DF2'
+    @elseif ($table_name == 'log_total_intensity')
+            color: '#C07000'
+    @else
+            color: '#614DF2'
     @endif
         });
 @endforeach
@@ -159,6 +161,14 @@
                 var tool_type = 'Total distance';
                 point_value = Math.round(point_value / {{ $scales['log_total_distance'] }});
                 units = 'km';
+            }
+    @endif
+    @if (isset($scales['log_total_intensity']))
+            if (obj.point.color == '#C07000')
+            {
+                var tool_type = 'Intensity';
+                point_value = Math.round(point_value / {{ $scales['log_total_intensity'] }});
+                units = '';
             }
     @endif
             return '<pre><strong>' + moment(obj.point.x).format('DD-MM-YYYY') + '</strong><br>' + tool_type + ': ' + point_value + units + '</pre>';

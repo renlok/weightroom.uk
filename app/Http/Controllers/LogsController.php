@@ -295,7 +295,7 @@ class LogsController extends Controller
 
     public function getVolume($from_date = 0, $to_date = 0, $n = 0)
     {
-        $query = DB::table('logs')
+        $query = DB::table('logs')->select(DB::raw("*, log_total_volume / log_total_reps As log_total_intensity"))
                     ->where('user_id', Auth::user()->user_id);
         if ($from_date != 0)
         {
@@ -337,6 +337,13 @@ class LogsController extends Controller
             if ($scales['log_total_sets'] == 0)
                 $scales['log_total_sets'] = 1;
             $graph_names['log_total_sets'] = 'Total sets';
+        }
+        if ($query->max('log_total_intensity') > 0)
+        {
+            $scales['log_total_intensity'] = floor($max_volume / $query->max('log_total_intensity'));
+            if ($scales['log_total_intensity'] == 0)
+                $scales['log_total_intensity'] = 1;
+            $graph_names['log_total_intensity'] = 'Intensity';
         }
         if ($query->max('log_total_distance') > 0)
         {

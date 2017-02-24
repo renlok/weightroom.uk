@@ -11,7 +11,7 @@
   <table class="table table-striped">
     <tbody>
 @foreach ($followed_users as $followed_user)
-        <td>{{ $followed_user->user->user_name }}</td>
+        <td><a href="{{ route('viewUser', ['user_name' => $followed_user->user->user_name]) }}">{{ $followed_user->user->user_name }}</a></td>
         <td>{{ $followed_user->created_at->toDateString() }}</td>
         <td><p class="btn btn-default"><a href="{{ route('unfollowUser', ['user' => $followed_user->user->user_name]) }}">Unfollow <img src="{{ asset('img/user_delete.png') }}"></a></p></td>
       </tr>
