@@ -105,15 +105,15 @@
             values: dataset{{ $table_name }},
             key: '{{ $graph_name }}',
     @if ($table_name == 'log_total_reps')
-            color: '#a6bf50'
+            color: '#68b84a'
     @elseif ($table_name == 'log_total_sets')
-            color: '#56c5a6'
+            color: '#4a68b8'
     @elseif ($table_name == 'log_total_volume')
             color: '#b84a68'
     @elseif ($table_name == 'log_total_distance')
-            color: '#9F85C7'
+            color: '#4df261'
     @elseif ($table_name == 'log_total_intensity')
-            color: '#68b84a'
+            color: '#f2614d'
     @else
             color: '#614DF2'
     @endif
@@ -132,7 +132,7 @@
             if (obj.point.color == '#b84a68')
                 var tool_type = 'Volume';
     @if (isset($scales['log_total_reps']))
-            if (obj.point.color == '#a6bf50')
+            if (obj.point.color == '#68b84a')
             {
                 var tool_type = 'Total reps';
                 point_value = Math.round(point_value / {{ $scales['log_total_reps'] }});
@@ -140,7 +140,7 @@
             }
     @endif
     @if (isset($scales['log_total_sets']))
-            if (obj.point.color == '#56c5a6')
+            if (obj.point.color == '#4a68b8')
             {
                 var tool_type = 'Total sets';
                 point_value = Math.round(point_value / {{ $scales['log_total_sets'] }});
@@ -156,7 +156,7 @@
             }
     @endif
     @if (isset($scales['log_total_distance']))
-            if (obj.point.color == '#9F85C7')
+            if (obj.point.color == '#4df261')
             {
                 var tool_type = 'Total distance';
                 point_value = Math.round(point_value / {{ $scales['log_total_distance'] }});
@@ -164,7 +164,7 @@
             }
     @endif
     @if (isset($scales['log_total_intensity']))
-            if (obj.point.color == '#68b84a')
+            if (obj.point.color == '#f2614d')
             {
                 var tool_type = 'Intensity';
                 point_value = Math.round(point_value / {{ $scales['log_total_intensity'] }});
