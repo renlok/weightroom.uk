@@ -340,14 +340,14 @@ class LogsController extends Controller
         }
         if ($query->max('log_total_distance') > 0)
         {
-            $scales['log_total_distance'] = floor($max_volume / $query->max('log_total_distance'));
+            $scales['log_total_distance'] = floor($max_volume / Format::correct_distance($query->max('log_total_distance'), 'm', 'km'));
             if ($scales['log_total_distance'] == 0)
                 $scales['log_total_distance'] = 1;
             $graph_names['log_total_distance'] = 'Total distance';
         }
         if ($query->max('log_total_time') > 0)
         {
-            $scales['log_total_time'] = floor($max_volume / $query->max('log_total_time'));
+            $scales['log_total_time'] = floor($max_volume / Format::correct_time($query->max('log_total_time'), 's', 'h'));
             if ($scales['log_total_time'] == 0)
                 $scales['log_total_time'] = 1;
             $graph_names['log_total_time'] = 'Total time';
