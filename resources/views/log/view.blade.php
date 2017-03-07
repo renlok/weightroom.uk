@@ -214,10 +214,14 @@ blockquote.small {
     @include('common.logExercise', ['view_type' => 'log'])
   @endforeach
   @include('common.commentTree', ['comments' => $comments])
-@else
+@elseif (!$log_visible)
   <div class="row empty-log">
-    <h1>Nothing's here</h1>
+    <h1>This users logs are private</h1>
   </div>
+@else
+    <div class="row empty-log">
+        <h1>Nothing's here</h1>
+    </div>
 @endif
 @endsection
 

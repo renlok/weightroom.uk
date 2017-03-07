@@ -50,15 +50,21 @@ class MiscController extends Controller
                 return User::select(DB::raw('DISTINCT(users.user_id)'))->join('logs', 'users.user_id', '=', 'logs.user_id')->orderBy(\DB::raw('RAND()'))->take(10)->pluck('users.user_id');
             });
             $random = true;
+            $follow_count = 0;
+        }
+        else
+        {
+            $follow_count = $followed_users->count();
         }
         $logs = Log::whereIn('user_id', $followed_users)->whereRaw("TRIM(log_text) != ''")->orderBy('log_date', 'desc')->paginate(50);
-        return view('dash', compact('logs', 'random'));
+        return view('dash', compact('logs', 'random', 'follow_count'));
     }
 
     public function dashAll()
     {
         $logs = Log::orderBy('log_date', 'desc')->whereRaw("TRIM(log_text) != ''")->paginate(50);
         $random = false;
-        return view('dash', compact('logs', 'random'));
+        $follow_count = 0;
+        return view('dash', compact('logs', 'random', 'follow_count'));
     }
 }

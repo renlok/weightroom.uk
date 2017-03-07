@@ -1,3 +1,8 @@
+@extends('layouts.master')
+
+@section('title', 'Privacy Policy')
+
+@section('content')
 <p>This Privacy Policy governs the manner in which The WeightRoom.uk collects, uses, maintains and discloses information collected from users (each, a "User") of the <a href="//weightroom.uk/">http://weightroom.uk/</a> website ("Site").</p>
 
 <h3>Personal identification information</h3>
@@ -65,3 +70,4 @@
 <p>If you have any questions about this Privacy Policy, the practices of this site, or your dealings with this site, please contact us.</p>
 
 <p>This document was last updated on August 08, 2015</p>
+@endsection
