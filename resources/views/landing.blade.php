@@ -189,7 +189,7 @@ button.btn-default:hover {
 			<h2>Set goals</h2>
 			<p class="lead">
 				The best way to achieve something is to set measurable goals, and we will help you with just that.
-				See you goals neatly arranged so that you can see what needs work and where you are excelling.
+				See your goals neatly arranged so that you can see what needs work and where you are excelling.
 			</p>
 		</div>
 		<div class="col-md-6" id="goalscreen">
