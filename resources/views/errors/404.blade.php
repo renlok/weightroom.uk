@@ -41,7 +41,7 @@
         <div class="container">
             <div class="content">
                 <div class="title">Nothing to see here</div>
-				<img src="img/404/O8tTAD1.gif">
+                    <img src="//weightroom.uk/img/404/O8tTAD1.gif">
             </div>
         </div>
     </body>

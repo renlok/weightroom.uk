@@ -147,6 +147,18 @@
   ga('send', 'pageview');
 
 </script>
+<script>
+    Userback = window.Userback || {};
+    Userback.access_token = '879|996|JgEnNTf3tRs7hFTXUVBF7eMsd4vTMOmw41USU9Vo1nvi3ogXkR';
 
+    (function(id) {
+        if (document.getElementById(id)) {return;}
+        var s = document.createElement('script');
+        s.id = id;
+        s.src = 'https://static.userback.io/widget/v1.js';
+        var parent_node = document.head || document.body;
+        parent_node.appendChild(s);
+    })('userback-sdk');
+</script>
 </body>
 </html>
