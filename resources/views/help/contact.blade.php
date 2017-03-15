@@ -25,6 +25,7 @@
       <textarea class="form-control" id="message"></textarea>
     </div>
     <div class="form-group">
+      {!! csrf_field() !!}
       <button type="submit" class="btn btn-primary">Contact Us</button>
     </div>
   </form>
