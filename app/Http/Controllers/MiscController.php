@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Auth;
 use Cache;
 use DB;
+use Validator;
 use App\Log;
 use App\User;
 use App\User_follow;
@@ -37,6 +38,44 @@ class MiscController extends Controller
     public function privacyPolicy()
     {
         return view('help.privacypolicy');
+    }
+
+    public function termsOfService()
+    {
+        return view('help.termsofservice');
+    }
+
+    public function getContactUs()
+    {
+        return view('help.contact');
+    }
+
+    public function postContactUs(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required|email',
+            'message' => 'required'
+        ]);
+        if ($validator->fails()) {
+            return redirect()
+                    ->route('contactUs')
+                    ->withErrors($validator)
+                    ->withInput();
+        }
+        \Mail::send('emails.contact',
+            [
+                'name' => $request->get('name'),
+                'email' => $request->get('email'),
+                'user_message' => $request->get('message')
+            ], function($message)
+        {
+            $message->from($request->get('email'));
+            $message->to('chris@weightroom.uk', 'Admin')->subject('WeightRoom Feedback');
+        });
+        return redirect()
+            ->route('contactUs')
+            ->with('flash_message', 'Thanks for contacting us! We will get in touch soon.');
     }
 
     public function dash()

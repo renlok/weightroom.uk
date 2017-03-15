@@ -208,4 +208,9 @@ class ImportController extends Controller
     {
         return view('import.upload');
     }
+
+    public function export(Request $request)
+    {
+
+    }
 }

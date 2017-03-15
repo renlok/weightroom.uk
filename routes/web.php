@@ -188,7 +188,11 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
 //Route::get('/', 'MiscController@index');
 Route::group(['middleware' => 'auth'], function () {
     Route::get('dashboard', 'MiscController@dash')->name('dashboard');
+    Route::get('dash', 'MiscController@dash');
     Route::get('dashboard/all', 'MiscController@dashAll')->name('dashboardAll');
+    Route::get('dash/all', 'MiscController@dashAll');
+    Route::get('help/contact', 'MiscController@getContactUs')->name('contactUs');
+    Route::post('help/contact', 'MiscController@postContactUs');
 });
 
 Route::get('demo', 'MiscController@demo')->name('demo');
@@ -197,7 +201,8 @@ Route::get('faq', 'MiscController@faq')->name('faq');
 Route::get('/', 'MiscController@landing')->name('home');
 
 // legal guff
-Route::get('help/privacypolicy', 'MiscController@privacyPolicy')->name('privacyPolicy');
+Route::get('help/privacy', 'MiscController@privacyPolicy')->name('privacyPolicy');
+Route::get('help/terms', 'MiscController@termsOfService')->name('termsOfService');
 
 Route::group(['prefix' => 'comment', 'middleware' => 'auth'], function () {
     Route::get('{comment_id}/delete', 'CommentController@delete')->name('deleteComment');

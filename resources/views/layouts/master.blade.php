@@ -117,8 +117,14 @@
 </div>
 
 <footer class="footer">
-  <div class="container">
-    <p class="text-muted">2016 &#169; weightroom.uk.<span class="hidden-xs"> Use of this site constitutes acceptance of the site's <a href="{{ route('privacyPolicy') }}" target="_blank">Privacy Policy and Terms of Use</a>.</span></p>
+  <div class="container text-muted">
+    <ul class="list-inline">
+      <li>2016 - 2017 &#169; weightroom.uk</li>
+      <li><a href="{{ route('privacyPolicy') }}">Privacy</a></li>
+      <li><a href="{{ route('termsOfService') }}">Terms</a></li>
+      <li><a href="{{ route('contactUs') }}">Contact</a></li>
+      <li><a href="{{ route('faq') }}">Help</a></li>
+    </ul>
   </div>
 </footer>
 
