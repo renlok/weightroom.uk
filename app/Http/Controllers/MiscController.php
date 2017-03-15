@@ -56,13 +56,13 @@ class MiscController extends Controller
         {
             $follow_count = $followed_users->count();
         }
-        $logs = Log::whereIn('user_id', $followed_users)->whereRaw("TRIM(log_text) != ''")->orderBy('log_date', 'desc')->paginate(50);
+        $logs = Log::whereIn('user_id', $followed_users)->whereRaw("TRIM(log_text) != ''")->orderBy('log_date', 'desc')->orderBy('created_at', 'desc')->paginate(50);
         return view('dash', compact('logs', 'random', 'follow_count'));
     }
 
     public function dashAll()
     {
-        $logs = Log::orderBy('log_date', 'desc')->whereRaw("TRIM(log_text) != ''")->paginate(50);
+        $logs = Log::whereRaw("TRIM(log_text) != ''")->orderBy('log_date', 'desc')->orderBy('created_at', 'desc')->paginate(50);
         $random = false;
         $follow_count = 0;
         return view('dash', compact('logs', 'random', 'follow_count'));
