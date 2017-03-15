@@ -68,7 +68,7 @@ class MiscController extends Controller
                 'name' => $request->get('name'),
                 'email' => $request->get('email'),
                 'user_message' => $request->get('message')
-            ], function($message)
+            ], function($message) use ($request)
         {
             $message->from($request->get('email'));
             $message->to('chris@weightroom.uk', 'Admin')->subject('WeightRoom Feedback');
