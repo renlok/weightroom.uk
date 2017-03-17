@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use Auth;
 use App\Post;
+use App\Comment;
 use Carbon\Carbon;
 use Markdown;
 

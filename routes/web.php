@@ -206,8 +206,8 @@ Route::get('help/terms', 'MiscController@termsOfService')->name('termsOfService'
 
 Route::group(['prefix' => 'comment', 'middleware' => 'auth'], function () {
     Route::get('{comment_id}/delete', 'CommentController@delete')->name('deleteComment');
-    Route::post('{object_id}', 'CommentController@storeLogComment')->name('storeLogComment');
-    Route::post('{object_id}', 'CommentController@storeBlogComment')->name('storeBlogComment');
+    Route::post('log/{object_id}', 'CommentController@storeLogComment')->name('storeLogComment');
+    Route::post('blog/{object_id}', 'CommentController@storeBlogComment')->name('storeBlogComment');
 });
 
 Route::group(['prefix' => 'blog'], function () {

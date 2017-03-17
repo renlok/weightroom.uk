@@ -1,6 +1,7 @@
 <style>
 .object_comments, .comment_child {
   list-style: none;
+  clear: both;
 }
 .comment_child {
   padding-left:10px;

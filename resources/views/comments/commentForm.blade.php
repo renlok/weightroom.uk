@@ -1,3 +1,4 @@
+@if (Auth::check())
 <form action="{{ route('store' . $object_type . 'Comment', ['object_id' => $object_id]) }}" method="post">
     <input type="hidden" name="parent_id" value="{{ $parent_id }}">
     {!! csrf_field() !!}
@@ -9,3 +10,4 @@
         <button type="submit" class="btn btn-default">Post</button>
     </div>
 </form>
+@endif
