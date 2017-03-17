@@ -28,8 +28,13 @@ class BlogController extends Controller
         $post = Post::where('url', $url)->firstOrFail();
         $prev_url = Post::prevBlogPostUrl($post->post_id);
         $next_url = Post::nextBlogPostUrl($post->post_id);
+        $comments = Comment::where('commentable_id', $log->log_id)->where('commentable_type', 'App\Post')->where('parent_id', 0)->orderBy('comment_date', 'asc')->withTrashed()->get();
+        if (!isset($commenting))
+        {
+            $commenting = false;
+        }
 
-        return view('blog.blogPost', compact('prev_url', 'next_url', 'post'));
+        return view('blog.blogPost', compact('prev_url', 'next_url', 'post', 'comments', 'commenting'));
     }
 
     public function getAddBlogPost()

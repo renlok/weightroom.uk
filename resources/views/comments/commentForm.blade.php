@@ -1,4 +1,4 @@
-<form action="{{ route('saveComment', ['log_id' => $log->log_id]) }}" method="post">
+<form action="{{ route('store' . $object_type . 'Comment', ['object_id' => $object_id]) }}" method="post">
     <input type="hidden" name="parent_id" value="{{ $parent_id }}">
     {!! csrf_field() !!}
     <div class="form-group">

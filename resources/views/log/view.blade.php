@@ -14,22 +14,6 @@ h3.exercise {
 .cal_log_date{
   background-color:#F90;
 }
-.log_comments, .comment_child {
-  list-style: none;
-}
-.comment_child {
-  padding-left:10px;
-}
-.comment_child li div {
-  border-left: solid 1px #ddd;
-  padding-left: 10px;
-}
-.comment h6 {
-  margin-bottom: 0px;
-}
-.jcollapsible:hover, .jcollapsible:visited, .jcollapsible {
-  text-decoration: none;
-}
 .calender-cont {
   text-align: center;
 }
@@ -56,6 +40,7 @@ blockquote.small {
   font-size:50px;
 }
 </style>
+@include('comments.commentCss')
 @endsection
 
 @section('content')
@@ -213,7 +198,7 @@ blockquote.small {
   @foreach ($log->log_exercises as $log_exercise)
     @include('common.logExercise', ['view_type' => 'log'])
   @endforeach
-  @include('common.commentTree', ['comments' => $comments])
+  @include('comments.commentTree', ['comments' => $comments, 'object_id' => $log->log_id, 'object_type' => 'Log'])
 @elseif (!$log_visible)
   <div class="row empty-log">
     <h1>This users logs are private</h1>
@@ -228,41 +213,13 @@ blockquote.small {
 @section('endjs')
 <script src="{{ asset('js/jquery.pickmeup.js') }}"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js" charset="utf-8"></script>
-<script src="{{ asset('js/jCollapsible.js') }}"></script>
+@include('comments.commentJs')
 
 <script>
 var calendar_count = 3;
 $(document).ready(function(){
-    $('.log_comments').collapsible({
-        xoffset:'-30',
-        symbolhide:'[-]',
-        symbolshow:'[+]'
-    @if ($commenting)
-        , defaulthide:false
-    @endif
-    });
     $('.deleteLink').click(function() {
         $('#deleteWarning').collapse('toggle');
-    });
-    $('.reply').click(function() {
-        var element = $(this).parent().parent().find(".comment-reply-box").first();
-        if ( element.is( ":hidden" ) ) {
-            element.slideDown("slow");
-        } else {
-            element.slideUp("slow");
-        }
-        return false;
-    });
-    $('.delete').click(function() {
-        var comment_id = $(this).attr('c-id');
-        var element = $('#c' + comment_id).text('[Deleted]');
-        $.ajax({
-            url: "{{ route('deleteComment', ['comment_id' => ':cid']) }}".replace(':cid', comment_id),
-            type: 'GET',
-            dataType: 'json',
-            cache: false
-        });
-        return false;
     });
     if ($( window ).width() < 500)
     {

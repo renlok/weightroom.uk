@@ -73,6 +73,9 @@
           @if ($note->notification_type == 'reply')
             <li role="presentation"><a href="{{ route('viewLog', ['date' => $note->notification_from['log_date'], 'user_name' => $note->notification_from['user_name']]) }}#comments">{{ trans('notifications.commentReply', ['username' => $note->notification_value]) }}</a></li>
           @endif
+          @if ($note->notification_type == 'replyBlog')
+            <li role="presentation"><a href="{{ route('viewBlogPost', ['url' => $note->notification_from['post_url']]) }}#comments">{{ trans('notifications.commentReplyBlog', ['username' => $note->notification_value]) }}</a></li>
+          @endif
           @if ($note->notification_type == 'follow')
             <li role="presentation"><a href="{{ route('viewUser', ['user_name' => $note->notification_value]) }}">{{ trans('notifications.follower', ['username' => $note->notification_value]) }}</a></li>
           @endif

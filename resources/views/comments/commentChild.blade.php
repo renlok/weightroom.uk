@@ -8,12 +8,12 @@
 				<span id="c{{ ${"comment$token"}->comment_id }}">{{ ${"comment$token"}->comment }}</span>
 				<p class="small"><a href="#" class="reply">reply</a> <a href="#" class="delete" c-id="{{ ${"comment$token"}->comment_id }}">delete</a></p>
 				<div class="comment-reply-box" style="display:none;">
-					@include('common.commentForm', ['parent_id' => ${"comment$token"}->comment_id])
+					@include('comments.commentForm', ['parent_id' => ${"comment$token"}->comment_id])
 				</div>
 			@else
 				[Deleted]
 			@endif
-			@include('common.commentChild', ['children_comments' . ($token + 1) => ${"comment$token"}->children()->get(), 'token' => ($token + 1)])
+			@include('comments.commentChild', ['children_comments' . ($token + 1) => ${"comment$token"}->children()->get(), 'token' => ($token + 1)])
 		</div>
 	</li>
 	@endforeach

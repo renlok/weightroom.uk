@@ -8,14 +8,15 @@ use App\Http\Requests;
 use Auth;
 use App\Comment;
 use App\Log;
+use App\Post;
 use App\Notification;
 use Carbon;
 
 class CommentController extends Controller
 {
-    public function store($log_id, Request $request)
+    public function storeLogComment($object_id, Request $request)
     {
-        $log = Log::where('log_id', $log_id)->firstOrFail();
+        $log = Log::where('log_id', $object_id)->firstOrFail();
         if (!ctype_space($request->input('comment')) && !empty($request->input('comment')))
         {
             if ($request->input('parent_id') == 0)
@@ -29,23 +30,21 @@ class CommentController extends Controller
             }
             else
             {
-                $parent_comment = Comment::join('logs', 'logs.log_id', '=', 'comments.commentable_id')
-                                ->join('users', 'logs.user_id', '=', 'users.user_id')
-                                ->select('logs.log_date', 'comments.user_id', 'users.user_name')
+                $parent_comment = Comment::select('user_id')
                                 ->where('comment_id', $request->input('parent_id'))
                                 ->withTrashed()
                                 ->firstOrFail();
                 Notification::create([
                     'user_id' => $parent_comment->user_id,
                     'notification_type' => 'reply',
-                    'notification_from' => ['log_date' => $parent_comment->log_date, 'user_name' => $parent_comment->user_name],
+                    'notification_from' => ['log_date' => $log->log_date->toDateString(), 'user_name' => $log->user_name],
                     'notification_value' => Auth::user()->user_name
                 ]);
             }
             Comment::create([
                 'parent_id' => $request->input('parent_id'),
                 'comment' => $request->input('comment'),
-                'commentable_id' => $log_id,
+                'commentable_id' => $object_id,
                 'commentable_type' => 'App\Log',
                 'comment_date' => Carbon::now(),
                 'user_id' => Auth::user()->user_id,
@@ -54,6 +53,40 @@ class CommentController extends Controller
         }
         return redirect()
                 ->route('viewLog', ['date' => $log->log_date->toDateString(), 'user_name' => $log->user->user_name])
+                ->with('commenting', true);
+    }
+
+    public function storeBlogComment($object_id, Request $request)
+    {
+        // check its valid
+        $post = Post::where('post_id', $object_id)->firstOrFail();
+        if (!ctype_space($request->input('comment')) && !empty($request->input('comment')))
+        {
+            if ($request->input('parent_id') != 0)
+            {
+                $parent_comment = Comment::select('user_id')
+                                ->where('comment_id', $request->input('parent_id'))
+                                ->withTrashed()
+                                ->firstOrFail();
+                Notification::create([
+                    'user_id' => $parent_comment->user_id,
+                    'notification_type' => 'replyBlog',
+                    'notification_from' => ['post_url' => $post->url],
+                    'notification_value' => Auth::user()->user_name
+                ]);
+            }
+            Comment::create([
+                'parent_id' => $request->input('parent_id'),
+                'comment' => $request->input('comment'),
+                'commentable_id' => $object_id,
+                'commentable_type' => 'App\Post',
+                'comment_date' => Carbon::now(),
+                'user_id' => Auth::user()->user_id,
+                'user_name' => Auth::user()->user_name
+            ]);
+        }
+        return redirect()
+                ->route('viewBlogPost', ['url' => $post->url])
                 ->with('commenting', true);
     }
 

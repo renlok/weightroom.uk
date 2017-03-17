@@ -3,6 +3,7 @@
 @section('title', $post->title)
 
 @section('headerstyle')
+@include('comments.commentCss')
 @endsection
 
 @section('content')
@@ -19,8 +20,10 @@
       </div>
     </div>
   </div>
+  @include('comments.commentTree', ['comments' => $comments, 'object_id' => $post->post_id, 'object_type' => 'Blog'])
 </div>
 @endsection
 
 @section('endjs')
+@include('comments.commentJs')
 @endsection
