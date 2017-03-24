@@ -58,7 +58,7 @@ class Parser
         // load the user
         $this->user = Auth::user();
         // build the initial startup data
-        $this->log_text = $log_text . ' '; // TODO: fix last character check properly
+        $this->log_text = $log_text;
         $this->log_date = $log_date;
         $this->getUserWeight ($user_weight);
         $this->construct_globals ();
@@ -128,10 +128,11 @@ class Parser
         $output_data = array();
         $line = $this->clean_line ($line);
         $string_array = str_split($line);
+        $last_char = '';
         foreach($string_array as $chr)
         {
-            // if the character is a space just add it to the chunk and continue
-            if ($chr == ' ')
+            // if the last and current characters are spaces just add it to the chunk and continue
+            if ($chr == ' ' && $last_char == ' ')
             {
                 $this->chunk_dump .= ' ';
                 continue;
@@ -207,6 +208,7 @@ class Parser
                     $this->current_blocks[0] = 'C';
                 }
             }
+            $last_char = $chr;
         }
         // add the last chunk to the data array
         if (!empty($this->chunk_dump))
@@ -1409,7 +1411,6 @@ class Parser
         return $output_chr;
     }
 
-    // TODO: add all the possible characters that will be accpected
     private function clean_line ($line)
     {
         // search x
