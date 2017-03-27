@@ -137,4 +137,14 @@ class User extends Model implements AuthenticatableContract,
     {
         return $this->hasMany('App\User_follow');
     }
+
+    /**
+     * a user can have a single subscription
+     *
+     * @returns Illuminate\Database\Eloquent\Relations\hasOne
+     */
+    public function subscription()
+    {
+        return $this->hasOne('App\Subscription');
+    }
 }

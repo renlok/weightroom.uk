@@ -8,8 +8,13 @@
   @include('common.flash')
   <p>Some info about why premium is totally rad</p>
   <div class="subscription-box">
-    @if (Auth::user()->subscribed('weightroom_gold') && Auth::user()->subscription('weightroom_gold')->onGracePeriod())
+    @if ($user->subscription('weightroom_gold')->onTrial())
+    <p>You are currently using a trial of WeightRoom Gold, this will expire at <code>{{ Auth::user()->subscription()->trial_ends_at->toDayDateTimeString() }}</code>.</p>
+    <p>We hope you are finding WeightRoom premium useful if not we would love if you would let us know why by sending us an <a href="mailto:chris@weightroom.uk">email</a>.</p>
+    <a class="btn btn-default" href="{{ route('userCancelPremium') }}" role="button">Cancel Premium</a>
+    @elseif (Auth::user()->subscribed('weightroom_gold') && Auth::user()->subscription('weightroom_gold')->onGracePeriod())
     <p>We are sorry you don't want your premium account any more. If you change your mind it is as easy as one click away.</p>
+    <p>Your WeightRoom Gold membership will expire at <code>{{ Auth::user()->subscription()->ends_at->toDayDateTimeString() }}</code>.</p>
     <a class="btn btn-default" href="{{ route('userResumePremium') }}" role="button">Resume Premium</a>
     @elseif (Auth::user()->subscribed('weightroom_gold'))
     <p>We hope you are finding WeightRoom premium useful if not we would love if you would let us know why by sending us an <a href="mailto:chris@weightroom.uk">email</a>.</p>

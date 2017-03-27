@@ -51,16 +51,16 @@ class SubscriptionController extends Controller
 
     public function getResumePremium()
     {
-      if (Auth::user()->subscription('weightroom_gold')->onGracePeriod()) {
-          Auth::user()->subscription('weightroom_gold')->resume();
-          Mail::to(Auth::user())->send(new SubscriptionRestarted());
-          return redirect()
-                ->route('userPremium')
-                ->with([
-                    'flash_message' => 'Your primium subscription has been restarted.'
-                ]);
-      } else {
-          return redirect()->route('userPremium');
-      }
+        if (Auth::user()->subscription('weightroom_gold')->onGracePeriod()) {
+            Auth::user()->subscription('weightroom_gold')->resume();
+            Mail::to(Auth::user())->send(new SubscriptionRestarted());
+            return redirect()
+                  ->route('userPremium')
+                  ->with([
+                      'flash_message' => 'Your primium subscription has been restarted.'
+                  ]);
+        } else {
+            return redirect()->route('userPremium');
+        }
     }
 }
