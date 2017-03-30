@@ -128,11 +128,10 @@ class Parser
         $output_data = array();
         $line = $this->clean_line ($line);
         $string_array = str_split($line);
-        $last_char = '';
         foreach($string_array as $chr)
         {
             // if the last and current characters are spaces just add it to the chunk and continue
-            if ($chr == ' ' && $last_char == ' ')
+            if ($chr == ' ')
             {
                 $this->chunk_dump .= ' ';
                 continue;
@@ -143,7 +142,7 @@ class Parser
             {
                 $this->build_accepted_char ();
                 $this->build_accepted_chars ($format_chr);
-                if (is_numeric($chr))
+                if ($format_chr == '0')
                 {
                     // check the last value of the format_dump if its not 0 already set it to 0
                     if (!isset($this->format_dump[strlen($this->format_dump) - 1]) || $this->format_dump[strlen($this->format_dump) - 1] != '0')
@@ -208,7 +207,6 @@ class Parser
                     $this->current_blocks[0] = 'C';
                 }
             }
-            $last_char = $chr;
         }
         // add the last chunk to the data array
         if (!empty($this->chunk_dump))
