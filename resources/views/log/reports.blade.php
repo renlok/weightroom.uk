@@ -39,7 +39,7 @@ svg {
     </div>
     <div class="col-md-6">
       <p><input type="checkbox" name="ignore_warmups" id="ignore_warmups" class="reportform" value="1" aria-label="Ignore Warmups"> Ignore Warmups</p>
-      <p><input type="checkbox" name="view_horizontal" id="view_horizontal" class="reportform hidden" value="1" aria-label="View Horizontal"> View Horizontal</p>
+      <p class="hidden"><input type="checkbox" name="view_horizontal" id="view_horizontal" class="reportform" value="1" aria-label="View Horizontal"> View Horizontal</p>
     </div>
   </div>
   <div>

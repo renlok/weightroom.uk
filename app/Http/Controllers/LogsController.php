@@ -406,9 +406,9 @@ class LogsController extends Controller
         $ignore_warmups = $request->input('ignore_warmups', 0);
         // load graph type
         $report_data = [];
-        $report_data[0] = getReportData($view_type, $exercise_view, $ignore_warmups);
+        $report_data[0] = LogsController::getReportData($view_type, $exercise_view, $ignore_warmups);
         if ($view_type2 != 'nothing') {
-            $report_data[1] = getReportData($view_type2, $exercise_view, $ignore_warmups);
+            $report_data[1] = LogsController::getReportData($view_type2, $exercise_view, $ignore_warmups);
         }
         return response()->json($report_data);
     }
