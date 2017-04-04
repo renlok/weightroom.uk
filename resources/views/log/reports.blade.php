@@ -80,30 +80,33 @@ svg {
     var stored_data = [];
     var data_length = 0;
     var maxY = 0;
-    var key_label = 'volume';
+    var key_label0 = 'volume';
+    var key_label1 = '';
     var unit = 'kg';
     callAjax();
     function reportData(raw_data, ma) {
         var reportChartData = [];
-        var dataset = [];
-        for (var i = 0; i < 2; i++) {
-            if (raw_data[i].length > 0) {
-                $.each(raw_data[i], function(date, value) {
-                    if (maxY < value) maxY = value;
-                    dataset.push({x: moment(date,'YYYY-MM-DD').toDate(), y: value, shape:'circle'});
-                    minDate = date;
-                });
+        for (var i = 0; i < raw_data.length; i++) {
+            var dataset = [];
+            $.each(raw_data[i], function(date, value) {
+                if (maxY < value) maxY = value;
+                dataset.push({x: moment(date,'YYYY-MM-DD').toDate(), y: value, shape:'circle'});
+                minDate = date;
+            });
+            reportChartData.push({
+                values: dataset,
+                "bar": true,
+                key: key_label + i,
+                type: "bar",
+                yAxis: (i + 1)
+            });
+            if (ma > 0) {
                 reportChartData.push({
-                    values: dataset,
-                    "bar": true,
-                    key: key_label
+                    values: simpleMovingAverage(dataset, ma),
+                    key: 'Moving Average',
+                    type: "line",
+                    yAxis: (i + 1)
                 });
-                if (ma > 0) {
-                    reportChartData.push({
-                        values: simpleMovingAverage(dataset, ma),
-                        key: 'Moving Average'
-                    });
-                }
             }
         }
         return reportChartData;
@@ -123,22 +126,24 @@ svg {
                 width = 1150;
             }
             var height = Math.round(width/2);
-            var chart = (barchart) ? nv.models.linePlusBarChart() : nv.models.lineWithFocusChart();
+            chart = (barchart) ? nv.models.linePlusBarChart().clipEdge(true) : nv.models.multiChart();
             chart.margin({top: 30, right: 60, bottom: 50, left: 70})
                  .color(d3.scale.category10().range())
                  .useVoronoi(false) // not working so lets disable it for now
-                 .clipEdge(true)
                  .width(width).height(height);
 
             chart.noData("Not enough data to generate Report");
 
             chart.xAxis.tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); }).showMaxMin(true);
-            chart.x2Axis.tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); }).showMaxMin(true);
-            chart.y1Axis.tickFormat(yTickFormat).showMaxMin(true);
-            chart.y2Axis.tickFormat(yTickFormat).showMaxMin(true);
             if (barchart) {
+                chart.x2Axis.tickFormat(function(d) { return d3.time.format('%x')(new Date(d)); }).showMaxMin(true);
+                chart.y1Axis.tickFormat(yTickFormat).showMaxMin(true);
+                chart.y2Axis.tickFormat(yTickFormat).showMaxMin(true);
                 chart.y3Axis.tickFormat(yTickFormat).showMaxMin(true);
                 chart.y4Axis.tickFormat(yTickFormat).showMaxMin(true);
+            } else {
+                chart.yAxis1.tickFormat(yTickFormat).showMaxMin(true);
+                chart.yAxis2.tickFormat(yTickFormat).showMaxMin(true);
             }
 
             function yTickFormat(d) {
@@ -156,12 +161,15 @@ svg {
             maxY = 0;
             var sorted_data = reportData(stored_data, $("#n").find(":selected").val());
 
-            chart.lines.forceY([0, maxY]);
             if (barchart) {
-                chart.lines2.forceY([0, maxY]);
+                chart.lines.forceY([0, maxY]);
                 chart.bars.forceY([0, maxY]);
-                chart.bars2.forceY([0, maxY]);
+            } else {
+                chart.lines1.forceY([0, maxY]);
+                chart.bars1.forceY([0, maxY]);
             }
+            chart.lines2.forceY([0, maxY]);
+            chart.bars2.forceY([0, maxY]);
 
             d3.select('#reportChart svg')
               .datum(sorted_data)
@@ -204,10 +212,9 @@ svg {
             },
             dataType: "json"
         }).done(function(data) {
+            key_label0 = getKeyLabal($("#view_type").find(":selected").val());
             if ($("#view_type2").find(":selected").val() != 'nothing') {
-                key_label = getKeyLabal($("#view_type").find(":selected").val()) + " vs " + getKeyLabal($("#view_type2").find(":selected").val());
-            } else {
-                key_label = getKeyLabal($("#view_type").find(":selected").val());
+                key_label1 = getKeyLabal($("#view_type2").find(":selected").val());
             }
             stored_data = data;
             data_length = Object.size(stored_data);
