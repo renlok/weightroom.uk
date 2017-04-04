@@ -81,7 +81,7 @@ svg {
     var data_length = 0;
     var maxY = 0;
     var key_label = ['volume', ''];
-    var unit = 'kg';
+    var unit = ['kg'];
     callAjax();
     function reportData(raw_data, ma) {
         var reportChartData = [];
@@ -142,14 +142,22 @@ svg {
                 chart.y4Axis.tickFormat(yTickFormat).showMaxMin(true);
             } else {
                 chart.yAxis1.tickFormat(yTickFormat).showMaxMin(true);
-                chart.yAxis2.tickFormat(yTickFormat).showMaxMin(true);
+                chart.yAxis2.tickFormat(yTickFormatR).showMaxMin(true);
             }
 
             function yTickFormat(d) {
+                return addUnit(d, 0);
+            }
+
+            function yTickFormatR(d) {
+                return addUnit(d, 1);
+            }
+
+            function addUnit(d, u) {
                 var suffix = '';
-                if (unit)
+                if (unit[u])
                 {
-                    suffix = ' ' + unit;
+                    suffix = ' ' + unit[u];
                 }
                 return d3.format(',.2r')(d) + suffix;
             }
@@ -211,9 +219,9 @@ svg {
             },
             dataType: "json"
         }).done(function(data) {
-            key_label[0] = getKeyLabal($("#view_type").find(":selected").val());
+            key_label[0] = getKeyLabal($("#view_type").find(":selected").val(), 0);
             if ($("#view_type2").find(":selected").val() != 'nothing') {
-                key_label[1] = getKeyLabal($("#view_type2").find(":selected").val());
+                key_label[1] = getKeyLabal($("#view_type2").find(":selected").val(), 1);
             }
             stored_data = data;
             data_length = Object.size(stored_data);
@@ -229,22 +237,22 @@ svg {
         // TODO
     });
 
-    function getKeyLabal(view_type) {
+    function getKeyLabal(view_type, u) {
         if (view_type == 'setsweek') {
-            unit = 'sets';
+            unit[u] = 'sets';
             return 'Sets/Week';
         }
         else if (view_type == 'workoutsweek') {
-            unit = 'workouts';
+            unit[u] = 'workouts';
             return 'Workouts/Week';
         }
         else if (view_type == 'intensity') {
-            unit = '';
+            unit[u] = '';
             return 'Intensity';
         }
         else
         {
-            unit = '{{ Auth::user()->user_unit }}';
+            unit[u] = '{{ Auth::user()->user_unit }}';
             return 'Volume';
         }
     }
