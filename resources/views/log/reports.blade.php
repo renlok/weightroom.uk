@@ -80,8 +80,7 @@ svg {
     var stored_data = [];
     var data_length = 0;
     var maxY = 0;
-    var key_label0 = 'volume';
-    var key_label1 = '';
+    var key_label = ['volume', ''];
     var unit = 'kg';
     callAjax();
     function reportData(raw_data, ma) {
@@ -96,7 +95,7 @@ svg {
             reportChartData.push({
                 values: dataset,
                 "bar": true,
-                key: key_label + i,
+                key: key_label[i],
                 type: "bar",
                 yAxis: (i + 1)
             });
@@ -212,9 +211,9 @@ svg {
             },
             dataType: "json"
         }).done(function(data) {
-            key_label0 = getKeyLabal($("#view_type").find(":selected").val());
+            key_label[0] = getKeyLabal($("#view_type").find(":selected").val());
             if ($("#view_type2").find(":selected").val() != 'nothing') {
-                key_label1 = getKeyLabal($("#view_type2").find(":selected").val());
+                key_label[1] = getKeyLabal($("#view_type2").find(":selected").val());
             }
             stored_data = data;
             data_length = Object.size(stored_data);
