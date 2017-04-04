@@ -58,7 +58,7 @@ class Parser
         // load the user
         $this->user = Auth::user();
         // build the initial startup data
-        $this->log_text = $log_text;
+        $this->log_text = $log_text . ' '; //TODO:make a proper fix
         $this->log_date = $log_date;
         $this->getUserWeight ($user_weight);
         $this->construct_globals ();

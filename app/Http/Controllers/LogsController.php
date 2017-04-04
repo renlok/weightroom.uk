@@ -401,13 +401,25 @@ class LogsController extends Controller
     public function ajaxGetReport(Request $request)
     {
         $view_type = $request->input('view_type', 'volume');
+        $view_type2 = $request->input('view_type2', 'nothing');
         $exercise_view = $request->input('exercise_view', 'everything');
+        $ignore_warmups = $request->input('ignore_warmups', 0);
         // load graph type
+        $report_data = [];
+        $report_data[0] = getReportData($view_type, $exercise_view, $ignore_warmups);
+        if ($view_type2 != 'nothing') {
+            $report_data[1] = getReportData($view_type2, $exercise_view, $ignore_warmups);
+        }
+        return response()->json($report_data);
+    }
+
+    private static function getReportData($view_type, $exercise_view, $ignore_warmups)
+    {
         $main_table = 'logs';
         if ($view_type == 'volume')
         {
             $graph_value = 'logs.log_total_volume';
-            if ($request->old('ignore_warmups', 0))
+            if ($ignore_warmups)
             {
                 $graph_value = 'logs.log_total_volume - logs.log_warmup_volume';
             }
@@ -417,7 +429,7 @@ class LogsController extends Controller
         {
             $main_table = 'log_exercises';
             $graph_value = 'log_exercises.logex_inol';
-            if ($request->old('ignore_warmups', 0))
+            if ($ignore_warmups)
             {
                 $graph_value = 'log_exercises.logex_inol - log_exercises.logex_inol_warmup';
             }
@@ -469,9 +481,9 @@ class LogsController extends Controller
             else
             {
                 $return_values[$value->value_date] = (float)$value->graph_value;
-            }#
+            }
         }
         $blanks = DB::table('weeks')->whereBetween('week', [$min_date, $max_date])->pluck('empty', 'week')->all();
-        return response()->json(array_merge($blanks, $return_values));
+        return array_merge($blanks, $return_values);
     }
 }
