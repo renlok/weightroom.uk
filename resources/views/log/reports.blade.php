@@ -197,8 +197,46 @@ svg {
                 chart.update();
             }
 
+            if (!barchart) {
+                nv.dispatch.on('render_end', function(newState) {
+                    resetBarSize();
+                    chart.legend.dispatch.on('legendClick', function(newState) {
+                        chart.update();
+                        setTimeout(function(){resetBarSize(newState)});
+                    });
+                });
+            }
+
             return chart;
         });
+    }
+
+    function resetBarSize(d1) {
+        var w2 = d3.select(".bars2Wrap .nv-bar").attr("width")/2;
+        if (!d1) {
+            d3.selectAll(".bars1Wrap .nv-bar").style("width", w2);
+            d3.selectAll(".bars2Wrap .nv-bar").style("width", w2);
+            d3.selectAll(".bars2Wrap .nv-bar")[0].forEach(function(d) {
+                var t = d3.transform(d3.select(d).attr("transform")),
+                x = t.translate[0] + w2,
+                y = t.translate[1];
+                d3.select(d).attr("transform", "translate(" + x +"," + y + ")");
+            });
+        } else if (d1.yAxis == 2 && d1.disabled) {
+            d3.selectAll(".bars1Wrap .nv-bar").style("width", w2 * 2);
+        } else if (d1.yAxis == 1 && d1.disabled) {
+            d3.selectAll(".bars2Wrap .nv-bar").style("width", w2 * 2);
+        } else {
+            d3.selectAll(".bars1Wrap .nv-bar").style("width", w2);
+            d3.selectAll(".bars2Wrap .nv-bar").style("width", w2);
+            d3.selectAll(".bars2Wrap .nv-bar")[0].forEach(function(d){
+                var t = d3.transform(d3.select(d).attr("transform")),
+                x = t.translate[0] + w2,
+                y = t.translate[1];
+                d3.select(d).attr("transform", "translate(" + x +"," + y + ")");
+            });
+        }
+        return;
     }
 
     $(".reportform").change(function() {
