@@ -20,6 +20,13 @@
 	</div>
 
 	<div class="thumbnail">
+		<img src="{{ asset('img/screens/reports.png') }}" class="img-responsive" alt="Responsive image">
+		<div class="caption">
+		View reports of exercise groups, individual exercises or everything. Get the data you need to take control of your training
+		</div>
+	</div>
+
+	<div class="thumbnail">
 		<img src="{{ asset('img/screens/volume.png') }}" class="img-responsive" alt="Responsive image">
 		<div class="caption">
 		See how your workouts have varied over time with a total volume chart

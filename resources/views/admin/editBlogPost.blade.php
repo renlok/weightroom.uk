@@ -15,15 +15,15 @@
 <form action="{{ ($blog_id == 0) ? route('adminAddBlogPost') : route('adminEditBlogPost', ['blog_id' => $blog_id]) }}" method="post">
   <div class="form-group">
     <input type="hidden" name="blog_id" value="{{ $blog_id }}">
-    <label for="blogName">Blog name</label>
-    <input type="text" id="blogName" class="form-control" name="blog_name" placeholder="Blog name" value="{{ $blog_name }}">
+    <label for="blogName">Blog post title</label>
+    <input type="text" id="blogName" class="form-control" name="blog_name" placeholder="Title" value="{{ $blog_name }}">
   </div>
   <div class="form-group">
-    <label for="blogDesc">Template description</label>
-    <input type="text" id="blogDesc" class="form-control" name="blog_description" placeholder="Blog description" value="{{ $blog_description }}">
+    <label for="blogDesc">Blog post description</label>
+    <input type="text" id="blogDesc" class="form-control" name="blog_description" placeholder="Description" value="{{ $blog_description }}">
   </div>
   <div class="form-group">
-    <label for="blogContent">Blog content</label>
+    <label for="blogContent">Blog post content</label>
     <textarea id="blogContent" class="form-control" rows="25" name="blog_content">{{ $blog_content }}</textarea>
   </div>
   <div class="form-group">

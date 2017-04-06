@@ -38,7 +38,7 @@
 	<input type="text" id="templateName" name="template_name" placeholder="Template name" value="{{ $template_name }}">
 	<div>
 		<label for="templateDesc">Template description</label>
-		<input type="text" id="templateDesc" name="template_description" placeholder="Template description" value="{{ $template_description }}">
+		<textarea type="text" id="templateDesc" name="template_description">{{ $template_description }}</textarea>
 		<label for="templateName">Template type</label>
 		<select name="template_type">
 			<option value="powerlifting" {{ ($template_type == 'powerlifting') ? 'selected="selected"' : '' }}>powerlifting</option>
