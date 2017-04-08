@@ -55,8 +55,8 @@
         @if (Admin::InvitesEnabled())
           <li role="presentation"><a href="{{ route('invites') }}">{{ trans('master.inviteCodes') }}</a></li>
         @endif
-          <li role="presentation"><a href="//reddit.com/r/weightroomuk" target="_blank">{{ trans('master.bugs') }}</a></li>
-          <li role="presentation"><a href="//weightroom.uk/blog/">{{ trans('master.blog') }}</a></li>
+          <li role="presentation"><a href="{{ route('userPremium') }}">{{ trans('master.premium') }}</a></li>
+          <li role="presentation"><a href="{{ route('viewBlog') }}">{{ trans('master.blog') }}</a></li>
           <li role="presentation"><a href="{{ route('faq') }}">{{ trans('master.faq') }}</a></li>
           <li role="presentation"><a href="{{ route('userSettings') }}">{{ trans('master.settings') }}</a></li>
           <li role="presentation"><a href="{{ route('logout') }}">{{ trans('master.logout') }}</a></li>
@@ -121,12 +121,17 @@
 
 <footer class="footer">
   <div class="container text-muted">
-    <ul class="list-inline">
+    <ul class="list-inline pull-left footer-links">
       <li>2016 - 2017 &#169; weightroom.uk</li>
       <li><a href="{{ route('privacyPolicy') }}">Privacy</a></li>
       <li><a href="{{ route('termsOfService') }}">Terms</a></li>
       <li><a href="{{ route('contactUs') }}">Contact</a></li>
       <li><a href="{{ route('faq') }}">Help</a></li>
+    </ul>
+    <ul class="list-inline pull-right hidden-xs footer-social">
+      <li><a href="https://www.reddit.com/r/weightroomuk/"><img src="{{ asset('img/social/reddit.jpg') }}"></a></li>
+      <li><a href="https://www.facebook.com/weightroom.uk"><img src="{{ asset('img/social/facebook.jpg') }}"></a></li>
+      <li><a href="https://twitter.com/weightroom_uk"><img src="{{ asset('img/social/twitter.jpg') }}"></a></li>
     </ul>
   </div>
 </footer>
