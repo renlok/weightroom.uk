@@ -11,6 +11,7 @@ use App\User;
 use App\User_follow;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class MiscController extends Controller
