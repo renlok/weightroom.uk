@@ -129,9 +129,9 @@
       <li><a href="{{ route('faq') }}">Help</a></li>
     </ul>
     <ul class="list-inline pull-right hidden-xs footer-social">
-      <li><a href="https://www.reddit.com/r/weightroomuk/"><img src="{{ asset('img/social/reddit.jpg') }}"></a></li>
-      <li><a href="https://www.facebook.com/weightroom.uk"><img src="{{ asset('img/social/facebook.jpg') }}"></a></li>
-      <li><a href="https://twitter.com/weightroom_uk"><img src="{{ asset('img/social/twitter.jpg') }}"></a></li>
+      <li><a href="https://www.reddit.com/r/weightroomuk/"><img src="{{ asset('img/social/reddit.png') }}"></a></li>
+      <li><a href="https://www.facebook.com/weightroom.uk"><img src="{{ asset('img/social/facebook.png') }}"></a></li>
+      <li><a href="https://twitter.com/weightroom_uk"><img src="{{ asset('img/social/twitter.png') }}"></a></li>
     </ul>
   </div>
 </footer>

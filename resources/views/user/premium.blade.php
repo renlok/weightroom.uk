@@ -8,7 +8,7 @@
   @include('common.flash')
   <p>Currently, during the beta stages of WeightRoom all features will be free for everyone, but if you like what we are doing and would like to support us we would definitely appreciate it.</p>
   <div class="subscription-box">
-    @if (Auth::user()->subscription('weightroom_gold')->onTrial())
+    @if (Auth::user()->subscribed('weightroom_gold') && Auth::user()->subscription('weightroom_gold')->onTrial())
     <p>You are currently using a trial of WeightRoom Gold, this will expire at <code>{{ Auth::user()->subscription()->trial_ends_at->toDayDateTimeString() }}</code>.</p>
     <p>We hope you are finding WeightRoom premium useful if not we would love if you would let us know why by sending us an <a href="mailto:chris@weightroom.uk">email</a>.</p>
     <a class="btn btn-default" href="{{ route('userCancelPremium') }}" role="button">Cancel Premium</a>
