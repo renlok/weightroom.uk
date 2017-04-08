@@ -6,8 +6,6 @@
 <div class="narrow-centre-block">
   <h2>Premium Membership</h2>
   @include('common.flash')
-  <p>Currently, during the beta stages of WeightRoom all features are free for everyone, but if you like what we are doing and would like to support us we would definitely appreciate it.</p>
-  <p>Why not support us for just $5 a month and of course if you just want to support us with a one off payment you can easily cancel the subscription at any time.</p>
   <div class="subscription-box">
     @if (Auth::user()->subscribed('weightroom_gold') && Auth::user()->subscription('weightroom_gold')->onTrial())
     <p>You are currently using a trial of WeightRoom Gold, this will expire at <code>{{ Auth::user()->subscription()->trial_ends_at->toDayDateTimeString() }}</code>.</p>
@@ -18,9 +16,12 @@
     <p>Your WeightRoom Gold membership will expire at <code>{{ Auth::user()->subscription()->ends_at->toDayDateTimeString() }}</code>.</p>
     <a class="btn btn-default" href="{{ route('userResumePremium') }}" role="button">Resume Premium</a>
     @elseif (Auth::user()->subscribed('weightroom_gold'))
+    <p>We would like to give you a huge thank you for supporting us.</p>
     <p>We hope you are finding WeightRoom premium useful if not we would love if you would let us know why by sending us an <a href="mailto:chris@weightroom.uk">email</a>.</p>
     <a class="btn btn-default" href="{{ route('userCancelPremium') }}" role="button">Cancel Premium</a>
     @else
+    <p>Currently, during the beta stages of WeightRoom all features are free for everyone, but if you like what we are doing and would like to support us we would definitely appreciate it.</p>
+    <p>Why not support us for just $5 a month and of course if you just want to support us with a one off payment you can easily cancel the subscription at any time.</p>
     <form class="form-horizontal" action="{{ route('userPremium') }}" method="post" id="payment-form">
       <div id="payment-errors" class="alert alert-danger" role="alert" style="display:none;"></div>
       <div class="form-group">
