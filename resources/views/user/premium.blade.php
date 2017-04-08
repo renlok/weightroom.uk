@@ -6,8 +6,8 @@
 <div class="narrow-centre-block">
   <h2>Premium Membership</h2>
   @include('common.flash')
-  <p>Currently, during the beta stages of WeightRoom all features will be free for everyone, but if you like what we are doing and would like to support us we would definitely appreciate it.</p>
-  <p>Why not support us for just $5 a month, that's just one coffee and of course if you just want to support us with a one off payment you can easily cancel the subscription whenever you want.</p>
+  <p>Currently, during the beta stages of WeightRoom all features are free for everyone, but if you like what we are doing and would like to support us we would definitely appreciate it.</p>
+  <p>Why not support us for just $5 a month and of course if you just want to support us with a one off payment you can easily cancel the subscription at any time.</p>
   <div class="subscription-box">
     @if (Auth::user()->subscribed('weightroom_gold') && Auth::user()->subscription('weightroom_gold')->onTrial())
     <p>You are currently using a trial of WeightRoom Gold, this will expire at <code>{{ Auth::user()->subscription()->trial_ends_at->toDayDateTimeString() }}</code>.</p>
@@ -44,9 +44,9 @@
       </div>
       <div class="form-group">
         {{ csrf_field() }}
-        <p class="small">This will start a recurrent payment for $5 a month</p>
+        <p class="small">This will start a recurrent payment of $5 a month</p>
         <input type="submit" id="submit-button" class="btn btn-default btn-lg" value="Submit Payment Details">
-        <p class="small text-muted">*All of your card details are securely handled by stripe, none of our payment information will be saved by us.</p>
+        <p class="small text-muted">*All of your card details are securely handled by stripe, none of your payment information will be saved by us.</p>
       </div>
     </form>
     @endif
