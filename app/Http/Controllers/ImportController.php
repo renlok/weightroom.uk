@@ -65,7 +65,7 @@ class ImportController extends Controller
                 'Weight' => 'log_weight'
             ],
             'TheSquatRack' => [
-                'Performed At' => 'log_date',
+                'Performed At' => 'log_date:other',
                 'Exercise' => 'exercise_name',
                 'Exercise#' => 'logex_order',
                 'Set#' => 'logitem_order',
@@ -129,6 +129,8 @@ class ImportController extends Controller
                     $tmpFileName,
                     $csvfile->getMimeType()
                 ]);
+                $request->session()->put('csvheaders', $file_headers);
+                $request->session()->put('csvfirstline', $first_row);
                 $csvfile->move(public_path() . $tmpFilePath, $tmpFileName);
                 return view('import.matchUpload', compact('column_names', 'file_headers', 'first_row', 'link_array', 'map_match'));
             }
@@ -138,6 +140,9 @@ class ImportController extends Controller
     public function storeImport(Request $request)
     {
         $csv_file_data = $request->session()->get('csvfile');
+        $csv_headers = $request->session()->get('csvheaders');
+        $csv_first_line = $request->session()->get('csvfirstline');
+        $validator_values = array_combine($csv_headers, $csv_first_line);
         $hash = sha1(Auth::user()->user_id . microtime());
 
         $column_string = '';
@@ -155,10 +160,24 @@ class ImportController extends Controller
                 case 'log_date:YYYY-MM-DD':
                 case 'log_date:DD/MM/YYYY':
                 case 'log_date:MM/DD/YYYY':
-                case 'log_date:other':
                     $parts = explode(':', $column);
                     $column_string .= $parts[0];
+                    // check date format is correct
+                    $dateTime = DateTime::createFromFormat($parts[1], $validator_values[$key]);
+                    $errors = DateTime::getLastErrors();
+                    if (!empty($errors['warning_count'])) {
+                        return back()->withInput()->with('flash_message', 'Date format doesn\'t match');
+                    }
                     $extra_sql .= ", log_date_format = '{$parts[1]}'";
+                    break;
+                case 'log_date:other':
+                    // check date format is correct
+                    try {
+                        $date = new DateTime($validator_values[$key]);
+                    } catch (Exception $e) {
+                        return back()->withInput()->with('flash_message', 'Date format doesn\'t match');
+                    }
+                    $extra_sql .= ", log_date_format = 'YYYY-MM-DD'";
                     break;
                 case 'logitem_weight:kg':
                 case 'logitem_weight:lb':
@@ -167,15 +186,18 @@ class ImportController extends Controller
                     $extra_sql .= ", logitem_weight_is_kg = '$is_kg'";
                     break;
                 case 'log_weight':
-                case 'exercise_name':
                 case 'logitem_distance':
                 case 'logitem_time':
                 case 'logitem_reps':
                 case 'logitem_sets':
-                case 'logitem_comment':
                 case 'logitem_pre':
                 case 'logex_order':
                 case 'logitem_order':
+                    if (!is_numeric($validator_values[$key])) {
+                        return back()->withInput()->with('flash_message', 'Date format doesn\'t match');
+                    }
+                case 'exercise_name':
+                case 'logitem_comment':
                     $column_string .= $column;
                     break;
                 default:
@@ -189,7 +211,7 @@ class ImportController extends Controller
                 LINES TERMINATED BY '\\n'
                 IGNORE 1 LINES
                 ($column_string)
-                SET user_id = %d, hash = %s $extra_sql", addslashes($csv_file_data[0] . $csv_file_data[1]), Auth::user()->user_id, $hash);
+                SET user_id = %d, hash = '%s' $extra_sql", addslashes($csv_file_data[0] . $csv_file_data[1]), Auth::user()->user_id, $hash);
 
         \DB::connection()->getpdo()->exec($query);
 

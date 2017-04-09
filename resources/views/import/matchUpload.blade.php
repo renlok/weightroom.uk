@@ -9,6 +9,7 @@
 @if ($map_match != '')
 <p>CSV from: {{ $map_match }}</p>
 @endif
+@include('common.flash')
 <form action="{{ route('storeImport') }}" method="post">
 <table class="table table-striped">
   <thead>
