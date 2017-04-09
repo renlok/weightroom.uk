@@ -129,10 +129,16 @@ class ImportController extends Controller
                     $tmpFileName,
                     $csvfile->getMimeType()
                 ]);
-                $request->session()->put('csvheaders', $file_headers);
+                // clean first row values
+                $tmp = $first_row;
+                foreach ($tmp as $key => $value) {
+                    $new_key = preg_replace("/[^A-Za-z0-9 ]/", '', $key);
+                    $first_row->$new_key = $first_row->$key;
+                    unset($first_row->$key);
+                }
                 $request->session()->put('csvfirstline', $first_row);
                 $csvfile->move(public_path() . $tmpFilePath, $tmpFileName);
-                return view('import.matchUpload', compact('column_names', 'file_headers', 'first_row', 'link_array', 'map_match'));
+                return view('import.matchUpload', compact('column_names', 'first_row', 'link_array', 'map_match'));
             }
         }
     }
@@ -140,9 +146,7 @@ class ImportController extends Controller
     public function storeImport(Request $request)
     {
         $csv_file_data = $request->session()->get('csvfile');
-        $csv_headers = $request->session()->get('csvheaders');
-        $csv_first_line = $request->session()->get('csvfirstline');
-        $validator_values = array_combine($csv_headers, $csv_first_line);
+        $validator_values = $request->session()->get('csvfirstline');
         $hash = sha1(Auth::user()->user_id . microtime());
 
         $column_string = '';
@@ -163,8 +167,8 @@ class ImportController extends Controller
                     $parts = explode(':', $column);
                     $column_string .= $parts[0];
                     // check date format is correct
-                    $dateTime = DateTime::createFromFormat($parts[1], $validator_values[$key]);
-                    $errors = DateTime::getLastErrors();
+                    $dateTime = \DateTime::createFromFormat($parts[1], $validator_values->$key);
+                    $errors = \DateTime::getLastErrors();
                     if (!empty($errors['warning_count'])) {
                         return back()->withInput()->with('flash_message', 'Date format doesn\'t match');
                     }
@@ -173,7 +177,7 @@ class ImportController extends Controller
                 case 'log_date:other':
                     // check date format is correct
                     try {
-                        $date = new DateTime($validator_values[$key]);
+                        $date = new \DateTime($validator_values->$key);
                     } catch (Exception $e) {
                         return back()->withInput()->with('flash_message', 'Date format doesn\'t match');
                     }
@@ -193,7 +197,7 @@ class ImportController extends Controller
                 case 'logitem_pre':
                 case 'logex_order':
                 case 'logitem_order':
-                    if (!is_numeric($validator_values[$key])) {
+                    if (!is_numeric($validator_values->$key)) {
                         return back()->withInput()->with('flash_message', 'Date format doesn\'t match');
                     }
                 case 'exercise_name':

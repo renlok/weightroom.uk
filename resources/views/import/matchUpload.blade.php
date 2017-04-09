@@ -20,7 +20,7 @@
     </tr>
   </thead>
   <tbody>
-@foreach ($file_headers as $key => $file_header)
+@foreach ($first_row as $file_header => $first_data)
     <tr>
       <td>
         <label for="{{ $file_header }}">{{ $file_header }}</label>
@@ -34,7 +34,7 @@
         </select>
       </td>
       <td>
-        {{ $first_row->$file_header }}
+        {{ $first_data }}
       </td>
     </tr>
 @endforeach
