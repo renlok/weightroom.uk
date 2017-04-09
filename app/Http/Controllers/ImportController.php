@@ -105,7 +105,7 @@ class ImportController extends Controller
                 // do stuff
                 $csvfile = $request->file('csvfile');
                 $reader = Excel::load($csvfile, function($reader){});
-                $first_row = $reader->first();
+                $first_row = $reader->first()->toArray();
                 $file_headers = $reader->first()->keys()->toArray(); // returns array of headers
                 $link_array = array_flip($file_headers);
                 $map_match = '';
@@ -133,8 +133,8 @@ class ImportController extends Controller
                 $tmp = $first_row;
                 foreach ($tmp as $key => $value) {
                     $new_key = preg_replace("/[^A-Za-z0-9 ]/", '', $key);
-                    $first_row->$new_key = $first_row->$key;
-                    unset($first_row->$key);
+                    $first_row[$new_key] = $first_row[$key];
+                    unset($first_row[$key]);
                 }
                 $request->session()->put('csvfirstline', $first_row);
                 $csvfile->move(public_path() . $tmpFilePath, $tmpFileName);
@@ -167,7 +167,7 @@ class ImportController extends Controller
                     $parts = explode(':', $column);
                     $column_string .= $parts[0];
                     // check date format is correct
-                    $dateTime = \DateTime::createFromFormat($parts[1], $validator_values->$key);
+                    $dateTime = \DateTime::createFromFormat($parts[1], $validator_values[$key]);
                     $errors = \DateTime::getLastErrors();
                     if (!empty($errors['warning_count'])) {
                         return back()->withInput()->with('flash_message', 'Date format doesn\'t match');
@@ -177,7 +177,7 @@ class ImportController extends Controller
                 case 'log_date:other':
                     // check date format is correct
                     try {
-                        $date = new \DateTime($validator_values->$key);
+                        $date = new \DateTime($validator_values[$key]);
                     } catch (Exception $e) {
                         return back()->withInput()->with('flash_message', 'Date format doesn\'t match');
                     }
@@ -197,7 +197,7 @@ class ImportController extends Controller
                 case 'logitem_pre':
                 case 'logex_order':
                 case 'logitem_order':
-                    if (!is_numeric($validator_values->$key)) {
+                    if (!is_numeric($validator_values[$key])) {
                         return back()->withInput()->with('flash_message', 'Date format doesn\'t match');
                     }
                 case 'exercise_name':
