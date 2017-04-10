@@ -135,7 +135,7 @@ class ImportController extends Controller
                 foreach ($tmp as $key => $value) {
                     $new_key = preg_replace("/[^A-Za-z0-9]/", '_', $key);
                     $first_row[$new_key] = $value;
-                    $file_headers[$new_key] = $keys;
+                    $file_headers[$new_key] = $key;
                 }
                 $link_array = array_flip($link_array);
                 array_walk($link_array, function(&$value, $key) {
