@@ -47,29 +47,29 @@ class Import extends Parser
                 $key_counter++;
             }
             $item_data = [];
-            if ($log_line->logitem_weight > 0 && $log_line->logitem_weight != '')
+            if ((float)$log_line->logitem_weight > 0 && $log_line->logitem_weight != '')
             {
-                $item_data['W'] = [$log_line->logitem_weight, ($log_line->logitem_weight_is_kg) ? 'kg' : 'lb'];
+                $item_data['W'] = [(float)$log_line->logitem_weight, ($log_line->logitem_weight_is_kg) ? 'kg' : 'lb'];
             }
-            elseif ($log_line->logitem_distance > 0 && $log_line->logitem_distance != '')
+            elseif ((float)$log_line->logitem_distance > 0 && $log_line->logitem_distance != '')
             {
-                $item_data['D'] = [$log_line->logitem_distance, 'km'];
+                $item_data['D'] = [(float)$log_line->logitem_distance, 'km'];
             }
-            elseif ($log_line->logitem_time > 0 && $log_line->logitem_time != '')
+            elseif ((float)$log_line->logitem_time > 0 && $log_line->logitem_time != '')
             {
-                $item_data['T'] = [$log_line->logitem_time, 'm'];
+                $item_data['T'] = [(float)$log_line->logitem_time, 'm'];
             }
-            if ($log_line->logitem_reps > 0 && $log_line->logitem_reps != '')
+            if ((int)$log_line->logitem_reps > 0 && $log_line->logitem_reps != '')
             {
-                $item_data['R'] = $log_line->logitem_reps;
+                $item_data['R'] = (int)$log_line->logitem_reps;
             }
-            if ($log_line->logitem_sets > 0 && $log_line->logitem_sets != '')
+            if ((int)$log_line->logitem_sets > 0 && $log_line->logitem_sets != '')
             {
-                $item_data['S'] = $log_line->logitem_sets;
+                $item_data['S'] = (int)$log_line->logitem_sets;
             }
-            if ($log_line->logitem_pre != '')
+            if ((float)$log_line->logitem_pre != '')
             {
-                $item_data['P'] = $log_line->logitem_pre;
+                $item_data['P'] = (float)$log_line->logitem_pre;
             }
             if ($log_line->logitem_comment != '')
             {

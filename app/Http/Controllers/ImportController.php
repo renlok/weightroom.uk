@@ -129,16 +129,21 @@ class ImportController extends Controller
                     $tmpFileName,
                     $csvfile->getMimeType()
                 ]);
-                // clean first row values
+                // clean first row keys
                 $tmp = $first_row;
+                $first_row = [];
                 foreach ($tmp as $key => $value) {
-                    $new_key = preg_replace("/[^A-Za-z0-9 ]/", '', $key);
-                    $first_row[$new_key] = $first_row[$key];
-                    unset($first_row[$key]);
+                    $new_key = preg_replace("/[^A-Za-z0-9]/", '_', $key);
+                    $first_row[$new_key] = $value;
                 }
+                $link_array = array_flip($link_array);
+                array_walk($link_array, function(&$value, $key) {
+                    $value = preg_replace("/[^A-Za-z0-9]/", '_', $value);
+                });
+                $link_array = array_flip($link_array);
                 $request->session()->put('csvfirstline', $first_row);
                 $csvfile->move(public_path() . $tmpFilePath, $tmpFileName);
-                return view('import.matchUpload', compact('column_names', 'first_row', 'link_array', 'map_match'));
+                return view('import.matchUpload', compact('column_names', 'file_headers', 'first_row', 'link_array', 'map_match'));
             }
         }
     }
@@ -167,7 +172,8 @@ class ImportController extends Controller
                     $parts = explode(':', $column);
                     $column_string .= $parts[0];
                     // check date format is correct
-                    $dateTime = \DateTime::createFromFormat($parts[1], $validator_values[$key]);
+                    $date_format = str_replace(['YYYY', 'YY', 'MM', 'DD'], ['Y', 'y', 'n', 'j'], $parts[1]);
+                    $dateTime = \DateTime::createFromFormat($date_format, $validator_values[$key]);
                     $errors = \DateTime::getLastErrors();
                     if (!empty($errors['warning_count'])) {
                         return back()->withInput()->with('flash_message', 'Date format doesn\'t match');

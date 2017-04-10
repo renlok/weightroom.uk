@@ -23,7 +23,7 @@
 @foreach ($first_row as $file_header => $first_data)
     <tr>
       <td>
-        <label for="{{ $file_header }}">{{ $file_header }}</label>
+        <label for="{{ $file_header }}">{{ $file_headers[$file_header] }}</label>
       </td>
       <td>
     	  <select class="form-control" name="{{ $file_header }}">
