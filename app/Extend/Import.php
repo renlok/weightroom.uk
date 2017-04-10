@@ -32,7 +32,13 @@ class Import extends Parser
                 $this->user = User::where('user_id', $log_line->user_id)->first();
                 $this->log_data = array('comment' => '', 'exercises' => array());
                 $date_format = str_replace(['YYYY', 'YY', 'MM', 'DD'], ['Y', 'y', 'n', 'j'], $log_line->log_date_format);
-                $this->log_date = ($log_line->log_date_format == 'YYYY-MM-DD') ? $log_line->log_date : Carbon::createFromFormat($date_format, $log_line->log_date)->toDateString();
+                if ($log_line->log_date_format == 'YYYY-MM-DD') {
+                    $this->log_date = $log_line->log_date;
+                } elseif ($log_line->log_date_format == 'other') {
+                    $this->log_date = Carbon::parse($log_line->log_date)->toDateString();
+                } else {
+                    $this->log_date = Carbon::createFromFormat($date_format, $log_line->log_date)->toDateString();
+                }
                 $this->user_weight = ($log_line->log_weight == '') ? 0 : $log_line->log_weight;
                 $setup = true;
             }

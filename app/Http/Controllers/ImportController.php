@@ -135,6 +135,7 @@ class ImportController extends Controller
                 foreach ($tmp as $key => $value) {
                     $new_key = preg_replace("/[^A-Za-z0-9]/", '_', $key);
                     $first_row[$new_key] = $value;
+                    $file_headers[$new_key] = $keys;
                 }
                 $link_array = array_flip($link_array);
                 array_walk($link_array, function(&$value, $key) {
@@ -187,7 +188,8 @@ class ImportController extends Controller
                     } catch (Exception $e) {
                         return back()->withInput()->with('flash_message', 'Date format doesn\'t match');
                     }
-                    $extra_sql .= ", log_date_format = 'YYYY-MM-DD'";
+                    $column_string .= 'log_date';
+                    $extra_sql .= ", log_date_format = 'other'";
                     break;
                 case 'logitem_weight:kg':
                 case 'logitem_weight:lb':
