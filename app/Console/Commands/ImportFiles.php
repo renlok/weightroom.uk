@@ -30,7 +30,7 @@ class ImportFiles extends Command
      */
     public function handle()
     {
-        $hash = DB::table('import_data')->select('hash', 'log_date')->orderBy('priority', 'desc')->orderBy('import_id', 'desc')->get();
+        $hash = DB::table('import_data')->select('hash', 'log_date')->orderBy('priority', 'desc')->orderBy('import_id', 'desc')->first();
         $importParser = new Import();
         $importParser->parseImportData ($hash);
         $importParser->formatLogData (true);
