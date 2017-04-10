@@ -30,7 +30,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('globalstats')->monthly();
 
-        $schedule->command('importfiles')->hourly();
+        $schedule->command('importfiles')->everyTenMinutes();
 
         $schedule->command('cleanjunk')->monthly();
     }

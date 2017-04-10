@@ -17,7 +17,7 @@ class Import extends Parser
 
     public function parseImportData ($hash)
     {
-        $log_data = DB::table('import_data')->where('hash', $hash)->orderBy('user_id')->orderBy('logex_order')->orderBy('logitem_order')->get();
+        $log_data = DB::table('import_data')->where('hash', $hash->hash)->where('log_date', $hash->log_date)->orderBy('user_id')->orderBy('logex_order')->orderBy('logitem_order')->get();
         $setup = false;
         $exercise_keys = [];
         $key_counter = 0;
