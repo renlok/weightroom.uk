@@ -16,6 +16,11 @@ body {
 	padding-left: 25px;
 	max-width: 1200px;
 }
+#notification_bubble ul li {
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+}
 #notification_bubble ul li button {
 	padding: 3px 10px;
 }

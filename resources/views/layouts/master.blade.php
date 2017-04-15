@@ -159,7 +159,7 @@
             cache: false
         });
         notifications_count--;
-        $(this).hide();
+        $(this).parent().hide();
         if (notifications_count < 1)
             $('#notification_bubble').hide();
         return false;
