@@ -64,7 +64,7 @@
       </li>
       @if ($header_notifications_count > 0)
       <li class="dropdown" id="notification_bubble">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="badge">{{ $header_notifications_count }}</span></a>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="badge" id="notifications_count">{{ $header_notifications_count }}</span></a>
         <ul class="dropdown-menu">
         @foreach ($header_notifications as $note)
           @if ($note->notification_type == 'comment')
@@ -159,6 +159,7 @@
             cache: false
         });
         notifications_count--;
+        $('#notifications_count').text(notifications_count);
         $(this).parent().hide();
         if (notifications_count < 1)
             $('#notification_bubble').hide();
