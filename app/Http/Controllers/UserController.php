@@ -105,4 +105,12 @@ class UserController extends Controller
                 ->back()
                 ->with('flash_message', 'Notifications cleared.');
     }
+
+    public function clearNotification($note_id)
+    {
+        Notification::where('user_id', Auth::user()->user_id)->where('notification_id', $note_id)->delete();
+        return redirect()
+                ->back()
+                ->with('flash_message', 'Notification deleted.');
+    }
 }

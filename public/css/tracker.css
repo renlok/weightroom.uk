@@ -16,6 +16,9 @@ body {
 	padding-left: 25px;
 	max-width: 1200px;
 }
+#notification_bubble ul li button {
+	padding: 3px 10px;
+}
 .narrow-centre-block {
 	display: block;
 	max-width: 585px;

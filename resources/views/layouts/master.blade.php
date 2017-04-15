@@ -68,16 +68,16 @@
         <ul class="dropdown-menu">
         @foreach ($header_notifications as $note)
           @if ($note->notification_type == 'comment')
-            <li role="presentation"><a href="{{ route('viewLog', ['date' => $note->notification_from['log_date']]) }}#comments">{{ trans('notifications.logComment', ['username' => $note->notification_value]) }}</a></li>
+            <li role="presentation"><a href="{{ route('viewLog', ['date' => $note->notification_from['log_date']]) }}#comments">{{ trans('notifications.logComment', ['username' => $note->notification_value]) }}</a><button type="button" class="close pull-right clear_note" aria-label="Close" note-id="{{ $note->notification_id }}"><span aria-hidden="true">×</span></button></li>
           @endif
           @if ($note->notification_type == 'reply')
-            <li role="presentation"><a href="{{ route('viewLog', ['date' => $note->notification_from['log_date'], 'user_name' => $note->notification_from['user_name']]) }}#comments">{{ trans('notifications.commentReply', ['username' => $note->notification_value]) }}</a></li>
+            <li role="presentation"><a href="{{ route('viewLog', ['date' => $note->notification_from['log_date'], 'user_name' => $note->notification_from['user_name']]) }}#comments">{{ trans('notifications.commentReply', ['username' => $note->notification_value]) }}</a><button type="button" class="close pull-right clear_note" aria-label="Close" note-id="{{ $note->notification_id }}"><span aria-hidden="true">×</span></button></li>
           @endif
           @if ($note->notification_type == 'replyBlog')
-            <li role="presentation"><a href="{{ route('viewBlogPost', ['url' => $note->notification_from['post_url']]) }}#comments">{{ trans('notifications.commentReplyBlog', ['username' => $note->notification_value]) }}</a></li>
+            <li role="presentation"><a href="{{ route('viewBlogPost', ['url' => $note->notification_from['post_url']]) }}#comments">{{ trans('notifications.commentReplyBlog', ['username' => $note->notification_value]) }}</a><button type="button" class="close pull-right clear_note" aria-label="Close" note-id="{{ $note->notification_id }}"><span aria-hidden="true">×</span></button></li>
           @endif
           @if ($note->notification_type == 'follow')
-            <li role="presentation"><a href="{{ route('viewUser', ['user_name' => $note->notification_value]) }}">{{ trans('notifications.follower', ['username' => $note->notification_value]) }}</a></li>
+            <li role="presentation"><a href="{{ route('viewUser', ['user_name' => $note->notification_value]) }}">{{ trans('notifications.follower', ['username' => $note->notification_value]) }}</a><button type="button" class="close pull-right clear_note" aria-label="Close" note-id="{{ $note->notification_id }}"><span aria-hidden="true">×</span></button></li>
           @endif
         @endforeach
           <li role="presentation"><a href="#" id="clear_notes">{{ trans('notifications.clearAll') }}</a></li>
@@ -143,12 +143,25 @@
     $('div.alert').not('.alert-important').delay(3000).slideUp(300);
 @endif
 @if ($header_notifications_count > 0)
+    var notifications_count = {{ $header_notifications_count }};
     $('#clear_notes').click(function(){
         $.ajax({
             url: "{{ route('clearNotifications') }}",
             cache: false
         });
         $('#notification_bubble').hide();
+        return false;
+    });
+    $('.clear_note').click(function(){
+        var note_id = $(this).attr('note-id');
+        $.ajax({
+            url: "{{ route('clearNotification', ['note_id' => ':nid']) }}".replace(':nid', note_id),
+            cache: false
+        });
+        notifications_count--;
+        $(this).hide();
+        if (notifications_count < 1)
+            $('#notification_bubble').hide();
         return false;
     });
 @endif

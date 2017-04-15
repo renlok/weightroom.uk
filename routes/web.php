@@ -43,6 +43,7 @@ Route::group(['prefix' => 'user'], function () {
         Route::get('follow/{user_name}/{date?}', 'UserController@follow')->name('followUser');
         Route::get('unfollow/{user_name}/{date?}', 'UserController@unfollow')->name('unfollowUser');
         Route::get('notifications/clear', 'UserController@clearNotifications')->name('clearNotifications');
+        Route::get('notification/{note_id}/clear', 'UserController@clearNotification')->name('clearNotification');
         // subscription routes
         Route::get('premium', 'SubscriptionController@getPremium')->name('userPremium');
         Route::post('premium', 'SubscriptionController@postPremium');
