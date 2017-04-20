@@ -95,7 +95,7 @@ class ImportController extends Controller
             'exercise_name' => 'Exercise Name',
             'logitem_weight:kg' => 'Weight (KG)',
             'logitem_weight:lb' => 'Weight (LB)',
-            'logitem_weight_is_bw' => 'Is Bodyweight Exercise?'
+            'logitem_weight_is_bw' => 'Is Bodyweight Exercise?',
             'logitem_distance' => 'Distance',
             'logitem_time' => 'Time',
             'logitem_reps' => 'Reps',
