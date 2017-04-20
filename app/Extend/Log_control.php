@@ -207,7 +207,14 @@ class Log_control
         {
             if ($item->is_time == false && $item->is_distance == false && $item->is_endurance == false && $item->logitem_reps > 0)
             {
-                $intensity = ($item->logitem_abs_weight / $current_1rm) * 100;
+                if ($current_1rm == 0)
+                {
+                    $intensity = 100;
+                }
+                else
+                {
+                    $intensity = ($item->logitem_abs_weight / $current_1rm) * 100;
+                }
                 if ($intensity >= 100)
                 {
                     $set_inol = ($item->logitem_reps * $item->logitem_sets);
