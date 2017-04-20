@@ -17,7 +17,7 @@
     <input type="file" name="csvfile" id="csvfile">
   </div>
   {{ csrf_field() }}
-  <button type="submit" class="btn btn-default">Submit</button>
+  <button type="submit" class="btn btn-default">Upload</button>
 </form>
 @endsection
 

@@ -14,6 +14,11 @@ use Validator;
 
 class ImportController extends Controller
 {
+    public function importForm()
+    {
+        return view('import.upload');
+    }
+
     public function import(Request $request)
     {
         // can the user import a file yet?
@@ -76,7 +81,7 @@ class ImportController extends Controller
                 'RPE' => 'logitem_pre',
                 'Chains' => 'logitem_comment',
                 'Duration' => 'logitem_time',
-                'Distance' => 'logitem_comment',
+                'Distance' => 'logitem_distance',
                 'Box Height' => 'logitem_comment',
             ]
         ];
@@ -236,16 +241,70 @@ class ImportController extends Controller
 
     public function importSuccess()
     {
-        return view('import.success');
+        return view('import.successUpload');
     }
 
-    public function importForm()
+    public function exportForm()
     {
-        return view('import.upload');
+        return view('import.export');
     }
 
-    public function export(Request $request)
+    public function processExport(Request $request)
     {
+        $headers = array(
+            'Content-Type'        => 'text/csv',
+            'Cache-Control'       => 'must-revalidate, post-check=0, pre-check=0',
+            'Content-Disposition' => 'attachment; filename=test.csv',
+            'Expires'             => '0',
+            'Pragma'              => 'public',
+        );
 
+        $response = new StreamedResponse(function() use($ids){
+            // Open output stream
+            $handle = fopen('php://output', 'w');
+
+            // Add CSV headers
+            fputcsv($handle, [
+                "Log Date",
+                "Exercise",
+                "Weight (Kg)",
+                "Distance",
+                "Time",
+                "Reps",
+                "Sets",
+                "RPE",
+                "Comment",
+                "Exercise#",
+                "Set#",
+            ]);
+
+            Log::with('log_exercises.log_items', 'log_exercises.exercise')
+                ->where('user_id', Auth::user()->user_id)
+                ->where('log_date', '<=', $request->input('to_date'))
+                ->where('log_date', '>=', $request->input('from_date'))
+                ->chunk(500, function($logs) use($handle) {
+                foreach ($logs as $log) {
+                    // Add a new row with data
+                    fputcsv($handle, [
+                        $log->log_date,
+                        $log->log_exercises()->exercise()->exercise_name,
+                        $log->log_exercises()->log_items()->logitem_weight,
+                        $log->log_exercises()->log_items()->logitem_distance,
+                        $log->log_exercises()->log_items()->logitem_time,
+                        $log->log_exercises()->log_items()->logitem_reps,
+                        $log->log_exercises()->log_items()->logitem_sets,
+                        $log->log_exercises()->log_items()->logitem_pre,
+                        $log->log_exercises()->log_items()->logitem_comment,
+                        $log->log_exercises()->logex_order,
+                        $log->log_exercises()->log_items()->logitem_order,
+                    ]);
+                }
+            });
+
+            // Close the output stream
+            fclose($handle);
+        }, 200, $headers);
+
+        return $response->send();
     }
 }

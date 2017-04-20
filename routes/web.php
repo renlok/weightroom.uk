@@ -149,6 +149,12 @@ Route::group(['middleware' => 'auth', 'prefix' => 'import'], function () {
     Route::get('success', 'ImportController@importSuccess')->name('successImport');
 });
 
+// export
+Route::group(['middleware' => 'auth', 'prefix' => 'export'], function () {
+    Route::get('/', 'ImportController@exportForm')->name('export');
+    Route::post('process', 'ImportController@processExport')->name('processExport');
+});
+
 // templates
 Route::group(['middleware' => 'auth', 'prefix' => 'templates'], function () {
     Route::get('/', 'TemplateController@home')->name('templatesHome');
