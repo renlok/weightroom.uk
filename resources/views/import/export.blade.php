@@ -11,8 +11,8 @@
 @include('common.beta')
 @include('common.flash')
 @include('errors.validation')
-<form action="{{ url('export') }}" method="post">
-  <div class="form-inline">
+<form action="{{ url('processExport') }}" method="post">
+  <div class="form-inline padding">
     <div class="form-group">
       <label for="from_date">From</label>
       <input type="text" class="form-control" id="from_date" name="from_date" value="{{ $from_date }}">
@@ -22,7 +22,7 @@
       <input type="text" class="form-control" id="to_date" name="to_date" value="{{ $to_date }}">
     </div>
   </div>
-  <div class="form-inline">
+  <div class="form-inline padding">
     <div class="form-group">
       <label for="format">Format</label>
       <select class="form-control" name="format" id="format">
