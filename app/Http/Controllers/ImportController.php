@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Auth;
 use Carbon;
 use DB;
@@ -280,14 +281,20 @@ class ImportController extends Controller
 
     public function downloadExport(Request $request)
     {
-        $to_date = $request->session()->get('to_date');
-        $from_date = $request->session()->get('from_date');
+        if ($request->session()->has('to_date'))
+        {
+            $to_date = $request->session()->get('to_date');
+            $from_date = $request->session()->get('from_date');
+            $request->session()->forget('to_date');
+            $request->session()->forget('from_date');
+        }
+        else
+        {
+            return redirect()->route('export')->withInput()->with('flash_message', 'From/To dates missing');
+        }
         $headers = array(
             'Content-Type'        => 'text/csv',
-            'Cache-Control'       => 'must-revalidate, post-check=0, pre-check=0',
-            'Content-Disposition' => 'attachment; filename=test.csv',
-            'Expires'             => '0',
-            'Pragma'              => 'public',
+            'Content-Disposition' => 'attachment; filename=weightroom-export.csv',
         );
 
         $response = new StreamedResponse(function() use($to_date, $from_date){
@@ -315,20 +322,24 @@ class ImportController extends Controller
                 ->where('log_date', '>=', $from_date)
                 ->chunk(500, function($logs) use($handle) {
                 foreach ($logs as $log) {
-                    // Add a new row with data
-                    fputcsv($handle, [
-                        $log->log_date,
-                        $log->log_exercises()->exercise()->exercise_name,
-                        $log->log_exercises()->log_items()->logitem_weight,
-                        $log->log_exercises()->log_items()->logitem_distance,
-                        $log->log_exercises()->log_items()->logitem_time,
-                        $log->log_exercises()->log_items()->logitem_reps,
-                        $log->log_exercises()->log_items()->logitem_sets,
-                        $log->log_exercises()->log_items()->logitem_pre,
-                        $log->log_exercises()->log_items()->logitem_comment,
-                        $log->log_exercises()->logex_order,
-                        $log->log_exercises()->log_items()->logitem_order,
-                    ]);
+                    foreach ($log->log_exercises as $log_exercise) {
+                        foreach ($log_exercise->log_items as $log_item) {
+                            // Add a new row with data
+                            fputcsv($handle, [
+                                $log->log_date,
+                                $log_exercise->exercise->exercise_name,
+                                $log_item->logitem_weight,
+                                $log_item->logitem_distance,
+                                $log_item->logitem_time,
+                                $log_item->logitem_reps,
+                                $log_item->logitem_sets,
+                                $log_item->logitem_pre,
+                                $log_item->logitem_comment,
+                                $log_exercise->logex_order,
+                                $log_item->logitem_order,
+                            ]);
+                        }
+                    }
                 }
             });
 
