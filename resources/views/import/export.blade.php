@@ -11,7 +11,7 @@
 @include('common.beta')
 @include('common.flash')
 @include('errors.validation')
-<form action="{{ url('processExport') }}" method="post">
+<form action="{{ route('processExport') }}" method="post">
   <div class="form-inline padding">
     <div class="form-group">
       <label for="from_date">From</label>
