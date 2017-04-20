@@ -259,11 +259,29 @@ class ImportController extends Controller
             $from_date = Carbon::now()->toDateString();
         }
         $to_date = Carbon::now()->toDateString();
-        return view('import.export');
+        return view('import.export', compact('to_date', 'from_date'));
     }
 
     public function processExport(Request $request)
     {
+        $request->session()->put('to_date', $request->input('to_date'));
+        $request->session()->put('from_date', $request->input('from_date'));
+        $are_logs = Log::with('log_exercises.log_items', 'log_exercises.exercise')
+                        ->where('user_id', Auth::user()->user_id)
+                        ->where('log_date', '<=', $request->input('to_date'))
+                        ->where('log_date', '>=', $request->input('from_date'))->first();
+        if ($are_logs == null)
+        {
+            return back()->withInput()->with('flash_message', 'No logs exist within the selected period');
+        }
+
+        return redirect()->route('downloadExport');
+    }
+
+    public function downloadExport(Request $request)
+    {
+        $to_date = $request->session()->get('to_date');
+        $from_date = $request->session()->get('from_date');
         $headers = array(
             'Content-Type'        => 'text/csv',
             'Cache-Control'       => 'must-revalidate, post-check=0, pre-check=0',
@@ -272,7 +290,7 @@ class ImportController extends Controller
             'Pragma'              => 'public',
         );
 
-        $response = new StreamedResponse(function() use($ids){
+        $response = new StreamedResponse(function() use($to_date, $from_date){
             // Open output stream
             $handle = fopen('php://output', 'w');
 
@@ -293,8 +311,8 @@ class ImportController extends Controller
 
             Log::with('log_exercises.log_items', 'log_exercises.exercise')
                 ->where('user_id', Auth::user()->user_id)
-                ->where('log_date', '<=', $request->input('to_date'))
-                ->where('log_date', '>=', $request->input('from_date'))
+                ->where('log_date', '<=', $to_date)
+                ->where('log_date', '>=', $from_date)
                 ->chunk(500, function($logs) use($handle) {
                 foreach ($logs as $log) {
                     // Add a new row with data

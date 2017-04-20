@@ -3,6 +3,7 @@
 @section('title', 'Export Workout Data')
 
 @section('headerstyle')
+<link href="{{ asset('css/pickmeup.css') }}" rel="stylesheet">
 @endsection
 
 @section('content')
@@ -21,14 +22,16 @@
       <input type="text" class="form-control" id="to_date" name="to_date" value="{{ $to_date }}">
     </div>
   </div>
-  <div class="form-group">
-    <label for="format">Format</label>
-    <select class="form-control" name="format" id="format">
-      <option value="csv">CSV File</option>
-    </select>
+  <div class="form-inline">
+    <div class="form-group">
+      <label for="format">Format</label>
+      <select class="form-control" name="format" id="format">
+        <option value="csv">CSV File</option>
+      </select>
+    </div>
   </div>
   {{ csrf_field() }}
-  <button type="submit" class="btn btn-default">Submit</button>
+  <button type="submit" class="btn btn-default">Export</button>
 </form>
 @endsection
 
