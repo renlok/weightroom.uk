@@ -83,11 +83,12 @@
     <p>Find workout templates</p>
   </div>
   <div class="col-md-4">
-	<a href="{{ route('import') }}">Import workouts</a>
+    <a href="{{ route('import') }}">Import workouts</a>
     <p>Import workouts via CSV</p>
   </div>
   <div class="col-md-4">
-	&nbsp;
+    <a href="{{ route('export') }}">Export workouts</a>
+    <p>Export your workout data</p>
   </div>
 </div>
 @else

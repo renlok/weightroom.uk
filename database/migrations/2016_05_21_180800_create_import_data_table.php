@@ -14,8 +14,8 @@ class CreateImportDataTable extends Migration
     {
         Schema::create('import_data', function (Blueprint $table) {
             $table->increments('import_id');
-			$table->integer('priority')->default(5);
-			$table->string('hash');
+            $table->integer('priority')->default(5);
+            $table->string('hash');
             $table->integer('user_id')->unsigned()->index();
             $table->string('log_date');
             $table->string('log_date_format');
@@ -23,6 +23,7 @@ class CreateImportDataTable extends Migration
             $table->string('exercise_name');
             $table->string('logitem_weight');
             $table->boolean('logitem_weight_is_kg')->default(1);
+            $table->boolean('logitem_weight_is_bw')->default(0);
             $table->string('logitem_distance');
             $table->string('logitem_time');
             $table->string('logitem_reps');

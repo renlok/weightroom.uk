@@ -53,7 +53,20 @@ class Import extends Parser
                 $key_counter++;
             }
             $item_data = [];
-            if ((float)$log_line->logitem_weight > 0 && $log_line->logitem_weight != '')
+            if ($log_line->logitem_weight_is_bw)
+            {
+                $item_data['W'][] = ['BW', ($log_line->logitem_weight_is_kg) ? 'kg' : 'lb'];
+                if ($log_line->logitem_weight != '')
+                {
+                    if ((float)$log_line->logitem_weight > 0) {
+                        $item_data['W'][0] .= ' + ';
+                    } elseif ((float)$log_line->logitem_weight < 0) {
+                        $item_data['W'][0] .= ' - ';
+                    }
+                    $item_data['W'][0] .= (float)$log_line->logitem_weight;
+                }
+            }
+            elseif ((float)$log_line->logitem_weight > 0 && $log_line->logitem_weight != '')
             {
                 $item_data['W'] = [(float)$log_line->logitem_weight, ($log_line->logitem_weight_is_kg) ? 'kg' : 'lb'];
             }
@@ -64,6 +77,10 @@ class Import extends Parser
             elseif ((float)$log_line->logitem_time > 0 && $log_line->logitem_time != '')
             {
                 $item_data['T'] = [(float)$log_line->logitem_time, 'm'];
+            }
+            if (!isset($item_data['W']) && !isset($item_data['D']) && !isset($item_data['T']))
+            {
+                $item_data['W'] = ['BW', ($log_line->logitem_weight_is_kg) ? 'kg' : 'lb'];
             }
             if ((int)$log_line->logitem_reps > 0 && $log_line->logitem_reps != '')
             {

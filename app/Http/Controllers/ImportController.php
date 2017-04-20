@@ -11,6 +11,7 @@ use Carbon;
 use DB;
 use Excel;
 use Validator;
+use App\Log;
 
 class ImportController extends Controller
 {
@@ -94,6 +95,7 @@ class ImportController extends Controller
             'exercise_name' => 'Exercise Name',
             'logitem_weight:kg' => 'Weight (KG)',
             'logitem_weight:lb' => 'Weight (LB)',
+            'logitem_weight_is_bw' => 'Is Bodyweight Exercise?'
             'logitem_distance' => 'Distance',
             'logitem_time' => 'Time',
             'logitem_reps' => 'Reps',
@@ -211,10 +213,11 @@ class ImportController extends Controller
                 case 'logex_order':
                 case 'logitem_order':
                     if (!is_numeric($validator_values[$key])) {
-                        return back()->withInput()->with('flash_message', 'Date format doesn\'t match');
+                        return back()->withInput()->with('flash_message', 'Format doesn\'t match');
                     }
                 case 'exercise_name':
                 case 'logitem_comment':
+                case 'logitem_weight_is_bw':
                     $column_string .= $column;
                     break;
                 default:
@@ -246,6 +249,16 @@ class ImportController extends Controller
 
     public function exportForm()
     {
+        $from_date_query = Log::where('user_id', Auth::user()->user_id)->orderBy('log_date', 'asc')->value('log_date');
+        if ($from_date_query != null)
+        {
+            $from_date = $from_date_query->toDateString();
+        }
+        else
+        {
+            $from_date = Carbon::now()->toDateString();
+        }
+        $to_date = Carbon::now()->toDateString();
         return view('import.export');
     }
 
