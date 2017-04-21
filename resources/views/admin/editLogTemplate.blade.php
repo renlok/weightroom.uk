@@ -55,15 +55,11 @@
   </div>
   <div id="app">
     <template v-for="(log, log_index) in log_data">
-      <div class="log" v-bind:class="{'odd': log_index % 2 === 0}">
+      <div class="log" v-bind:class="{'odd': log_index % 2 === 1}">
         <label>Log</label>
         <input type="text" v-model="log_data[log_index].log_name" v-bind:name="'log_name['+ log_index +']'" placeholder="Log name">
-        @{{#if log_index > 0}}
-        <button type="button" v-on:click="moveLog(log_index, 'up')">▲</button>
-        @{{/if}}
-        @{{#if log_index < log_data.length - 1}}
-        <button type="button" v-on:click="moveLog(log_index, 'down')">▼</button>
-        @{{/if}}
+        <button type="button" v-on:click="moveLog(log_index, 'up')" v-show="log_index > 0">▲</button>
+        <button type="button" v-on:click="moveLog(log_index, 'down')" v-show="log_index < log_data.length - 1">▼</button>
         <button type="button" v-on:click="copyLog(log_index)">c</button>
         <button type="button" v-on:click="deleteLog(log_index)">x</button>
         <div>
@@ -82,12 +78,8 @@
         <div>Exercises:</div>
         <div v-for="(exercise, exercise_index) in log.exercise_data" class="exercise">
           <input type="text" v-model="log_data[log_index].exercise_data[exercise_index].exercise_name" v-bind:name="'exercise_name['+ log_index +']['+ exercise_index +']'" placeholder="Exercise name">
-          @{{#if exercise_index > 0}}
-          <button type="button" v-on:click="moveExercise(exercise_index, log_index, 'up')">▲</button>
-          @{{/if}}
-          @{{#if exercise_index < log_data[log_index].exercise_data.length - 1}}
-          <button type="button" v-on:click="moveExercise(exercise_index, log_index, 'down')">▼</button>
-          @{{/if}}
+          <button type="button" v-on:click="moveExercise(exercise_index, log_index, 'up')" v-show="exercise_index > 0">▲</button>
+          <button type="button" v-on:click="moveExercise(exercise_index, log_index, 'down')" v-show="exercise_index < log_data[log_index].exercise_data.length - 1">▼</button>
           <button type="button" v-on:click="copyExercise(exercise_index, log_index)">c</button>
           <button type="button" v-on:click="deleteExercise(exercise_index, log_index)">x</button>
           <div v-for="(item, item_index) in exercise.item_data" class="logItem">
@@ -106,12 +98,8 @@
             </select>
             <label>warmup?</label>
             <input type="checkbox" value="1" v-model="log_data[log_index].exercise_data[exercise_index].item_data[item_index].warmup" v-bind:name="'item_warmup['+ log_index +']['+ exercise_index +']['+ item_index +']'">
-            @{{#if item_index > 0}}
-            <button type="button" v-on:click="moveItem(item_index, exercise_index, log_index, 'up')">▲</button>
-            @{{/if}}
-            @{{#if item_index < log_data[log_index].exercise_data[exercise_index].item_data.length - 1}}
-            <button type="button" v-on:click="moveItem(item_index, exercise_index, log_index, 'down')">▼</button>
-            @{{/if}}
+            <button type="button" v-on:click="moveItem(item_index, exercise_index, log_index, 'up')" v-show="item_index > 0">▲</button>
+            <button type="button" v-on:click="moveItem(item_index, exercise_index, log_index, 'down')" v-show="item_index < log_data[log_index].exercise_data[exercise_index].item_data.length - 1">▼</button>
             <button type="button" v-on:click="copyItem(item_index, exercise_index, log_index)">c</button>
             <button type="button" v-on:click="deleteItem(item_index, exercise_index, log_index)">x</button>
           </div>
@@ -201,7 +189,7 @@ new Vue({
                 if (log_id > 0)
                   this.log_data.move(log_id, log_id - 1);
             } else {
-                if (log_id < log_data.length - 1)
+                if (log_id < this.log_data.length - 1)
                     this.log_data.move(log_id, log_id + 1);
             }
         },
@@ -210,7 +198,7 @@ new Vue({
                 if (exercise_id > 0)
                     this.log_data[log_id].exercise_data.move(exercise_id, exercise_id - 1);
             } else {
-                if (exercise_id < log_data[log_id].exercise_data.length - 1)
+                if (exercise_id < this.log_data[log_id].exercise_data.length - 1)
                     this.log_data[log_id].exercise_data.move(exercise_id, exercise_id + 1);
             }
         },
@@ -219,7 +207,7 @@ new Vue({
                 if (item_id > 0)
                     this.log_data[log_id].exercise_data[exercise_id].item_data.move(item_id, item_id - 1);
             } else {
-                if (item_id < log_data[log_id].exercise_data[exercise_id].item_data.length - 1)
+                if (item_id < this.log_data[log_id].exercise_data[exercise_id].item_data.length - 1)
                     this.log_data[log_id].exercise_data[exercise_id].item_data.move(item_id, item_id + 1);
             }
         },
