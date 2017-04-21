@@ -24,6 +24,9 @@
 .inputNumber {
   width: 30px;
 }
+.odd {
+  background-color: #ddd;
+}
 </style>
 @endsection
 
@@ -36,9 +39,11 @@
   <input type="hidden" name="template_id" value="{{ $template_id }}">
   <label for="templateName">Template name</label>
   <input type="text" id="templateName" name="template_name" placeholder="Template name" value="{{ $template_name }}">
-  <div>
+  <div class="form-group">
     <label for="templateDesc">Template description</label>
-    <textarea type="text" id="templateDesc" name="template_description">{{ $template_description }}</textarea>
+    <textarea type="text" id="templateDesc" class="form-control" name="template_description">{{ $template_description }}</textarea>
+  </div>
+  <div class="form-group">
     <label for="templateName">Template type</label>
     <select name="template_type">
       <option value="powerlifting" {{ ($template_type == 'powerlifting') ? 'selected="selected"' : '' }}>powerlifting</option>
@@ -50,13 +55,13 @@
   </div>
   <div id="app">
     <template v-for="(log, log_index) in log_data">
-      <div class="log" style="@{{ ((log_index % 2) == 1 ? 'background-color: #ddd;' : '') }}">
+      <div class="log" v-bind:class="{'odd': log_index % 2 === 0}">
         <label>Log</label>
-        <input type="text" value="@{{ log.log_name }}" name="log_name[@{{ log_index }}]" placeholder="Log name"><button type="button" v-on:click="deleteLog(log_index)">x</button>
+        <input type="text" v-model="log_data[log_index].log_name" v-bind:name="'log_name['+ log_index +']'" placeholder="Log name"><button type="button" v-on:click="moveLog(log_index, 'up')">^</button><button type="button" v-on:click="moveLog(log_index, 'down')">v</button><button type="button" v-on:click="copyLog(log_index)">c</button><button type="button" v-on:click="deleteLog(log_index)">x</button>
         <div>
           <label>Week #:</label>
-          <input type="text" value="@{{ log.log_week }}" name="log_week[@{{ log_index }}]" placeholder="Log week">
-          <select name="log_day[@{{ log_index }}]" v-model="log.log_day">
+          <input type="text" v-model="log_data[log_index].log_week" v-bind:name="'log_week['+ log_index +']'" placeholder="Log week">
+          <select v-bind:name="'log_day['+ log_index +']'" v-model="log_data[log_index].log_day">
             <option value="1">Monday</option>
             <option value="2">Tuesday</option>
             <option value="3">Wednesday</option>
@@ -68,13 +73,15 @@
         </div>
         <div>Exercises:</div>
         <div v-for="(exercise, exercise_index) in log.exercise_data" class="exercise">
-          <input type="text" value="@{{ exercise.exercise_name }}" name="exercise_name[@{{ log_index }}][@{{ exercise_index }}]" placeholder="Exercise name"><button type="button" v-on:click="deleteExercise(exercise_index, log_index)">x</button>
+          <input type="text" v-model="log_data[log_index].exercise_data[exercise_index].exercise_name" v-bind:name="'exercise_name['+ log_index +']['+ exercise_index +']'" placeholder="Exercise name"><button type="button" v-on:click="moveExercise(exercise_index, log_index, 'up')">^</button><button type="button" v-on:click="moveExercise(exercise_index, log_index, 'down')">v</button><button type="button" v-on:click="copyExercise(exercise_index, log_index)">c</button><button type="button" v-on:click="deleteExercise(exercise_index, log_index)">x</button>
           <div v-for="(item, item_index) in exercise.item_data" class="logItem">
-            <input type="text" value="@{{ item.value }}" name="item_value[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]" class="inputNumber"> + <input type="text" value="@{{ item.plus }}" name="item_plus[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]" class="inputNumber">
-             x <input type="text" value="@{{ item.reps }}" name="item_reps[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]" class="inputNumber"> x <input type="text" value="@{{ item.sets }}" name="item_sets[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]" class="inputNumber">
-            @<input type="text" value="@{{ item.rpe }}" name="item_rpe[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]" class="inputNumber">
-            <input type="text" value="@{{ item.comment }}" name="item_comment[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]" placeholder="Comment">
-            <select name="item_type[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]" v-model="exercise.item_data[item_index].type">
+            <input type="text" v-model="log_data[log_index].exercise_data[exercise_index].item_data[item_index].value" v-bind:name="'item_value['+ log_index +']['+ exercise_index +']['+ item_index +']'" class="inputNumber">
+             + <input type="text" v-model="log_data[log_index].exercise_data[exercise_index].item_data[item_index].plus" v-bind:name="'item_plus['+ log_index +']['+ exercise_index +']['+ item_index +']'" class="inputNumber">
+             x <input type="text" v-model="log_data[log_index].exercise_data[exercise_index].item_data[item_index].reps" v-bind:name="'item_reps['+ log_index +']['+ exercise_index +']['+ item_index +']'" class="inputNumber">
+             x <input type="text" v-model="log_data[log_index].exercise_data[exercise_index].item_data[item_index].sets" v-bind:name="'item_sets['+ log_index +']['+ exercise_index +']['+ item_index +']'" class="inputNumber">
+             @ <input type="text" v-model="log_data[log_index].exercise_data[exercise_index].item_data[item_index].rpe" v-bind:name="'item_rpe['+ log_index +']['+ exercise_index +']['+ item_index +']'" class="inputNumber">
+            <input type="text" v-model="log_data[log_index].exercise_data[exercise_index].item_data[item_index].comment" v-bind:name="'item_comment['+ log_index +']['+ exercise_index +']['+ item_index +']'" placeholder="Comment">
+            <select v-model="log_data[log_index].exercise_data[exercise_index].item_data[item_index].type" v-bind:name="'item_type['+ log_index +']['+ exercise_index +']['+ item_index +']'">
               <option value="W">Weight</option>
               <option value="RM">Rep Max</option>
               <option value="P">Percent</option>
@@ -82,7 +89,10 @@
               <option value="T">Time</option>
             </select>
             <label>warmup?</label>
-            <input type="checkbox" value="1" name="item_warmup[@{{ log_index }}][@{{ exercise_index }}][@{{ item_index }}]" v-model="item.warmup">
+            <input type="checkbox" value="1" v-model="log_data[log_index].exercise_data[exercise_index].item_data[item_index].warmup" v-bind:name="'item_warmup['+ log_index +']['+ exercise_index +']['+ item_index +']'">
+            <button type="button" v-on:click="moveItem(item_index, exercise_index, log_index, 'up')">^</button>
+            <button type="button" v-on:click="moveItem(item_index, exercise_index, log_index, 'down')">v</button>
+            <button type="button" v-on:click="copyItem(item_index, exercise_index, log_index)">c</button>
             <button type="button" v-on:click="deleteItem(item_index, exercise_index, log_index)">x</button>
           </div>
           <button type="button" v-on:click="addItem(exercise_index, log_index)">Add Item</button>
@@ -130,11 +140,6 @@ var default_item = {
     type: 'W'
 }
 
-var deafult_exercise = {
-    exercise_name: '',
-    item_data: [Object.assign({}, default_item)]
-};
-
 new Vue({
     el: '#app',
     data: {
@@ -142,24 +147,65 @@ new Vue({
     },
     methods: {
         addLog: function(){
-            this.log_data.push({log_name: '', log_week:1, log_day:1, exercise_data: [Object.assign({}, deafult_exercise)]});
+            this.log_data.push({log_name: '', log_week:1, log_day:1, exercise_data: [Object.assign({}, {exercise_name: '', item_data: [Object.assign({}, default_item)]})]});
         },
         addExercise: function(index_id) {
-            this.log_data[index_id].exercise_data.push(Object.assign({}, deafult_exercise));
+            this.log_data[index_id].exercise_data.push(Object.assign({}, {exercise_name: '', item_data: [Object.assign({}, default_item)]}));
         },
         addItem: function(index_id, log_id) {
             this.log_data[log_id].exercise_data[index_id].item_data.push(Object.assign({}, default_item));
         },
-        deleteLog: function(log_index) {
-            this.log_data.splice(log_index, 1);
+        deleteLog: function(log_id) {
+            this.log_data.splice(log_id, 1);
         },
-        deleteExercise: function(exercise_index, log_index) {
-            this.log_data[log_index].exercise_data.splice(exercise_index, 1);
+        deleteExercise: function(exercise_id, log_id) {
+            this.log_data[log_id].exercise_data.splice(exercise_id, 1);
         },
-        deleteItem: function(item_index, exercise_index, log_index) {
-          this.log_data[log_index].exercise_data[exercise_index].item_data.splice(item_index, 1);
-        }
+        deleteItem: function(item_id, exercise_id, log_id) {
+            this.log_data[log_id].exercise_data[exercise_id].item_data.splice(item_id, 1);
+        },
+        copyLog: function(log_id) {
+            var new_log = this.log_data[log_id];
+            this.log_data.splice(exercise_id + 1, 0, Object.assign({}, new_log));
+        },
+        copyExercise: function(exercise_id, log_id) {
+            var new_exercise = this.log_data[log_id].exercise_data[exercise_id];
+            this.log_data[log_id].exercise_data.splice(exercise_id + 1, 0, Object.assign({}, new_exercise));
+        },
+        copyItem: function(item_id, exercise_id, log_id) {
+            var new_item = this.log_data[log_id].exercise_data[exercise_id].item_data[item_id];
+            this.log_data[log_id].exercise_data[exercise_id].item_data.splice(exercise_id + 1, 0, Object.assign({}, new_item));
+        },
+        moveLog: function(log_id, dir) {
+          if (dir == 'up')
+              this.log_data.move(log_id, log_id - 1);
+          else
+              this.log_data.move(log_id, log_id + 1);
+        },
+        moveExercise: function(exercise_id, log_id, dir) {
+            if (dir == 'up')
+                this.log_data[log_id].exercise_data.move(exercise_id, exercise_id - 1);
+            else
+                this.log_data[log_id].exercise_data.move(exercise_id, exercise_id + 1);
+        },
+        moveItem: function(item_id, exercise_id, log_id, dir) {
+            if (dir == 'up')
+                this.log_data[log_id].exercise_data[exercise_id].item_data.move(item_id, item_id - 1);
+            else
+                this.log_data[log_id].exercise_data[exercise_id].item_data.move(item_id, item_id + 1);
+        },
     }
 });
+
+Array.prototype.move = function (old_index, new_index) {
+    if (new_index >= this.length) {
+        var k = new_index - this.length;
+        while ((k--) + 1) {
+            this.push(undefined);
+        }
+    }
+    this.splice(new_index, 0, this.splice(old_index, 1)[0]);
+    return this; // for testing purposes
+};
 </script>
 @endsection

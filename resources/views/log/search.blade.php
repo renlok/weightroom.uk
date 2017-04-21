@@ -46,7 +46,7 @@
     <label for="weight" class="col-sm-2 control-label labeldd">
       <select class="form-control" name="valuetype" id="valuetype" v-on:change="change_type" v-model="selected">
         <option value="weight"{{ ('weight' == old('valuetype')) ? ' selected="selected"' : '' }}>Weight</option>
-        <option value="distance"{{ ('distance' == old('valuetype')) ? ' selected="selected"' : '' }}>Distacne</option>
+        <option value="distance"{{ ('distance' == old('valuetype')) ? ' selected="selected"' : '' }}>Distance</option>
         <option value="time"{{ ('time' == old('valuetype')) ? ' selected="selected"' : '' }}>Time</option>
       </select>
     </label>
@@ -70,7 +70,7 @@
         </div>
         <div class="col-md-10">
           <div class="input-group">
-            <input type="text" class="form-control" name="weight" id="weight" placeholder="@{{ type_placeholder }}" value="{{ old('weight') }}">
+            <input type="text" class="form-control" name="weight" id="weight" v-bind:placeholder="type_placeholder" value="{{ old('weight') }}">
             <div class="input-group-addon" v-model="type_unit">@{{ type_unit }}</div>
           </div>
         </div>

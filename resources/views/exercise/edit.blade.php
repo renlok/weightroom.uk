@@ -136,7 +136,7 @@ new Vue({
         ]
     },
     methods: {
-        new_goal: function (goal) {
+        old_goal: function (goal) {
             if (goal.goal_type != 'wr')
             {
                 goal.hidden = true;

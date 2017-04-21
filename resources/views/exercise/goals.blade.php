@@ -27,7 +27,7 @@
       <span>Total Reps: <b>{{ $goal->goal_value_one }}</b></span>
     @endif
     <button class="btn btn-default btn-xs" v-on:click="edit_goal({{ $goal->goal_id }})">edit</button> | <button class="btn btn-default btn-xs" v-on:click="delete_goal({{ $goal->goal_id }})">delete</button>
-      <div class="progress">
+      <div class="progress margintb">
         <div class="progress-bar" role="progressbar" aria-valuenow="{{ $goal->percentage }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ $goal->percentage }}%;">
           {{ $goal->percentage }}%: {{ $goal->best }}
         </div>
