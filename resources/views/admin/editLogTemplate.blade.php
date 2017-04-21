@@ -57,7 +57,7 @@
     <template v-for="(log, log_index) in log_data">
       <div class="log" v-bind:class="{'odd': log_index % 2 === 0}">
         <label>Log</label>
-        <input type="text" v-model="log_data[log_index].log_name" v-bind:name="'log_name['+ log_index +']'" placeholder="Log name"><button type="button" v-on:click="moveLog(log_index, 'up')">^</button><button type="button" v-on:click="moveLog(log_index, 'down')">v</button><button type="button" v-on:click="copyLog(log_index)">c</button><button type="button" v-on:click="deleteLog(log_index)">x</button>
+        <input type="text" v-model="log_data[log_index].log_name" v-bind:name="'log_name['+ log_index +']'" placeholder="Log name"><button type="button" v-on:click="moveLog(log_index, 'up')">▲</button><button type="button" v-on:click="moveLog(log_index, 'down')">▼</button><button type="button" v-on:click="copyLog(log_index)">c</button><button type="button" v-on:click="deleteLog(log_index)">x</button>
         <div>
           <label>Week #:</label>
           <input type="text" v-model="log_data[log_index].log_week" v-bind:name="'log_week['+ log_index +']'" placeholder="Log week">
@@ -73,7 +73,7 @@
         </div>
         <div>Exercises:</div>
         <div v-for="(exercise, exercise_index) in log.exercise_data" class="exercise">
-          <input type="text" v-model="log_data[log_index].exercise_data[exercise_index].exercise_name" v-bind:name="'exercise_name['+ log_index +']['+ exercise_index +']'" placeholder="Exercise name"><button type="button" v-on:click="moveExercise(exercise_index, log_index, 'up')">^</button><button type="button" v-on:click="moveExercise(exercise_index, log_index, 'down')">v</button><button type="button" v-on:click="copyExercise(exercise_index, log_index)">c</button><button type="button" v-on:click="deleteExercise(exercise_index, log_index)">x</button>
+          <input type="text" v-model="log_data[log_index].exercise_data[exercise_index].exercise_name" v-bind:name="'exercise_name['+ log_index +']['+ exercise_index +']'" placeholder="Exercise name"><button type="button" v-on:click="moveExercise(exercise_index, log_index, 'up')">▲</button><button type="button" v-on:click="moveExercise(exercise_index, log_index, 'down')">▼</button><button type="button" v-on:click="copyExercise(exercise_index, log_index)">c</button><button type="button" v-on:click="deleteExercise(exercise_index, log_index)">x</button>
           <div v-for="(item, item_index) in exercise.item_data" class="logItem">
             <input type="text" v-model="log_data[log_index].exercise_data[exercise_index].item_data[item_index].value" v-bind:name="'item_value['+ log_index +']['+ exercise_index +']['+ item_index +']'" class="inputNumber">
              + <input type="text" v-model="log_data[log_index].exercise_data[exercise_index].item_data[item_index].plus" v-bind:name="'item_plus['+ log_index +']['+ exercise_index +']['+ item_index +']'" class="inputNumber">
@@ -90,8 +90,8 @@
             </select>
             <label>warmup?</label>
             <input type="checkbox" value="1" v-model="log_data[log_index].exercise_data[exercise_index].item_data[item_index].warmup" v-bind:name="'item_warmup['+ log_index +']['+ exercise_index +']['+ item_index +']'">
-            <button type="button" v-on:click="moveItem(item_index, exercise_index, log_index, 'up')">^</button>
-            <button type="button" v-on:click="moveItem(item_index, exercise_index, log_index, 'down')">v</button>
+            <button type="button" v-on:click="moveItem(item_index, exercise_index, log_index, 'up')">▲</button>
+            <button type="button" v-on:click="moveItem(item_index, exercise_index, log_index, 'down')">▼</button>
             <button type="button" v-on:click="copyItem(item_index, exercise_index, log_index)">c</button>
             <button type="button" v-on:click="deleteItem(item_index, exercise_index, log_index)">x</button>
           </div>

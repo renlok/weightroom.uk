@@ -51,8 +51,10 @@
       </select>
     </label>
     <label for="weight" class="col-sm-1 control-label labeldd">
-      <select class="form-control" name="valueunit" id="valueunit">
-        <option value="@{{ unit }}"{{ ('weight_kg' == old('valueunit')) ? ' selected="selected"' : '' }} v-for="unit in units">@{{ unit }}</option>
+      <select class="form-control" name="valueunit" id="valueunit" v-model="type_unit">
+        <template v-for="unit in units">
+          <option v-bind:value="unit">@{{ unit }}</option>
+        </template>
       </select>
     </label>
     <div class="col-sm-9">
@@ -71,7 +73,7 @@
         <div class="col-md-10">
           <div class="input-group">
             <input type="text" class="form-control" name="weight" id="weight" v-bind:placeholder="type_placeholder" value="{{ old('weight') }}">
-            <div class="input-group-addon" v-model="type_unit">@{{ type_unit }}</div>
+            <div class="input-group-addon">@{{ type_unit }}</div>
           </div>
         </div>
       </div>
@@ -124,7 +126,7 @@ new Vue({
     el: '#type_changer',
     data: {
         selected: '{{ old('valuetype', 'weight') }}',
-        type_unit: '{{ $user->user_unit }}',
+        type_unit: '{{ old('valueunit', $user->user_unit) }}',
         type_placeholder: 'Weight',
 @if (old('valuetype', 'weight') == 'weight')
         units: {!! (Auth::user()->user_unit == 'lb') ? "['lb', 'kg']" : "['kg', 'lb']" !!}
