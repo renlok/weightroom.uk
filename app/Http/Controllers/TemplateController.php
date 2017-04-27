@@ -7,11 +7,14 @@ use App\Http\Requests;
 
 use App\Exercise;
 use App\Exercise_record;
+use App\Log;
 use App\Template;
 use App\Template_log;
 use App\Extend\PRs;
+use App\Extend\Log_control;
 
 use Auth;
+use Validator;
 
 class TemplateController extends Controller
 {
@@ -168,7 +171,40 @@ class TemplateController extends Controller
                 }
             }
         }
+        // set up variables for blade
         $template_name = Template::where('template_id', $log->template_id)->value('template_name');
-        return view('templates.build', compact('template_name', 'log', 'exercise_values', 'exercise_names'));
+        $calender = Log_control::preload_calender_data($date, $user->user_id);
+        return view('templates.build', compact('template_name', 'log', 'exercise_values', 'exercise_names', 'calender'));
+    }
+
+    public function saveTemplate(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'log_date' => 'required|date_format:Y-m-d',
+            'template_text' => 'required',
+        ]);
+
+        if ($validator->fails())
+        {
+            return redirect()
+                    ->back()
+                    ->withErrors($validator)
+                    ->with('fail', true)
+                    ->withInput();
+        }
+
+        if (Log::isValid($request->input('log_date'), Auth::user()->user_id))
+        {
+            $route = 'editLog';
+        }
+        else
+        {
+            $route = 'newLog';
+        }
+        return redirect()
+                ->route($route, ['date' => $request->input('log_date')])
+                ->with([
+                    'template_text' => $request->input('template_text')
+                ]);
     }
 }

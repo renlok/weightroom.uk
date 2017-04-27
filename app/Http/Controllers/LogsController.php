@@ -129,6 +129,10 @@ class LogsController extends Controller
         {
             $log->log_text = Log_control::rebuild_log_text ($user->user_id, $date);
         }
+        if (Session::has('template_text'))
+        {
+            $log->log_text .= "\n" . session('template_text');
+        }
         $type = 'edit';
         $exercise_list = Exercise::listexercises(true)->get();
         $exercises = '';
@@ -164,6 +168,10 @@ class LogsController extends Controller
             'log_text' => '',
             'log_weight' => Log::getlastbodyweight(Auth::user()->user_id, $date)->value('log_weight'),
         ];
+        if (Session::has('template_text'))
+        {
+            $log->log_text = session('template_text');
+        }
         $type = 'new';
         $exercise_list = Exercise::listexercises(true)->get();
         $exercises = '';

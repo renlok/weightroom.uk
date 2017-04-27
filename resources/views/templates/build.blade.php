@@ -14,35 +14,55 @@
 .cm-error{ text-decoration: underline; background:#f00; color:#fff !important; }
 .cm-YT { background: #4C8EFA; color:#fff !important;}
 .CodeMirror {
-	height: 500px;
-	padding: 6px 12px;
-	font-size: 14px;
-	line-height: 1.42857143;
-	color: #555;
-	background-color: #fff;
-	background-image: none;
-	border: 1px solid #ccc;
-	border-radius: 4px;
-	-webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-	box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-	-webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
-	-o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
-	transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+  height: 500px;
+  padding: 6px 12px;
+  font-size: 14px;
+  line-height: 1.42857143;
+  color: #555;
+  background-color: #fff;
+  background-image: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+  box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+  -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+  -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+  transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+.pickmeup {
+  z-index:99999;
+}
+.pmu-not-in-month.cal_log_date {
+  background-color:#7F4C00;
+}
+.cal_log_date {
+  background-color:#F90;
 }
 </style>
 @endsection
 
 @section('content')
+<div class="pull-left">
 <h2>{{ $template_name }}: {{ $log->template_log_name }}</h2>
 <p class="small"><a href="{{ route('viewTemplate', ['template_id' => $log->template_id]) }}">← Back to template</a></p>
 @if ($log->template_log_description != '')
-	<p>{{ $log->template_log_description }}</p>
+  <p>{{ $log->template_log_description }}</p>
 @endif
 @if ($log->template_log_week != '')
-	<p>Week: {{ $log->template_log_week }}, Day: {{ $log->template_log_day }}</p>
+  <p>Week: {{ $log->template_log_week }}, Day: {{ $log->template_log_day }}</p>
 @endif
+</div>
+<div class="pull-right hidden-print" style="margin-top: 40px;">
+  <button type="button" class="btn btn-default btn-lg" id="track_date">
+    <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+  </button>
+  <button type="button" class="btn btn-default btn-lg print-button">
+    <span class="glyphicon glyphicon-print" aria-hidden="true"></span>
+  </button>
+</div>
+@include('errors.validation')
 
-<pre id="formattinghelp" class="cm-s-default" style="display: block;">
+<pre id="template-data" class="cm-s-default" style="display: block; clear:both;">
 {{ $log->template_log_name }}
 
 @foreach ($log->template_log_exercises as $log_exercises)
@@ -62,4 +82,61 @@ Total volume: {{ Format::format_distance($log_exercises->logtempex_distance) }}
 
 @endforeach
 </pre>
+<form class="hidden" action="{{ route("saveTemplate") }}" method="post" id="template-submit">
+  <textarea id="template-text" name="template_text"></textarea>
+  <input type="text" name="log_date" id="log-date" value="">
+</form>
+@endsection
+
+@section('endjs')
+<script>
+$('.print-button').click(function(){
+     window.print();
+});
+var arDates = {!! $calender['dates'] !!};
+var calMonths = {!! $calender['cals'] !!};
+
+$('#track_date').pickmeup({
+    date  : moment('{{ Carbon::now()->toDateString() }}','YYYY-MM-DD').format(),
+    format  : 'Y-m-d',
+    change  : function(e) {
+        var url = '{{ route("saveTemplate") }}';
+        $("#template-text").val($("#template-data").text());
+        $("#log-date").val(e);
+        $("#template-submit").submit();
+    },
+    calendars : 1,
+    first_day : {{ Auth::user()->user_weekstart }},
+    render: function(date) {
+        var d = moment(date);
+        var m = d.format('YYYY-MM');
+        if ($.inArray(m, calMonths) == -1)
+        {
+            calMonths.push(m);
+            loadlogdata(m);
+        }
+        if ($.inArray(d.format('YYYY-MM-DD'), arDates) != -1)
+        {
+            return {
+                class_name: 'cal_log_date'
+            }
+        }
+    }
+});
+
+function loadlogdata(date)
+{
+    var url = '{{ route("ajaxCal", ["date" => ":date", "user_name" => Auth::user()->user_name]) }}';
+    $.ajax({
+        url: url.replace(':date', date),
+        type: 'GET',
+        dataType: 'json',
+        cache: true
+    }).done(function(o) {
+        $.merge(calMonths, o.cals);
+        $.merge(arDates, o.dates);
+        $('.date').pickmeup('update');
+    }).fail(function() {}).always(function() {});
+}
+</script>
 @endsection
