@@ -64,7 +64,7 @@
 @include('errors.validation')
 
 <pre id="template-data" class="cm-s-default" style="display: block; clear:both;">
-{{ $log->template_log_name }}
+{{ $template_name }}: {{ $log->template_log_name }}
 
 @foreach ($log->template_log_exercises as $log_exercises)
 {!! ($log->has_fixed_values || !isset($exercise_names[$log_exercises->logtempex_order])) ? '<span class="cm-ENAME">#' . $log_exercises->texercise_name . '</span>' : '<span class="cm-ENAME">#' . $exercise_names[$log_exercises->logtempex_order] . '</span>' !!}
