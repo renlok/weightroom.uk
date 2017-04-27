@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Auth;
 use DB;
+use Session;
 use Validator;
 use App\Comment;
 use App\Exercise;
@@ -131,7 +132,7 @@ class LogsController extends Controller
         }
         if (Session::has('template_text'))
         {
-            $log->log_text .= "\n" . session('template_text');
+            $log->log_text .= "\n\n" . session('template_text');
         }
         $type = 'edit';
         $exercise_list = Exercise::listexercises(true)->get();
@@ -170,7 +171,7 @@ class LogsController extends Controller
         ];
         if (Session::has('template_text'))
         {
-            $log->log_text = session('template_text');
+            $log['log_text'] = session('template_text');
         }
         $type = 'new';
         $exercise_list = Exercise::listexercises(true)->get();

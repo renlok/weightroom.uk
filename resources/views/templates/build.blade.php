@@ -3,6 +3,7 @@
 @section('title', 'Generate Template: ' . $template_name . ' - ' . $log->template_log_name)
 
 @section('headerstyle')
+<link href="{{ asset('css/pickmeup.css') }}" rel="stylesheet">
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.22.0/codemirror.min.css">
 <style>
 .cm-ENAME { color:#3338B7;}
@@ -85,10 +86,13 @@ Total volume: {{ Format::format_distance($log_exercises->logtempex_distance) }}
 <form class="hidden" action="{{ route("saveTemplate") }}" method="post" id="template-submit">
   <textarea id="template-text" name="template_text"></textarea>
   <input type="text" name="log_date" id="log-date" value="">
+  {!! csrf_field() !!}
 </form>
 @endsection
 
 @section('endjs')
+<script src="{{ asset('js/jquery.pickmeup.js') }}"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js" charset="utf-8"></script>
 <script>
 $('.print-button').click(function(){
      window.print();

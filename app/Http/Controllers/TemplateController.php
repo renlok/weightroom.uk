@@ -14,6 +14,7 @@ use App\Extend\PRs;
 use App\Extend\Log_control;
 
 use Auth;
+use Carbon;
 use Validator;
 
 class TemplateController extends Controller
@@ -173,7 +174,7 @@ class TemplateController extends Controller
         }
         // set up variables for blade
         $template_name = Template::where('template_id', $log->template_id)->value('template_name');
-        $calender = Log_control::preload_calender_data($date, $user->user_id);
+        $calender = Log_control::preload_calender_data(Carbon::now()->toDateString(), Auth::user()->user_id);
         return view('templates.build', compact('template_name', 'log', 'exercise_values', 'exercise_names', 'calender'));
     }
 
