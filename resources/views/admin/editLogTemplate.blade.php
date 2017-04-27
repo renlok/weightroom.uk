@@ -174,7 +174,7 @@ new Vue({
         },
         copyLog: function(log_id) {
             var new_log = this.log_data[log_id];
-            this.log_data.splice(exercise_id + 1, 0, Object.assign({}, new_log));
+            this.log_data.splice(log_id + 1, 0, Object.assign({}, new_log));
         },
         copyExercise: function(exercise_id, log_id) {
             var new_exercise = this.log_data[log_id].exercise_data[exercise_id];
@@ -182,7 +182,7 @@ new Vue({
         },
         copyItem: function(item_id, exercise_id, log_id) {
             var new_item = this.log_data[log_id].exercise_data[exercise_id].item_data[item_id];
-            this.log_data[log_id].exercise_data[exercise_id].item_data.splice(exercise_id + 1, 0, Object.assign({}, new_item));
+            this.log_data[log_id].exercise_data[exercise_id].item_data.splice(item_id + 1, 0, Object.assign({}, new_item));
         },
         moveLog: function(log_id, dir) {
             if (dir == 'up') {
