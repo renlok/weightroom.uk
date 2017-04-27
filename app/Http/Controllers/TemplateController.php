@@ -126,7 +126,7 @@ class TemplateController extends Controller
                         }
                         else
                         {
-                            $query = Exercise_record::getlastest1rm(Auth::user()->user_id, $exercise_names[$log_exercises->logtempex_order]);
+                            $query = Exercise_record::getlastest1rm(Auth::user()->user_id, $exercise_names[$log_exercises->logtempex_order])->first();
                             $loaded[1] = $query->pr_1rm;
                         }
                     }
