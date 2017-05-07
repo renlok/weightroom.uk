@@ -46,7 +46,6 @@ class ExercisesController extends Controller
         {
             $current_type = 'time';
         }
-        $goals = Exercise_goal::where('exercise_id', $exercise->exercise_id)->get();
         $groups = Exercise_group_relation::with('exercise_group')->where('exercise_id', $exercise->exercise_id)->get();
         return view('exercise.edit', compact('exercise_name', 'current_type', 'goals', 'groups'));
     }
@@ -369,7 +368,12 @@ class ExercisesController extends Controller
 
     public function getDeleteGroup($group_id)
     {
-        Exercise_group::where('user_id', Auth::user()->user_id)->where('exgroup_id', $group_id)->delete();
+        $group = Exercise_group::where('user_id', Auth::user()->user_id)->where('exgroup_id', $group_id);
+        if ($group->first() != null)
+        {
+            $group->delete();
+            Exercise_group_relation::where('exgroup_id', $group_id)->delete();
+        }
         return redirect()
             ->route('exerciseGroups')
             ->with(['flash_message' => 'Group deleted']);
@@ -383,7 +387,7 @@ class ExercisesController extends Controller
             return response('no such exercise', 400);
         }
         $group = Exercise_group::firstOrCreate(['user_id' => Auth::user()->user_id, 'exgroup_name' => $group_name]);
-        Exercise_group_relation::insert(['exgroup_id' => $group->exgroup_id, 'exercise_id' => $exercise->exercise_id]);
+        Exercise_group_relation::firstOrCreate(['exgroup_id' => $group->exgroup_id, 'exercise_id' => $exercise->exercise_id]);
         return response('added', 201);
     }
 

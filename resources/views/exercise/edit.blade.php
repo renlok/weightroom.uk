@@ -158,7 +158,7 @@ new Vue({
     }
 });
 $(document).ready(function() {
-    var t = $("#gexercise_groups").tagging();
+    var t = $("#exercise_groups").tagging();
     $tag_box = t[0];
     // Execute callback when a tag is added
     $tag_box.on( "add:after", function ( el, text, tagging ) {

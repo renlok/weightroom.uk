@@ -19,11 +19,9 @@
 </form>
 @foreach ($groups as $group)
   <h3>{{ $group->exgroup_name }} <a href="{{ route('deleteExerciseGroup', ['group_id' => $group->exgroup_id]) }}" class="btn btn-default" role="button">x</a></h3>
-  <div data-tags-input-name="tag" edit-on-delete="false" no-spacebar="true" id="group-{{ $group->exgroup_id }}">
-  @foreach ($group->exercise_group_relations as $exercises)
-    {{ $exercises->exercise->exercise_name }}
-  @endforeach
-  </div>
+  <div data-tags-input-name="tag" edit-on-delete="false" no-spacebar="true" id="group-{{ $group->exgroup_id }}">@foreach ($group->exercise_group_relations as $exercises)
+    {{ $exercises->exercise->exercise_name }},
+  @endforeach</div>
   <script>
   $(document).ready(function() {
       var t = $("#group-{{ $group->exgroup_id }}").tagging();
@@ -36,9 +34,7 @@
               type: 'GET',
               dataType: 'json',
               cache: true
-          }).done(function(o) {}).fail(function() {
-              $tag_box.tagging("remove", text);
-          }).always(function() {});
+          }).done(function(o) {}).fail(function() {}).always(function() {});
       });
 
       // Execute callback when a tag is removed

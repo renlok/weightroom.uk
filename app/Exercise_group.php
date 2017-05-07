@@ -28,6 +28,6 @@ class Exercise_group extends Model
      */
     public function exercise_group_relations()
     {
-        return $this->hasMany('App\Exercise_group_relation', 'exgrprel_id');
+        return $this->hasMany('App\Exercise_group_relation', 'exgroup_id');
     }
 }
