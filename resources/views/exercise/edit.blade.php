@@ -33,7 +33,7 @@
 </form>
 
 <h3>Exercise Groups</h3>
-<div data-tags-input-name="tag" id="exercise_groups">
+<div data-tags-input-name="tag" edit-on-delete="false" no-spacebar="true" id="exercise_groups">
 @foreach ($groups as $group)
   {{ $group->exgroup_name }}
 @endforeach
@@ -159,6 +159,7 @@ new Vue({
 });
 $(document).ready(function() {
     var t = $("#gexercise_groups").tagging();
+    $tag_box = t[0];
     // Execute callback when a tag is added
     $tag_box.on( "add:after", function ( el, text, tagging ) {
         var url = '{{ route('addToExerciseGroup', ['group_name' => ':name', 'exercise_name' => $exercise_name]) }}';
@@ -172,7 +173,7 @@ $(document).ready(function() {
 
     // Execute callback when a tag is removed
     $tag_box.on( "remove:after", function ( el, text, tagging ) {
-        var url = '{{ route('getDeleteFromGroup', ['group_name' => ':name', 'exercise_name' => $exercise_name]) }}';
+        var url = '{{ route('deleteFromExerciseGroup', ['group_name' => ':name', 'exercise_name' => $exercise_name]) }}';
         $.ajax({
             url: url.replace(':name', text),
             type: 'GET',
