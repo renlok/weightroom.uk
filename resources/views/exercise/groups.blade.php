@@ -8,11 +8,13 @@
 
 @section('content')
 <h2>Exercise Groups</h2>
+@include('common.flash')
 <form class="form-inline" action="{{ route('addExerciseGroup') }}" method="post">
   <div class="form-group">
     <label for="newgroup">New Group</label>
     <input type="text" class="form-control" id="newgroup" name="newgroup">
   </div>
+  {!! csrf_field() !!}
   <button type="submit" class="btn btn-default">Add Group</button>
 </form>
 @foreach ($groups as $group)
@@ -27,7 +29,7 @@
       var t = $("#group-{{ $group->exgroup_id }}").tagging();
       // Execute callback when a tag is added
       $tag_box.on( "add:after", function ( el, text, tagging ) {
-          var url = '{{ route('addToExerciseGroup', ['group_id' => $group->exgroup_id, 'exercise_name' => ':name']) }}';
+          var url = '{{ route('addToExerciseGroup', ['group_name' => $group->exgroup_name, 'exercise_name' => ':name']) }}';
           $.ajax({
               url: url.replace(':name', text),
               type: 'GET',
@@ -38,7 +40,7 @@
 
       // Execute callback when a tag is removed
       $tag_box.on( "remove:after", function ( el, text, tagging ) {
-          var url = '{{ route('getDeleteFromGroup', ['group_id' => $group->exgroup_id, 'exercise_name' => ':name']) }}';
+          var url = '{{ route('getDeleteFromGroup', ['group_name' => $group->exgroup_name, 'exercise_name' => ':name']) }}';
           $.ajax({
               url: url.replace(':name', text),
               type: 'GET',

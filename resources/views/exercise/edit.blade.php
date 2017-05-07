@@ -3,6 +3,7 @@
 @section('title', 'Edit Exercise: ' . $exercise_name)
 
 @section('headerstyle')
+<link href="{{ asset('css/tag-basic-style.css') }}" rel="stylesheet">
 <style>
 .hidden {
   display: none;
@@ -30,6 +31,13 @@
     </div>
   </div>
 </form>
+
+<h3>Exercise Groups</h3>
+<div data-tags-input-name="tag" id="exercise_groups">
+@foreach ($groups as $group)
+  {{ $group->exgroup_name }}
+@endforeach
+</div>
 
 <form class="form-horizontal" action="{{ route('editExercise', ['exercise_name' => $exercise_name]) }}" method="post">
   <div class="form-group">
@@ -106,6 +114,7 @@
 
 @section('endjs')
 <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.min.js" charset="utf-8"></script>
+<script src="{{ asset('js/tagging.min.js') }}"></script>
 <script>
 new Vue({
     el: '#new_goal',
@@ -147,6 +156,30 @@ new Vue({
             }
         }
     }
+});
+$(document).ready(function() {
+    var t = $("#gexercise_groups").tagging();
+    // Execute callback when a tag is added
+    $tag_box.on( "add:after", function ( el, text, tagging ) {
+        var url = '{{ route('addToExerciseGroup', ['group_name' => ':name', 'exercise_name' => $exercise_name]) }}';
+        $.ajax({
+            url: url.replace(':name', text),
+            type: 'GET',
+            dataType: 'json',
+            cache: true
+        }).done(function(o) {}).fail(function() {}).always(function() {});
+    });
+
+    // Execute callback when a tag is removed
+    $tag_box.on( "remove:after", function ( el, text, tagging ) {
+        var url = '{{ route('getDeleteFromGroup', ['group_name' => ':name', 'exercise_name' => $exercise_name]) }}';
+        $.ajax({
+            url: url.replace(':name', text),
+            type: 'GET',
+            dataType: 'json',
+            cache: true
+        }).done(function(o) {}).fail(function() {}).always(function() {});
+    });
 });
 </script>
 @endsection

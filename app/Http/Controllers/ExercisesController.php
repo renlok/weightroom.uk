@@ -47,7 +47,8 @@ class ExercisesController extends Controller
             $current_type = 'time';
         }
         $goals = Exercise_goal::where('exercise_id', $exercise->exercise_id)->get();
-        return view('exercise.edit', compact('exercise_name', 'current_type', 'goals'));
+        $groups = Exercise_group_relation::with('exercise_group')->where('exercise_id', $exercise->exercise_id)->get();
+        return view('exercise.edit', compact('exercise_name', 'current_type', 'goals', 'groups'));
     }
 
     public function postEditName($exercise_name, Request $request)
@@ -374,35 +375,27 @@ class ExercisesController extends Controller
             ->with(['flash_message' => 'Group deleted']);
     }
 
-    public function getAddToGroup($group_id, $exercise_name)
+    public function getAddToGroup($group_name, $exercise_name)
     {
         $exercise = Exercise::getexercise($exercise_name, Auth::user()->user_id)->first();
         if ($exercise == null)
         {
             return response('no such exercise', 400);
         }
-        $group_exists = Exercise_group::where('user_id', Auth::user()->user_id)->where('exgroup_id', $group_id)->first();
-        if ($group_exists == null)
-        {
-            return response('no such group', 400);
-        }
-        Exercise_group_relation::insert(['exgroup_id' => $group_id, 'exercise_id' => $exercise->exercise_id]);
+        $group = Exercise_group::where('user_id', Auth::user()->user_id)->where('exgroup_name', $group_name)->firstOrCreate();
+        Exercise_group_relation::insert(['exgroup_id' => $group->exgroup_id, 'exercise_id' => $exercise->exercise_id]);
         return response('added', 201);
     }
 
-    public function getDeleteFromGroup($group_id, $exercise_name)
+    public function getDeleteFromGroup($group_name, $exercise_name)
     {
         $exercise = Exercise::getexercise($exercise_name, Auth::user()->user_id)->first();
         if ($exercise == null)
         {
             return response('no such exercise', 400);
         }
-        $group_exists = Exercise_group::where('user_id', Auth::user()->user_id)->where('exgroup_id', $group_id)->first();
-        if ($group_exists == null)
-        {
-            return response('no such group', 400);
-        }
-        Exercise_group_relation::where('exgroup_id', $group_id)->where('exercise_id', $exercise->exercise_id)->delete();
+        $group = Exercise_group::where('user_id', Auth::user()->user_id)->where('exgroup_name', $group_name)->firstOrCreate();
+        Exercise_group_relation::where('exgroup_id' => $group->exgroup_id)->where('exercise_id', $exercise->exercise_id)->delete();
         return response('deleted', 201);
     }
 }

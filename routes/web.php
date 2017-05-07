@@ -112,8 +112,8 @@ Route::group(['prefix' => 'exercise', 'middleware' => 'auth'], function () {
     Route::get('groups', 'ExercisesController@getExerciseGroups')->name('exerciseGroups');
     Route::post('groups/add', 'ExercisesController@postNewGroup')->name('addExerciseGroup');
     Route::get('groups/delete/{group_id}', 'ExercisesController@getDeleteGroup')->name('deleteExerciseGroup');
-    Route::get('groups/add/{group_id}/{exercise_name}', 'ExercisesController@getAddToGroup')->name('addToExerciseGroup');
-    Route::get('groups/delete/{group_id}/{exercise_name}', 'ExercisesController@getDeleteFromGroup')->name('deleteFromExerciseGroup');
+    Route::get('groups/add/{group_name}/{exercise_name}', 'ExercisesController@getAddToGroup')->name('addToExerciseGroup');
+    Route::get('groups/delete/{group_name}/{exercise_name}', 'ExercisesController@getDeleteFromGroup')->name('deleteFromExerciseGroup');
     // compare
     Route::get('compare', 'ExercisesController@getCompareForm')->name('compareExercisesForm');
     Route::get('compare/{reps}/{exercise1}/{exercise2?}/{exercise3?}/{exercise4?}/{exercise5?}', 'ExercisesController@getCompare')->name('compareExercises');

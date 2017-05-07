@@ -18,7 +18,7 @@ class Exercise_group_relation extends Model
      */
     public function exercise_group()
     {
-        return $this->belongsTo('App\Exercise_group');
+        return $this->belongsTo('App\Exercise_group', 'exgroup_id');
     }
 
     /**
