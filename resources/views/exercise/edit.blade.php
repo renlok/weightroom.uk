@@ -33,11 +33,7 @@
 </form>
 
 <h3>Exercise Groups</h3>
-<div data-tags-input-name="tag" edit-on-delete="false" no-spacebar="true" id="exercise_groups">
-@foreach ($groups as $group)
-  {{ $group->exgroup_name }}
-@endforeach
-</div>
+<div data-tags-input-name="tag" edit-on-delete="false" no-spacebar="true" id="exercise_groups">@foreach ($groups as $group){{ $group->exgroup_name }}, @endforeach</div>
 
 <form class="form-horizontal" action="{{ route('editExercise', ['exercise_name' => $exercise_name]) }}" method="post">
   <div class="form-group">
