@@ -3,6 +3,8 @@
 use Illuminate\Database\Seeder;
 use Illuminate\Database\Eloquent\Model;
 
+use Carbon\Carbon;
+
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -14,11 +16,17 @@ class DatabaseSeeder extends Seeder
     {
         Model::unguard();
 
-        DB::table('users')->insert([
-            'user_name' => 'test',
-            'user_email' => str_random(10).'@gmail.com',
-            'user_password' => bcrypt('test123'),
-        ]);
+        $date = Carbon::createFromDate(2010, 1, 4);
+        while (true) {
+            $date_string = $date->toDateString();
+            DB::table('weeks')->insert([
+                'week' => $date_string,
+            ]);
+            $date->addWeek();
+            if ($date_string == '2020-12-28') {
+                break;
+            }
+        }
 
         // $this->call(UserTableSeeder::class);
 
