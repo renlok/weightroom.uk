@@ -13,6 +13,8 @@ use Validator;
 
 use App\Exercise;
 use App\Exercise_goal;
+use App\Exercise_group;
+use App\Exercise_group_relation;
 use App\Exercise_record;
 use App\Logs;
 use App\Log_exercise;
@@ -330,5 +332,77 @@ class ExercisesController extends Controller
         }
         return redirect()
             ->route('compareExercises', $route_data);
+    }
+
+    public function getExerciseGroups()
+    {
+        // load exercise groups
+        $groups = Exercise_group::with('exercise_group_relations.exercise')->where('user_id', Auth::user()->user_id)->get();
+        return view('exercise.groups', compact('groups'));
+    }
+
+    public function postNewGroup(Request $request)
+    {
+        $group_name = $request->input('newgroup', '');
+        if (!empty($group_name))
+        {
+            $group_exists = Exercise_group::where('user_id', Auth::user()->user_id)->where('exgroup_name', $group_name)->first();
+            if ($group_exists != null)
+            {
+                $return_message = 'Group already exists';
+            }
+            else
+            {
+                Exercise_group::insert(['user_id' => Auth::user()->user_id, 'exgroup_name' => $group_name]);
+                $return_message = 'Group added';
+            }
+        }
+        else
+        {
+            $return_message = 'Group name cannot be empty';
+        }
+        return redirect()
+            ->route('exerciseGroups')
+            ->with(['flash_message' => $return_message]);
+    }
+
+    public function getDeleteGroup($group_id)
+    {
+        Exercise_group::where('user_id', Auth::user()->user_id)->where('exgroup_id', $group_id)->delete();
+        return redirect()
+            ->route('exerciseGroups')
+            ->with(['flash_message' => 'Group deleted']);
+    }
+
+    public function getAddToGroup($group_id, $exercise_name)
+    {
+        $exercise = Exercise::getexercise($exercise_name, Auth::user()->user_id)->first();
+        if ($exercise == null)
+        {
+            return response('no such exercise', 400);
+        }
+        $group_exists = Exercise_group::where('user_id', Auth::user()->user_id)->where('exgroup_id', $group_id)->first();
+        if ($group_exists == null)
+        {
+            return response('no such group', 400);
+        }
+        Exercise_group_relation::insert(['exgroup_id' => $group_id, 'exercise_id' => $exercise->exercise_id]);
+        return response('added', 201);
+    }
+
+    public function getDeleteFromGroup($group_id, $exercise_name)
+    {
+        $exercise = Exercise::getexercise($exercise_name, Auth::user()->user_id)->first();
+        if ($exercise == null)
+        {
+            return response('no such exercise', 400);
+        }
+        $group_exists = Exercise_group::where('user_id', Auth::user()->user_id)->where('exgroup_id', $group_id)->first();
+        if ($group_exists == null)
+        {
+            return response('no such group', 400);
+        }
+        Exercise_group_relation::where('exgroup_id', $group_id)->where('exercise_id', $exercise->exercise_id)->delete();
+        return response('deleted', 201);
     }
 }

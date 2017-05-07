@@ -140,4 +140,14 @@ class User extends Model implements AuthenticatableContract,
     {
         return $this->hasMany('App\User_follow');
     }
+
+    /**
+     * a user can many user exercise groups
+     *
+     * @returns Illuminate\Database\Eloquent\Relations\hasMany
+     */
+    public function exercise_groups()
+    {
+        return $this->hasMany('App\Exercise_group');
+    }
 }

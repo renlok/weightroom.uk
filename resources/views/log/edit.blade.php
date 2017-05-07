@@ -40,10 +40,10 @@
 .pickmeup {
     z-index:99999;
 }
-.pmu-not-in-month.cal_log_date{
+.pmu-not-in-month.cal_log_date {
     background-color:#7F4C00;
 }
-.cal_log_date{
+.cal_log_date {
     background-color:#F90;
 }
 </style>

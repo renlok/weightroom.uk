@@ -30,16 +30,17 @@
   </div>
   <div class="col-md-4">
     <a href="{{ route('globalGoals') }}">Exercise Goals</a>
-    <p>Set different goals for different exercises and see how close you are to hitting them</p>
+    <p>Set different goals for different exercises and monitor your progress towards them.</p>
   </div>
 </div>
 <div class="row padding">
   <div class="col-md-4">
-	<a href="{{ route('viewReports') }}">Reports</a>
-	<p>View your volume/intensity/sets per week/workouts per week has changed over time. Can be used as a useful indicator of improvement</p>
+    <a href="{{ route('viewReports') }}">Reports</a>
+    <p>View your volume/intensity/sets per week/workouts per week has changed over time. Can be used as a useful indicator of improvement</p>
   </div>
   <div class="col-md-4">
-    &nbsp;
+    <a href="{{ route('exerciseGroups') }}">Exercise Groups</a>
+    <p>Group exercises together so you can easily keep track of them.</p>
   </div>
   <div class="col-md-4">
     &nbsp;

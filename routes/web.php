@@ -108,6 +108,12 @@ Route::group(['prefix' => 'exercise', 'middleware' => 'auth'], function () {
     Route::get('{exercise_name}/history/{from_date?}/{to_date?}', 'ExercisesController@history')->name('exerciseHistory');
     // volume
     Route::get('{exercise_name}/volume', 'ExercisesController@volume')->name('volume');
+    // groups
+    Route::get('groups', 'ExercisesController@getExerciseGroups')->name('exerciseGroups');
+    Route::post('groups/add', 'ExercisesController@postNewGroup')->name('addExerciseGroup');
+    Route::get('groups/delete/{group_id}', 'ExercisesController@getDeleteGroup')->name('deleteExerciseGroup');
+    Route::get('groups/add/{group_id}/{exercise_name}', 'ExercisesController@getAddToGroup')->name('addToExerciseGroup');
+    Route::get('groups/delete/{group_id}/{exercise_name}', 'ExercisesController@getDeleteFromGroup')->name('deleteFromExerciseGroup');
     // compare
     Route::get('compare', 'ExercisesController@getCompareForm')->name('compareExercisesForm');
     Route::get('compare/{reps}/{exercise1}/{exercise2?}/{exercise3?}/{exercise4?}/{exercise5?}', 'ExercisesController@getCompare')->name('compareExercises');

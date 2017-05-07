@@ -6,10 +6,10 @@
 <style>
 blockquote.small {
     margin: 0 !important;
-	padding: 0 5px !important;
+    padding: 0 5px !important;
 }
 .template-log p {
-	margin-left: 10px;
+    margin-left: 10px;
 }
 </style>
 @endsection
