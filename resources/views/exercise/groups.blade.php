@@ -32,7 +32,7 @@
       $tag_box.on( "add:after", function ( el, text, tagging ) {
           var url = '{{ route('addToExerciseGroup', ['group_name' => $group->exgroup_name, 'exercise_name' => ':name']) }}';
           $.ajax({
-              url: url.replace(':name', text),
+              url: url.replace(':name', text.trim()),
               type: 'GET',
               dataType: 'json',
               cache: true
@@ -45,7 +45,7 @@
       $tag_box.on( "remove:after", function ( el, text, tagging ) {
           var url = '{{ route('deleteFromExerciseGroup', ['group_name' => $group->exgroup_name, 'exercise_name' => ':name']) }}';
           $.ajax({
-              url: url.replace(':name', text),
+              url: url.replace(':name', text.trim()),
               type: 'GET',
               dataType: 'json',
               cache: true
