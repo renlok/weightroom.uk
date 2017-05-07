@@ -395,7 +395,7 @@ class ExercisesController extends Controller
             return response('no such exercise', 400);
         }
         $group = Exercise_group::where('user_id', Auth::user()->user_id)->where('exgroup_name', $group_name)->firstOrCreate();
-        Exercise_group_relation::where('exgroup_id' => $group->exgroup_id)->where('exercise_id', $exercise->exercise_id)->delete();
+        Exercise_group_relation::where('exgroup_id', $group->exgroup_id)->where('exercise_id', $exercise->exercise_id)->delete();
         return response('deleted', 201);
     }
 }
