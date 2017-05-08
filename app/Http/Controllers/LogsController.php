@@ -416,16 +416,17 @@ class LogsController extends Controller
         $view_type2 = $request->input('view_type2', 'nothing');
         $exercise_view = $request->input('exercise_view', 'everything');
         $ignore_warmups = $request->input('ignore_warmups', 0);
+        $date_range = $request->input('date_range', 'lastyear');
         // load graph type
         $report_data = [];
-        $report_data[0] = LogsController::getReportData($view_type, $exercise_view, $ignore_warmups);
+        $report_data[0] = LogsController::getReportData($view_type, $exercise_view, $ignore_warmups, $date_range);
         if ($view_type2 != 'nothing') {
-            $report_data[1] = LogsController::getReportData($view_type2, $exercise_view, $ignore_warmups);
+            $report_data[1] = LogsController::getReportData($view_type2, $exercise_view, $ignore_warmups, $date_range);
         }
         return response()->json($report_data);
     }
 
-    private static function getReportData($view_type, $exercise_view, $ignore_warmups)
+    private static function getReportData($view_type, $exercise_view, $ignore_warmups, $date_range)
     {
         $main_table = 'logs';
         if ($view_type == 'volume')
@@ -446,6 +447,10 @@ class LogsController extends Controller
                 $graph_value = 'log_exercises.logex_inol - log_exercises.logex_inol_warmup';
             }
             $graph_values = Log_exercise::select(DB::raw('SUBDATE(' . $main_table . '.log_date, WEEKDAY(' . $main_table . '.log_date)) as value_date, SUM(' . $graph_value . ') as graph_value'));
+        }
+        else if ($view_type == 'repsweek')
+        {
+            $graph_values = Log::select(DB::raw('SUBDATE(' . $main_table . '.log_date, WEEKDAY(' . $main_table . '.log_date)) as value_date, SUM(logs.log_total_reps) as graph_value'));
         }
         else if ($view_type == 'setsweek')
         {
@@ -479,6 +484,25 @@ class LogsController extends Controller
             elseif (intval($exercise_view) == $exercise_view)
             {
                 $graph_values = $graph_values->where('exercises.exercise_id', $exercise_view);
+            }
+        }
+        if ($date_range != 'all')
+        {
+            switch ($date_range)
+            {
+                case 'lastmonth':
+                    $graph_values = $graph_values->where($main_table . '.log_date', '>=', Carbon::now()->subMonth()->toDateString());
+                    break;
+                case 'lastquarter':
+                    $graph_values = $graph_values->where($main_table . '.log_date', '>=', Carbon::now()->subMonths(4)->toDateString());
+                    break;
+                case 'lasthalf':
+                    $graph_values = $graph_values->where($main_table . '.log_date', '>=', Carbon::now()->subMonths(6)->toDateString());
+                    break;
+                default:
+                case 'lastyear':
+                    $graph_values = $graph_values->where($main_table . '.log_date', '>=', Carbon::now()->subYear()->toDateString());
+                    break;
             }
         }
         $graph_values = $graph_values->where("$main_table.user_id", Auth::user()->user_id)

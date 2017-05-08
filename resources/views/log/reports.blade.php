@@ -26,6 +26,7 @@ svg {
       <select class="form-control reportform" name="view_type" id="view_type">
         <option value="volume">Volume</option>
         <option value="intensity">Intensity</option>
+        <option value="repsweek">Reps/Week</option>
         <option value="setsweek">Sets/Week</option>
         <option value="workoutsweek">Workouts/Week</option>
       </select>
@@ -38,7 +39,14 @@ svg {
       </select>
     </div>
     <div class="col-md-6">
-      <p><input type="checkbox" name="ignore_warmups" id="ignore_warmups" class="reportform" value="1" aria-label="Ignore Warmups"> Ignore Warmups</p>
+      <select class="form-control reportform" name="date_range" id="date_range">
+        <option value="all">All</option>
+        <option value="lastyear" selected="selected">Last 12 months</option>
+        <option value="lasthalf">Last 6 months</option>
+        <option value="lastquarter">Last 4 months</option>
+        <option value="lastmonth">Last 1 month</option>
+      </select>
+      <p><input type="checkbox" name="ignore_warmups" id="ignore_warmups" class="reportform margintb" value="1" aria-label="Ignore Warmups"> Ignore Warmups</p>
       <p class="hidden"><input type="checkbox" name="view_horizontal" id="view_horizontal" class="reportform" value="1" aria-label="View Horizontal"> View Horizontal</p>
     </div>
   </div>
