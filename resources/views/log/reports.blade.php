@@ -48,9 +48,12 @@ svg {
       <option value="everything">Everything</option>
       <option value="powerlifting">Powerlifting</option>
       <option value="weightlifting">Weightlifting</option>
+    @foreach ($groups as $group)
+          <option value="group:{{ $group->exgroup_id }}" {{ (('group:' . $group->exgroup_id) == old('exercise_view')) ? 'selected' : '' }}>{{ $group->exgroup_name }}</option>
+    @endforeach
     @foreach ($exercises as $exercise)
-          <option value="{{ $exercise->exercise_id }}" {{ (strtolower($exercise->exercise_name == old('exercise_view')) ? 'selected' : '') }}>{{ $exercise->exercise_name }}</option>
-      @endforeach
+          <option value="{{ $exercise->exercise_id }}" {{ (strtolower($exercise->exercise_name) == strtolower(old('exercise_view'))) ? 'selected' : '' }}>{{ $exercise->exercise_name }}</option>
+    @endforeach
     </select>
   </div>
   <div>

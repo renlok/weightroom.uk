@@ -11,6 +11,14 @@ class Exercise_group extends Model
     protected $primaryKey = 'exgroup_id';
     protected $guarded = ['exgroup_id'];
 
+    public function scopeListnotempty($query)
+    {
+        return $query->select('exgroup_name', 'exercise_groups.exgroup_id')
+                      ->join('exercise_group_relations', 'exercise_groups.exgroup_id', '=', 'exercise_group_relations.exgroup_id')
+                      ->where('user_id', Auth::user()->user_id)
+                      ->orderBy('exgroup_name', 'asc');
+    }
+
     /**
      * Exercise_group belongs to a single user
      *

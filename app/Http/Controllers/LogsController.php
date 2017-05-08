@@ -8,6 +8,8 @@ use Session;
 use Validator;
 use App\Comment;
 use App\Exercise;
+use App\Exercise_group;
+use App\Exercise_group_relation;
 use App\Log;
 use App\Log_exercise;
 use App\User;
@@ -404,7 +406,8 @@ class LogsController extends Controller
     public function getReports(Request $request)
     {
         $exercises = Exercise::listexercises(true)->get();
-        return view('log.reports', compact('exercises'));
+        $groups = Exercise_group::listnotempty()->get();
+        return view('log.reports', compact('exercises', 'groups'));
     }
 
     public function ajaxGetReport(Request $request)
@@ -468,7 +471,12 @@ class LogsController extends Controller
             {
                 $graph_values = $graph_values->whereIn('exercises.exercise_id', [Auth::user()->user_snatchid, Auth::user()->user_cleanjerkid]);
             }
-            elseif(intval($exercise_view) == $exercise_view)
+            elseif (substr($exercise_view, 0, 6) == 'group:')
+            {
+                $exercise_ids = Exercise_group_relation::where('exgroup_id', substr($exercise_view, 6))->get();
+                $graph_values = $graph_values->whereIn('exercises.exercise_id', $exercise_ids);
+            }
+            elseif (intval($exercise_view) == $exercise_view)
             {
                 $graph_values = $graph_values->where('exercises.exercise_id', $exercise_view);
             }
