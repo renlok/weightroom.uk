@@ -93,7 +93,7 @@ svg {
     var data_length = 0;
     var maxY = 0;
     var key_label = ['volume', ''];
-    var unit = ['kg'];
+    var unit = ['{{ Auth::user()->user_unit }}', ''];
     callAjax();
     function reportData(raw_data, ma) {
         var reportChartData = [];
