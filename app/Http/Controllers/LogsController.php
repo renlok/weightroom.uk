@@ -473,7 +473,7 @@ class LogsController extends Controller
             }
             elseif (substr($exercise_view, 0, 6) == 'group:')
             {
-                $exercise_ids = Exercise_group_relation::where('exgroup_id', substr($exercise_view, 6))->get();
+                $exercise_ids = Exercise_group_relation::where('exgroup_id', substr($exercise_view, 6))->pluck('exercise_id');
                 $graph_values = $graph_values->whereIn('exercises.exercise_id', $exercise_ids);
             }
             elseif (intval($exercise_view) == $exercise_view)

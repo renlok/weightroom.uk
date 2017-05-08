@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Auth;
 use DB;
 use Carbon\Carbon;
 
@@ -16,6 +17,7 @@ class Exercise_group extends Model
         return $query->select('exgroup_name', 'exercise_groups.exgroup_id')
                       ->join('exercise_group_relations', 'exercise_groups.exgroup_id', '=', 'exercise_group_relations.exgroup_id')
                       ->where('user_id', Auth::user()->user_id)
+                      ->groupBy('exercise_group_relations.exgroup_id')
                       ->orderBy('exgroup_name', 'asc');
     }
 

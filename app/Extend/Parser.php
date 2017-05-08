@@ -86,7 +86,7 @@ class Parser
             {
                 $position++;
                 preg_match_all('/#([^#])+/', $line, $matches);
-                array_walk($matches, function(&$item) {
+                array_walk($matches[0], function(&$item) {
                     $item = substr(trim($item), 1);
                 });
                 if(!empty($matches[0][0]))

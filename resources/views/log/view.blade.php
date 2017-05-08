@@ -167,7 +167,7 @@ blockquote.small {
   </p>
 </div>
 @endif
-@if ($log != null && $log_visible)
+@if ($log != null && ($log_visible || $user->user_id == Auth::user()->user_id))
   <h2>Workout summary</h2>
   @if (($log->log_total_volume + ($log->log_failed_volume * $user->user_volumeincfails) - ($log->log_warmup_volume * $user->user_volumewarmup)) > 0)
     <p class="logrow">

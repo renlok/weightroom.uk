@@ -46,10 +46,10 @@ svg {
     <label for="n">Limit to</label>
     <select class="form-control reportform" name="exercise_view" id="exercise_view">
       <option value="everything">Everything</option>
-      <option value="powerlifting">Powerlifting</option>
-      <option value="weightlifting">Weightlifting</option>
+      <option value="powerlifting">Group: Powerlifting</option>
+      <option value="weightlifting">Group: Weightlifting</option>
     @foreach ($groups as $group)
-          <option value="group:{{ $group->exgroup_id }}" {{ (('group:' . $group->exgroup_id) == old('exercise_view')) ? 'selected' : '' }}>{{ $group->exgroup_name }}</option>
+          <option value="group:{{ $group->exgroup_id }}" {{ (('group:' . $group->exgroup_id) == old('exercise_view')) ? 'selected' : '' }}>Group: {{ $group->exgroup_name }}</option>
     @endforeach
     @foreach ($exercises as $exercise)
           <option value="{{ $exercise->exercise_id }}" {{ (strtolower($exercise->exercise_name) == strtolower(old('exercise_view'))) ? 'selected' : '' }}>{{ $exercise->exercise_name }}</option>
