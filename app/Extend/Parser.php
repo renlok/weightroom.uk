@@ -12,6 +12,8 @@ use App\Log_exercise;
 use App\User;
 use App\Exercise;
 use App\Exercise_goal;
+use App\Exercise_group;
+use App\Exercise_group_relation;
 use App\Exercise_record;
 use App\Extend\Format;
 use App\Extend\PRs;
@@ -83,13 +85,22 @@ class Parser
             if ($line[0] == '#')
             {
                 $position++;
-                $exercise = substr($line, 1); // set exercise marker
-                // add new exercise group to array
-                $this->log_data['exercises'][$position] = array(
-                        'name' => trim($exercise),
-                        'comment' => '',
-                        'data' => array());
-                continue; // end this loop
+                preg_match_all('/#([^#])+/', $line, $matches);
+                array_walk($matches, function(&$item) {
+                    $item = substr(trim($item), 1);
+                });
+                if(!empty($matches[0][0]))
+                {
+                    $exercise = $matches[0][0]; // set exercise marker
+                    unset($matches[0][0]);
+                    // add new exercise group to array
+                    $this->log_data['exercises'][$position] = array(
+                            'name' => trim($exercise),
+                            'comment' => '',
+                            'groups' => $matches[0],
+                            'data' => array());
+                    continue; // end this loop
+                }
             }
 
             // no exercise yet
@@ -447,6 +458,14 @@ class Parser
                 $this->exercises[$i]['distance'] = $exercise->is_distance;
                 // load exercise goals
                 $goals = Exercise_goal::where('exercise_id', $exercise->exercise_id)->where('goal_complete', false)->get();
+            }
+            if (count($item['groups']) > 0)
+            {
+                foreach ($item['groups'] as $exercise_group_name)
+                {
+                    $exercise_group = Exercise_group::firstOrCreate(['user_id' => Auth::user()->user_id, 'exgroup_name' => $exercise_group_name]);
+                    Exercise_group_relation::firstOrCreate(['exgroup_id' => $exercise_group->exgroup_id, 'exercise_id' => $exercise->exercise_id]);
+                }
             }
             $this->exercises[$i]['update'] = false;
             $this->exercises[$i]['id'] = $exercise->exercise_id;
