@@ -351,7 +351,7 @@ $(document).ready(function(){
         $("#log").get(0),
         {
             mode: "logger",
-            lineWrapping: false,
+            lineWrapping: true,
             extraKeys: {"Ctrl": "autocomplete"}
         });
     editor.on("keyup", function(cm, event) {

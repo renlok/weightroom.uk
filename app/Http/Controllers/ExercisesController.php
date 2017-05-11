@@ -46,6 +46,7 @@ class ExercisesController extends Controller
         {
             $current_type = 'time';
         }
+        $goals = Exercise_goal::where('exercise_id', $exercise->exercise_id)->get();
         $groups = Exercise_group_relation::with('exercise_group')->where('exercise_id', $exercise->exercise_id)->get();
         return view('exercise.edit', compact('exercise_name', 'current_type', 'goals', 'groups'));
     }
