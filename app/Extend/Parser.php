@@ -462,7 +462,7 @@ class Parser
                 // load exercise goals
                 $goals = Exercise_goal::where('exercise_id', $exercise->exercise_id)->where('goal_complete', false)->get();
             }
-            if (count($item['groups']) > 0)
+            if (isset($item['groups']) && count($item['groups']) > 0)
             {
                 foreach ($item['groups'] as $exercise_group_name)
                 {
