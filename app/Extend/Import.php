@@ -12,7 +12,7 @@ class Import extends Parser
 {
     public function __construct()
     {
-        parent::__construct('', 0, 0);
+        parent::__construct('', 0, 0, false);
     }
 
     public function parseImportData ($hash)
@@ -30,6 +30,7 @@ class Import extends Parser
                 $this->log_update_text = 1;
                 $this->log_text = '';
                 $this->user = User::where('user_id', $log_line->user_id)->first();
+                $this->getUserWeight (0);
                 $this->log_data = array('comment' => '', 'exercises' => array());
                 $date_format = str_replace(['YYYY', 'YY', 'MM', 'DD'], ['Y', 'y', 'n', 'j'], $log_line->log_date_format);
                 if ($log_line->log_date_format == 'YYYY-MM-DD') {

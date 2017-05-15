@@ -55,14 +55,17 @@ class Parser
     // set some defaul values
     protected $log_update_text = 0;
 
-    public function __construct($log_text, $log_date, $user_weight)
+    public function __construct($log_text, $log_date, $user_weight, $auth_user = true)
     {
-        // load the user
-        $this->user = Auth::user();
         // build the initial startup data
         $this->log_text = $log_text . ' '; //TODO:make a proper fix
         $this->log_date = $log_date;
-        $this->getUserWeight ($user_weight);
+        if ($auth_user)
+        {
+            // load the user
+            $this->user = Auth::user();
+            $this->getUserWeight ($user_weight);
+        }
         $this->construct_globals ();
     }
 
