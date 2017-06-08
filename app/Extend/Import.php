@@ -6,6 +6,7 @@ use DB;
 use Carbon\Carbon;
 
 use App\Extend\Parser;
+use App\Mail\ImportComplete;
 use App\User;
 
 class Import extends Parser
@@ -22,6 +23,7 @@ class Import extends Parser
         $exercise_keys = [];
         $key_counter = 0;
         $to_delete = [];
+        $user_id = 0;
         foreach ($log_data as $log_line)
         {
             if (!$setup)
@@ -30,6 +32,7 @@ class Import extends Parser
                 $this->log_update_text = 1;
                 $this->log_text = '';
                 $this->user = User::where('user_id', $log_line->user_id)->first();
+                $user_id = $log_line->user_id;
                 $this->getUserWeight (0);
                 $this->log_data = array('comment' => '', 'exercises' => array());
                 $date_format = str_replace(['YYYY', 'YY', 'MM', 'DD'], ['Y', 'y', 'n', 'j'], $log_line->log_date_format);
@@ -104,5 +107,11 @@ class Import extends Parser
             $to_delete[] = $log_line->import_id;
         }
         DB::table('import_data')->whereIn('import_id', $to_delete)->delete();
+
+        // if the users import is complete send them an email
+        if (DB::table('import_data')->where('user_id', $user_id)->first() == null)
+        {
+            Mail::to(Auth::user())->send(new ImportComplete());
+        }
     }
 }
