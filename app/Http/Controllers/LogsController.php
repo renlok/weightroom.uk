@@ -100,7 +100,7 @@ class LogsController extends Controller
         $carbon_date = Carbon::createFromFormat('Y-m-d', $date);
         $calender = Log_control::preload_calender_data($date, $user->user_id);
         $log_visible = true;
-        if ($user->user_private)
+        if ($user->user_private && Auth::check())
         {
             // TODO make more advanced privacy options
             $log_visible = (DB::table('user_follows')->where('follow_user_id', Auth::user()->user_id)->where('user_id', $user->user_id)->first() == null) ? false : true;

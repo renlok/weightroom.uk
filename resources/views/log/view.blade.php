@@ -39,6 +39,13 @@ blockquote.small {
   margin:40px 0 40px 0;
   font-size:50px;
 }
+.log-buttons a {
+    padding-left: 6px;
+}
+#log-source textarea {
+    width: 400px;
+    height: 100px;
+}
 </style>
 @include('comments.commentCss')
 @endsection
@@ -198,6 +205,17 @@ blockquote.small {
   @foreach ($log->log_exercises as $log_exercise)
     @include('common.logExercise', ['view_type' => 'log'])
   @endforeach
+  <div class="clearfix">
+      <div class="pull-right log-buttons">
+          <small>
+              <a href="#" id="view-source">source</a>
+              <a href="{{ route('viewLog', ['date' => $date, 'user_name' => $user->user_name]) }}">permalink</a>
+          </small>
+      </div>
+  </div>
+  <div class="collapse pull-right margintb" role="alert" id="log-source" aria-expanded="false">
+      <textarea class="form-control">{{ $log->log_text }}</textarea>
+  </div>
   @include('comments.commentTree', ['comments' => $comments, 'object_id' => $log->log_id, 'object_type' => 'Log'])
 @elseif (!$log_visible)
   <div class="row empty-log">
@@ -220,6 +238,10 @@ var calendar_count = 3;
 $(document).ready(function(){
     $('.deleteLink').click(function() {
         $('#deleteWarning').collapse('toggle');
+    });
+    $('#view-source').click(function() {
+        $('#log-source').collapse('toggle');
+        return false;
     });
     if ($( window ).width() < 500)
     {
