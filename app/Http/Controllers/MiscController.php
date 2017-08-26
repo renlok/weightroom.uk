@@ -87,7 +87,7 @@ class MiscController extends Controller
         {
             $followed_users = Cache::remember('random_users_dash', 360, function()
             {
-                return User::select(DB::raw('DISTINCT(users.user_id)'))->join('logs', 'users.user_id', '=', 'logs.user_id')->orderBy(\DB::raw('RAND()'))->take(10)->pluck('users.user_id');
+                return User::select(DB::raw('DISTINCT(users.user_id)'))->join('logs', 'users.user_id', '=', 'logs.user_id')->where('users.user_private', 0)->orderBy(\DB::raw('RAND()'))->take(10)->pluck('users.user_id');
             });
             $random = true;
             $follow_count = 0;
@@ -102,7 +102,7 @@ class MiscController extends Controller
 
     public function dashAll()
     {
-        $logs = Log::whereRaw("TRIM(log_text) != ''")->where('log_date', '<=', Carbon::now()->toDateString())->orderBy('log_date', 'desc')->orderBy('created_at', 'desc')->paginate(50);
+        $logs = Log::whereRaw("TRIM(log_text) != ''")->whereNotIn('user_id', User::where('user_private', 1)->get())->where('log_date', '<=', Carbon::now()->toDateString())->orderBy('log_date', 'desc')->orderBy('created_at', 'desc')->paginate(50);
         $random = false;
         $follow_count = 0;
         return view('dash', compact('logs', 'random', 'follow_count'));

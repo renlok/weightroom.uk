@@ -120,14 +120,7 @@ new Vue({
     },
     methods: {
         new_goal: function () {
-            if (this.selected != 'wr')
-            {
-                this.hidden = true;
-            }
-            else
-            {
-                this.hidden = false;
-            }
+            this.hidden = (this.selected != 'wr');
         }
     }
 });
@@ -142,14 +135,7 @@ new Vue({
     },
     methods: {
         old_goal: function (goal) {
-            if (goal.goal_type != 'wr')
-            {
-                goal.hidden = true;
-            }
-            else
-            {
-                goal.hidden = false;
-            }
+            goal.hidden = (goal.goal_type != 'wr');
         }
     }
 });

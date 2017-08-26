@@ -92,7 +92,16 @@ class LogsController extends Controller
         {
             $comments = null;
         }
-        $is_following = (Auth::check() && DB::table('user_follows')->where('user_id', Auth::user()->user_id)->where('follow_user_id', $user->user_id)->first() == null) ? false : true;
+        $following_state = null;
+        $following = DB::table('user_follows')->select('is_accepted')->where('user_id', Auth::user()->user_id)->where('follow_user_id', $user->user_id)->first();
+        if (Auth::check() && $following != null)
+        {
+            $following_state = 'pending';
+            if ($following->is_accepted)
+            {
+                $following_state = 'accepted';
+            }
+        }
         if (!isset($commenting))
         {
             $commenting = false;
@@ -102,10 +111,9 @@ class LogsController extends Controller
         $log_visible = true;
         if ($user->user_private && Auth::check())
         {
-            // TODO make more advanced privacy options
-            $log_visible = (DB::table('user_follows')->where('follow_user_id', Auth::user()->user_id)->where('user_id', $user->user_id)->first() == null) ? false : true;
+            $log_visible = ($following != null && $following->is_accepted);
         }
-        return view('log.view', compact('date', 'carbon_date', 'user', 'log', 'comments', 'is_following', 'commenting', 'calender', 'log_visible'));
+        return view('log.view', compact('date', 'carbon_date', 'user', 'log', 'comments', 'following_state', 'commenting', 'calender', 'log_visible'));
     }
 
     public function getTrack()

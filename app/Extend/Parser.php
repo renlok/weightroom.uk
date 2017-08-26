@@ -278,10 +278,6 @@ class Parser
                     {
                         $output_data[$i][$block] = $last_values[$block];
                     }
-                    else
-                    {
-                        $output_data[$i][$block] = $output_data[$i][$block];
-                    }
                     if (!is_array($output_data[$i][$block]))
                     {
                         $output_data[$i][$block] = trim($output_data[$i][$block]);

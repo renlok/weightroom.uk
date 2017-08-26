@@ -11,7 +11,7 @@
   padding-left: 10px;
 }
 .comment h6 {
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 .jcollapsible:hover, .jcollapsible:visited, .jcollapsible {
   text-decoration: none;

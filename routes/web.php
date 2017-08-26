@@ -39,7 +39,9 @@ Route::group(['prefix' => 'user'], function () {
         Route::get('settings', 'UserController@getSettings')->name('userSettings');
         Route::post('settings', 'UserController@postSettings');
         // follow/unfollow routes
-        Route::get('followlist', 'UserController@getFollowList')->name('followList');
+        Route::get('list/following', 'UserController@getFollowingList')->name('followingList');
+        Route::get('list/followers', 'UserController@getFollowersList')->name('followersList');
+        Route::get('acceptfollow/{user_name}', 'UserController@getAcceptUserFollow')->name('acceptUserFollow');
         Route::get('follow/{user_name}/{date?}', 'UserController@follow')->name('followUser');
         Route::get('unfollow/{user_name}/{date?}', 'UserController@unfollow')->name('unfollowUser');
         Route::get('notifications/clear', 'UserController@clearNotifications')->name('clearNotifications');

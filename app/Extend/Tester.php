@@ -404,7 +404,7 @@ class Tester
                 // clean up set data
                 $set = $this->cleanSetData ($set, $i, $j);
                 // check comment for special tags
-                $this->checkSpecialTags ($set['C'], $i, $j, $set);
+                $this->checkSpecialTags ($set['C'], $i, $j);
                 $this->setAbsoluteWeight ($set, $i, $j);
                 // calculate volume data
                 $this->updateVolumes ($set, $i, $j);

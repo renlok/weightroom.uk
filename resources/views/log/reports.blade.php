@@ -6,8 +6,8 @@
 <link href="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.3/nv.d3.min.css" rel="stylesheet">
 <style>
 svg {
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
     height: 100%;
     width: 100%;
 }
@@ -248,7 +248,6 @@ svg {
                 d3.select(d).attr("transform", "translate(" + x +"," + y + ")");
             });
         }
-        return;
     }
 
     $(".reportform").change(function() {

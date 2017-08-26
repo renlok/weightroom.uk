@@ -16,6 +16,7 @@ class CreateUserFollowsTable extends Migration
             $table->increments('follow_id');
             $table->integer('user_id')->unsigned()->index();
             $table->integer('follow_user_id')->unsigned()->index();
+            $table->boolean('is_accepted')->default(1);
             $table->timestamps();
         });
     }

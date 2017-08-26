@@ -34,7 +34,7 @@ blockquote.small {
 <h4>We think a blank page is boring so here is a random selection of users you can check out</h4>
 @else
 	@if ($follow_count > 0)
-<p class="small"><a href="{{ route('followList') }}">Following {{ $follow_count }} users</a></p>
+<p class="small"><a href="{{ route('followingList') }}">Following {{ $follow_count }} users</a></p>
 	@endif
 @endif
 <table class="table">

@@ -66,14 +66,7 @@
       },
       methods: {
         change_type: function () {
-            if (this.selected != 'wr')
-            {
-                this.hidden = true;
-            }
-            else
-            {
-                this.hidden = false;
-            }
+            this.hidden = (this.selected != 'wr');
         },
         delete_goal: function(goal_id) {
           $.ajax({
@@ -135,14 +128,7 @@ new Vue({
     },
     methods: {
         new_goal: function () {
-            if (this.selected != 'wr')
-            {
-                this.hidden = true;
-            }
-            else
-            {
-                this.hidden = false;
-            }
+            this.hidden = (this.selected != 'wr');
         }
     }
 });

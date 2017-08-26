@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\UpdateUserSettingsRequest;
 use App\Http\Controllers\Controller;
 use Auth;
+use DB;
 use App\User;
 use App\Exercise;
 use App\User_follow;
@@ -19,21 +20,32 @@ class UserController extends Controller
         return view('user.search', compact('users'));
     }
 
-    public function follow($user_name, $date)
+    public function follow($user_name, $date = null)
     {
         // add follower
-        $user_id = User::where('user_name', $user_name)->firstOrFail()->user_id;
+        $user = User::select('user_id', 'user_private')->where('user_name', $user_name)->firstOrFail();
         User_follow::create([
             'user_id' => Auth::user()->user_id,
-            'follow_user_id' => $user_id
+            'follow_user_id' => $user->user_id,
+            'is_accepted' => !$user->user_private
         ]);
         Notification::create([
-            'user_id' => $user_id,
+            'user_id' => $user->user_id,
             'notification_type' => 'follow',
             'notification_value' => Auth::user()->user_name
         ]);
-        return redirect()
-                ->route('viewLog', ['user_name' => $user_name, 'date' => $date]);
+        if ($date == null)
+        {
+            return redirect()
+                ->route('followersList')
+                ->with('flash_message', 'User followed.');
+        }
+        else
+        {
+            return redirect()
+                ->route('viewLog', ['user_name' => $user_name, 'date' => $date])
+                ->with('flash_message', 'User followed.');
+        }
     }
 
     public function unfollow($user_name, $date = null)
@@ -44,7 +56,7 @@ class UserController extends Controller
         if ($date == null)
         {
             return redirect()
-                  ->route('followList')
+                  ->route('followingList')
                   ->with('flash_message', 'User unfollowed.');
         }
         else
@@ -55,10 +67,44 @@ class UserController extends Controller
         }
     }
 
-    public function getFollowList()
+    public function getAcceptUserFollow($user_name)
+    {
+        $user_id = User::where('user_name', $user_name)->firstOrFail()->user_id;
+        User_follow::where('is_accepted', 0)
+                    ->where('follow_user_id', Auth::user()->user_id)
+                    ->where('user_id', $user_id)
+                    ->update(['is_accepted' => 1]);
+        return redirect()
+            ->route('followersList')
+            ->with('flash_message', 'User accepted.');
+    }
+
+    public function getFollowingList()
     {
         $followed_users = User_follow::with('user')->where('user_id', Auth::user()->user_id)->paginate(50);
-        return view('user.followList', compact('followed_users'));
+        $list_type = 'followings';
+        return view('user.followList', compact('followed_users', 'list_type'));
+    }
+
+    public function getFollowersList(Request $request)
+    {
+        $take = $request->input("per_page", 50);
+        $page = $request->input("page", 1);
+        $skip = $page * $take;
+        if($take < 1) { $take = 1; }
+        if($skip < 0) { $skip = 0; }
+
+        $followed_users = DB::select(DB::raw("SELECT uf.is_accepted, u.user_name, uf.created_at,
+          (SELECT COUNT(*) As is_following FROM user_follows uf0 WHERE uf0.user_id = uf.follow_user_id AND uf.user_id = uf0.follow_user_id) As is_following
+          FROM user_follows uf
+          LEFT JOIN users u ON (uf.user_id = u.user_id)
+          WHERE uf.follow_user_id = :follow_user_id"), ["follow_user_id" => Auth::user()->user_id]);
+        $totalCount = count($followed_users);
+        $results = array_slice($followed_users, $skip, $take);
+
+        $paginator = new \Illuminate\Pagination\LengthAwarePaginator($results, $totalCount, $take, $page);
+
+        return view('user.followersList', compact('followed_users', 'paginator'));
     }
 
     public function getSettings()

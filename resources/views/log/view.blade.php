@@ -132,8 +132,10 @@ blockquote.small {
         <h4>{{ $user->user_name }} @include('common.userBadges')</h4>
         <p><small>Member since: {{ $user->created_at->toDateString() }}</small></p>
 @if (Auth::check() && $user->user_id != Auth::user()->user_id)
-  @if ($is_following)
+  @if ($following_state == 'accepted')
         <p class="btn btn-default"><a href="{{ route('unfollowUser', ['user' => $user->user_name, 'date' => $date]) }}">Unfollow <img src="{{ asset('img/user_delete.png') }}"></a></p>
+  @elseif ($following_state == 'pending')
+        <p class="btn btn-default btn-gray"><a href="{{ route('unfollowUser', ['user' => $user->user_name, 'date' => $date]) }}">Cancel request <img src="{{ asset('img/user_delete.png') }}"></a></p>
   @else
         <p class="btn btn-default"><a href="{{ route('followUser', ['user' => $user->user_name, 'date' => $date]) }}">Follow <img src="{{ asset('img/user_add.png') }}"></a></p>
   @endif

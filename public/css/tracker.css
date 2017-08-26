@@ -102,6 +102,9 @@ body {
 .logrow blockquote.small {
     margin: 0 !important;
 }
+.btn-gray {
+    color: #b8b8b8 !important;
+}
 /* print style */
 @media print {
     a[href]:after {

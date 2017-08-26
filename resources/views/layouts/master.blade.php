@@ -77,7 +77,7 @@
             <li role="presentation"><a href="{{ route('viewBlogPost', ['url' => $note->notification_from['post_url']]) }}#comments">{{ trans('notifications.commentReplyBlog', ['username' => $note->notification_value]) }}</a><button type="button" class="close pull-right clear_note" aria-label="Close" note-id="{{ $note->notification_id }}"><span aria-hidden="true">×</span></button></li>
           @endif
           @if ($note->notification_type == 'follow')
-            <li role="presentation"><a href="{{ route('viewUser', ['user_name' => $note->notification_value]) }}">{{ trans('notifications.follower', ['username' => $note->notification_value]) }}</a><button type="button" class="close pull-right clear_note" aria-label="Close" note-id="{{ $note->notification_id }}"><span aria-hidden="true">×</span></button></li>
+            <li role="presentation"><a href="{{ route('followersList') }}">{{ trans('notifications.follower', ['username' => $note->notification_value]) }}</a><button type="button" class="close pull-right clear_note" aria-label="Close" note-id="{{ $note->notification_id }}"><span aria-hidden="true">×</span></button></li>
           @endif
         @endforeach
           <li role="presentation"><a href="#" id="clear_notes">{{ trans('notifications.clearAll') }}</a></li>
