@@ -125,7 +125,7 @@
   <div class="form-group">
     <div>
   		<label for="privacy">Make logs private</label>
-  		<p><small><i>Means only people <strong>you follow</strong> will be able to see your logs</i></small></p>
+  		<p><small><i>Means only people you accept will be able to see your logs</i></small></p>
   	</div>
 	<label class="radio-inline">
 	  <input type="radio" id="privacy" name="privacy" value="0" {{ $user->user_private == '0' ? 'checked' : '' }}> No
