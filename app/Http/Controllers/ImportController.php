@@ -18,7 +18,8 @@ class ImportController extends Controller
 {
     public function importForm()
     {
-        return view('import.upload');
+        $imports_remaining = DB::table('import_data')->where('user_id', Auth::user()->user_id)->get()->count();
+        return view('import.upload', compact('imports_remaining'));
     }
 
     public function import(Request $request)
@@ -85,7 +86,36 @@ class ImportController extends Controller
                 'Duration' => 'logitem_time',
                 'Distance' => 'logitem_distance',
                 'Box Height' => 'logitem_comment',
+            ],
+            'WeightRoom' => [
+                'Log Date' => 'log_date:other',
+                'Exercise' => 'exercise_name',
+                'Weight (Kg)' => 'logitem_weight:kg',
+                'Distance' => 'logitem_distance',
+                'Time' => 'logitem_time',
+                'Reps' => 'logitem_reps',
+                'Sets' => 'logitem_sets',
+                'RPE' => 'logitem_pre',
+                'Comment' => 'logitem_comment',
+                'Exercise#' => 'logex_order',
+                'Set#' => 'logitem_order'
             ]
+        ];
+        $generic_map = [
+            'log date' => 'log_date:other',
+            'date' => 'log_date:DD/MM/YYYY',
+            'performed at' => 'log_date:other',
+            'exercise' => 'exercise_name',
+            'weight (kg)' => 'logitem_weight:kg',
+            'weight (lbs)' => 'logitem_weight:lb',
+            'distance' => 'logitem_distance',
+            'time' => 'logitem_time',
+            'reps' => 'logitem_reps',
+            'sets' => 'logitem_sets',
+            'rpe' => 'logitem_pre',
+            'comment' => 'logitem_comment',
+            'exercise#' => 'logex_order',
+            'set#' => 'logitem_order'
         ];
         $column_names = [
             'log_date:YYYY-MM-DD' => 'Date (YYYY-MM-DD)',
@@ -128,6 +158,14 @@ class ImportController extends Controller
                         $map_match = $map_name;
                         break;
                     }
+                }
+                // no perfect map was found try with the generic mapper
+                if ($map_match == '') {
+                   foreach ($link_array as $header_item => $val) {
+                       if (isset($generic_map[strtolower($header_item)])) {
+                           $link_array[$header_item] = $generic_map[strtolower($header_item)];
+                       }
+                   }
                 }
                 // store the file
                 $tmpFilePath = '/temp/';
@@ -213,7 +251,7 @@ class ImportController extends Controller
                 case 'logitem_pre':
                 case 'logex_order':
                 case 'logitem_order':
-                    if (!is_numeric($validator_values[$key])) {
+                    if (!is_numeric($validator_values[$key]) && !empty($validator_values[$key])) {
                         return back()->withInput()->with('flash_message', 'Format doesn\'t match');
                     }
                 case 'exercise_name':

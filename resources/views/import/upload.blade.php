@@ -11,6 +11,12 @@
 @include('common.beta')
 @include('common.flash')
 @include('errors.validation')
+@if ($imports_remaining > 0)
+<div class="alert alert-success">
+  You currently have an import being processed, please wait before uploading another file.
+  <!-- {{ $imports_remaining }} -->
+</div>
+@else
 <form action="{{ url('import') }}" method="post" enctype="multipart/form-data">
   <div class="form-group">
     <label for="csvfile">File input</label>
@@ -19,6 +25,7 @@
   {{ csrf_field() }}
   <button type="submit" class="btn btn-default">Upload</button>
 </form>
+@endif
 @endsection
 
 @section('endjs')
