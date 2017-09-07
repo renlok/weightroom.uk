@@ -11,6 +11,7 @@ use App\User;
 use App\Exercise;
 use App\User_follow;
 use App\Notification;
+use App\Template;
 
 class UserController extends Controller
 {
@@ -111,7 +112,8 @@ class UserController extends Controller
     {
         $user = Auth::user();
         $exercises = Exercise::listexercises(false)->get();
-        return view('user.settings', compact('user', 'exercises'));
+        $hasTemplates = (Template::where('user_id', Auth::user()->user_id)->first() != null);
+        return view('user.settings', compact('user', 'exercises', 'hasTemplates'));
     }
 
     public function postSettings(UpdateUserSettingsRequest $request)

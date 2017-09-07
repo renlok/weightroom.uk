@@ -51,6 +51,11 @@ Route::group(['prefix' => 'user'], function () {
         Route::post('premium', 'SubscriptionController@postPremium');
         Route::get('premium/cancel', 'SubscriptionController@getCancelPremium')->name('userCancelPremium');
         Route::get('premium/resume', 'SubscriptionController@getResumePremium')->name('userResumePremium');
+        // seller setup
+        Route::get('seller-setup', 'TemplateController@getSetupPayAccount')->name('setupPayAccount');
+        Route::post('seller-setup', 'TemplateController@postSetupPayAccount');
+        Route::get('seller-setup/bank', 'TemplateController@getSetupPayAccountBank')->name('setupPayAccountBank');
+        Route::post('seller-setup/bank', 'TemplateController@postSetupPayAccountBank');
     });
 });
 
@@ -170,6 +175,9 @@ Route::group(['middleware' => 'auth', 'prefix' => 'templates'], function () {
     Route::get('view/{template_id}', 'TemplateController@viewTemplate')->name('viewTemplate');
     Route::post('build', 'TemplateController@postBuildTemplate')->name('buildTemplate');
     Route::post('save', 'TemplateController@saveTemplate')->name('saveTemplate');
+    // template payments
+    Route::get('purchase/{template_id}', 'TemplateController@getTemplateSaleProcess')->name('templateSaleProcess');
+    Route::post('purchase/{template_id}', 'TemplateController@postTemplateSaleProcess');
 });
 
 // admin

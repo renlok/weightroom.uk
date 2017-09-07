@@ -16,6 +16,9 @@ blockquote.small {
 
 @section('content')
 <h2>{{ $template->template_name }}</h2>
+@if ($template->template_charge > 0)
+<p class="small">Purchased at: {{ $purchased_on }}</p>
+@endif
 <p class="small"><a href="{{ route('templatesHome') }}">← Back to templates</a></p>
 @if ($template->template_description != '')
 	<p>{{ $template->template_description }}</p>

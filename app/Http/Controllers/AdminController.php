@@ -109,7 +109,8 @@ class AdminController extends Controller
         $template_name = '';
         $template_description = '';
         $template_type = '';
-        return view('admin.editLogTemplate', compact('json_data', 'template_id', 'template_name', 'template_description', 'template_type'));
+        $template_charge = 0;
+        return view('admin.editLogTemplate', compact('json_data', 'template_id', 'template_name', 'template_description', 'template_type', 'template_charge'));
     }
 
     public function postAddTemplate(Request $request)
@@ -208,7 +209,8 @@ class AdminController extends Controller
         $template_name = $template->template_name;
         $template_description = $template->template_description;
         $template_type = $template->template_type;
-        return view('admin.editLogTemplate', compact('json_data', 'template_id', 'template_name', 'template_description', 'template_type'));
+        $template_charge = $template->template_charge;
+        return view('admin.editLogTemplate', compact('json_data', 'template_id', 'template_name', 'template_description', 'template_type', 'template_charge'));
     }
 
     public function postEditTemplate(Request $request, $template_id)
@@ -219,10 +221,11 @@ class AdminController extends Controller
         DB::table('template_log_exercises')->whereIn('template_log_id', $template_logs)->delete();
         DB::table('template_log_items')->whereIn('template_log_id', $template_logs)->delete();
         // update template
-        $template = Template::where('template_id', $template_id)->update([
+        Template::where('template_id', $template_id)->update([
             'template_name' => $request->input('template_name'),
             'template_description' => $request->input('template_description'),
             'template_type' => $request->input('template_type'),
+            'template_charge' => $request->input('template_charge'),
         ]);
         AdminController::saveTemplateLogs($request, $template_id);
         return redirect()

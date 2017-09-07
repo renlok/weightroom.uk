@@ -45,7 +45,8 @@ class User extends Model implements AuthenticatableContract,
         'stripe_id',
         'stripe_plan',
         'card_brand',
-        'card_last_four'
+        'card_last_four',
+        'stripe_custom_id'
     ];
 
     protected $dates = [

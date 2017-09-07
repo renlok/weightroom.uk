@@ -15,6 +15,9 @@
 <h2>Edit user settings</h2>
 @include('errors.validation')
 @include('common.flash')
+@if ($hasTemplates)
+	<div class="alert alert-info" role="alert">You have listed a workout template. Before you can start charging for them you must setup your <a href="{{ route('setupPayAccount') }}"><strong>pay account</strong></a>.</div>
+@endif
 <form class="form-horizontal" action="{{ url('user/settings') }}" method="post">
   <div class="form-group">
     <div>

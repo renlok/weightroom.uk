@@ -44,24 +44,25 @@
     <textarea type="text" id="templateDesc" class="form-control" name="template_description">{{ $template_description }}</textarea>
   </div>
   <div class="form-group">
-    <label for="templateName">Template type</label>
+    <label for="template_type">Template type</label>
     <select name="template_type">
       <option value="powerlifting" {{ ($template_type == 'powerlifting') ? 'selected="selected"' : '' }}>powerlifting</option>
       <option value="running" {{ ($template_type == 'running') ? 'selected="selected"' : '' }}>running</option>
       <option value="weightlifting" {{ ($template_type == 'weightlifting') ? 'selected="selected"' : '' }}>weightlifting</option>
       <option value="crossfit" {{ ($template_type == 'crossfit') ? 'selected="selected"' : '' }}>crossfit</option>
       <option value="bodybuilding" {{ ($template_type == 'bodybuilding') ? 'selected="selected"' : '' }}>bodybuilding</option>
+      <option value="general" {{ ($template_type == 'general') ? 'selected="selected"' : '' }}>general</option>
     </select>
   </div>
   <div id="app">
     <template v-for="(log, log_index) in log_data">
       <div class="log" v-bind:class="{'odd': log_index % 2 === 1}">
-        <label>Log</label>
-        <input type="text" v-model="log_data[log_index].log_name" v-bind:name="'log_name['+ log_index +']'" placeholder="Log name">
+        <label>Workout</label>
+        <input type="text" v-model="log_data[log_index].log_name" v-bind:name="'log_name['+ log_index +']'" placeholder="Workout name">
         <button type="button" v-on:click="moveLog(log_index, 'up')" v-show="log_index > 0">▲</button>
         <button type="button" v-on:click="moveLog(log_index, 'down')" v-show="log_index < log_data.length - 1">▼</button>
-        <button type="button" v-on:click="copyLog(log_index)">c</button>
-        <button type="button" v-on:click="deleteLog(log_index)">x</button>
+        <button type="button" v-on:click="copyLog(log_index)" data-toggle="tooltip" data-placement="top" title="Duplicate workout">c</button>
+        <button type="button" v-on:click="deleteLog(log_index)" data-toggle="tooltip" data-placement="top" title="Delete workout">x</button>
         <div>
           <label>Week #:</label>
           <input type="text" v-model="log_data[log_index].log_week" v-bind:name="'log_week['+ log_index +']'" placeholder="Log week">
@@ -80,8 +81,8 @@
           <input type="text" v-model="log_data[log_index].exercise_data[exercise_index].exercise_name" v-bind:name="'exercise_name['+ log_index +']['+ exercise_index +']'" placeholder="Exercise name">
           <button type="button" v-on:click="moveExercise(exercise_index, log_index, 'up')" v-show="exercise_index > 0">▲</button>
           <button type="button" v-on:click="moveExercise(exercise_index, log_index, 'down')" v-show="exercise_index < log_data[log_index].exercise_data.length - 1">▼</button>
-          <button type="button" v-on:click="copyExercise(exercise_index, log_index)">c</button>
-          <button type="button" v-on:click="deleteExercise(exercise_index, log_index)">x</button>
+          <button type="button" v-on:click="copyExercise(exercise_index, log_index)" data-toggle="tooltip" data-placement="top" title="Duplicate exercise">c</button>
+          <button type="button" v-on:click="deleteExercise(exercise_index, log_index)" data-toggle="tooltip" data-placement="top" title="Delete exercise">x</button>
           <div v-for="(item, item_index) in exercise.item_data" class="logItem">
             <input type="text" v-model="log_data[log_index].exercise_data[exercise_index].item_data[item_index].value" v-bind:name="'item_value['+ log_index +']['+ exercise_index +']['+ item_index +']'" class="inputNumber">
              + <input type="text" v-model="log_data[log_index].exercise_data[exercise_index].item_data[item_index].plus" v-bind:name="'item_plus['+ log_index +']['+ exercise_index +']['+ item_index +']'" class="inputNumber">
@@ -96,26 +97,32 @@
               <option value="D">Distance</option>
               <option value="T">Time</option>
             </select>
-            <label>warmup?</label>
+            <label>Warmup Set?</label>
             <input type="checkbox" value="1" v-model="log_data[log_index].exercise_data[exercise_index].item_data[item_index].warmup" v-bind:name="'item_warmup['+ log_index +']['+ exercise_index +']['+ item_index +']'">
             <button type="button" v-on:click="moveItem(item_index, exercise_index, log_index, 'up')" v-show="item_index > 0">▲</button>
             <button type="button" v-on:click="moveItem(item_index, exercise_index, log_index, 'down')" v-show="item_index < log_data[log_index].exercise_data[exercise_index].item_data.length - 1">▼</button>
-            <button type="button" v-on:click="copyItem(item_index, exercise_index, log_index)">c</button>
-            <button type="button" v-on:click="deleteItem(item_index, exercise_index, log_index)">x</button>
+            <button type="button" v-on:click="copyItem(item_index, exercise_index, log_index)" data-toggle="tooltip" data-placement="right" title="Duplicate set">c</button>
+            <button type="button" v-on:click="deleteItem(item_index, exercise_index, log_index)" data-toggle="tooltip" data-placement="right" title="Delete set">x</button>
           </div>
-          <button type="button" v-on:click="addItem(exercise_index, log_index)">Add Item</button>
+          <button type="button" v-on:click="addItem(exercise_index, log_index)">Add Set</button>
         </div>
         <button type="button" v-on:click="addExercise(log_index)">Add Exercise</button>
       </div>
     </template>
-    <button type="button" v-on:click="addLog">Add log</button>
+    <button type="button" v-on:click="addLog">Add Workout</button>
+  </div>
+  <div class="form-inline margintb">
+    <label for="template_charge">Price ($): </label>
+    <input type="input" value="{{ $template_charge }}" name="template_charge" class="form-control">
   </div>
   {!! csrf_field() !!}
   <button type="submit" class="btn btn-default">Submit</button>
+@if ($template_id > 0)
+  <button type="button" class="btn btn-danger deleteLink">Delete Template</button>
+@endif
 </form>
 
 @if ($template_id > 0)
-<button type="button" class="btn btn-danger deleteLink">Delete Template</button>
 <div class="alert alert-danger margintb collapse" role="alert" id="deleteWarning" aria-expanded="false">
   <button type="button" class="close deleteLink"><span aria-hidden="true">&times;</span></button>
   <h4>You sure?</h4>
@@ -131,6 +138,9 @@
 @section('endjs')
 <script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.min.js"></script>
 <script>
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip()
+})
 @if ($template_id > 0)
 $('.deleteLink').click(function() {
     $('#deleteWarning').collapse('toggle');

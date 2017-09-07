@@ -52,6 +52,7 @@ class CreateUsersTable extends Migration
             $table->string('card_last_four')->nullable();
             $table->timestamp('trial_ends_at')->nullable();
             $table->timestamp('subscription_ends_at')->nullable();
+            $table->string('stripe_custom_id')->nullable();
         });
     }
 
