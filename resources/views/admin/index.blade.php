@@ -10,6 +10,7 @@
 <ul>
 	<li><a href="{{ route('adminListUsers') }}">List Users</a></li>
 	<li><a href="{{ route('adminStats') }}">User Stats</a></li>
+	<li><a href="{{ route('adminViewLogs') }}">Error Logs</a></li>
 	<li><a href="{{ route('adminSettings') }}">Settings</a></li>
 </ul>
 <h3>Workout Templates</h3>

@@ -8,6 +8,7 @@ use App\Http\Requests;
 use Auth;
 use Carbon\Carbon;
 use DB;
+use File;
 
 use App\Console\Commands\ImportFiles;
 use App\Console\Commands\GlobalStats;
@@ -346,6 +347,51 @@ class AdminController extends Controller
                     'flash_message' => 'Template deleted.',
                     'flash_message_type' => 'danger'
                 ]);
+    }
+
+    public function getViewLogs($log = 'laravel')
+    {
+        $log_path = storage_path() . '/logs/';
+        $files = glob($log_path . '*.log');
+        $files = array_reverse($files);
+        $files = array_filter($files, 'is_file');
+        $files = array_values($files);
+        foreach ($files as $k => $file) {
+            preg_match('/(.*)\.log/', basename($file), $matches);
+            $files[$k] = $matches[1];
+        }
+        try
+        {
+            $log_contents = File::get($log_path . $log . '.log');
+        }
+        catch (Illuminate\Filesystem\FileNotFoundException $exception)
+        {
+            $log_contents = "The file doesn't exist";
+        }
+        return view('admin.viewLogs', compact('files', 'log_contents', 'log'));
+    }
+
+    public function cleanLogFile($log)
+    {
+        try
+        {
+            if ($log == 'laravel') {
+                File::put(storage_path() . '/logs/' . $log . '.log', '');
+            } else {
+                File::delete(storage_path() . '/logs/' . $log . '.log');
+            }
+        }
+        catch (Illuminate\Filesystem\FileNotFoundException $exception)
+        {
+            return redirect()
+                ->route('adminViewLogs')
+                ->with([
+                    'flash_message' => 'No such file.',
+                    'flash_message_type' => 'danger'
+                ]);;
+        }
+        return redirect()
+            ->route('adminViewLogs');
     }
 
     public function getListUsers()
