@@ -87,7 +87,7 @@
   </tr>
   <tr>
 @for ($i = 1; $i <= 10; $i++)
-    <td>{!! (isset($current_prs[$i])) ? '<a href="' . route('viewLog', ['date' => $current_prs[$i][0]['log_date']]) . '">' . Format::$format_func($current_prs[$i][0]['pr_value']) . '</a>' : '-' !!}</td>
+    <td>{!! (isset($current_prs[$i])) ? '<a href="' . route('viewLog', ['date' => Carbon::parse($current_prs[$i][0]['log_date'])->format('Y-m-d')]) . '">' . Format::$format_func($current_prs[$i][0]['pr_value']) . '</a>' : '-' !!}</td>
 @endfor
   </tr>
 </tbody>
