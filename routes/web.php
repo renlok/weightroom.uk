@@ -25,7 +25,7 @@ Route::group(['middleware' => 'guest'], function () {
     Route::post('password/email', 'Auth\PasswordController@postEmail');
 
     // Password reset routes...
-    Route::get('password/reset/{token}', 'Auth\PasswordController@getReset')->name('passwordReset');
+    Route::get('password/reset/{token}', 'Auth\PasswordController@getReset')->name('password.reset');
     Route::post('password/reset', 'Auth\PasswordController@reset');
 });
 Route::get('logout', 'LoginController@getLogout')->name('logout');
