@@ -28,7 +28,7 @@ class Exercise_group extends Model
      */
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo('App\User', 'user_id', 'user_id');
     }
 
     /**
@@ -38,6 +38,6 @@ class Exercise_group extends Model
      */
     public function exercise_group_relations()
     {
-        return $this->hasMany('App\Exercise_group_relation', 'exgroup_id');
+        return $this->hasMany('App\Exercise_group_relation', 'exgroup_id', 'exgroup_id');
     }
 }

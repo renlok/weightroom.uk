@@ -16,6 +16,6 @@ class Template extends Model
      */
     public function template_logs()
     {
-        return $this->hasMany('App\Template_log', 'template_id');
+        return $this->hasMany('App\Template_log', 'template_id', 'template_id');
     }
 }

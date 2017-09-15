@@ -420,7 +420,7 @@ class Parser
         }
         // set log values
         $this->log->log_update_text = $this->log_update_text;
-        $this->log->log_text = $this->log_text;
+        $this->log->log_text = trim($this->log_text);
         $this->log->log_comment = trim($this->log_data['comment']);
         $this->log->log_weight = $this->user_weight;
 

@@ -9,7 +9,6 @@ class Log_exercise extends Model
 {
     protected $primaryKey = 'logex_id';
     protected $dates = ['log_date'];
-    protected $dateFormat = 'Y-m-d';
     protected $guarded = ['logex_id'];
     protected $appends = ['average_intensity'];
     // set defaults
@@ -33,7 +32,7 @@ class Log_exercise extends Model
      */
     public function log_items()
     {
-        return $this->hasMany('App\Log_item', 'logex_id');
+        return $this->hasMany('App\Log_item', 'logex_id', 'logex_id');
     }
 
     /**
@@ -43,7 +42,7 @@ class Log_exercise extends Model
      */
     public function log()
     {
-        return $this->belongsTo('App\Log');
+        return $this->belongsTo('App\Log', 'log_id', 'log_id');
     }
 
     /**
@@ -53,7 +52,7 @@ class Log_exercise extends Model
      */
     public function exercise()
     {
-        return $this->belongsTo('App\Exercise');
+        return $this->belongsTo('App\Exercise', 'exercise_id', 'exercise_id');
     }
 
     /**

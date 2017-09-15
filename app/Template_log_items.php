@@ -16,6 +16,6 @@ class Template_log_items extends Model
      */
     public function template_log_exercise()
     {
-        return $this->belongsTo('App\Template_log_exercise', 'logtempex_id');
+        return $this->belongsTo('App\Template_log_exercise', 'logtempex_id', 'logtempex_id');
     }
 }

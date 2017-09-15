@@ -16,7 +16,7 @@ class Template_purchase extends Model
      */
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo('App\User', 'user_id', 'user_id');
     }
 
     /**
@@ -26,6 +26,6 @@ class Template_purchase extends Model
      */
     public function template()
     {
-        return $this->belongsTo('App\Template');
+        return $this->belongsTo('App\Template', 'template_id', 'template_id');
     }
 }

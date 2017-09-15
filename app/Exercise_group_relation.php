@@ -18,7 +18,7 @@ class Exercise_group_relation extends Model
      */
     public function exercise_group()
     {
-        return $this->belongsTo('App\Exercise_group', 'exgroup_id');
+        return $this->belongsTo('App\Exercise_group', 'exgroup_id', 'exgroup_id');
     }
 
     /**
@@ -28,6 +28,6 @@ class Exercise_group_relation extends Model
      */
     public function exercise()
     {
-        return $this->belongsTo('App\Exercise', 'exercise_id');
+        return $this->belongsTo('App\Exercise', 'exercise_id', 'exercise_id');
     }
 }

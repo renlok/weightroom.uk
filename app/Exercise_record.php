@@ -10,7 +10,6 @@ class Exercise_record extends Model
 {
     protected $primaryKey = 'pr_id';
     protected $dates = ['log_date'];
-    protected $dateFormat = 'Y-m-d';
     protected $casts = [
         'is_time' => 'boolean',
         'is_endurance' => 'boolean',

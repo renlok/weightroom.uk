@@ -11,7 +11,6 @@ class Log_item extends Model
 {
     protected $primaryKey = 'logitem_id';
     protected $dates = ['log_date'];
-    protected $dateFormat = 'Y-m-d';
     protected $casts = [
         'is_bw' => 'boolean',
         'is_time' => 'boolean',
@@ -124,7 +123,7 @@ class Log_item extends Model
      */
     public function log_exercise()
     {
-        return $this->belongsTo('App\Log_exercise', 'logex_id');
+        return $this->belongsTo('App\Log_exercise', 'logex_id', 'logex_id');
     }
 
     /**

@@ -9,7 +9,6 @@ class Log extends Model
 {
     protected $primaryKey = 'log_id';
     protected $dates = ['log_date'];
-    protected $dateFormat = 'Y-m-d';
     protected $casts = [
         'log_update_text' => 'boolean',
     ];
@@ -76,7 +75,7 @@ class Log extends Model
      */
     public function log_exercises()
     {
-        return $this->hasMany('App\Log_exercise');
+        return $this->hasMany('App\Log_exercise', 'log_id', 'log_id');
     }
 
     /**
@@ -86,7 +85,7 @@ class Log extends Model
      */
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo('App\User', 'user_id', 'user_id');
     }
 
     /**

@@ -16,7 +16,7 @@ class Template_log_exercise extends Model
      */
     public function template_log_items()
     {
-        return $this->hasMany('App\Template_log_items', 'logtempex_id');
+        return $this->hasMany('App\Template_log_items', 'logtempex_id', 'logtempex_id');
     }
 
     /**
@@ -26,6 +26,6 @@ class Template_log_exercise extends Model
      */
     public function template_log()
     {
-        return $this->belongsTo('App\Template_log', 'template_log_id');
+        return $this->belongsTo('App\Template_log', 'template_log_id', 'template_log_id');
     }
 }

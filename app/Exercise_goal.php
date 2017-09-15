@@ -21,7 +21,7 @@ class Exercise_goal extends Model
      */
     public function exercise()
     {
-        return $this->belongsTo('App\Exercise', 'exercise_id');
+        return $this->belongsTo('App\Exercise', 'exercise_id', 'exercise_id');
     }
 
     /**

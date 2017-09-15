@@ -109,7 +109,7 @@ class User extends Model implements AuthenticatableContract,
      */
     public function logs()
     {
-        return $this->hasMany('App\Log');
+        return $this->hasMany('App\Log', 'user_id', 'user_id');
     }
 
     /**
@@ -119,7 +119,7 @@ class User extends Model implements AuthenticatableContract,
      */
     public function notifications()
     {
-        return $this->hasMany('App\Notification');
+        return $this->hasMany('App\Notification', 'user_id', 'user_id');
     }
 
     /**
@@ -129,7 +129,7 @@ class User extends Model implements AuthenticatableContract,
      */
     public function invite_codes()
     {
-        return $this->hasMany('App\Invite_code');
+        return $this->hasMany('App\Invite_code', 'user_id', 'user_id');
     }
 
     /**
@@ -139,7 +139,7 @@ class User extends Model implements AuthenticatableContract,
      */
     public function user_follows()
     {
-        return $this->hasMany('App\User_follow');
+        return $this->hasMany('App\User_follow', 'user_id', 'user_id');
     }
 
     /**
@@ -149,6 +149,6 @@ class User extends Model implements AuthenticatableContract,
      */
     public function exercise_groups()
     {
-        return $this->hasMany('App\Exercise_group');
+        return $this->hasMany('App\Exercise_group', 'user_id', 'user_id');
     }
 }
