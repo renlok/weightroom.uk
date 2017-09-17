@@ -93,13 +93,17 @@ class LogsController extends Controller
             $comments = null;
         }
         $following_state = null;
-        $following = DB::table('user_follows')->select('is_accepted')->where('user_id', Auth::user()->user_id)->where('follow_user_id', $user->user_id)->first();
-        if (Auth::check() && $following != null)
+        $following = null;
+        if (Auth::check())
         {
-            $following_state = 'pending';
-            if ($following->is_accepted)
+            $following = DB::table('user_follows')->select('is_accepted')->where('user_id', Auth::user()->user_id)->where('follow_user_id', $user->user_id)->first();
+            if ($following != null)
             {
-                $following_state = 'accepted';
+                $following_state = 'pending';
+                if ($following->is_accepted)
+                {
+                    $following_state = 'accepted';
+                }
             }
         }
         if (!isset($commenting))
