@@ -184,7 +184,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'templates'], function () {
 Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
     Route::get('/', 'AdminController@home')->name('adminHome');
     Route::get('stats', 'AdminController@getStats')->name('adminStats');
-    Route::get('logs/{log?}', 'AdminController@getViewLogs')->name('adminViewLogs');
+    Route::get('logs/{raw?}/{log?}', 'AdminController@getViewLogs')->name('adminViewLogs');
     Route::get('delete-log/{log}', 'AdminController@cleanLogFile')->name('adminDeleteLog');
     Route::get('settings', 'AdminController@getSettings')->name('adminSettings');
     Route::post('settings', 'AdminController@postSettings');

@@ -349,7 +349,7 @@ class AdminController extends Controller
                 ]);
     }
 
-    public function getViewLogs($log = 'laravel')
+    public function getViewLogs($raw = 0, $log = 'laravel')
     {
         $log_path = storage_path() . '/logs/';
         $files = glob($log_path . '*.log');
@@ -368,7 +368,7 @@ class AdminController extends Controller
         {
             $log_contents = "The file doesn't exist";
         }
-        return view('admin.viewLogs', compact('files', 'log_contents', 'log'));
+        return view('admin.viewLogs', compact('files', 'log_contents', 'log', 'raw'));
     }
 
     public function cleanLogFile($log)
