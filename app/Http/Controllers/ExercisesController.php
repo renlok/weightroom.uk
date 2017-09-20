@@ -59,20 +59,21 @@ class ExercisesController extends Controller
         // new name already exists
         if($exercise_new != null)
         {
-            $final_id = $exercise_new->$exercise_id;
+            $final_id = $exercise_new->exercise_id;
             // remove the old exercise and merge it with an exsisting one
             // update the exercise id
             DB::table('log_exercises')
-                ->where('exercise_id', $exercise_old->$exercise_id)
-                ->update(['exercise_id' => $exercise_new->$exercise_id]);
+                ->where('exercise_id', $exercise_old->exercise_id)
+                ->update(['exercise_id' => $exercise_new->exercise_id]);
             // update PRs
-            PRs::rebuildExercisePRs($exercise_new->$exercise_id);
+            PRs::rebuildExercisePRs($exercise_new->exercise_id);
             // delete the old PRs
             DB::table('exercise_records')
-                ->where('exercise_id', $exercise_old->$exercise_id)
+                ->where('exercise_id', $exercise_old->exercise_id)
                 ->delete();
             // delete the old exercise
             $exercise_old->delete();
+            $message = "<strong>$exercise_name</strong> has been merged with <strong>$new_name</strong>";
         }
         else
         {
@@ -80,6 +81,7 @@ class ExercisesController extends Controller
             // rename the exercise
             $exercise_old->exercise_name = $new_name;
             $exercise_old->save();
+            $message = "<strong>$exercise_name</strong> shall be now known as <strong>$new_name</strong>";
         }
         // update the log texts
         DB::table('logs')
@@ -89,7 +91,7 @@ class ExercisesController extends Controller
             ->update(['logs.log_update_text' => 1]);
         return redirect()
             ->route('viewExercise', ['exercise_name' => $new_name])
-            ->with(['flash_message' => "$exercise_name shall be now known as $new_name"]);
+            ->with(['flash_message' => $message]);
     }
 
     public function postEdit($exercise_name, Request $request)

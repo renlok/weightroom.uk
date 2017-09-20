@@ -21,7 +21,7 @@
     <label for="exercisenew" class="col-sm-2 control-label">Exercises <strong>new</strong> name:</label>
     <div class="col-sm-10">
       <input type="text" class="form-control" id="exercisenew" name="exercisenew" placeholder="New name" value="{{ old('exercisenew') }}">
-    <small>If an exercise by the new name already exists the two will be merged</small>
+    <small>Caution: If an exercise by the new name already exists the two will be merged, this cannot be undone.</small>
     </div>
   </div>
   <div class="form-group">
