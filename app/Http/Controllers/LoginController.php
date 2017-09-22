@@ -86,7 +86,7 @@ class LoginController extends Controller
             'user_email' => $input['user_email'],
             'email' => $input['user_email'],
             'user_password' => bcrypt($input['password']),
-            'user_invitedcode' => $input['invcode']
+            'user_invitedcode' => (Admin::InvitesEnabled()) ? $input['invcode'] : ''
         ]);
 
         if (Auth::attempt(['user_name' => $input['user_name'], 'password' => $input['password']])) {

@@ -86,6 +86,11 @@ class User extends Model implements AuthenticatableContract,
             return 1;
     }
 
+    public static function findForPassport($username)
+    {
+        return User::where('user_name', $username)->first();
+    }
+
     public function setUserShowrepsAttribute($value) {
         if (is_array($value)) {
             $this->attributes['user_showreps'] = '[' . implode(',', array_map('intval', $value)) . ']';
