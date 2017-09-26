@@ -81,13 +81,13 @@ class LoginController extends Controller
             Invite_code::where('code_id', $invite_code->code_id)->decrement('code_uses');
         }
 
-        User::create([
-            'user_name' => $input['user_name'],
-            'user_email' => $input['user_email'],
-            'email' => $input['user_email'],
-            'user_password' => bcrypt($input['password']),
-            'user_invitedcode' => (Admin::InvitesEnabled()) ? $input['invcode'] : ''
-        ]);
+        $user = new User;
+        $user->user_name = $input['user_name'];
+        $user->user_email = $input['user_email'];
+        $user->email = $input['user_email'];
+        $user->user_password = bcrypt($input['password']);
+        $user->user_invitedcode = (Admin::InvitesEnabled()) ? $input['invcode'] : '';
+        $user->save();
 
         if (Auth::attempt(['user_name' => $input['user_name'], 'password' => $input['password']])) {
             // Authentication passed...
