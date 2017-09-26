@@ -157,4 +157,9 @@ class User extends Model implements AuthenticatableContract,
     {
         return $this->hasMany('App\Exercise_group', 'user_id', 'user_id');
     }
+
+    public function getForeignKey()
+    {
+        return $this->primaryKey;
+    }
 }
