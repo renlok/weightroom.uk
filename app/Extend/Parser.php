@@ -748,6 +748,10 @@ class Parser
             $this->log_items[$i][$j]->is_distance = true;
             $set['W'] = 0;
             $set['T'] = 0;
+        } else {
+            $set['W'] = 0;
+            $set['T'] = 0;
+            $set['D'] = 0;
         }
         $set['R'] = (isset($set['R'])) ? intval($set['R']) : 1;
         $set['S'] = (isset($set['S'])) ? intval($set['S']) : 1;

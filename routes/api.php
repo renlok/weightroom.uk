@@ -11,8 +11,10 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::post('user/register', 'ApiV1Controller@register');
-Route::get('log/{user_name}/{log_date}', 'ApiV1Controller@getLogData');
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:api');
+Route::prefix('v1')->group(function () {
+    Route::post('user/register', 'Api\ApiV1Controller@register');
+    Route::get('log/{user_name}/{log_date}', 'Api\ApiV1Controller@getLogData');
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    })->middleware('auth:api');
+});

@@ -1,5 +1,5 @@
 <?php
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Requests\RegisterRequest;
@@ -9,9 +9,20 @@ use App\Http\Requests;
 use App\User;
 use App\Admin;
 
+use Validator;
+
 class ApiV1Controller extends Controller
 {
     public function register(RegisterRequest $request) {
+        $validator = Validator::make($request->all(), [
+            'user_name' => 'required',
+            'user_email' => 'required|email|unique:users',
+            'password' => 'required',
+            'password_confirmation' => 'required|same:password',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => 1, 'errors'=>$validator->errors()], 401);
+        }
         $input = $request->all();
 
         $user = new User;
@@ -27,15 +38,23 @@ class ApiV1Controller extends Controller
             ]);
         } else {
             return response()->json([
-                'error' => '1'
-            ]);
+                'error' => '1',
+                'errors' => 'Cannot create user'
+            ], 401);
         }
     }
 
     public function getLogData($user_name, $log_date) {
         $user = User::with('logs.log_exercises.log_items', 'logs.log_exercises.exercise')
-            ->where('user_name', $user_name)->firstOrFail();
+            ->where('user_name', $user_name)->first();
+        if ($user == null) {
+            return response()->json(['error' => 1, 'errors'=>'Cannot find user'], 401);
+        }
         $log = $user->logs()->where('log_date', $log_date)->first();
-        return response()->json($log->toJson());
+        if ($log == null) {
+            return response()->json(['log_data' => null], 401);
+        } else {
+            return response()->json(['log_data' => $log->toJson()]);
+        }
     }
 }
