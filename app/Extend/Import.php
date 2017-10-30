@@ -4,6 +4,7 @@ namespace App\Extend;
 
 use DB;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Mail;
 
 use App\Extend\Parser;
 use App\Mail\ImportComplete;
