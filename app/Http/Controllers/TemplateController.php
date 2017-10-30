@@ -14,7 +14,6 @@ use App\User;
 use App\Extend\PRs;
 use App\Extend\Log_control;
 use Auth;
-use Carbon;
 use Validator;
 use Stripe\Account as StripeAccount;
 
@@ -59,7 +58,8 @@ class TemplateController extends Controller
             }
         }
         $exercises = Exercise::listexercises(true)->get();
-        return view('templates.view', compact('template', 'template_exercises', 'exercises', 'purchased_on'));
+        $is_active = (User::activeTemplate(Auth::user()->user_id) == $template_id);
+        return view('templates.view', compact('template', 'template_exercises', 'exercises', 'purchased_on', 'is_active'));
     }
 
     public function getTemplateSales($template)

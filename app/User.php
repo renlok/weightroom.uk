@@ -91,6 +91,15 @@ class User extends Model implements AuthenticatableContract,
         return User::where('user_name', $username)->first();
     }
 
+    public static function activeTemplate($user_id) {
+        $active_template = User::where('user_id', $user_id)->first()->template;
+        if ($active_template == null) {
+            return null;
+        } else {
+            return $active_template->template_id;
+        }
+    }
+
     public function setUserShowrepsAttribute($value) {
         if (is_array($value)) {
             $this->attributes['user_showreps'] = '[' . implode(',', array_map('intval', $value)) . ']';
@@ -156,6 +165,16 @@ class User extends Model implements AuthenticatableContract,
     public function exercise_groups()
     {
         return $this->hasMany('App\Exercise_group', 'user_id', 'user_id');
+    }
+
+    /**
+     * user has one template
+     *
+     * @returns Illuminate\Database\Eloquent\Relations\hasOne
+     */
+    public function template()
+    {
+        return $this->hasOne('App\User_template', 'template_id', 'template_id');
     }
 
     public function getForeignKey()

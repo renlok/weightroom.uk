@@ -15,7 +15,18 @@ blockquote.small {
 @endsection
 
 @section('content')
-<h2>{{ $template->template_name }}</h2>
+<div class="row">
+	<div class="col-md-6">
+		<h2>{{ $template->template_name }}</h2>
+	</div>
+	<div class="col-md-6">
+	@if ($is_active)
+		<button class="btn btn-default h2">Generate Template</button>
+	@else
+		<button class="btn btn-default h2">Set As Current Template</button>
+	@endif
+	</div>
+</div>
 @if ($template->template_charge > 0)
 <p class="small">Purchased at: {{ $purchased_on }}</p>
 @endif
@@ -35,7 +46,7 @@ blockquote.small {
 			<h3>{{ $log->template_log_name }}</h3>
 		</div>
 		<div class="col-md-6 form-inline">
-			<button type="submit" class="btn btn-default">Generate {{ $log->template_log_name }}</button>
+			<button type="submit" class="btn btn-default h3">Generate {{ $log->template_log_name }}</button>
 		</div>
 	</div>
 	@if ($log->template_log_description != '')
