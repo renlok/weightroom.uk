@@ -13,6 +13,7 @@
 
 @section('content')
 <h2>Edit: {{ $exercise_name }}</h2>
+@include('errors.validation')
 <form class="form-horizontal" action="{{ route('editExerciseName', ['exercise_name' => $exercise_name]) }}" method="post">
   <div class="form-group">
     <h3>Rename exercise</h3>

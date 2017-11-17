@@ -1395,15 +1395,16 @@ class Parser
         // clean units
         if (isset($this->units[$block_type]))
         {
-            $end = $this->strposa($block, array_keys($this->units[$block_type]));
+            $cleaned_block = strtolower(preg_replace('/\s/', '', $block));
+            $end = $this->strposa($cleaned_block, array_keys($this->units[$block_type]));
             if ($end !== false)
             {
                 // TODO: fix trim(substr($block, $end)), $block set incorrectly
-                $block = array(trim(substr($block, 0, $end)), $this->units[$block_type][trim(substr($block, $end))]);
+                $block = array(substr($cleaned_block, 0, $end), $this->units[$block_type][substr($cleaned_block, $end)]);
             }
             else
             {
-                $block = array(trim($block), '');
+                $block = array($cleaned_block, '');
             }
         }
         return $block;

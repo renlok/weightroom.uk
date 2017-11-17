@@ -53,6 +53,15 @@ class ExercisesController extends Controller
 
     public function postEditName($exercise_name, Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'exercisenew' => 'required|string'
+        ]);
+        if ($validator->fails()) {
+            return redirect()
+                ->route('viewExercise', ['exercise_name' => $exercise_name])
+                ->withErrors($validator)
+                ->withInput();
+        }
         $new_name = $request->input('exercisenew');
         $exercise_old = Exercise::where('exercise_name', $exercise_name)->where('user_id', Auth::user()->user_id)->firstOrFail();
         $exercise_new = Exercise::where('exercise_name', $new_name)->where('user_id', Auth::user()->user_id)->first();
@@ -96,6 +105,15 @@ class ExercisesController extends Controller
 
     public function postEdit($exercise_name, Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'exerciseType' => 'required|in:weight,time,enduracne,distance'
+        ]);
+        if ($validator->fails()) {
+            return redirect()
+                ->route('viewExercise', ['exercise_name' => $exercise_name])
+                ->withErrors($validator)
+                ->withInput();
+        }
         $new_type = $request->input('exerciseType');
         $exercise = Exercise::select('exercise_id')->where('exercise_name', $exercise_name)->where('user_id', Auth::user()->user_id)->firstOrFail();
         $update = ['is_time' => false, 'is_endurance' => false, 'is_distance' => false];
