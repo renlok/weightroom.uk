@@ -174,7 +174,7 @@ class User extends Model implements AuthenticatableContract,
      */
     public function template()
     {
-        return $this->hasOne('App\User_template', 'template_id', 'template_id');
+        return $this->hasOne('App\User_template', 'user_id', 'user_id');
     }
 
     public function getForeignKey()

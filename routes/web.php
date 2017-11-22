@@ -175,6 +175,8 @@ Route::group(['middleware' => 'auth', 'prefix' => 'templates'], function () {
     Route::get('view/{template_id}', 'TemplateController@viewTemplate')->name('viewTemplate');
     Route::post('build', 'TemplateController@postBuildTemplate')->name('buildTemplate');
     Route::post('save', 'TemplateController@saveTemplate')->name('saveTemplate');
+    // active templates
+    Route::match(['get', 'post'], 'active/{template_id}', 'TemplateController@setActiveTemplate')->name('setActiveTemplate');
     // template payments
     Route::get('purchase/{template_id}', 'TemplateController@getTemplateSaleProcess')->name('templateSaleProcess');
     Route::post('purchase/{template_id}', 'TemplateController@postTemplateSaleProcess');

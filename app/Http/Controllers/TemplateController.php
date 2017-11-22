@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\User_template;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
@@ -47,8 +48,10 @@ class TemplateController extends Controller
             }
         }
         $template_exercises = [];
+        $fixed_values = false;
         foreach ($template->template_logs as $log)
         {
+            $fixed_values = ($log->has_fixed_values) ? true : $fixed_values;
             foreach ($log->template_log_exercises as $log_exercises)
             {
                 if (!in_array($log_exercises->texercise_name, $template_exercises))
@@ -59,7 +62,39 @@ class TemplateController extends Controller
         }
         $exercises = Exercise::listexercises(true)->get();
         $is_active = (User::activeTemplate(Auth::user()->user_id) == $template_id);
-        return view('templates.view', compact('template', 'template_exercises', 'exercises', 'purchased_on', 'is_active'));
+        return view('templates.view', compact('template', 'template_exercises', 'exercises', 'purchased_on', 'is_active', 'fixed_values'));
+    }
+
+    public function setActiveTemplate($template_id, Request $request)
+    {
+        $exerciseInputs = $request->input();
+        $template_data = [];
+        if (count($exerciseInputs) > 0) {
+            $template_data['exercise'] = $exerciseInputs['texercise_name'];
+            for ($i = 0; $i < count($template_data['exercise']); $i++) {
+                if (!empty($template_data['weight'][$i]) && $template_data['weight'][$i] !== 0) {
+                    $template_data['weight'][$i] = $exerciseInputs['weight'][$i];
+                } else {
+                    $template_data['weight'][$i] = Exercise_record::join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
+                            ->where('exercise_name', $template_data['exercise'][$i])
+                            ->where('exercise_records.user_id', Auth::user()->user_id)
+                            ->where('is_est1rm', 1)
+                            ->orderBy('pr_1rm', 'desc')->value('pr_1rm');
+                }
+                if ($template_data['weight'][$i] == null || intval($template_data['weight'][$i]) == 0) {
+                    return redirect()
+                        ->route('viewTemplate', ['template_id' => $template_id])
+                        ->with([
+                            'flash_message' => 'Please enter values for each exercise',
+                            'flash_message_type' => 'danger',
+                            'flash_message_important' => true
+                        ]);
+                }
+            }
+        }
+        User_template::setActive(Auth::user()->user_id, $template_id, $template_data);
+        return redirect()
+            ->route('viewTemplate', ['template_id' => $template_id]);
     }
 
     public function getTemplateSales($template)

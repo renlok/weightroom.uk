@@ -21,9 +21,13 @@ blockquote.small {
 	</div>
 	<div class="col-md-6">
 	@if ($is_active)
-		<button class="btn btn-default h2">Generate Template</button>
+		<button class="btn btn-success h2">Generate Next Template</button>
 	@else
-		<button class="btn btn-default h2">Set As Current Template</button>
+		@if ($fixed_values)
+		<a href="{{ route('setActiveTemplate', ['template_id' => $template->template_id]) }}" class="btn btn-default h2">Set As Current Template</a>
+		@else
+		<button data-toggle="modal" data-target="#activeTemplate" class="btn btn-default h2">Set As Current Template</button>
+		@endif
 	@endif
 	</div>
 </div>
@@ -115,4 +119,42 @@ blockquote.small {
 	{!! csrf_field() !!}
 </form>
 @endforeach
+
+@if (!($is_active && $fixed_values))
+<div class="modal fade" id="activeTemplate" tabindex="-1" role="dialog" aria-labelledby="activeTemplateLabel">
+	<div class="modal-dialog" role="document" style="width: 800px;">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="activeTemplateLabel">Set Active Template</h4>
+			</div>
+			<div class="modal-body">
+				<form method="post" action="{{ route('setActiveTemplate', ['template_id' => $template->template_id]) }}">
+					<div class="form-group">
+						<p>Set <strong>{{ $template->template_name }}</strong> as your current template. Enter a 1RM or select an existing exercise to generate the templates from.</p>
+					</div>
+					@foreach ($template_exercises as $exercise)
+					<div class="form-group">
+						<div class="col-md-5"><h4>{{ $exercise }}</h4></div>
+						<div class="col-md-7 form-inline">
+							<input type="hidden" name="texercise_name[]" value="{{ $exercise }}">
+							@include('common.exerciseDropdown', ['dropownName' => '', 'selected' => $exercise])
+							Or 1RM:
+							<input type="text" name="weight[]" class="form-control" placeholder="kg">
+						</div>
+					</div>
+					@endforeach
+					{{ csrf_field() }}
+					<div class="form-group">
+						<button type="submit" class="btn btn-default margintb">Confirm</button>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+@endif
 @endsection
