@@ -21,7 +21,7 @@ blockquote.small {
 	</div>
 	<div class="col-md-6">
 	@if ($is_active)
-		<button class="btn btn-success h2">Generate Next Template</button>
+		<a href="{{ route('buildActiveTemplate') }}" class="btn btn-success h2">Generate Next Template</a>
 	@else
 		@if ($fixed_values)
 		<a href="{{ route('setActiveTemplate', ['template_id' => $template->template_id]) }}" class="btn btn-default h2">Set As Current Template</a>
@@ -39,6 +39,7 @@ blockquote.small {
 	<p>{{ $template->template_description }}</p>
 @endif
 
+@include('errors.validation')
 @include('common.flash')
 
 @foreach ($template->template_logs as $log)

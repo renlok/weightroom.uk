@@ -173,7 +173,8 @@ Route::group(['middleware' => 'auth', 'prefix' => 'export'], function () {
 Route::group(['middleware' => 'auth', 'prefix' => 'templates'], function () {
     Route::get('/', 'TemplateController@home')->name('templatesHome');
     Route::get('view/{template_id}', 'TemplateController@viewTemplate')->name('viewTemplate');
-    Route::post('build', 'TemplateController@postBuildTemplate')->name('buildTemplate');
+    Route::get('build/active', 'TemplateController@buildTemplateActive')->name('buildActiveTemplate');
+    Route::post('build/direct', 'TemplateController@buildTemplateDirect')->name('buildTemplate');
     Route::post('save', 'TemplateController@saveTemplate')->name('saveTemplate');
     // active templates
     Route::match(['get', 'post'], 'active/{template_id}', 'TemplateController@setActiveTemplate')->name('setActiveTemplate');

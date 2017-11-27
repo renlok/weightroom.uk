@@ -16,6 +16,7 @@ use App\Extend\PRs;
 use App\Extend\Log_control;
 use Auth;
 use Validator;
+use Carbon\Carbon;
 use Stripe\Account as StripeAccount;
 
 class TemplateController extends Controller
@@ -72,7 +73,7 @@ class TemplateController extends Controller
         if (count($exerciseInputs) > 0) {
             $template_data['exercise'] = $exerciseInputs['texercise_name'];
             for ($i = 0; $i < count($template_data['exercise']); $i++) {
-                if (!empty($template_data['weight'][$i]) && $template_data['weight'][$i] !== 0) {
+                if (!empty($exerciseInputs['weight'][$i]) && $exerciseInputs['weight'][$i] !== 0) {
                     $template_data['weight'][$i] = $exerciseInputs['weight'][$i];
                 } else {
                     $template_data['weight'][$i] = Exercise_record::join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
@@ -92,6 +93,9 @@ class TemplateController extends Controller
                 }
             }
         }
+        $template_data['cycle'] = 1;
+        $template_data['log_ids'] = Template_log::where('template_id', $template_id)->orderBy('template_log_week', 'asc')->orderBy('template_log_day', 'asc')->pluck('template_log_id')->toArray();
+        $template_data['log'] = $template_data['log_ids'][0];
         User_template::setActive(Auth::user()->user_id, $template_id, $template_data);
         return redirect()
             ->route('viewTemplate', ['template_id' => $template_id]);
@@ -243,10 +247,43 @@ class TemplateController extends Controller
         }
     }
 
-    public function postBuildTemplate(Request $request)
+    public function buildTemplateActive() {
+        $template = Auth::user()->template;
+        // build data array for template generator
+        $template_data = [
+            'log_id' => $template->user_template_data['log'],
+            'exercise' => isset($template->user_template_data['exercise']) ? $template->user_template_data['exercise'] : [],
+            'weight' => isset($template->user_template_data['weight']) ? $template->user_template_data['weight'] : []
+        ];
+        return TemplateController::buildTemplate($template_data);
+    }
+
+    public function buildTemplateDirect(Request $request) {
+        $validator = Validator::make($request->all(), [
+            'log_id' => 'required|exists:template_logs,template_log_id',
+            'exercises.*' => 'exists:exercises,exercise_name,user_id,'.Auth::user()->user_id
+        ],
+        [
+            'log_id' => 'Template not found',
+            'exercises.*' => 'Invalid exercise'
+        ]);
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+        $template_data = [
+            'log_id' => $request->log_id,
+            'exercise' => $request->exercise,
+            'weight' => $request->weight
+        ];
+        return TemplateController::buildTemplate($template_data);
+    }
+
+    public static function buildTemplate($template_data)
     {
-        // TODO: check inputs
-        // TODO: check log_id is valid
+        // load the log
         $log = Template_log::with([
                 'template_log_exercises' => function($query) {
                     $query->orderBy('template_log_exercises.logtempex_order', 'asc');
@@ -256,14 +293,15 @@ class TemplateController extends Controller
                         ->orderBy('template_log_items.logtempitem_order', 'asc');
                 }
             ])
-            ->where('template_log_id', $request->log_id)->where('has_fixed_values', $request->has_fixed_values)->firstOrFail();
+            ->where('template_log_id', $template_data['log_id'])->firstOrFail();
         $exercise_values = [];
         $exercise_names = [];
-        if (!$request->has_fixed_values)
+        // generate array of weights to use
+        if (!$log->has_fixed_values)
         {
-            foreach ($request->exercise as $key => $exercise)
+            foreach ($template_data['exercise'] as $key => $exercise)
             {
-                if ($exercise == 0 && ($request->weight[$key] == '' || intval($request->weight[$key]) == 0))
+                if ($exercise == 0 && ($template_data['weight'][$key] == '' || intval($template_data['weight'][$key]) == 0))
                 {
                     return redirect()->back()
                             ->withInput()
@@ -288,7 +326,7 @@ class TemplateController extends Controller
         foreach ($log->template_log_exercises as $log_exercises)
         {
             $loaded = [];
-            $entered_1rm = ($request->weight[$log_exercises->logtempex_order] != '' && intval($request->weight[$log_exercises->logtempex_order]) > 0) ? true : false;
+            $entered_1rm = (!$log->has_fixed_values && $template_data['weight'][$log_exercises->logtempex_order] != '' && intval($template_data['weight'][$log_exercises->logtempex_order]) > 0) ? true : false;
             foreach ($log_exercises->template_log_items as $log_items)
             {
                 if ($log_items->is_bw)
@@ -313,7 +351,7 @@ class TemplateController extends Controller
                     {
                         if ($entered_1rm)
                         {
-                            $loaded[1] = $request->weight[$log_exercises->logtempex_order];
+                            $loaded[1] = $template_data['weight'][$log_exercises->logtempex_order];
                         }
                         else
                         {
@@ -329,7 +367,7 @@ class TemplateController extends Controller
                     {
                         if ($entered_1rm)
                         {
-                            $loaded[$log_items->current_rm] = PRs::generateRM($request->weight[$log_exercises->logtempex_order], 1, $log_items->current_rm);
+                            $loaded[$log_items->current_rm] = PRs::generateRM($template_data['weight'][$log_exercises->logtempex_order], 1, $log_items->current_rm);
                         }
                         else
                         {
