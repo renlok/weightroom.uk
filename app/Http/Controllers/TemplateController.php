@@ -255,7 +255,7 @@ class TemplateController extends Controller
             'exercise' => isset($template->user_template_data['exercise']) ? $template->user_template_data['exercise'] : [],
             'weight' => isset($template->user_template_data['weight']) ? $template->user_template_data['weight'] : []
         ];
-        return TemplateController::buildTemplate($template_data);
+        return TemplateController::buildTemplate($template_data, 1);
     }
 
     public function buildTemplateDirect(Request $request) {
@@ -278,10 +278,10 @@ class TemplateController extends Controller
             'exercise' => $request->exercise,
             'weight' => $request->weight
         ];
-        return TemplateController::buildTemplate($template_data);
+        return TemplateController::buildTemplate($template_data, 0);
     }
 
-    public static function buildTemplate($template_data)
+    public static function buildTemplate($template_data, $active)
     {
         // load the log
         $log = Template_log::with([
@@ -404,10 +404,10 @@ class TemplateController extends Controller
         // set up variables for blade
         $template_name = Template::where('template_id', $log->template_id)->value('template_name');
         $calender = Log_control::preload_calender_data(Carbon::now()->toDateString(), Auth::user()->user_id);
-        return view('templates.build', compact('template_name', 'log', 'exercise_values', 'exercise_names', 'calender'));
+        return view('templates.build', compact('template_name', 'log', 'exercise_values', 'exercise_names', 'calender', 'active'));
     }
 
-    public function saveTemplate(Request $request)
+    public function saveTemplate($active = 0, Request $request)
     {
         $validator = Validator::make($request->all(), [
             'log_date' => 'required|date_format:Y-m-d',
@@ -430,6 +430,10 @@ class TemplateController extends Controller
         else
         {
             $route = 'newLog';
+        }
+        if ($active)
+        {
+            User_template::nextActive(Auth::user()->user_id);
         }
         return redirect()
                 ->route($route, ['date' => $request->input('log_date')])

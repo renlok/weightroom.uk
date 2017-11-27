@@ -83,7 +83,7 @@ Total volume: {{ Format::format_distance($log_exercises->logtempex_distance) }}
 
 @endforeach
 </pre>
-<form class="hidden" action="{{ route("saveTemplate") }}" method="post" id="template-submit">
+<form class="hidden" action="{{ route("saveTemplate", ['active' => $active]) }}" method="post" id="template-submit">
   <textarea id="template-text" name="template_text"></textarea>
   <input type="text" name="log_date" id="log-date" value="">
   {!! csrf_field() !!}
