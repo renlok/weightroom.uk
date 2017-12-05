@@ -157,6 +157,7 @@ class LogsController extends Controller
             {
                 $exercises .= ',';
             }
+            $exercise['exercise_name'] = str_replace('"', '\"', $exercise['exercise_name']);
             $exercises .= "[\"{$exercise['exercise_name']}\", {$exercise['COUNT']}]";
         }
         $calender = Log_control::preload_calender_data($date, $user->user_id);
