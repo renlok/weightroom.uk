@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Extend\Log_control;
+use App\Extend\Format;
 use DB;
 
 class GenerateCleanNames extends Command

@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         \App\Console\Commands\Inspire::class,
+        \App\Console\Commands\GenerateCleanNames::class,
         \App\Console\Commands\GlobalStats::class,
         \App\Console\Commands\ImportFiles::class,
         \App\Console\Commands\CleanJunk::class,
