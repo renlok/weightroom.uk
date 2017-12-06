@@ -3,7 +3,7 @@
 @section('title', 'Goals')
 
 @section('headerstyle')
-<script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.min.js" charset="utf-8"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.5.9/vue.min.js" charset="utf-8"></script>
 @endsection
 
 @section('content')

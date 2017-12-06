@@ -14,7 +14,7 @@
 @section('content')
 <h2>Edit: {{ $exercise_name }}</h2>
 @include('errors.validation')
-<form class="form-horizontal" action="{{ route('editExerciseName', ['exercise_name' => $exercise_name]) }}" method="post">
+<form class="form-horizontal" action="{{ route('editExerciseName', ['exercise_name' => rawurlencode($exercise_name_clean)]) }}" method="post">
   <div class="form-group">
     <h3>Rename exercise</h3>
   </div>
@@ -36,7 +36,7 @@
 <h3>Exercise Groups</h3>
 <div data-tags-input-name="tag" edit-on-delete="false" no-spacebar="true" id="exercise_groups">@foreach ($groups as $group){{ $group->exgroup_name }}, @endforeach</div>
 
-<form class="form-horizontal" action="{{ route('editExercise', ['exercise_name' => $exercise_name]) }}" method="post">
+<form class="form-horizontal" action="{{ route('editExercise', ['exercise_name' => rawurlencode($exercise_name_clean)]) }}" method="post">
   <div class="form-group">
     <h3>Change exercise type</h3>
   </div>
@@ -60,7 +60,7 @@
 </form>
 
 <h3>Exercise Goals:</h3>
-<form action="{{ route('updateExerciseGoals', ['exercise_name' => $exercise_name]) }}" method="post">
+<form action="{{ route('updateExerciseGoals', ['exercise_name' => rawurlencode($exercise_name_clean)]) }}" method="post">
   <div class="form-inline">
     <div class="form-group" id="new_goal">
       <label for="goalType" class="control-label">New goal:</label>
@@ -110,7 +110,7 @@
 @endsection
 
 @section('endjs')
-<script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.2.6/vue.min.js" charset="utf-8"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/vue/2.5.9/vue.min.js" charset="utf-8"></script>
 <script src="{{ asset('js/tagging.min.js') }}"></script>
 <script>
 new Vue({
@@ -145,10 +145,10 @@ $(document).ready(function() {
     $tag_box = t[0];
     // Execute callback when a tag is added
     $tag_box.on( "add:after", function ( el, text, tagging ) {
-        var url = '{{ route('addToExerciseGroup', ['group_name' => ':name', 'exercise_name' => $exercise_name]) }}';
         $.ajax({
-            url: url.replace(':name', text),
-            type: 'GET',
+            url: '{{ route('addToExerciseGroup') }}',
+            type: 'POST',
+            data: {'group_name': text, 'exercise_name': '{{ $exercise_name }}', '_token': '{!! csrf_token() !!}'},
             dataType: 'json',
             cache: true
         }).done(function(o) {}).fail(function() {}).always(function() {});
@@ -156,10 +156,10 @@ $(document).ready(function() {
 
     // Execute callback when a tag is removed
     $tag_box.on( "remove:after", function ( el, text, tagging ) {
-        var url = '{{ route('deleteFromExerciseGroup', ['group_name' => ':name', 'exercise_name' => $exercise_name]) }}';
         $.ajax({
-            url: url.replace(':name', text),
-            type: 'GET',
+            url: '{{ route('deleteFromExerciseGroup') }}',
+            type: 'POST',
+            data: {'group_name': text, 'exercise_name': '{{ $exercise_name }}', '_token': '{!! csrf_token() !!}'},
             dataType: 'json',
             cache: true
         }).done(function(o) {}).fail(function() {}).always(function() {});

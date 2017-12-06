@@ -1,5 +1,5 @@
 @section('headerstyle')
-<link href="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.5/nv.d3.min.css" rel="stylesheet">
+<link href="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.min.css" rel="stylesheet">
 <style>
 #prHistoryChart .nv-lineChart circle.nv-point {
   fill-opacity: 2;
@@ -46,8 +46,8 @@
 
 @section('endjs')
 <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js" charset="utf-8"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.5/nv.d3.min.js" charset="utf-8"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js" charset="utf-8"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.min.js" charset="utf-8"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.3/moment.min.js" charset="utf-8"></script>
 
 <script>
     function prHistoryData() {
@@ -60,7 +60,7 @@
 	@endforeach
 		prHistoryChartData.push({
 			values: dataset,
-			key: '{{ ucwords($graph_name) }}',
+			key: '{{ str_replace("'", "\'", ucwords($graph_name)) }}',
     @if ($graph_name == 'Wilks' || $graph_name == 'Sinclair')
             color: '#2CA02C'
     @elseif ($graph_name == 'Bodyweight')

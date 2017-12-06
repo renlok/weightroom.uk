@@ -8,7 +8,7 @@
 @forelse ($exercises as $exercise)
 	<li class="list-group-item">
 		<span class="badge">{{ $exercise->COUNT }}</span>
-		<a href="{{ route('viewExercise', ['exercise_name' => $exercise->exercise_name]) }}">{{ $exercise->exercise_name }}</a>
+		<a href="{{ route('viewExercise', ['exercise_name' => rawurlencode($exercise->exercise_name_clean)]) }}">{{ $exercise->exercise_name }}</a>
 	</li>
 @empty
 	<li class="list-group-item">

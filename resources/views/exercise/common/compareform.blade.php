@@ -4,7 +4,7 @@
     <p><small class="text-muted"><i>(To select multiple exercises hold Ctrl or Cmd)</i></small></p>
     <select name="exercises[]" size="10" multiple required id="exercises" class="form-control">
     @foreach ($exercises as $exercise)
-        <option value="{{ strtolower($exercise->exercise_name) }}" {{ (in_array(strtolower($exercise->exercise_name), $exercise_names)) ? 'selected' : '' }}>{{ $exercise->exercise_name }}</option>
+        <option value="{{ strtolower($exercise->exercise_name_clean) }}" {{ (in_array(strtolower($exercise->exercise_name_clean), $exercise_names)) ? 'selected' : '' }}>{{ $exercise->exercise_name }}</option>
     @endforeach
     </select>
 </div>

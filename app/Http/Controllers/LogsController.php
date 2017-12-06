@@ -133,6 +133,22 @@ class LogsController extends Controller
         }
     }
 
+    public static function loadExerciseHints()
+    {
+        $exercise_list = Exercise::listexercises(true)->get();
+        $exercises = '';
+        foreach ($exercise_list as $exercise)
+        {
+            if ($exercises != '')
+            {
+                $exercises .= ',';
+            }
+            $exercise['exercise_name'] = str_replace('"', '\"', $exercise['exercise_name']);
+            $exercises .= "[\"{$exercise['exercise_name']}\", {$exercise['COUNT']}]";
+        }
+        return $exercises;
+    }
+
     public static function getEdit($date)
     {
         $user = Auth::user();
@@ -149,17 +165,7 @@ class LogsController extends Controller
             $log->log_text .= "\n\n" . session('template_text');
         }
         $type = 'edit';
-        $exercise_list = Exercise::listexercises(true)->get();
-        $exercises = '';
-        foreach ($exercise_list as $exercise)
-        {
-            if ($exercises != '')
-            {
-                $exercises .= ',';
-            }
-            $exercise['exercise_name'] = str_replace('"', '\"', $exercise['exercise_name']);
-            $exercises .= "[\"{$exercise['exercise_name']}\", {$exercise['COUNT']}]";
-        }
+        $exercises = LogsController::loadExerciseHints();
         $calender = Log_control::preload_calender_data($date, $user->user_id);
         return view('log.edit', compact('date', 'log', 'user', 'type', 'exercises', 'calender'));
     }
@@ -189,16 +195,7 @@ class LogsController extends Controller
             $log['log_text'] = session('template_text');
         }
         $type = 'new';
-        $exercise_list = Exercise::listexercises(true)->get();
-        $exercises = '';
-        foreach ($exercise_list as $exercise)
-        {
-            if ($exercises != '')
-            {
-                $exercises .= ',';
-            }
-            $exercises .= "[\"{$exercise['exercise_name']}\", {$exercise['COUNT']}]";
-        }
+        $exercises = LogsController::loadExerciseHints();
         $calender = Log_control::preload_calender_data($date, $user->user_id);
         return view('log.edit', compact('date', 'log', 'user', 'type', 'exercises', 'calender'));
     }

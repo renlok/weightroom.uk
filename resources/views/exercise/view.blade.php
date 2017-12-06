@@ -3,7 +3,7 @@
 @section('title', $exercise_name)
 
 @section('headerstyle')
-<link href="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.5/nv.d3.min.css" rel="stylesheet">
+<link href="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.min.css" rel="stylesheet">
 <style>
 #prHistoryChart .nv-lineChart circle.nv-point {
   fill-opacity: 2;
@@ -42,11 +42,11 @@
                 Range <span class="caret"></span>
             </button>
             <ul class="dropdown-menu">
-                <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => $type, 'range' => 0]) }}">All</a></li>
-                <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => $type, 'range' => 12]) }}">1 year</a></li>
-                <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => $type, 'range' => 6]) }}">6 months</a></li>
-                <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => $type, 'range' => 3]) }}">3 months</a></li>
-                <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => $type, 'range' => 1]) }}">1 month</a></li>
+                <li><a href="{{ route('viewExercise', ['exercise_name' => rawurlencode($exercise_name_clean), 'type' => $type, 'range' => 0]) }}">All</a></li>
+                <li><a href="{{ route('viewExercise', ['exercise_name' => rawurlencode($exercise_name_clean), 'type' => $type, 'range' => 12]) }}">1 year</a></li>
+                <li><a href="{{ route('viewExercise', ['exercise_name' => rawurlencode($exercise_name_clean), 'type' => $type, 'range' => 6]) }}">6 months</a></li>
+                <li><a href="{{ route('viewExercise', ['exercise_name' => rawurlencode($exercise_name_clean), 'type' => $type, 'range' => 3]) }}">3 months</a></li>
+                <li><a href="{{ route('viewExercise', ['exercise_name' => rawurlencode($exercise_name_clean), 'type' => $type, 'range' => 1]) }}">1 month</a></li>
             </ul>
         </div>
         <div class="btn-group">
@@ -54,15 +54,15 @@
                 Graph Type <span class="caret"></span>
             </button>
             <ul class="dropdown-menu">
-                <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => 'prs', 'range' => $range]) }}">PRs</a></li>
-                <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => 'monthly', 'range' => $range]) }}">Monthly maxes</a></li>
-                <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => 'weekly', 'range' => $range]) }}">Weekly maxes</a></li>
-                <li><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name, 'type' => 'daily', 'range' => $range]) }}">Daily maxes</a></li>
+                <li><a href="{{ route('viewExercise', ['exercise_name' => rawurlencode($exercise_name_clean), 'type' => 'prs', 'range' => $range]) }}">PRs</a></li>
+                <li><a href="{{ route('viewExercise', ['exercise_name' => rawurlencode($exercise_name_clean), 'type' => 'monthly', 'range' => $range]) }}">Monthly maxes</a></li>
+                <li><a href="{{ route('viewExercise', ['exercise_name' => rawurlencode($exercise_name_clean), 'type' => 'weekly', 'range' => $range]) }}">Weekly maxes</a></li>
+                <li><a href="{{ route('viewExercise', ['exercise_name' => rawurlencode($exercise_name_clean), 'type' => 'daily', 'range' => $range]) }}">Daily maxes</a></li>
             </ul>
         </div>
     </div>
 </div>
-<p><small><a href="{{ route('listExercises') }}">&larr; Back to list</a></small> | <small><a href="{{ route('editExercise', ['exercise_name' => $exercise_name]) }}">Edit exercise</a></small> | <small><a href="{{ route('exerciseHistory', ['exercise_name' => $exercise_name]) }}">View history</a></small></p>
+<p><small><a href="{{ route('listExercises') }}">&larr; Back to list</a></small> | <small><a href="{{ route('editExercise', ['exercise_name' => rawurlencode($exercise_name_clean)]) }}">Edit exercise</a></small> | <small><a href="{{ route('exerciseHistory', ['exercise_name' => rawurlencode($exercise_name_clean)]) }}">View history</a></small></p>
 
 <table width="100%" class="table">
 <thead>
@@ -92,7 +92,7 @@
   </tr>
 </tbody>
 </table>
-<p class="text-right small"><a href="{{ route('viewExercisePRHistory', ['exercise_name' => $exercise_name]) }}">View PR history</a></p>
+<p class="text-right small"><a href="{{ route('viewExercisePRHistory', ['exercise_name' => rawurlencode($exercise_name_clean)]) }}">View PR history</a></p>
 
 <div id="prHistoryChart">
     <svg></svg>
@@ -167,8 +167,8 @@
 
 @section('endjs')
 <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js" charset="utf-8"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js" charset="utf-8"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.5/nv.d3.min.js" charset="utf-8"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.3/moment.min.js" charset="utf-8"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.min.js" charset="utf-8"></script>
 
 <script>
     function prHistoryData() {

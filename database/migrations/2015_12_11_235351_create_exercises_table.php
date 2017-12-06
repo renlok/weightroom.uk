@@ -15,6 +15,7 @@ class CreateExercisesTable extends Migration
         Schema::create('exercises', function (Blueprint $table) {
             $table->increments('exercise_id');
 	        $table->string('exercise_name');
+            $table->string('exercise_name_clean');
             $table->integer('user_id')->unsigned()->index();
             $table->boolean('is_time')->default('0');
             $table->boolean('is_endurance')->default('0'); // NEW colomn

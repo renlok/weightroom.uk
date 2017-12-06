@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use DB;
 use File;
 
+use App\Console\Commands\GenerateCleanNames;
 use App\Console\Commands\ImportFiles;
 use App\Console\Commands\GlobalStats;
 use App\Console\Commands\CleanJunk;
@@ -62,6 +63,15 @@ class AdminController extends Controller
         return redirect()
             ->route('adminHome')
             ->with(['flash_message' => "Cleaned database"]);
+    }
+
+    public function forceCleanNames()
+    {
+        $stats = new GenerateCleanNames();
+        $stats->handle();
+        return redirect()
+            ->route('adminHome')
+            ->with(['flash_message' => "Rebuilt Clean Names"]);
     }
 
     public function forceRebuildExercisePRTable($exercise_id)

@@ -102,7 +102,7 @@ blockquote.small {
   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
   @foreach (session('new_exercises') as $new_exercise)
     <p>You have logged {{ $new_exercise[0] }} for the first time</p>
-    <p class="small">We have set it to be a {{ ($new_exercise[2]) ? 'endurance' : (($new_exercise[3]) ? 'distance' : (($new_exercise[1]) ? 'time' : 'weight')) }} based exercise by default from now on, you can change this via the <a href="{{ route('editExercise', ['exercise_name' => $new_exercise[0]]) }}">edit exercise</a> page.</p>
+    <p class="small">We have set it to be a {{ ($new_exercise[2]) ? 'endurance' : (($new_exercise[3]) ? 'distance' : (($new_exercise[1]) ? 'time' : 'weight')) }} based exercise by default from now on, you can change this via the <a href="{{ route('editExercise', ['exercise_name' => rawurlencode(Format::urlSafeString($new_exercise[0]))]) }}">edit exercise</a> page.</p>
   @endforeach
 </div>
 @endif
@@ -232,7 +232,7 @@ blockquote.small {
 
 @section('endjs')
 <script src="{{ asset('js/jquery.pickmeup.js') }}"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js" charset="utf-8"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.3/moment.min.js" charset="utf-8"></script>
 @include('comments.commentJs')
 
 <script>

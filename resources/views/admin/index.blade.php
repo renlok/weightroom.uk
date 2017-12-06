@@ -26,6 +26,7 @@
 <h3>Force cron tasks</h3>
 <ul>
 	<li><a href="{{ route('forceStats') }}">Force Stats Count</a></li>
+	<li><a href="{{ route('forceCleanNames') }}">Force Clean Exercise Names</a></li>
 	<li><a href="{{ route('cleanJunk') }}">Force Clean Junk</a></li>
 	<li><a href="{{ route('cronImport') }}">Force Cron Import</a><span class="badge"> {{ $cron_count }}</span></li>
 </ul>

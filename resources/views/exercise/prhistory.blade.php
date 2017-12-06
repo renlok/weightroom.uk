@@ -17,7 +17,7 @@ td small {
 
 @section('content')
 <h2>PR History: {{ $exercise_name }}</h2>
-<p><small><a href="{{ route('viewExercise', ['exercise_name' => $exercise_name]) }}">&larr; Back to exercise</a></small> | <small><a href="{{ route('exerciseHistory', ['exercise_name' => $exercise_name]) }}">View history</a></small></p>
+<p><small><a href="{{ route('viewExercise', ['exercise_name' => rawurlencode($exercise_name_clean)]) }}">&larr; Back to exercise</a></small> | <small><a href="{{ route('exerciseHistory', ['exercise_name' => $exercise_name]) }}">View history</a></small></p>
 <table class="table table-striped table-hover">
 	<thead>
 		<th>Date</th>

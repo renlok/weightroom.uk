@@ -49,7 +49,7 @@ class GoalController extends Controller
     }
     public function postUpdateExerciseGoals($exercise_name, Request $request)
     {
-        $exercise = Exercise::select('exercise_id')->where('exercise_name', $exercise_name)->where('user_id', Auth::user()->user_id)->firstOrFail();
+        $exercise = Exercise::select('exercise_id')->where('exercise_name_clean', $exercise_name)->where('user_id', Auth::user()->user_id)->firstOrFail();
         // deal with new goal if entered
         if ($request->has('valueOne'))
         {
@@ -76,7 +76,7 @@ class GoalController extends Controller
             }
         }
         return redirect()
-            ->route('viewExercise', ['exercise_name' => $exercise_name])
+            ->route('viewExercise', ['exercise_name' => rawurlencode($exercise_name)])
             ->with(['flash_message' => "$exercise_name goals have been updated"]);
     }
 

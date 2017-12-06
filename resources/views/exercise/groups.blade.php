@@ -26,10 +26,10 @@
       $tag_box = t[0];
       // Execute callback when a tag is added
       $tag_box.on( "add:after", function ( el, text, tagging ) {
-          var url = '{{ route('addToExerciseGroup', ['group_name' => $group->exgroup_name, 'exercise_name' => ':name']) }}';
           $.ajax({
-              url: url.replace(':name', text.trim()),
-              type: 'GET',
+              url: '{{ route('addToExerciseGroup') }}',
+              type: 'POST',
+              data: {'group_name': '{{ $group->exgroup_name }}', 'exercise_name': text.trim(), '_token': '{!! csrf_token() !!}'},
               dataType: 'json',
               cache: true
           }).done(function(o) {}).fail(function() {}).always(function() {});
@@ -37,10 +37,10 @@
 
       // Execute callback when a tag is removed
       $tag_box.on( "remove:after", function ( el, text, tagging ) {
-          var url = '{{ route('deleteFromExerciseGroup', ['group_name' => $group->exgroup_name, 'exercise_name' => ':name']) }}';
           $.ajax({
-              url: url.replace(':name', text.trim()),
-              type: 'GET',
+              url: '{{ route('deleteFromExerciseGroup') }}',
+              type: 'POST',
+              data: {'group_name': '{{ $group->exgroup_name }}', 'exercise_name': text.trim(), '_token': '{!! csrf_token() !!}'},
               dataType: 'json',
               cache: true
           }).done(function(o) {}).fail(function() {}).always(function() {});

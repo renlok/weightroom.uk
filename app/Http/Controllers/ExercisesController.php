@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Extend\Log_control;
 use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
@@ -32,7 +33,9 @@ class ExercisesController extends Controller
 
     public function getEdit($exercise_name)
     {
-        $exercise = Exercise::select('is_time', 'is_endurance', 'is_distance', 'exercise_id')->where('exercise_name', $exercise_name)->where('user_id', Auth::user()->user_id)->firstOrFail();
+        $exercise = Exercise::select('is_time', 'is_endurance', 'is_distance', 'exercise_id', 'exercise_name')->where('exercise_name_clean', $exercise_name)->where('user_id', Auth::user()->user_id)->firstOrFail();
+        $exercise_name_clean = $exercise_name;
+        $exercise_name = $exercise->exercise_name;
         $current_type = 'weight';
         if ($exercise->is_distance)
         {
@@ -47,8 +50,8 @@ class ExercisesController extends Controller
             $current_type = 'time';
         }
         $goals = Exercise_goal::where('exercise_id', $exercise->exercise_id)->get();
-        $groups = Exercise_group_relation::with('exercise_group')->where('exercise_id', $exercise->exercise_id)->get();
-        return view('exercise.edit', compact('exercise_name', 'current_type', 'goals', 'groups'));
+        $groups = Exercise_group_relation::join('exercise_groups', 'exercise_groups.exgroup_id', 'exercise_group_relations.exgroup_id')->where('exercise_id', $exercise->exercise_id)->get();
+        return view('exercise.edit', compact('exercise_name', 'exercise_name_clean', 'current_type', 'goals', 'groups'));
     }
 
     public function postEditName($exercise_name, Request $request)
@@ -58,13 +61,14 @@ class ExercisesController extends Controller
         ]);
         if ($validator->fails()) {
             return redirect()
-                ->route('viewExercise', ['exercise_name' => $exercise_name])
+                ->route('viewExercise', ['exercise_name' => rawurlencode($exercise_name)])
                 ->withErrors($validator)
                 ->withInput();
         }
         $new_name = $request->input('exercisenew');
-        $exercise_old = Exercise::where('exercise_name', $exercise_name)->where('user_id', Auth::user()->user_id)->firstOrFail();
+        $exercise_old = Exercise::where('exercise_name_clean', $exercise_name)->where('user_id', Auth::user()->user_id)->firstOrFail();
         $exercise_new = Exercise::where('exercise_name', $new_name)->where('user_id', Auth::user()->user_id)->first();
+        $exercise_name = $exercise_old->exercise_name;
         // new name already exists
         if($exercise_new != null)
         {
@@ -89,6 +93,7 @@ class ExercisesController extends Controller
             $final_id = $exercise_old->exercise_id;
             // rename the exercise
             $exercise_old->exercise_name = $new_name;
+            $exercise_old->exercise_name_clean = Format::urlSafeString($new_name);
             $exercise_old->save();
             $message = "<strong>$exercise_name</strong> shall be now known as <strong>$new_name</strong>";
         }
@@ -99,7 +104,7 @@ class ExercisesController extends Controller
             ->where('log_exercises.exercise_id', $final_id)
             ->update(['logs.log_update_text' => 1]);
         return redirect()
-            ->route('viewExercise', ['exercise_name' => $new_name])
+            ->route('viewExercise', ['exercise_name' => rawurlencode(Format::urlSafeString($new_name))])
             ->with(['flash_message' => $message]);
     }
 
@@ -110,12 +115,12 @@ class ExercisesController extends Controller
         ]);
         if ($validator->fails()) {
             return redirect()
-                ->route('viewExercise', ['exercise_name' => $exercise_name])
+                ->route('viewExercise', ['exercise_name' => rawurlencode($exercise_name)])
                 ->withErrors($validator)
                 ->withInput();
         }
         $new_type = $request->input('exerciseType');
-        $exercise = Exercise::select('exercise_id')->where('exercise_name', $exercise_name)->where('user_id', Auth::user()->user_id)->firstOrFail();
+        $exercise = Exercise::select('exercise_id')->where('exercise_name_clean', $exercise_name)->where('user_id', Auth::user()->user_id)->firstOrFail();
         $update = ['is_time' => false, 'is_endurance' => false, 'is_distance' => false];
         if ($new_type == 'time')
         {
@@ -135,15 +140,17 @@ class ExercisesController extends Controller
             ->where('exercise_id', $exercise->exercise_id)
             ->update($update);
         return redirect()
-            ->route('viewExercise', ['exercise_name' => $exercise_name])
+            ->route('viewExercise', ['exercise_name' => rawurlencode($exercise_name)])
             ->with(['flash_message' => "$exercise_name has been updated"]);
     }
 
     public function history($exercise_name, $from_date = '', $to_date = '')
     {
         $user = Auth::user();
-        $exercise = Exercise::where('exercise_name', $exercise_name)
+        $exercise = Exercise::where('exercise_name_clean', $exercise_name)
                     ->where('user_id', $user->user_id)->firstOrFail();
+        $exercise_name = $exercise->exercise_name;
+        $exercise_name_clean = $exercise->exercise_name_clean;
         $query = $exercise->log_exercises();
         if (!empty($from_date))
         {
@@ -196,7 +203,7 @@ class ExercisesController extends Controller
         // get log_exercises
         $log_exercises = $query->orderBy('log_date', 'desc')->get();
         $exercise_count = $log_exercises->count();
-        return view('exercise.history', compact('exercise_name', 'graph_names', 'log_exercises', 'scales', 'user', 'exercise_count'));
+        return view('exercise.history', compact('exercise_name', 'exercise_name_clean', 'graph_names', 'log_exercises', 'scales', 'user', 'exercise_count'));
     }
 
     public function volume($exercise_name)
@@ -208,6 +215,8 @@ class ExercisesController extends Controller
     public function getViewExercise($exercise_name, $type = 'prs', $range = 0, $force_pr_type = null)
     {
         $exercise = Exercise::getexercise($exercise_name, Auth::user()->user_id)->firstOrFail();
+        $exercise_name = $exercise->exercise_name;
+        $exercise_name_clean = $exercise->exercise_name_clean;
         $query = Exercise_record::getexerciseprs(Auth::user()->user_id, Carbon::now()->toDateString(), $exercise_name, $exercise, true)->get();
         $current_prs = $query->groupBy('pr_reps')->toArray();
         $filtered_prs = Exercise_record::filterPrs($query);
@@ -248,12 +257,14 @@ class ExercisesController extends Controller
             $show_prilepin = false;
         }
 
-        return view('exercise.view', compact('exercise_name', 'current_prs', 'filtered_prs', 'prs', 'range', 'type', 'graph_label', 'format_func', 'show_prilepin', 'approx1rm'));
+        return view('exercise.view', compact('exercise_name', 'exercise_name_clean', 'current_prs', 'filtered_prs', 'prs', 'range', 'type', 'graph_label', 'format_func', 'show_prilepin', 'approx1rm'));
     }
 
     public function getViewExercisePRHistory($exercise_name)
     {
         $exercise = Exercise::getexercise($exercise_name, Auth::user()->user_id)->firstOrFail();
+        $exercise_name = $exercise->exercise_name;
+        $exercise_name_clean = $exercise->exercise_name_clean;
         $prs = Exercise_record::getexerciseprsall(Auth::user()->user_id, 0, $exercise_name, $exercise, true, array_merge([1,2,3,4,5,6,7,8,9,10], Auth::user()->user_showextrareps))->get()->groupBy(function ($item, $key) {
             return $item['log_date']->toDateString();
         })->toArray();
@@ -288,7 +299,7 @@ class ExercisesController extends Controller
         {
             $format_func = 'format_distance';
         }
-        return view('exercise.prhistory', compact('exercise_name', 'exercise', 'prs', 'format_func'));
+        return view('exercise.prhistory', compact('exercise_name', 'exercise_name_clean', 'exercise', 'prs', 'format_func'));
     }
 
     public function getCompareForm()
@@ -306,9 +317,9 @@ class ExercisesController extends Controller
         $pr_value = ($reps > 0) ? 'pr_value' : 'pr_1rm';
         $records = DB::table('exercise_records')
             ->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
-            ->select(DB::raw("MAX($pr_value) as pr_value"), 'pr_reps', 'log_date', 'exercise_name')
+            ->select(DB::raw("MAX($pr_value) as pr_value"), 'pr_reps', 'log_date', 'exercise_name', 'exercise_name_clean')
             ->where('exercise_records.user_id', Auth::user()->user_id)
-            ->whereIn('exercise_name', $exercise_names);
+            ->whereIn('exercise_name_clean', $exercise_names);
         if ($reps > 0)
         {
             $records = $records->where('pr_reps', $reps);
@@ -318,6 +329,8 @@ class ExercisesController extends Controller
             $records = $records->where('is_est1rm', 1);
         }
         $records = $records->groupBy(DB::raw('log_date, exercise_name'))->orderBy('log_date', 'asc')->get();
+        // replace clean names for original names
+        $exercise_names = DB::table('exercises')->whereIn('exercise_name_clean', $exercise_names)->pluck('exercise_name')->toArray();
         return view('exercise.compare', compact('exercises', 'records', 'exercise1', 'exercise2', 'exercise3', 'exercise4', 'exercise5', 'reps', 'exercise_names'));
     }
 
@@ -326,7 +339,7 @@ class ExercisesController extends Controller
         $validator = Validator::make($request->all(), [
             'reps' => 'required|integer',
             'exercises.0' => 'required',
-            'exercises.*' => 'exists:exercises,exercise_name,user_id,'.Auth::user()->user_id
+            'exercises.*' => 'exists:exercises,exercise_name_clean,user_id,'.Auth::user()->user_id
         ]);
         if ($validator->fails()) {
             return redirect('exercise/compare')
@@ -374,7 +387,11 @@ class ExercisesController extends Controller
             }
             else
             {
-                Exercise_group::insert(['user_id' => Auth::user()->user_id, 'exgroup_name' => $group_name]);
+                Exercise_group::insert([
+                    'user_id' => Auth::user()->user_id,
+                    'exgroup_name' => $group_name,
+                    'exgroup_name_clean' => Format::urlSafeString($group_name)
+                ]);
                 $return_message = 'Group added';
             }
         }
@@ -400,26 +417,37 @@ class ExercisesController extends Controller
             ->with(['flash_message' => 'Group deleted']);
     }
 
-    public function getAddToGroup($group_name, $exercise_name)
+    public function postAddToGroup(Request $request)
     {
+        $group_name = $request->group_name;
+        $exercise_name = $request->exercise_name;
         $exercise = Exercise::getexercise($exercise_name, Auth::user()->user_id)->first();
         if ($exercise == null)
         {
             return response('no such exercise', 400);
         }
-        $group = Exercise_group::firstOrCreate(['user_id' => Auth::user()->user_id, 'exgroup_name' => $group_name]);
-        Exercise_group_relation::firstOrCreate(['exgroup_id' => $group->exgroup_id, 'exercise_id' => $exercise->exercise_id]);
+        $exercise_group = Exercise_group::where('user_id', Auth::user()->user_id)->where('exgroup_name', $group_name)->first();
+        if ($exercise_group == null) {
+            $exercise_group = new Exercise_group();
+            $exercise_group->user_id = Auth::user()->user_id;
+            $exercise_group->exgroup_name = $group_name;
+            $exercise_group->exgroup_name_clean = Format::urlSafeString($group_name);
+            $exercise_group->save();
+        }
+        Exercise_group_relation::firstOrCreate(['exgroup_id' => $exercise_group->exgroup_id, 'exercise_id' => $exercise->exercise_id]);
         return response('added', 201);
     }
 
-    public function getDeleteFromGroup($group_name, $exercise_name)
+    public function postDeleteFromGroup(Request $request)
     {
+        $group_name = $request->group_name;
+        $exercise_name = $request->exercise_name;
         $exercise = Exercise::getexercise($exercise_name, Auth::user()->user_id)->first();
         if ($exercise == null)
         {
             return response('no such exercise', 400);
         }
-        $group = Exercise_group::firstOrCreate(['user_id' => Auth::user()->user_id, 'exgroup_name' => $group_name]);
+        $group = Exercise_group::where('user_id', Auth::user()->user_id)->where('exgroup_name', $group_name)->firstOrFail();
         Exercise_group_relation::where('exgroup_id', $group->exgroup_id)->where('exercise_id', $exercise->exercise_id)->delete();
         return response('deleted', 201);
     }

@@ -1,6 +1,6 @@
 @if ($view_type == 'log')
     @if (Auth::check() && $user->user_id == Auth::user()->user_id)
-        <h3><a href="{{ route('viewExercise', ['exercise_name' => $log_exercise->exercise->exercise_name]) }}">{{ $log_exercise->exercise->exercise_name }}</a></h3>
+        <h3><a href="{{ route('viewExercise', ['exercise_name' => rawurlencode($log_exercise->exercise->exercise_name_clean)]) }}">{{ $log_exercise->exercise->exercise_name }}</a></h3>
     @else
         <h3 class="exercise">{{ $log_exercise->exercise->exercise_name }}</h3>
     @endif

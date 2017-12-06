@@ -16,6 +16,7 @@ class CreateExerciseGroupsTable extends Migration
             $table->increments('exgroup_id');
             $table->integer('user_id');
             $table->string('exgroup_name');
+            $table->string('exgroup_name_clean');
             $table->timestamps();
         });
     }

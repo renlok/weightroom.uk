@@ -100,7 +100,7 @@ class Parser
                     $this->log_data['exercises'][$position] = array(
                             'name' => trim($exercise),
                             'comment' => '',
-                            'groups' => $matches[0],
+                            'groups' => (is_array($matches[0])) ? array_filter($matches[0]) : [],
                             'data' => array());
                     continue; // end this loop
                 }
@@ -441,6 +441,7 @@ class Parser
                 // new exercise
                 $exercise = Exercise::create([
                     'exercise_name' => $exercise_name,
+                    'exercise_name_clean' => Format::urlSafeString($exercise_name),
                     'user_id' => $this->user->user_id
                 ]);
                 $this->exercises[$i]['new'] = true;
@@ -462,7 +463,14 @@ class Parser
             {
                 foreach ($item['groups'] as $exercise_group_name)
                 {
-                    $exercise_group = Exercise_group::firstOrCreate(['user_id' => Auth::user()->user_id, 'exgroup_name' => $exercise_group_name]);
+                    $exercise_group = Exercise_group::where('user_id', Auth::user()->user_id)->where('exgroup_name', $exercise_group_name)->first();
+                    if ($exercise_group == null) {
+                        $exercise_group = new Exercise_group();
+                        $exercise_group->user_id = Auth::user()->user_id;
+                        $exercise_group->exgroup_name = $exercise_group_name;
+                        $exercise_group->exgroup_name_clean = Format::urlSafeString($exercise_group_name);
+                        $exercise_group->save();
+                    }
                     Exercise_group_relation::firstOrCreate(['exgroup_id' => $exercise_group->exgroup_id, 'exercise_id' => $exercise->exercise_id]);
                 }
             }

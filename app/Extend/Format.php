@@ -180,4 +180,9 @@ class Format
         //$width = '640';
         //$height = '385';
     }
+
+    public static function urlSafeString($string)
+    {
+        return str_replace(['/', '#', '\\', '?', '&'], '-', $string);
+    }
 }

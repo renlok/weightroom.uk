@@ -4,7 +4,7 @@
 
 @section('headerstyle')
 <link href="{{ asset('css/pickmeup.css') }}" rel="stylesheet">
-<link href="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.5/nv.d3.min.css" rel="stylesheet">
+<link href="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.min.css" rel="stylesheet">
 <style>
 .leftspace {
   margin-left: 10px;
@@ -61,9 +61,9 @@
 
 @section('endjs')
 <script src="{{ asset('js/jquery.pickmeup.js') }}"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js" charset="utf-8"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.3/moment.min.js" charset="utf-8"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js" charset="utf-8"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.5/nv.d3.min.js" charset="utf-8"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.6/nv.d3.min.js" charset="utf-8"></script>
 <script>
     $('#from_date').pickmeup({
         date           : moment('{{ $from_date }}','YYYY-MM-DD').format(),

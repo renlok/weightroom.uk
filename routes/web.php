@@ -119,8 +119,8 @@ Route::group(['prefix' => 'exercise', 'middleware' => 'auth'], function () {
     Route::get('groups', 'ExercisesController@getExerciseGroups')->name('exerciseGroups');
     Route::post('groups/add', 'ExercisesController@postNewGroup')->name('addExerciseGroup');
     Route::get('groups/delete/{group_id}', 'ExercisesController@getDeleteGroup')->name('deleteExerciseGroup');
-    Route::get('groups/add/{group_name}/{exercise_name}', 'ExercisesController@getAddToGroup')->name('addToExerciseGroup');
-    Route::get('groups/delete/{group_name}/{exercise_name}', 'ExercisesController@getDeleteFromGroup')->name('deleteFromExerciseGroup');
+    Route::post('groups/exercise/add', 'ExercisesController@postAddToGroup')->name('addToExerciseGroup');
+    Route::post('groups/exercise/delete', 'ExercisesController@postDeleteFromGroup')->name('deleteFromExerciseGroup');
     // compare
     Route::get('compare', 'ExercisesController@getCompareForm')->name('compareExercisesForm');
     Route::get('compare/{reps}/{exercise1}/{exercise2?}/{exercise3?}/{exercise4?}/{exercise5?}', 'ExercisesController@getCompare')->name('compareExercises');
@@ -210,6 +210,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
 
     Route::get('cron/import', 'AdminController@cronImport')->name('cronImport');
     Route::get('stats/force', 'AdminController@forceStats')->name('forceStats');
+    Route::get('cleannames', 'AdminController@forceCleanNames')->name('forceCleanNames');
     Route::get('clean', 'AdminController@cleanJunk')->name('cleanJunk');
     Route::get('exercise/rebuild/{exercise_id}', 'AdminController@forceRebuildExercisePRTable')->name('adminRebuildExercisePRTable');
 });

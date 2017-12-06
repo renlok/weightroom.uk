@@ -22,7 +22,7 @@ class Exercise extends Model
         if ($count)
         {
             return $query->join('log_exercises', 'log_exercises.exercise_id', '=', 'exercises.exercise_id')
-                        ->select('exercises.exercise_id', 'exercises.exercise_name', DB::raw('COUNT(logex_id) as COUNT'))
+                        ->select('exercises.exercise_id', 'exercises.exercise_name', 'exercises.exercise_name_clean', DB::raw('COUNT(logex_id) as COUNT'))
                         ->where('exercises.user_id', Auth::user()->user_id)
                         ->groupBy('exercises.exercise_id')
                         ->orderBy('COUNT', 'desc');
@@ -37,7 +37,10 @@ class Exercise extends Model
 
     public function scopeGetexercise($query, $exercise_name, $user_id)
     {
-        return $query->where('exercise_name', $exercise_name)
+        return $query->where(function ($query) use ($exercise_name) {
+                        $query->where('exercise_name', $exercise_name)
+                            ->orWhere('exercise_name_clean', $exercise_name);
+                    })
                     ->where('user_id', $user_id);
     }
 
@@ -49,6 +52,16 @@ class Exercise extends Model
     public function setExerciseNameAttribute($value)
     {
         $this->attributes['exercise_name'] = strtolower($value);
+    }
+
+    public function getExerciseNameCleanAttribute($value)
+    {
+        return ucfirst($value);
+    }
+
+    public function setExerciseNameCleanAttribute($value)
+    {
+        $this->attributes['exercise_name_clean'] = strtolower($value);
     }
 
     /**
