@@ -231,6 +231,12 @@ class TemplateController extends Controller
     public function getSetupPayAccountBank()
     {
         $customer = StripeAccount::retrieve(Auth::user()->stripe_custom_id, User::getStripeKey());
+        if ($customer == null)
+        {
+            return redirect()
+                ->back()
+                ->with(['flash_message' => 'You must fill out your personal details before setting your payment details.']);
+        }
         return view('user.setupPayAccountBank', compact('customer'));
     }
 
