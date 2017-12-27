@@ -48,11 +48,11 @@
   <p>To help you be more consistent with your RPE values here is a basic description of what each number means:</p>
   <ul class="list-unstyled">
     <li><b>10</b>: Maximal effort</li>
-    <li><b>9.5</b>: Maybe could of done one more set</li>
-    <li><b>9</b>: Definitely could do one more set</li>
-    <li><b>8.5</b>: Maybe could do two more sets</li>
-    <li><b>8</b>: Definitely could do two more sets</li>
-    <li><b>7.5</b>: Maybe could of done three more sets</li>
+    <li><b>9.5</b>: Maybe could of done one more rep</li>
+    <li><b>9</b>: Definitely could do one more rep</li>
+    <li><b>8.5</b>: Maybe could do two more reps</li>
+    <li><b>8</b>: Definitely could do two more reps</li>
+    <li><b>7.5</b>: Maybe could of done three more reps</li>
     <li><b>7</b>: Fairly easy with quick speed</li>
     <li><b>6.5</b>: Borderline warmup set</li>
   </ul>
