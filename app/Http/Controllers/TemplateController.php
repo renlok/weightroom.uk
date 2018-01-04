@@ -15,6 +15,7 @@ use App\User;
 use App\Extend\PRs;
 use App\Extend\Log_control;
 use Auth;
+use DB;
 use Validator;
 use Carbon\Carbon;
 use Stripe\Account as StripeAccount;
@@ -23,8 +24,34 @@ class TemplateController extends Controller
 {
     public function home()
     {
-        $template_groups = Template::all()->groupBy('template_type');
-        return view('templates.index', compact('template_groups'));
+        $templates = DB::select(DB::raw(
+            "SELECT * FROM
+                (
+                    SELECT
+                        *,
+                        @rn := IF(@prev = template_type, @rn + 1, 1) AS rn,
+                        @prev := template_type
+                    FROM templates
+                    JOIN (SELECT @prev := NULL, @rn := 0) AS vars
+                    WHERE (template_is_public = 1 OR user_id = :user_id)
+                    ORDER BY template_type, template_score DESC
+                ) AS T1
+                WHERE rn <= 5"), ['user_id' => Auth::user()->user_id]);
+        $active_template = User_template::with('template')->where('user_id', Auth::user()->user_id)->first();
+        if ($active_template != null) {
+            $active_template = $active_template->template;
+        }
+        return view('templates.index', compact('templates', 'active_template'));
+    }
+
+    public function viewType($template_type)
+    {
+        $templates = Template::where('template_type', $template_type)->paginate(30);
+        $active_template = User_template::with('template')->where('user_id', Auth::user()->user_id)->first();
+        if ($active_template != null) {
+            $active_template = $active_template->template;
+        }
+        return view('templates.typeList', compact('templates', 'template_type', 'active_template'));
     }
 
     public function viewTemplate($template_id)
@@ -96,6 +123,7 @@ class TemplateController extends Controller
         $template_data['cycle'] = 1;
         $template_data['log_ids'] = Template_log::where('template_id', $template_id)->orderBy('template_log_week', 'asc')->orderBy('template_log_day', 'asc')->pluck('template_log_id')->toArray();
         $template_data['log'] = $template_data['log_ids'][0];
+        $template_data['is_lp'] = Template::where('template_id', $template_id)->value('template_is_lp');
         User_template::setActive(Auth::user()->user_id, $template_id, $template_data);
         return redirect()
             ->route('viewTemplate', ['template_id' => $template_id]);
@@ -253,7 +281,8 @@ class TemplateController extends Controller
         }
     }
 
-    public function buildTemplateActive() {
+    public function buildTemplateActive()
+    {
         $template = Auth::user()->template;
         // build data array for template generator
         $template_data = [
@@ -264,7 +293,8 @@ class TemplateController extends Controller
         return TemplateController::buildTemplate($template_data, 1);
     }
 
-    public function buildTemplateDirect(Request $request) {
+    public function buildTemplateDirect(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'log_id' => 'required|exists:template_logs,template_log_id',
             'exercises.*' => 'exists:exercises,exercise_name,user_id,'.Auth::user()->user_id
@@ -410,6 +440,8 @@ class TemplateController extends Controller
         // set up variables for blade
         $template_name = Template::where('template_id', $log->template_id)->value('template_name');
         $calender = Log_control::preload_calender_data(Carbon::now()->toDateString(), Auth::user()->user_id);
+        // give the template some point
+        Template::addScore($template_data['log_id']);
         return view('templates.build', compact('template_name', 'log', 'exercise_values', 'exercise_names', 'calender', 'active'));
     }
 

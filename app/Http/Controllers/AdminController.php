@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
+use App\Http\Requests\TemplateRequest;
 
 use Auth;
 use Carbon\Carbon;
@@ -121,17 +122,21 @@ class AdminController extends Controller
         $template_description = '';
         $template_type = '';
         $template_charge = 0;
-        return view('admin.editLogTemplate', compact('json_data', 'template_id', 'template_name', 'template_description', 'template_type', 'template_charge'));
+        $template_is_lp = 0;
+        $template_is_public = 1;
+        return view('admin.editLogTemplate', compact('json_data', 'template_id', 'template_name', 'template_description', 'template_type', 'template_charge', 'template_is_lp', 'template_is_public'));
     }
 
-    public function postAddTemplate(Request $request)
+    public function postAddTemplate(TemplateRequest $request)
     {
-        // TODO: validate inputs
         // save the template
         $template = new \App\Template;
         $template->template_name = $request->input('template_name');
         $template->template_description = $request->input('template_description');
         $template->template_type = $request->input('template_type');
+        $template->template_charge = $request->input('template_charge');
+        $template->template_is_lp = $request->input('template_is_lp', 0);
+        $template->template_is_public = $request->input('template_is_public', 0);
         $template->save();
         $template_id = $template->template_id;
         AdminController::saveTemplateLogs($request, $template_id);
@@ -221,10 +226,12 @@ class AdminController extends Controller
         $template_description = $template->template_description;
         $template_type = $template->template_type;
         $template_charge = $template->template_charge;
-        return view('admin.editLogTemplate', compact('json_data', 'template_id', 'template_name', 'template_description', 'template_type', 'template_charge'));
+        $template_is_lp = $template->template_is_lp;
+        $template_is_public = $template->template_is_public;
+        return view('admin.editLogTemplate', compact('json_data', 'template_id', 'template_name', 'template_description', 'template_type', 'template_charge', 'template_is_lp', 'template_is_public'));
     }
 
-    public function postEditTemplate(Request $request, $template_id)
+    public function postEditTemplate(TemplateRequest $request, $template_id)
     {
         // delete old data
         $template_logs = DB::table('template_logs')->where('template_id', $template_id)->pluck('template_log_id')->all();
@@ -237,6 +244,8 @@ class AdminController extends Controller
             'template_description' => $request->input('template_description'),
             'template_type' => $request->input('template_type'),
             'template_charge' => $request->input('template_charge'),
+            'template_is_lp' => $request->input('template_is_lp', 0),
+            'template_is_public' => $request->input('template_is_public', 0),
         ]);
         AdminController::saveTemplateLogs($request, $template_id);
         return redirect()

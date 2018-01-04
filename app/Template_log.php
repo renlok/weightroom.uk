@@ -24,7 +24,7 @@ class Template_log extends Model
      *
      * @returns Illuminate\Database\Eloquent\Relations\belongsTo
      */
-    public function template_log()
+    public function template()
     {
         return $this->belongsTo('App\Template', 'template_id', 'template_id');
     }

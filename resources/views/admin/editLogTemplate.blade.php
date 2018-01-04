@@ -34,6 +34,7 @@
 <h2>Admin Land: {{ ($template_id == 0) ? 'Add' : 'Edit' }} Log Template</h2>
 <p><a href="{{ route('adminHome') }}">Admin Home</a></p>
 
+@include('errors.validation')
 @include('common.flash')
 <form action="{{ ($template_id == 0) ? route('adminAddTemplate') : route('adminEditTemplate', ['template_id' => $template_id]) }}" method="post">
   <input type="hidden" name="template_id" value="{{ $template_id }}">
@@ -44,7 +45,7 @@
     <textarea type="text" id="templateDesc" class="form-control" name="template_description">{{ $template_description }}</textarea>
   </div>
   <div class="form-group">
-    <label for="template_type">Template type</label>
+    <label for="template_type">Template style</label>
     <select name="template_type">
       <option value="powerlifting" {{ ($template_type == 'powerlifting') ? 'selected="selected"' : '' }}>powerlifting</option>
       <option value="running" {{ ($template_type == 'running') ? 'selected="selected"' : '' }}>running</option>
@@ -110,6 +111,14 @@
       </div>
     </template>
     <button type="button" v-on:click="addLog">Add Workout</button>
+  </div>
+  <div class="form-inline margintb">
+    <label for="template_is_lp">Linear Progression</label>
+    <input type="checkbox" name="template_is_lp" value="1" {{ $template_is_lp ? 'checked' : '' }}>
+  </div>
+  <div class="form-inline margintb">
+    <label for="template_is_public">Public</label>
+    <input type="checkbox" name="template_is_public" value="1" {{ $template_is_public ? 'checked' : '' }}>
   </div>
   <div class="form-inline margintb">
     <label for="template_charge">Price ($): </label>
