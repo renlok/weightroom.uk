@@ -177,6 +177,14 @@ Route::group(['middleware' => 'auth', 'prefix' => 'templates'], function () {
     Route::get('build/active', 'TemplateController@buildTemplateActive')->name('buildActiveTemplate');
     Route::post('build/direct', 'TemplateController@buildTemplateDirect')->name('buildTemplate');
     Route::post('save/{active?}', 'TemplateController@saveTemplate')->name('saveTemplate');
+    // template tools
+    Route::get('add', 'TemplateController@getAddTemplate')->name('addTemplate');
+    Route::post('add', 'TemplateController@postAddTemplate');
+    Route::group(['middleware' => 'own.template'], function () {
+        Route::get('edit/{template_id}', 'TemplateController@getEditTemplate')->name('editTemplate');
+        Route::post('edit/{template_id}', 'TemplateController@postEditTemplate');
+        Route::get('delete/{template_id}', 'TemplateController@getDeleteTemplate')->name('deleteTemplate');
+    });
     // active templates
     Route::match(['get', 'post'], 'active/{template_id}', 'TemplateController@setActiveTemplate')->name('setActiveTemplate');
     // template payments

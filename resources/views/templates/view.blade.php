@@ -120,6 +120,9 @@ blockquote.small {
 	{!! csrf_field() !!}
 </form>
 @endforeach
+@if($template->user_id == Auth::user()->user_id)
+	<a href="{{ route('editTemplate', ['template_id' => $template->template_id]) }}" class="btn btn-primary h2">Edit</a>
+@endif
 
 @if (!($is_active && $fixed_values))
 <div class="modal fade" id="activeTemplate" tabindex="-1" role="dialog" aria-labelledby="activeTemplateLabel">

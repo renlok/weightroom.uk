@@ -8,7 +8,7 @@
 
 @section('content')
 <h2>Export Workout Data</h2>
-@include('common.beta')
+<p>Export your weightroom.uk workout data to either keep an offline copy or to use it somewhere else.</p>
 @include('common.flash')
 @include('errors.validation')
 <form action="{{ route('processExport') }}" method="post">

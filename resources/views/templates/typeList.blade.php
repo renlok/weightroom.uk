@@ -4,7 +4,11 @@
 
 @section('content')
     <h2>{{ ucwords($template_type) }} templates</h2>
-    <p>{{ ucwords($template_type) }} templates for you to browse</p>
+    @if ($template_type == 'my')
+        <p>All of the templates you have created.</p>
+    @else
+        <p>{{ ucwords($template_type) }} templates for you to browse</p>
+    @endif
     <p><a href="{{ route('templatesHome') }}">Templates home</a></p>
 
     <ul>

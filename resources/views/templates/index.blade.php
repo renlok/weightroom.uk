@@ -3,8 +3,18 @@
 @section('title', 'Workout Templates')
 
 @section('content')
-<h2>Workout Templates</h2>
-<p>Preset workouts for you to browse</p>
+<div class="row">
+	<div class="col-md-6">
+		<h2>Workout Templates</h2>
+		<p>Preset workouts for you to browse</p>
+	</div>
+	<div class="col-md-6">
+		@if ($has_templates)
+		<a href="{{ route('templatesTypeList', ['template_type' => 'my']) }}" class="btn btn-success h2">My Templates</a>
+		@endif
+		<a href="{{ route('addTemplate') }}" class="btn btn-success h2">Add New Template</a>
+	</div>
+</div>
 @include('common.beta')
 
 @if ($active_template != null)

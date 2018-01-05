@@ -76,13 +76,8 @@
     &nbsp;
   </div>
 </div>
-<h2>Beta Tools</h2>
-<small>Don't trust them</small>
+<h2>Data</h2>
 <div class="row padding">
-  <div class="col-md-4">
-    <a href="{{ route('templatesHome') }}">Workout Templates</a>
-    <p>Find workout templates</p>
-  </div>
   <div class="col-md-4">
     <a href="{{ route('import') }}">Import workouts</a>
     <p>Import workouts via CSV</p>
@@ -90,6 +85,14 @@
   <div class="col-md-4">
     <a href="{{ route('export') }}">Export workouts</a>
     <p>Export your workout data</p>
+  </div>
+</div>
+<h2>Beta Tools</h2>
+<small>Don't trust them</small>
+<div class="row padding">
+  <div class="col-md-4">
+    <a href="{{ route('templatesHome') }}">Workout Templates</a>
+    <p>Find workout templates</p>
   </div>
 </div>
 @else

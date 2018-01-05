@@ -52,5 +52,6 @@ class Kernel extends HttpKernel
         'log.exists' => \App\Http\Middleware\RedirectLogifExists::class,
         'log.notexists' => \App\Http\Middleware\RedirectLogifNotExists::class,
         'password-grant' => \App\Http\Middleware\InjectPasswordGrantCredentials::class,
+        'own.template' => \App\Http\Middleware\OwnTemplate::class,
     ];
 }

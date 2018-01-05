@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\User_template;
 use Illuminate\Http\Request;
+use App\Http\Requests\TemplateRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\Exercise;
@@ -13,7 +14,9 @@ use App\Template_log;
 use App\Template_purchase;
 use App\User;
 use App\Extend\PRs;
+use App\Extend\Format;
 use App\Extend\Log_control;
+use App\Extend\Templates;
 use Auth;
 use DB;
 use Validator;
@@ -41,12 +44,18 @@ class TemplateController extends Controller
         if ($active_template != null) {
             $active_template = $active_template->template;
         }
-        return view('templates.index', compact('templates', 'active_template'));
+        $user_templates = DB::select(DB::raw("SELECT COUNT(template_id) As COUNT FROM templates WHERE user_id = :user_id"), ['user_id' => Auth::user()->user_id]);
+        $has_templates = $user_templates[0]->COUNT > 0;
+        return view('templates.index', compact('templates', 'active_template', 'has_templates'));
     }
 
     public function viewType($template_type)
     {
-        $templates = Template::where('template_type', $template_type)->paginate(30);
+        if ($template_type == 'my') {
+            $templates = Template::where('user_id', Auth::user()->user_id)->paginate(30);
+        } else {
+            $templates = Template::where('template_type', $template_type)->paginate(30);
+        }
         $active_template = User_template::with('template')->where('user_id', Auth::user()->user_id)->first();
         if ($active_template != null) {
             $active_template = $active_template->template;
@@ -75,19 +84,8 @@ class TemplateController extends Controller
                 return TemplateController::getTemplateSales($template);
             }
         }
-        $template_exercises = [];
-        $fixed_values = false;
-        foreach ($template->template_logs as $log)
-        {
-            $fixed_values = ($log->has_fixed_values) ? true : $fixed_values;
-            foreach ($log->template_log_exercises as $log_exercises)
-            {
-                if (!in_array($log_exercises->texercise_name, $template_exercises))
-                {
-                    $template_exercises[] = $log_exercises->texercise_name;
-                }
-            }
-        }
+        $template_exercises = Templates::loadVariableExerciseList($template->template_logs);
+        $fixed_values = (count($template_exercises) == 0);
         $exercises = Exercise::listexercises(true)->get();
         $is_active = (User::activeTemplate(Auth::user()->user_id) == $template_id);
         return view('templates.view', compact('template', 'template_exercises', 'exercises', 'purchased_on', 'is_active', 'fixed_values'));
@@ -97,8 +95,19 @@ class TemplateController extends Controller
     {
         $exerciseInputs = $request->input();
         $template_data = [];
+        // do we have the needed data
+        $template_exercises = Templates::loadVariableExerciseList(Template_log::where('template_id', $template_id)->get());
+        $template_data['exercise'] = (isset($exerciseInputs['texercise_name'])) ? $exerciseInputs['texercise_name'] : [];
+        if ($template_exercises != $template_data['exercise']) {
+            return redirect()
+                ->route('viewTemplate', ['template_id' => $template_id])
+                ->with([
+                    'flash_message' => 'Please try again',
+                    'flash_message_type' => 'danger',
+                    'flash_message_important' => true
+                ]);
+        }
         if (count($exerciseInputs) > 0) {
-            $template_data['exercise'] = $exerciseInputs['texercise_name'];
             for ($i = 0; $i < count($template_data['exercise']); $i++) {
                 if (!empty($exerciseInputs['weight'][$i]) && $exerciseInputs['weight'][$i] !== 0) {
                     $template_data['weight'][$i] = $exerciseInputs['weight'][$i];
@@ -108,6 +117,7 @@ class TemplateController extends Controller
                             ->where('exercise_records.user_id', Auth::user()->user_id)
                             ->where('is_est1rm', 1)
                             ->orderBy('pr_1rm', 'desc')->value('pr_1rm');
+                    $template_data['weight'][$i] = Format::correct_weight($template_data['weight'][$i], 'kg', 'kg');
                 }
                 if ($template_data['weight'][$i] == null || intval($template_data['weight'][$i]) == 0) {
                     return redirect()
@@ -478,5 +488,97 @@ class TemplateController extends Controller
                 ->with([
                     'template_text' => $request->input('template_text')
                 ]);
+    }
+
+    public function getAddTemplate()
+    {
+        $json_data = json_encode([]);
+        $template_id = 0;
+        $template_name = '';
+        $template_description = '';
+        $template_type = '';
+        $template_charge = 0;
+        $template_is_lp = 0;
+        $template_is_public = 1;
+        return view('templates.editTemplate', compact('json_data', 'template_id', 'template_name', 'template_description', 'template_type', 'template_charge', 'template_is_lp', 'template_is_public'));
+    }
+
+    public function postAddTemplate(TemplateRequest $request)
+    {
+        // save the template
+        $template = new \App\Template;
+        $template->template_name = $request->input('template_name');
+        $template->user_id = Auth::user()->user_id;
+        $template->template_description = $request->input('template_description');
+        $template->template_type = $request->input('template_type');
+        $template->template_charge = $request->input('template_charge');
+        $template->template_is_lp = $request->input('template_is_lp', 0);
+        $template->template_is_public = $request->input('template_is_public', 0);
+        $template->save();
+        $template_id = $template->template_id;
+        Templates::saveTemplateLogs($request, $template_id);
+        return redirect()
+            ->route('viewTemplate', ['template_id' => $template_id])
+            ->with(['flash_message' => "Template added"]);
+    }
+
+    public function getEditTemplate($template_id)
+    {
+        $template = Template::with([
+            'template_logs.template_log_exercises' => function($query) {
+                $query->orderBy('template_log_exercises.logtempex_order', 'asc');
+            },
+            'template_logs.template_log_exercises.template_log_items' => function($query) {
+                $query->orderBy('template_log_items.logtempex_order', 'asc')
+                    ->orderBy('template_log_items.logtempitem_order', 'asc');
+            }
+        ])
+            ->where('template_id', $template_id)->firstorfail();
+        $template_name = $template->template_name;
+        $template_description = $template->template_description;
+        $template_type = $template->template_type;
+        $template_charge = $template->template_charge;
+        $template_is_lp = $template->template_is_lp;
+        $template_is_public = $template->template_is_public;
+        $json_data = Templates::loadJSONData($template);
+        return view('templates.editTemplate', compact('json_data', 'template_id', 'template_name', 'template_description', 'template_type', 'template_charge', 'template_is_lp', 'template_is_public'));
+    }
+
+    public function postEditTemplate(TemplateRequest $request, $template_id)
+    {
+        // delete old data
+        $template_logs = DB::table('template_logs')->where('template_id', $template_id)->pluck('template_log_id')->all();
+        DB::table('template_logs')->whereIn('template_log_id', $template_logs)->delete();
+        DB::table('template_log_exercises')->whereIn('template_log_id', $template_logs)->delete();
+        DB::table('template_log_items')->whereIn('template_log_id', $template_logs)->delete();
+        // update template
+        Template::where('template_id', $template_id)->update([
+            'template_name' => $request->input('template_name'),
+            'template_description' => $request->input('template_description'),
+            'user_id' => Auth::user()->user_id,
+            'template_type' => $request->input('template_type'),
+            'template_charge' => $request->input('template_charge'),
+            'template_is_lp' => $request->input('template_is_lp', 0),
+            'template_is_public' => $request->input('template_is_public', 0),
+        ]);
+        Templates::saveTemplateLogs($request, $template_id);
+        return redirect()
+            ->route('viewTemplate', ['template_id' => $template_id])
+            ->with(['flash_message' => "Template updated"]);
+    }
+
+    public function getDeleteTemplate($template_id)
+    {
+        DB::table('templates')->where('template_id', $template_id)->delete();
+        $template_logs = DB::table('template_logs')->where('template_id', $template_id)->pluck('template_log_id')->all();
+        DB::table('template_log_items')->whereIn('template_log_id', $template_logs)->delete();
+        DB::table('template_log_exercises')->whereIn('template_log_id', $template_logs)->delete();
+        DB::table('template_logs')->where('template_id', $template_id)->delete();
+        return redirect()
+            ->route('templatesHome')
+            ->with([
+                'flash_message' => 'Template deleted.',
+                'flash_message_type' => 'danger'
+            ]);
     }
 }
