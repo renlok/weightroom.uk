@@ -52,7 +52,7 @@ svg {
     </div>
   </div>
   <div>
-    <label for="n">Limit to</label>
+    <label for="exercise_view">Limit to</label>
     <select class="form-control reportform" name="exercise_view" id="exercise_view">
       <option value="everything">Everything</option>
       <option value="powerlifting">Group: Powerlifting</option>
@@ -264,6 +264,7 @@ svg {
                 view_type2: $("#view_type2").find(":selected").val(),
                 ignore_warmups: $("#ignore_warmups:checked").length,
                 exercise_view: $("#exercise_view").find(":selected").val(),
+                date_range: $("#date_range").find(":selected").val(),
                 '_token': '{!! csrf_token() !!}'
             },
             dataType: "json"
