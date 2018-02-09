@@ -196,6 +196,18 @@ button.btn-default:hover {
 			<img src="//weightroom.uk/img/landing/goal.png" class="img-responsive" alt="Create goals">
 		</div>
 	</div>
+	<div class="row">
+		<div class="col-md-6 pull-right">
+			<h2>Workout templates</h2>
+			<p class="lead">
+				Speed up your workout tracking even further by making use of our pre made templates.
+				Or use our tools to setup your own so you can use it again and again.
+			</p>
+		</div>
+		<div class="col-md-6 pull-left" id="volumescreen">
+			<img src="//weightroom.uk/img/landing/templates.png" class="img-responsive" alt="Workout templates">
+		</div>
+	</div>
 </div>
 
 <footer class="footer">
