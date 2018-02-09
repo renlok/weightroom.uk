@@ -188,12 +188,33 @@
                 deleteItem: function(item_id, exercise_id, log_id) {
                     this.log_data[log_id].exercise_data[exercise_id].item_data.splice(item_id, 1);
                 },
+                cleanExercises: function(log_id) {
+                    var exercise_data = [];
+                    for (var exercise_id in this.log_data[log_id].exercise_data){
+                        if (exercise_id != 'move') {
+                            exercise_data[exercise_id] = this.cleanItems(exercise_id, log_id);
+                        }
+                    }
+                    var new_log = Object.assign({}, this.log_data[log_id]);
+                    new_log.exercise_data = exercise_data;
+                    return new_log;
+                },
+                cleanItems: function(exercise_id, log_id) {
+                    var item_data = [];
+                    for (var item_id in this.log_data[log_id].exercise_data[exercise_id].item_data){
+                        if (item_id != 'move')
+                            item_data[item_id] = Object.assign({}, this.log_data[log_id].exercise_data[exercise_id].item_data[item_id]);
+                    }
+                    var new_exercise = Object.assign({}, this.log_data[log_id].exercise_data[exercise_id]);
+                    new_exercise.item_data = item_data;
+                    return new_exercise;
+                },
                 copyLog: function(log_id) {
-                    var new_log = this.log_data[log_id];
+                    var new_log = this.cleanExercises(log_id);
                     this.log_data.splice(log_id + 1, 0, Object.assign({}, new_log));
                 },
                 copyExercise: function(exercise_id, log_id) {
-                    var new_exercise = this.log_data[log_id].exercise_data[exercise_id];
+                    var new_exercise = this.cleanItems(exercise_id, log_id);
                     this.log_data[log_id].exercise_data.splice(exercise_id + 1, 0, Object.assign({}, new_exercise));
                 },
                 copyItem: function(item_id, exercise_id, log_id) {
@@ -226,7 +247,7 @@
                         if (item_id < this.log_data[log_id].exercise_data[exercise_id].item_data.length - 1)
                             this.log_data[log_id].exercise_data[exercise_id].item_data.move(item_id, item_id + 1);
                     }
-                },
+                }
             }
         });
 
