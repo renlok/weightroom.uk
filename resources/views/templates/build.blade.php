@@ -4,7 +4,7 @@
 
 @section('headerstyle')
 <link href="{{ asset('css/pickmeup.css') }}" rel="stylesheet">
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.22.0/codemirror.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.20.0/codemirror.min.css">
 <style>
 .cm-ENAME { color:#3338B7;}
 .cm-W, .cm-WW { color:#337AB7;}

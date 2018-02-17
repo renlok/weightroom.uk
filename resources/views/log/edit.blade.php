@@ -4,8 +4,8 @@
 
 @section('headerstyle')
 <link href="{{ asset('css/pickmeup.css') }}" rel="stylesheet">
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.css">
-<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/addon/hint/show-hint.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.20.0/codemirror.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.20.0/addon/hint/show-hint.min.css">
 @if ($user->user_firstlog)
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/intro.js/2.7.0/introjs.min.css">
 @endif
@@ -108,10 +108,10 @@ you can also have the same exercise multiple times
 @section('endjs')
 <script src="{{ asset('js/jquery.pickmeup.js') }}"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.3/moment.min.js" charset="utf-8"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/addon/mode/overlay.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/addon/hint/show-hint.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/addon/runmode/runmode.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.20.0/codemirror.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.20.0/addon/mode/overlay.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.20.0/addon/hint/show-hint.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.20.0/addon/runmode/runmode.min.js"></script>
 @if ($user->user_firstlog)
 <script src="//cdnjs.cloudflare.com/ajax/libs/intro.js/2.7.0/intro.min.js"></script>
 <script src="{{ asset('js/intro/tracker.js') }}"></script>
