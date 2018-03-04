@@ -86,7 +86,7 @@ class LogsController extends Controller
             {
                 $log->average_intensity = '';
             }
-            $comments = Comment::where('commentable_id', $log->log_id)->where('commentable_type', 'App\Log')->where('parent_id', 0)->orderBy('comment_date', 'asc')->withTrashed()->get();
+            $comments = Comment::where('commentable_id', $log->log_id)->where('commentable_type', 'App\Log')->whereNotIn('user_id', User::shadowBanList())->where('parent_id', 0)->orderBy('comment_date', 'asc')->withTrashed()->get();
         }
         else
         {
@@ -113,9 +113,13 @@ class LogsController extends Controller
         $carbon_date = Carbon::createFromFormat('Y-m-d', $date);
         $calender = Log_control::preload_calender_data($date, $user->user_id);
         $log_visible = true;
-        if ($user->user_private && Auth::check())
+        if ($user->user_private)
         {
-            $log_visible = ($following != null && $following->is_accepted);
+            if (Auth::check()) {
+                $log_visible = ($following != null && $following->is_accepted) || (Auth::user()->user_id == $user->user_id);
+            } else {
+                $log_visible = false;
+            }
         }
         return view('log.view', compact('date', 'carbon_date', 'user', 'log', 'comments', 'following_state', 'commenting', 'calender', 'log_visible'));
     }

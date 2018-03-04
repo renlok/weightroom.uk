@@ -201,6 +201,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
     Route::get('settings', 'AdminController@getSettings')->name('adminSettings');
     Route::post('settings', 'AdminController@postSettings');
 
+    Route::post('users/ban', 'AdminController@shadowBanUser')->name('adminBanUser');
     Route::get('users', 'AdminController@getListUsers')->name('adminListUsers');
 
     Route::get('template', 'AdminController@getListTemplates')->name('adminListTemplates');

@@ -176,7 +176,7 @@ blockquote.small {
   </p>
 </div>
 @endif
-@if ($log != null && ($log_visible || $user->user_id == Auth::user()->user_id))
+@if ($log != null && $log_visible)
   <h2>Workout summary</h2>
   @if (($log->log_total_volume + ($log->log_failed_volume * $user->user_volumeincfails) - ($log->log_warmup_volume * $user->user_volumewarmup)) > 0)
     <p class="logrow">
@@ -219,7 +219,7 @@ blockquote.small {
       <textarea class="form-control">{{ $log->log_text }}</textarea>
   </div>
   @include('comments.commentTree', ['comments' => $comments, 'object_id' => $log->log_id, 'object_type' => 'Log'])
-@elseif (!$log_visible)
+@elseif ($log != null && !$log_visible)
   <div class="row empty-log">
     <h1>This users logs are private</h1>
   </div>

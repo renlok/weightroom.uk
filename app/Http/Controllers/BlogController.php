@@ -29,7 +29,7 @@ class BlogController extends Controller
         $post = Post::where('url', $url)->firstOrFail();
         $prev_url = Post::prevBlogPostUrl($post->post_id);
         $next_url = Post::nextBlogPostUrl($post->post_id);
-        $comments = Comment::where('commentable_id', $post->post_id)->where('commentable_type', 'App\Post')->where('parent_id', 0)->orderBy('comment_date', 'asc')->withTrashed()->get();
+        $comments = Comment::where('commentable_id', $post->post_id)->where('commentable_type', 'App\Post')->whereNotIn('user_id', User::shadowBanList())->where('parent_id', 0)->orderBy('comment_date', 'asc')->withTrashed()->get();
         if (!isset($commenting))
         {
             $commenting = false;

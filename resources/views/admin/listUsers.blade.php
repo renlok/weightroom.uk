@@ -12,6 +12,7 @@
       <th>#</th>
       <th>Username</th>
       <th>&nbsp;</th>
+      <th>&nbsp;</th>
     </tr>
   </thead>
   <tbody>
@@ -26,6 +27,14 @@
       <td>{{ $user->user_id }}</td>
       <td>{{ $user->user_name }}</td>
       <td><a href="#">Edit</a></td>
+      <td>
+        <form action="{{ route('adminBanUser') }}" method="post">
+          <input type="hidden" value="{{ $user->user_id }}" name="user_id">
+          <input type="hidden" value="{{ intval(!$user->user_shadowban) }}" name="state">
+          {!! csrf_field() !!}
+          <button type="submit" class="btn btn-default">{{ $user->user_shadowban ? 'Unban' : 'Ban' }}</button>
+        </form>
+      </td>
     </tr>
 @endforeach
   </tbody>

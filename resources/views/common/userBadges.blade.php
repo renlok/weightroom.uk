@@ -7,6 +7,9 @@
 @if ($user->user_beta == 1)
 <img src="{{ asset('img/bug.png') }}" alt="Beta tester">
 @endif
+@if ($user->user_shadowban == 1)
+<img src="{{ asset('img/sound_mute.png') }}" alt="Shadow Banned">
+@endif
 @if ($user->user_admin == 1)
 <img src="{{ asset('img/star.png') }}" alt="Adminnosaurus Rex">
 @endif

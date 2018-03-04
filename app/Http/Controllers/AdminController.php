@@ -244,7 +244,7 @@ class AdminController extends Controller
                 ->with([
                     'flash_message' => 'No such file.',
                     'flash_message_type' => 'danger'
-                ]);;
+                ]);
         }
         return redirect()
             ->route('adminViewLogs');
@@ -254,5 +254,19 @@ class AdminController extends Controller
     {
         $users = User::paginate(50);
         return view('admin.listUsers', compact('users'));
+    }
+
+    public function shadowBanUser(Request $request)
+    {
+        $user = User::where('user_id', $request->input('user_id'))->firstOrFail();
+        $state = $request->input('state', 1);
+        $user->user_shadowban = $state;
+        $user->save();
+        return redirect()
+            ->route('adminListUsers')
+            ->with([
+                'flash_message' => 'User #'.$request->input('user_id').' has been '.($state ? '' : 'un').'shadow banned',
+                'flash_message_type' => 'danger'
+            ]);
     }
 }

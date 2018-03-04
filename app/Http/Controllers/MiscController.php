@@ -102,7 +102,7 @@ class MiscController extends Controller
 
     public function dashAll()
     {
-        $logs = Log::whereRaw("TRIM(log_text) != ''")->where('log_date', '<=', Carbon::now()->toDateString())->orderBy('log_date', 'desc')->orderBy('created_at', 'desc')->paginate(50);
+        $logs = Log::whereRaw("TRIM(log_text) != ''")->whereNotIn('user_id', User::shadowBanList())->where('log_date', '<=', Carbon::now()->toDateString())->orderBy('log_date', 'desc')->orderBy('created_at', 'desc')->paginate(50);
         $random = false;
         $follow_count = 0;
         return view('dash', compact('logs', 'random', 'follow_count'));

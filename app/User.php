@@ -12,6 +12,8 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Laravel\Cashier\Billable;
 use Laravel\Passport\HasApiTokens;
+use Cache;
+use Auth;
 
 class User extends Model implements AuthenticatableContract,
                                     AuthorizableContract,
@@ -115,6 +117,23 @@ class User extends Model implements AuthenticatableContract,
                             ->orWhere('user_name', 'LIKE', '%'.$username.'%');
                         })
                         ->pluck('user_name');
+    }
+
+    public static function shadowBanList()
+    {
+        /*$list = Cache::remember('shadow_ban_list', 1440, function () {
+            return User::where('user_shadowban', 1)->pluck('user_id');
+        });*/
+        $list = User::where('user_shadowban', 1)->pluck('user_id')->toArray();
+        // if user is shadow banned remove themselves from the list
+        if (Auth::check() && Auth::user()->user_shadowban)
+        {
+            $key = array_search(Auth::user()->user_id, $list);
+            if ($key !== false) {
+                $list = array_splice($list, $key + 1, 1);
+            }
+        }
+        return $list;
     }
 
     /**
