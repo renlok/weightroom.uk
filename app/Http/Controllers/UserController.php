@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateUserSettingsRequest;
 use App\Http\Controllers\Controller;
 use Auth;
 use DB;
+use Hash;
 use App\User;
 use App\Exercise;
 use App\User_follow;
@@ -160,5 +161,30 @@ class UserController extends Controller
         return redirect()
                 ->back()
                 ->with('flash_message', 'Notification deleted.');
+    }
+
+    public function deleteAllLogs(Request $request)
+    {
+        $password = $request->input('password');
+        if (Hash::check($password, Auth::user()->user_password)) {
+            DB::table('logs')->where('user_id', Auth::user()->user_id)->delete();
+            DB::table('log_items')->where('user_id', Auth::user()->user_id)->delete();
+            DB::table('log_exercises')->where('user_id', Auth::user()->user_id)->delete();
+            DB::table('exercise_records')->where('user_id', Auth::user()->user_id)->delete();
+            return redirect()
+                ->route('userSettings')
+                ->with([
+                    'flash_message' => 'All logs have been deleted.',
+                    'flash_message_type' => 'danger',
+                    'flash_message_important' => true
+                ]);
+        } else {
+            return redirect()
+                ->route('userSettings')
+                ->with([
+                    'flash_message' => 'Incorrect password.',
+                    'flash_message_type' => 'danger'
+                ]);
+        }
     }
 }

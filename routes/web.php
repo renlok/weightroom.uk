@@ -38,6 +38,7 @@ Route::group(['prefix' => 'user'], function () {
         // user settings
         Route::get('settings', 'UserController@getSettings')->name('userSettings');
         Route::post('settings', 'UserController@postSettings');
+        Route::post('delete/logs', 'UserController@deleteAllLogs')->name('userDeleteLogs');
         // follow/unfollow routes
         Route::get('list/following', 'UserController@getFollowingList')->name('followingList');
         Route::get('list/followers', 'UserController@getFollowersList')->name('followersList');

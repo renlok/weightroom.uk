@@ -230,24 +230,54 @@
           <button type="submit" class="btn btn-default" name="action">Save</button>
       </div>
   </div>
+
 </form>
+	<div class="form-group">
+		<h3>Danger Zone</h3>
+	</div>
+  <div class="form-group">
+	  <p>This will permanently delete all workout data you have posted to your account, this cannot be undone. We recommend exporting your data before doing this.</p>
+	  <button type="button" class="btn btn-danger deleteLink">Delete All Logs</button>
+	  <div class="alert alert-danger margintb collapse" role="alert" id="deleteWarning" aria-expanded="false">
+		  <button type="button" class="close deleteLink"><span aria-hidden="true">&times;</span></button>
+		  <h4>You sure?</h4>
+		  <p>You are about to delete all of your workout logs. <strong>This cannot be undone!</strong></p>
+		  <p>You must enter your password to delete all logs</p>
+		  <p>
+		  	<form action="{{ route('userDeleteLogs') }}" method="post">
+			  {!! csrf_field() !!}
+			  <div class="form-inline">
+				  <label>Password</label>
+				  <input type="password" name="password" class="form-control margintb">
+			  </div>
+			  <input type="submit" class="btn btn-danger" value="Yeah delete them">
+			  <button type="button" class="btn btn-default deleteLink">Woops no thanks</button>
+		  	</form>
+		  </p>
+	  </div>
+  </div>
 @endsection
 
 @section('endjs')
 <script>
-$('#showhide').click(function() {
-    $('#advanced_settings').slideToggle('fast');
-    $('#showhide').html(function(_,txt) {
-        var ret='';
-
-        if ( txt == '<button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span> Show</button>' ) {
-           ret = '<button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span> Hide</button>';
-        } else {
-           ret = '<button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span> Show</button>';
-        }
-        return ret;
+$(document).ready(function() {
+    $('.deleteLink').click(function () {
+        $('#deleteWarning').collapse('toggle');
     });
-    return false;
+    $('#showhide').click(function () {
+        $('#advanced_settings').slideToggle('fast');
+        $('#showhide').html(function (_, txt) {
+            var ret = '';
+
+            if (txt == '<button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span> Show</button>') {
+                ret = '<button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-chevron-up" aria-hidden="true"></span> Hide</button>';
+            } else {
+                ret = '<button type="button" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span> Show</button>';
+            }
+            return ret;
+        });
+        return false;
+    });
 });
 </script>
 @endsection
