@@ -35,6 +35,11 @@
 
 <h3>Exercise Groups</h3>
 <div data-tags-input-name="tag" edit-on-delete="false" no-spacebar="true" id="exercise_groups">@foreach ($groups as $group){{ $group->exgroup_name }}, @endforeach</div>
+<datalist id="exerciseGroups">
+@foreach ($all_groups as $group)
+    <option>{{ $group }}</option>
+@endforeach
+</datalist>
 
 <form class="form-horizontal" action="{{ route('editExercise', ['exercise_name' => rawurlencode($exercise_name_clean)]) }}" method="post">
   <div class="form-group">
@@ -141,7 +146,7 @@ new Vue({
     }
 });
 $(document).ready(function() {
-    var t = $("#exercise_groups").tagging();
+    var t = $("#exercise_groups").tagging({'datalist': 'exerciseGroups'});
     $tag_box = t[0];
     // Execute callback when a tag is added
     $tag_box.on( "add:after", function ( el, text, tagging ) {

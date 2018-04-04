@@ -17,12 +17,17 @@
   {!! csrf_field() !!}
   <button type="submit" class="btn btn-default">Add Group</button>
 </form>
+<datalist id="exercises">
+@foreach ($exercises as $exercise)
+    <option>{{ $exercise }}</option>
+@endforeach
+</datalist>
 @foreach ($groups as $group)
   <h3>{{ $group->exgroup_name }} <a href="{{ route('deleteExerciseGroup', ['group_id' => $group->exgroup_id]) }}" class="btn btn-default" role="button">x</a></h3>
   <div data-tags-input-name="tag" edit-on-delete="false" no-spacebar="true" id="group-{{ $group->exgroup_id }}">@foreach ($group->exercise_group_relations as $exercises){{ $exercises->exercise->exercise_name }}, @endforeach</div>
   <script>
   $(document).ready(function() {
-      var t = $("#group-{{ $group->exgroup_id }}").tagging();
+      var t = $("#group-{{ $group->exgroup_id }}").tagging({'datalist':'exercises'});
       $tag_box = t[0];
       // Execute callback when a tag is added
       $tag_box.on( "add:after", function ( el, text, tagging ) {

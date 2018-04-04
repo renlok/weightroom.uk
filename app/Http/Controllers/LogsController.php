@@ -153,6 +153,22 @@ class LogsController extends Controller
         return $exercises;
     }
 
+    public static function loadExerciseGroupHints()
+    {
+        $exercise_list = Exercise_group::select('exgroup_name', 'exercise_groups.exgroup_id')->orderBy('exgroup_name', 'asc')->get();
+        $exercises = '';
+        foreach ($exercise_list as $exercise)
+        {
+            if ($exercises != '')
+            {
+                $exercises .= ',';
+            }
+            $exercise['exgroup_name'] = str_replace('"', '\"', $exercise['exgroup_name']);
+            $exercises .= "[\"{$exercise['exgroup_name']}\", 0]";
+        }
+        return $exercises;
+    }
+
     public static function getEdit($date)
     {
         $user = Auth::user();
@@ -170,8 +186,9 @@ class LogsController extends Controller
         }
         $type = 'edit';
         $exercises = LogsController::loadExerciseHints();
+        $exercise_groups = LogsController::loadExerciseGroupHints();
         $calender = Log_control::preload_calender_data($date, $user->user_id);
-        return view('log.edit', compact('date', 'log', 'user', 'type', 'exercises', 'calender'));
+        return view('log.edit', compact('date', 'log', 'user', 'type', 'exercises', 'calender', 'exercise_groups'));
     }
 
     public function postEdit($date, LogRequest $request)
@@ -200,8 +217,9 @@ class LogsController extends Controller
         }
         $type = 'new';
         $exercises = LogsController::loadExerciseHints();
+        $exercise_groups = LogsController::loadExerciseGroupHints();
         $calender = Log_control::preload_calender_data($date, $user->user_id);
-        return view('log.edit', compact('date', 'log', 'user', 'type', 'exercises', 'calender'));
+        return view('log.edit', compact('date', 'log', 'user', 'type', 'exercises', 'calender', 'exercise_groups'));
     }
 
     public function postNew($date, LogRequest $request)

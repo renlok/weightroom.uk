@@ -173,7 +173,8 @@ $('#openhelp').click(function() {
     $('#formattinghelp').slideToggle('fast');
     return false;
 });
-var $ELIST = [{!! $exercises !!}];
+const $ELIST = [{!! $exercises !!}];
+const $GLIST = [{!! $exercise_groups !!}];
 function getHints(cm) {
 
     var cur = cm.getCursor(),
@@ -181,22 +182,33 @@ function getHints(cm) {
         str = token.string,
         ustr = $.trim(token.string.substr(1)),
         arr = [],
-        list = [];
+        list = [],
+        searchList = $ELIST;
+    var plusStr = '#';
     if (str.indexOf("#") !== 0) {
         return null;
     }
-    for (var i = 0; i < $ELIST.length; i++) {
-        if ((ustr == "") || $ELIST[i][0].toLowerCase().indexOf(ustr.toLowerCase()) > -1) {
-            arr.push($ELIST[i]);
+    const stringParts = str.split("#");
+    if (stringParts.length > 2) {
+        ustr = stringParts[stringParts.length - 1];
+        plusStr = str.slice(0, (ustr.length * -1));
+        searchList = $GLIST;
+    }
+    for (var i = 0; i < searchList.length; i++) {
+        if ((ustr == "") || searchList[i][0].toLowerCase().indexOf(ustr.toLowerCase()) > -1) {
+            arr.push(searchList[i]);
         }
     }
     arr.sort();
     for (i = 0; i < arr.length; i++) {
-        list.push("#" + arr[i][0] + " ");
+        list.push({
+            displayText: "#" + arr[i][0],
+            text: plusStr + arr[i][0] + " "
+        });
     }
-    var t = "#" + ustr + " ";
+    var t = plusStr + ustr + " ";
     if (arr.length && (ustr != "")) {
-        if (arr.length < 2 || list[0].toLowerCase() != t.toLowerCase()) {
+        if (arr.length < 2 || list[0].displayText.toLowerCase() != ('#'+ustr).toLowerCase()) {
             list.unshift({
                 displayText: "Create: " + ustr,
                 text: t
@@ -210,12 +222,12 @@ function getHints(cm) {
             });
         }
     }
-    var o = {
+    const hints = {
         list: list,
         from: CodeMirror.Pos(cur.line, token.start),
         to: CodeMirror.Pos(cur.line, token.end)
     };
-    return o;
+    return hints;
 }
 
 $(document).ready(function(){
