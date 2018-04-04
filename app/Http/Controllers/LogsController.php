@@ -155,7 +155,7 @@ class LogsController extends Controller
 
     public static function loadExerciseGroupHints()
     {
-        $exercise_list = Exercise_group::select('exgroup_name', 'exercise_groups.exgroup_id')->orderBy('exgroup_name', 'asc')->get();
+        $exercise_list = Exercise_group::select('exgroup_name', 'exercise_groups.exgroup_id')->where('user_id', Auth::user()->user_id)->orderBy('exgroup_name', 'asc')->get();
         $exercises = '';
         foreach ($exercise_list as $exercise)
         {

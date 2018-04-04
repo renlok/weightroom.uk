@@ -51,7 +51,7 @@ class ExercisesController extends Controller
         }
         $goals = Exercise_goal::where('exercise_id', $exercise->exercise_id)->get();
         $groups = Exercise_group_relation::join('exercise_groups', 'exercise_groups.exgroup_id', 'exercise_group_relations.exgroup_id')->where('exercise_id', $exercise->exercise_id)->get();
-        $all_groups = Exercise_group::orderBy('exgroup_name', 'asc')->pluck('exgroup_name');
+        $all_groups = Exercise_group::where('user_id', Auth::user()->user_id)->orderBy('exgroup_name', 'asc')->pluck('exgroup_name');
         return view('exercise.edit', compact('exercise_name', 'exercise_name_clean', 'current_type', 'goals', 'groups', 'all_groups'));
     }
 
