@@ -10,6 +10,7 @@ use App\Comment;
 use App\Log;
 use App\Post;
 use App\Notification;
+use App\Extend\Format;
 use Carbon;
 
 class CommentController extends Controller
@@ -37,13 +38,14 @@ class CommentController extends Controller
                 Notification::create([
                     'user_id' => $parent_comment->user_id,
                     'notification_type' => 'reply',
-                    'notification_from' => ['log_date' => $log->log_date->toDateString(), 'user_name' => $log->user_name],
+                    'notification_from' => ['log_date' => $log->log_date->toDateString(), 'user_name' => $log->user->user_name],
                     'notification_value' => Auth::user()->user_name
                 ]);
             }
             Comment::create([
                 'parent_id' => $request->input('parent_id'),
                 'comment' => $request->input('comment'),
+                'comment_html' => Format::addUserLinks(htmlspecialchars($request->input('comment')), 'logcomments', ['url_params' => ['log_date' => $log->log_date->toDateString(), 'user_name' => $log->user->user_name]]),
                 'commentable_id' => $object_id,
                 'commentable_type' => 'App\Log',
                 'comment_date' => Carbon::now(),
@@ -78,6 +80,7 @@ class CommentController extends Controller
             Comment::create([
                 'parent_id' => $request->input('parent_id'),
                 'comment' => $request->input('comment'),
+                'comment_html' => Format::addUserLinks(htmlspecialchars($request->input('comment')), 'blogcomments', ['url_params' => ['url' => $post->url]]),
                 'commentable_id' => $object_id,
                 'commentable_type' => 'App\Post',
                 'comment_date' => Carbon::now(),

@@ -13,8 +13,9 @@ return [
 
 	'logComment' => ':username commented on your log',
 	'commentReply' => ':username replied to your comment',
-  'commentReplyBlog' => ':username replied to your comment',
+    'commentReplyBlog' => ':username replied to your comment',
 	'follower' => ':username started following you',
+    'mention' => ':username has montioned you',
 	'clearAll' => 'Clear All',
 
 ];

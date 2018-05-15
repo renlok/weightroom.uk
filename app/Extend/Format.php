@@ -3,6 +3,8 @@
 namespace App\Extend;
 
 use Auth;
+use App\User;
+use App\Notification;
 
 class Format
 {
@@ -179,6 +181,44 @@ class Format
         );
         //$width = '640';
         //$height = '385';
+    }
+
+    public static function addUserLinks($comment, $location, $from = ['url_params' => []])
+    {
+        // find instances
+        if (preg_match_all(
+            "/@([^\\#?\s&\/]+):?([0-9]{4}-[0-9]{2}-[0-9]{2})?/im",
+            $comment,
+            $matches
+        ) > 0) {
+            // send notifications
+            foreach ($matches[1] as $i => $user) {
+                if ($user_id = User::where('user_name', preg_replace("/:([0-9]{4}-[0-9]{2}-[0-9]{2})?/im", '', $user))->value('user_id')) {
+
+                    // check if this has been sent before
+                    if (Notification::where('user_id', $user_id)
+                        ->where('notification_type', 'mention')
+                        ->where('notification_from', json_encode(['location' => $location, 'url_params' => $from['url_params']]))
+                                ->where('notification_value', Auth::user()->user_name)->first() == null){
+                        Notification::create([
+                            'user_id' => $user_id,
+                            'notification_type' => 'mention',
+                            'notification_from' => ['location' => $location, 'url_params' => $from['url_params']],
+                            'notification_value' => Auth::user()->user_name
+                        ]);
+                    }
+                }
+            }
+            $comment = preg_replace(
+                ["/@([^\\#?\s&\/]+):([0-9]{4}-[0-9]{2}-[0-9]{2})/im",
+                    "/@([^\\#?\s&\/]+)/im"],
+                ['<a href="' . url('/log/$2/view/$1') . '">#@#$1:$2</a>',
+                    '<a href="' . url('/log/$1') . '">#@#$1</a>'],
+                $comment
+            );
+            $comment = str_replace('">#@#', '">@', $comment);
+        }
+        return $comment;
     }
 
     public static function urlSafeString($string)

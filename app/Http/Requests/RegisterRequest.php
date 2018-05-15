@@ -13,7 +13,7 @@ class RegisterRequest extends Request
     public function rules()
     {
         return [
-            'user_name' => 'required|unique:users|max:255',
+            'user_name' => 'required|unique:users|max:255|isurlsafe',
             'user_email' => 'required|unique:users|max:255',
             'password' => 'required|confirmed|min:6',
             'invcode' => (Admin::InvitesEnabled()) ? 'required|isvalid:invite_codes,code,code_uses,code_expires' : '',
@@ -41,6 +41,7 @@ class RegisterRequest extends Request
     public function messages()
     {
         return [
+            'user_name.isurlsafe' => 'You cannot use /, #, \\, ? or & characters in your username',
             'invcode.exists' => 'The invite code is not valid',
         ];
     }

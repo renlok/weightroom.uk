@@ -79,6 +79,13 @@
           @if ($note->notification_type == 'follow')
             <li role="presentation"><a href="{{ route('followersList') }}">{{ trans('notifications.follower', ['username' => $note->notification_value]) }}</a><button type="button" class="close pull-right clear_note" aria-label="Close" note-id="{{ $note->notification_id }}"><span aria-hidden="true">×</span></button></li>
           @endif
+          @if ($note->notification_type == 'mention')
+              @if ($note->notification_from['location'] == 'log' || $note->notification_from['location'] == 'logcomments')
+            <li role="presentation"><a href="{{ route('viewLog', ['date' => $note->notification_from['url_params']['log_date'], 'user_name' => $note->notification_from['url_params']['user_name']]) . ($note->notification_from['location'] == 'logcomments' ? '#comments' : '') }}">{{ trans('notifications.mention', ['username' => $note->notification_value]) }}</a><button type="button" class="close pull-right clear_note" aria-label="Close" note-id="{{ $note->notification_id }}"><span aria-hidden="true">×</span></button></li>
+              @elseif ($note->notification_from['location'] == 'blog' || $note->notification_from['location'] == 'blogcomments')
+            <li role="presentation"><a href="{{ route('viewBlogPost', ['url' => $note->notification_from['url_params']['url']]) . ($note->notification_from['location'] == 'blogcomments' ? '#comments' : '') }}">{{ trans('notifications.follower', ['username' => $note->notification_value]) }}</a><button type="button" class="close pull-right clear_note" aria-label="Close" note-id="{{ $note->notification_id }}"><span aria-hidden="true">×</span></button></li>
+              @endif
+          @endif
         @endforeach
           <li role="presentation"><a href="#" id="clear_notes">{{ trans('notifications.clearAll') }}</a></li>
         </ul>

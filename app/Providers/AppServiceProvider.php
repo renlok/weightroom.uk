@@ -37,6 +37,14 @@ class AppServiceProvider extends ServiceProvider
 
             return DB::table($table)->where($column, $value)->where($where, $where_equals)->count() > 0;
         });
+        Validator::extend('isurlsafe', function($attribute, $value, $parameters, $validator) {
+            if (str_replace(['/', '#', '\\', '?', '&'], '-', $value) == $value)
+            {
+                return true;
+            }
+
+            return false;
+        });
     }
 
     /**

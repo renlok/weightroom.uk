@@ -8,7 +8,7 @@
 			<small>{{ $comment->comment_date->diffForHumans() }}</small>
 		</h6>
 		@if (!$comment->trashed())
-			<span id="c{{ $comment->comment_id }}">{{ $comment->comment }}</span>
+			<span id="c{{ $comment->comment_id }}">{!! $comment->comment_html !!}</span>
 			<p class="small"><a href="#" class="reply">reply</a> <a href="#" class="delete" c-id="{{ $comment->comment_id }}">delete</a></p>
 			<div class="comment-reply-box" style="display:none;">
 				@include('comments.commentForm', ['parent_id' => $comment->comment_id])
