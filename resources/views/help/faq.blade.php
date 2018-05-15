@@ -58,6 +58,11 @@
 <h3>My sinclair/wilks graphs aren't showing anything?</h3>
   <p>First make sure you have set which exercises to use in your <a href="{{ route('userSettings') }}">settings</a> page.</p>
   <p>Secondly make sure you have actually entered some logs using those exercises. We can't know how strong you are if you don't tell us.</p>
+<h3>Tagging users or logs</h3>
+  <p>You can tag other users in logs or comments like this.</p>
+  <pre><span class="cm-C">@username</span></pre>
+  <p>You can create a link to a log by adding a usertag and adding the date of the log to it.</p>
+  <pre><span class="cm-C">@renlok:2018-02-23</span></pre>
 <h3>Is there a list of upcoming features?</h3>
   <p>Sure checkout our <a href="{{ route('plans') }}">todo page</a></p>
 </div>
