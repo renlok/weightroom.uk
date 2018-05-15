@@ -129,7 +129,7 @@
 <footer class="footer">
   <div class="container text-muted">
     <ul class="list-inline pull-left footer-links">
-      <li>2016 - 2017 &#169; weightroom.uk</li>
+      <li>2016 - 2018 &#169; weightroom.uk</li>
       <li><a href="{{ route('privacyPolicy') }}">Privacy</a></li>
       <li><a href="{{ route('termsOfService') }}">Terms</a></li>
       <li><a href="{{ route('contactUs') }}">Contact</a></li>

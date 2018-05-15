@@ -421,7 +421,7 @@ class Parser
         // set log values
         $this->log->log_update_text = $this->log_update_text;
         $this->log->log_text = trim($this->log_text);
-        $this->log->log_comment = trim($this->log_data['comment']);
+        $this->log->log_comment = Format::replace_video_urls(Format::addUserLinks(nl2br(e(trim($this->log_data['comment']))), 'log', ['url_params' => ['log_date' => $this->log_date, 'user_name' => $this->user->user_name]]));
         $this->log->log_weight = $this->user_weight;
 
         // add all of the exercise details
@@ -480,7 +480,7 @@ class Parser
             $this->log_exercises[$i]->log_date = $this->log_date;
             $this->log_exercises[$i]->user_id = $this->user->user_id;
             $this->log_exercises[$i]->exercise_id = $this->exercises[$i]['id'];
-            $this->log_exercises[$i]->logex_comment = trim($item['comment']);
+            $this->log_exercises[$i]->logex_comment = Format::replace_video_urls(Format::addUserLinks(nl2br(e(trim($item['comment']))), 'log', ['url_params' => ['log_date' => $this->log_date, 'user_name' => $this->user->user_name]]));
             $this->log_exercises[$i]->logex_order = $i;
 
             $prs = Exercise_record::exercisePrs($this->user->user_id, $this->log_date, $exercise_name);

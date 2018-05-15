@@ -30,7 +30,7 @@
 </p>
 @if ($log_exercise->logex_comment != '')
 <blockquote class="small">
-    {!! Format::replace_video_urls(nl2br(e($log_exercise->logex_comment))) !!}
+    {!! $log_exercise->logex_comment !!}
 </blockquote>
 @endif
 <table class="table">

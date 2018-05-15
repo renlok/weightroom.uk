@@ -45,7 +45,7 @@ class CommentController extends Controller
             Comment::create([
                 'parent_id' => $request->input('parent_id'),
                 'comment' => $request->input('comment'),
-                'comment_html' => Format::addUserLinks(htmlspecialchars($request->input('comment')), 'logcomments', ['url_params' => ['log_date' => $log->log_date->toDateString(), 'user_name' => $log->user->user_name]]),
+                'comment_html' => Format::replace_video_urls(Format::addUserLinks(e($request->input('comment')), 'logcomments', ['url_params' => ['log_date' => $log->log_date->toDateString(), 'user_name' => $log->user->user_name]])),
                 'commentable_id' => $object_id,
                 'commentable_type' => 'App\Log',
                 'comment_date' => Carbon::now(),
@@ -80,7 +80,7 @@ class CommentController extends Controller
             Comment::create([
                 'parent_id' => $request->input('parent_id'),
                 'comment' => $request->input('comment'),
-                'comment_html' => Format::addUserLinks(htmlspecialchars($request->input('comment')), 'blogcomments', ['url_params' => ['url' => $post->url]]),
+                'comment_html' => Format::replace_video_urls(Format::addUserLinks(e($request->input('comment')), 'blogcomments', ['url_params' => ['url' => $post->url]])),
                 'commentable_id' => $object_id,
                 'commentable_type' => 'App\Post',
                 'comment_date' => Carbon::now(),

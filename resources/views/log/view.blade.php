@@ -201,7 +201,7 @@ blockquote.small {
   @endif
   @if ($log->log_comment != '')
     <blockquote>
-      {!! Format::replace_video_urls(nl2br(e($log->log_comment))) !!}
+      {!! $log->log_comment !!}
     </blockquote>
   @endif
   @foreach ($log->log_exercises as $log_exercise)
