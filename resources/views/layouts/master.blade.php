@@ -11,11 +11,22 @@
     <meta name="description" content="@yield('description', 'The ultimate weightlifting and powerlifting workout tracker. Track each of your workouts with beautiful logging and analysis tools')">
     <meta name="keywords" content="@yield('keywords', 'workout tracker, workout journal, training journal, weight training, strength training, powerlifting, weightlifting, strongman')">
 
+    <!-- PWS Data -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="apple-mobile-web-app-title" content="WeightRoom">
+    <meta name="application-name" content="WeightRoom">
+    <meta name="msapplication-TileColor" content="#00aba9">
+    <meta name="theme-color" content="#ffffff">
+
     <!-- Bootstrap -->
     <link href='//fonts.googleapis.com/css?family=Open+Sans&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ asset('css/tracker.css') }}">
-    <script src="//code.jquery.com/jquery-3.1.1.min.js" charset="utf-8"></script>
+    <script src="//code.jquery.com/jquery-3.3.1.slim.min.js" charset="utf-8"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" charset="utf-8"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
