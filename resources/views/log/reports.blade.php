@@ -84,8 +84,7 @@ svg {
 
 @section('endjs')
 <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.19.3/moment.min.js" charset="utf-8"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js" charset="utf-8"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/nvd3/1.8.3/nv.d3.min.js"></script>
+<script src="{{ mix('js/graphing.js') }}" charset="utf-8"></script>
 
 <script>
     var chart = null;

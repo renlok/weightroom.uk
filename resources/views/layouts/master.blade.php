@@ -25,7 +25,7 @@
     <!-- Bootstrap -->
     <link href='//fonts.googleapis.com/css?family=Open+Sans&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ asset('css/tracker.css') }}">
+    <link rel="stylesheet" href="{{ mix('css/global.css') }}">
     <script src="//code.jquery.com/jquery-3.3.1.slim.min.js" charset="utf-8"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" charset="utf-8"></script>
 
