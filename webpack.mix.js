@@ -20,8 +20,8 @@ mix.js(['resources/assets/js/packages/d3.js',
 mix.js(['resources/assets/js/packages/codemirror/codemirror.js',
     'resources/assets/js/packages/codemirror/overlay.js',
     'resources/assets/js/packages/codemirror/show-hint.js',
-    'resources/assets/js/packages/codemirror/runmode.js',
-    'resources/assets/js/log.edit.js'], 'public/js/log.edit.js');
+    'resources/assets/js/packages/codemirror/runmode.js'], 'public/js/codemirror.js');
+mix.js('resources/assets/js/log.edit.js', 'public/js/log.edit.js');
 // combine comments
 mix.js(['resources/assets/js/packages/jCollapsible.js',
     'resources/assets/js/comments.js'], 'public/js/comments.js');
