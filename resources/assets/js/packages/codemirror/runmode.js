@@ -2,7 +2,9 @@
 // Distributed under an MIT license: http://codemirror.net/LICENSE
 // Version 5.20
 
-(function(CodeMirror) {
+(function(mod) {
+    mod(CodeMirror);
+})(function(CodeMirror) {
 "use strict";
 
 CodeMirror.runMode = function(string, modespec, callback, options) {

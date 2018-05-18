@@ -112,7 +112,6 @@ you can also have the same exercise multiple times
 <script src="//cdnjs.cloudflare.com/ajax/libs/intro.js/2.7.0/intro.min.js"></script>
 <script src="{{ asset('js/intro/tracker.js') }}"></script>
 @endif
-<script src="{{ mix('js/codemirror.js') }}"></script>
 <script>
 let arDates = {!! $calender['dates'] !!};
 let calMonths = {!! $calender['cals'] !!};

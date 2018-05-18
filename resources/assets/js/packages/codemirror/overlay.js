@@ -11,7 +11,9 @@
 // or state.overlay.combineTokens was true, in which case the styles are
 // combined.
 
-(function(CodeMirror) {
+(function(mod) {
+    mod(CodeMirror);
+})(function(CodeMirror) {
 "use strict";
 
 CodeMirror.overlayMode = function(base, overlay, combine) {
