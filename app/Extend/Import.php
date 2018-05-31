@@ -112,7 +112,7 @@ class Import extends Parser
         // if the users import is complete send them an email
         if (DB::table('import_data')->where('user_id', $user_id)->first() == null)
         {
-            Mail::to(Auth::user())->send(new ImportComplete());
+            Mail::to($this->user)->send(new ImportComplete());
         }
     }
 }

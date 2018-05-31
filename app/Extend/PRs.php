@@ -222,8 +222,16 @@ class PRs
         }
     }
 
+    // $weight = weight lifted
+    // $reps = reps lifted
+    // $rm = estimated rep max to calculate
     public static function generateRM ($weight, $reps, $rm = 1)
     {
+        // error check
+        if ($reps == 0 || $rm == 0)
+        {
+            return 0;
+        }
         if ($reps == $rm)
         {
             return $weight;

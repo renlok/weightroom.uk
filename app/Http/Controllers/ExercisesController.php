@@ -190,9 +190,9 @@ class ExercisesController extends Controller
             $max_rm = Exercise_record::exercisemaxpr($user->user_id, $exercise->exercise_id, false, false, false);
             $scales = [
                 'logex_volume' => 1,
-                'logex_reps' => floor($max_volume / $max_reps),
-                'logex_sets' => floor($max_volume / $max_sets),
-                'logex_1rm' => floor($max_volume / $max_rm),
+                'logex_reps' => floor($max_volume / (($max_reps != 0) ? $max_reps : 1)),
+                'logex_sets' => floor($max_volume / (($max_sets != 0) ? $max_sets : 1)),
+                'logex_1rm' => floor($max_volume / (($max_rm != 0) ? $max_rm : 1)),
             ];
             $graph_names = [
                 'logex_volume' => 'Volume',

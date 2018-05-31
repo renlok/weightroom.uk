@@ -8,6 +8,7 @@ use App\Http\Requests;
 use Auth;
 use App\Post;
 use App\Comment;
+use App\User;
 use Carbon\Carbon;
 use Markdown;
 
