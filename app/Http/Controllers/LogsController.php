@@ -14,7 +14,7 @@ use App\Log;
 use App\Log_exercise;
 use App\User;
 use App\Extend\PRs;
-use App\Extend\Parser;
+use App\Extend\ParserPostProcessor;
 use App\Extend\Log_control;
 use App\Extend\Format;
 use App\Http\Requests;
@@ -193,7 +193,7 @@ class LogsController extends Controller
 
     public function postEdit($date, LogRequest $request)
     {
-        $parser = new Parser($request->input('log'), $date, $request->input('weight'));
+        $parser = new ParserPostProcessor($request->input('log'), $date, $request->input('weight'));
         $parser->parseText ();
         $parser->formatLogData (false);
         $parser->saveLogData ();
@@ -224,7 +224,7 @@ class LogsController extends Controller
 
     public function postNew($date, LogRequest $request)
     {
-        $parser = new Parser($request->input('log'), $date, $request->input('weight'));
+        $parser = new ParserPostProcessor($request->input('log'), $date, $request->input('weight'));
         $parser->parseText ();
         $parser->formatLogData (true);
         $parser->saveLogData ();

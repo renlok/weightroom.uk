@@ -6,11 +6,10 @@ use DB;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 
-use App\Extend\Parser;
 use App\Mail\ImportComplete;
 use App\User;
 
-class Import extends Parser
+class Import extends ParserPostProcessor
 {
     public function __construct()
     {

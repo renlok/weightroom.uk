@@ -42,7 +42,7 @@ class PRs
                     $pr_id_array[] = $item->logitem_id;
                     if (!$item->is_time)
                     {
-                        $new1rm = Parser::generate_rm($item->logitem_abs_weight, $item->logitem_reps);
+                        $new1rm = PRs::generateRM ($item->logitem_abs_weight, $item->logitem_reps);
                     }
                     else
                     {
@@ -150,75 +150,6 @@ class PRs
                     'is_distance' => $log_item->is_distance
                 ]);
             }
-        }
-    }
-
-    public static function get_prs ($user_id, $log_date, $exercise_name, $return_date = false)
-    {
-        // load all preceeding prs
-        $records = DB::table('exercise_records')
-                    ->join('exercises', 'exercise_records.exercise_id', '=', 'exercises.exercise_id')
-                    ->select('pr_reps', 'exercises.is_time', DB::raw('MAX(pr_value) as pr_value'))
-                    ->where('exercise_records.user_id', $user_id)
-                    ->where('exercises.exercise_name', $exercise_name)
-                    ->where('log_date', '<=', $log_date)
-                    ->groupBy(function ($item, $key) {
-                        if ($item['is_time'])
-                        {
-                            return 'T';
-                        }
-                        elseif ($item['is_endurance'])
-                        {
-                            return 'E';
-                        }
-                        elseif ($item['is_distance'])
-                        {
-                            return 'D';
-                        }
-                        else
-                        {
-                            return 'W';
-                        }
-                    })
-                    ->groupBy('pr_reps');
-        if ($return_date)
-        {
-            $records = $records->addSelect(DB::raw('MAX(log_date) as log_date'));
-        }
-        $records = $records->get();
-        $prs = ['W' => [], 'T' => [], 'D' => [], 'E' => []];
-        $date = ['W' => [], 'T' => [], 'D' => [], 'E' => []];
-        while ($row = $db->fetch())
-        {
-            if ($item['is_time'])
-            {
-                $type = 'T';
-            }
-            elseif ($item['is_endurance'])
-            {
-                $type = 'E';
-            }
-            elseif ($item['is_distance'])
-            {
-                $type = 'D';
-            }
-            else
-            {
-                $type = 'W';
-            }
-            if ($return_date)
-            {
-                $date[$type][$row['pr_reps']] = $row['log_date'];
-            }
-            $prs[$type][$row['pr_reps']] = $row['pr_value'];
-        }
-        if ($return_date)
-        {
-            return array($prs, $date);
-        }
-        else
-        {
-            return $prs;
         }
     }
 
