@@ -96,11 +96,11 @@ class ParserCore
     private function parseLine ($line, $position)
     {
         // build the initial startup data
+        $this->format_dump = '';
+        $this->chunk_dump = '';
         $this->current_blocks = array('U', 'W', 'D', 'T', 'C');
         $this->loadPossibleFormatsList ();
         $this->buildAcceptedCharacters ();
-        $this->format_dump = '';
-        $this->chunk_dump = '';
         // for when a line contains commas we can add them as multiple sets
         $multiline = 0;
         $multiline_max = 0;
