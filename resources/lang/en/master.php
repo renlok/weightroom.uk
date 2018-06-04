@@ -23,6 +23,7 @@ return [
     'viewLog' => 'View Log',
     'exerciseList' => 'Exercise List',
     'tools' => 'Tools',
+    'templates' => 'Templates',
     'inviteCodes' => 'Invite codes',
     'premium' => 'Support Us',
     'blog' => 'Blog',
