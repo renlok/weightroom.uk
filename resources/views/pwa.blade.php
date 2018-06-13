@@ -29,7 +29,7 @@
 <div class="navbar-fixed" role="navigation">
     <nav>
         <div class="nav-wrapper">
-            <a href="#!" class="brand-logo">WeightRoom</a>
+            <a href="/m/#" class="brand-logo hide-on-small-only">WeightRoom</a>
             <ul class="right">
                 <li><a id="add-log-button"><i class="material-icons">add</i></a></li>
                 <li><a id="datepicker"><i class="material-icons">event</i></a></li>
