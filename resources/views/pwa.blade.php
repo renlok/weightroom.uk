@@ -29,8 +29,8 @@
 <div class="navbar-fixed" role="navigation">
     <nav>
         <div class="nav-wrapper">
-            <a href="#!" class="brand-logo">WeightRoom PWA</a>
-            <ul class="right hide-on-med-and-down">
+            <a href="#!" class="brand-logo">WeightRoom</a>
+            <ul class="right">
                 <li><a id="add-log-button"><i class="material-icons">add</i></a></li>
                 <li><a id="datepicker"><i class="material-icons">event</i></a></li>
                 <li><a><i class="material-icons">menu</i></a></li>
@@ -40,10 +40,10 @@
 </div>
 
 <main class="main" hidden>
-    <h1 id="date"></h1>
+    <h2 id="date"></h2>
     <div id="add-log-wrapper" hidden>
         <div class="card-panel cardTemplate" id="add-log">
-            <h2>Add Workout Log</h2>
+            <h2>Add Workout</h2>
             <form action="" method="post" id="log-form">
             <div id="log-box">
                 <textarea rows="30" cols="50" name="log" id="log" class="form-control" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
@@ -59,7 +59,7 @@
     </div>
     <div id="view-log-wrapper">
         <div class="card-panel cardTemplate" id="log-view">
-            <h2>Workout summary</h2>
+            <h2>View Workout</h2>
             <div v-if="is_empty">
                 There's no workout here yet
             </div>

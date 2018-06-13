@@ -235,6 +235,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('dash/all', 'MiscController@dashAll');
     Route::get('help/contact', 'MiscController@getContactUs')->name('contactUs');
     Route::post('help/contact', 'MiscController@postContactUs');
+    Route::get('m', 'MiscController@mobile')->name('mobile');
 });
 
 Route::get('demo', 'MiscController@demo')->name('demo');
@@ -260,5 +261,3 @@ Route::group(['prefix' => 'blog'], function () {
 Route::get('test', function () {
     return view('landing_new');
 })->name('test');
-
- Route::get('m', 'MiscController@mobile')->name('mobile');
