@@ -46,7 +46,7 @@ app.addLogForm.addEventListener('submit', function(event) {
     request.onreadystatechange = function() {
         if (request.readyState === XMLHttpRequest.DONE) {
             if (request.status === 200) {
-                app.getAPIrequest(url, app.updateLog);
+                app.getAPIrequest(url, app.updateLog, true);
                 app.toggleLog('view');
             }
         } else {
@@ -94,8 +94,8 @@ app.toggleLoading = function() {
     }
 };
 
-app.getAPIrequest = function(url, func) {
-  if ('caches' in window) {
+app.getAPIrequest = function(url, func, force) {
+  if (!force && 'caches' in window) {
     /*
      * Check if the service worker has already cached this city's weather
      * data. If the service worker has the data, then display the cached

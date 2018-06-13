@@ -11,7 +11,6 @@
     <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection"/>
     <link rel="stylesheet" type="text/css" href="css/pwa.css">
 
-    <link rel="manifest" href="/manifest.json">
     <!-- Add to home screen for Safari on iOS -->
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -40,7 +39,7 @@
 </div>
 
 <main class="main" hidden>
-    <h2 id="date"></h2>
+    <h5 id="date"></h5>
     <div id="add-log-wrapper" hidden>
         <div class="card-panel cardTemplate" id="add-log">
             <h2>Add Workout</h2>
