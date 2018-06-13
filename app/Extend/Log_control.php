@@ -14,11 +14,14 @@ class Log_control
 {
     public static function correct_totals($user_id, $exercise_id, $logex_id, $current_1rm)
     {
+        // are we logged in or do we use default settings
+        $use_defaults = (!Auth::check());
         $log_exercise = DB::table('log_exercises')
                             ->select('logex_volume', 'logex_reps', 'logex_sets', 'logex_failed_volume', 'logex_failed_sets', 'logex_warmup_volume', 'logex_warmup_reps', 'logex_warmup_sets')
                             ->where('logex_id', $logex_id)
                             ->first();
-        if (Auth::user()->user_limitintensity > 0)
+
+        if (!$use_defaults && Auth::user()->user_limitintensity > 0)
         {
             $items = DB::table('log_items')
                         ->select(DB::raw('SUM(logitem_abs_weight*logitem_reps*logitem_sets) as logitem_weight, SUM(logitem_reps*logitem_sets) as logitem_reps, SUM(logitem_sets) as logitem_sets'))
@@ -30,14 +33,14 @@ class Log_control
             $log_exercise->logex_sets -= $items->logitem_sets;
         }
 
-        if (Auth::user()->user_volumeincfails)
+        if (!$use_defaults && Auth::user()->user_volumeincfails)
         {
             $log_exercise->logex_volume += $log_exercise->logex_failed_volume;
             $log_exercise->logex_reps += $log_exercise->logex_failed_sets;
             $log_exercise->logex_sets += $log_exercise->logex_failed_sets;
         }
 
-        if (Auth::user()->user_limitintensitywarmup)
+        if (!$use_defaults && Auth::user()->user_limitintensitywarmup)
         {
             $log_exercise->logex_volume -= $log_exercise->logex_warmup_volume;
             $log_exercise->logex_reps -= $log_exercise->logex_warmup_reps;
@@ -49,11 +52,13 @@ class Log_control
 
     public static function average_intensity($user_id, $exercise_id, $logex_id, $raw = false)
     {
+        // are we logged in or do we use default settings
+        $use_defaults = (!Auth::check());
         $exercise = Exercise::select('is_time', 'is_endurance', 'is_distance')->find($exercise_id);
         $current_1rm = Exercise_record::exercisemaxpr($user_id, $exercise_id, $exercise->is_time, $exercise->is_endurance, $exercise->is_distance);
         $log_exercise = Log_control::correct_totals($user_id, $exercise_id, $logex_id, $current_1rm);
 
-        if (Auth::user()->user_showintensity == 'p')
+        if ($use_defaults || Auth::user()->user_showintensity == 'p')
         {
             if ($current_1rm > 0 && $log_exercise->logex_reps > 0)
             {

@@ -49,6 +49,7 @@ class Kernel extends HttpKernel
         'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'log.exists' => \App\Http\Middleware\RedirectLogifExists::class,
         'log.notexists' => \App\Http\Middleware\RedirectLogifNotExists::class,
         'password-grant' => \App\Http\Middleware\InjectPasswordGrantCredentials::class,

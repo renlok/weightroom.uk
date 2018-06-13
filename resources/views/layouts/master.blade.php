@@ -185,27 +185,25 @@
         return false;
     });
 @endif
-  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-  ga('create', 'UA-1798088-8', 'auto');
-  ga('send', 'pageview');
+ga('create', 'UA-1798088-8', 'auto');
+ga('send', 'pageview');
 
-</script>
-<script>
-    Userback = window.Userback || {};
-    Userback.access_token = '879|996|JgEnNTf3tRs7hFTXUVBF7eMsd4vTMOmw41USU9Vo1nvi3ogXkR';
+Userback = window.Userback || {};
+Userback.access_token = '879|996|JgEnNTf3tRs7hFTXUVBF7eMsd4vTMOmw41USU9Vo1nvi3ogXkR';
 
-    (function(id) {
-        if (document.getElementById(id)) {return;}
-        var s = document.createElement('script');
-        s.id = id;
-        s.src = 'https://static.userback.io/widget/v1.js';
-        var parent_node = document.head || document.body;
-        parent_node.appendChild(s);
-    })('userback-sdk');
+(function(id) {
+    if (document.getElementById(id)) {return;}
+    var s = document.createElement('script');
+    s.id = id;
+    s.src = 'https://static.userback.io/widget/v1.js';
+    var parent_node = document.head || document.body;
+    parent_node.appendChild(s);
+})('userback-sdk');
 </script>
 </body>
 </html>

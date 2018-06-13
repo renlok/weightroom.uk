@@ -13,7 +13,7 @@
 <h2>Weightlifting Ratios Calculator</h2>
 <p>This tool calculates the ideal maxes for the different weightlifting exercises.</p>
 <p>As these are ideal values they should be taken with a pinch of salt, but they can give you an idea of your weaknesses.</p>
-<form>
+<form class="form-inline">
   <div class="form-group">
     <label for="benchmarklift">Benchmark Lift:</label>
 	<select class="form-control" id="benchmarklift">
@@ -22,7 +22,7 @@
 	  <option value="wlcnj">Clean and Jerk</option>
 	  <option value="wlpj">Power Jerk</option>
 	  <option value="wlfs">Front Squat</option>
-	  <option value="wlbs">Back Squat</option>
+	  <option value="wlbs" selected="selected">Back Squat</option>
 	  <option value="wlp">Pull</option>
 	  <option value="wlps">Power Snatch</option>
 	  <option value="wlpc">Power Clean</option>
@@ -30,11 +30,11 @@
   </div>
   <div class="form-group">
     <label for="liftrm">Lift 1RM:</label>
-    <input type="text" class="form-control" id="liftrm" placeholder="Weight">
+    <input type="text" class="form-control" id="liftrm" placeholder="Weight" value="100">
   </div>
   <button type="button" class="btn btn-default" id="calculate">Calculate</button>
 </form>
-<div id="wlratios" style="display:none;">
+<div id="wlratios">
     <h2>Estimated Max Lifts:</h2>
 	<p>Total: <span id="wlt"></span></p>
 	<p>Snatch: <span id="wls"></span></p>
@@ -56,11 +56,11 @@
 
 @section('endjs')
 <script>
-$('#calculate').click(function(){
-	if ($('#wlratios').is(":hidden") == true)
-	{
-		$('#wlratios').show();
-	}
+calculateValues();
+$('#calculate').click(function() {
+    calculateValues();
+});
+function calculateValues() {
 	var bmlift = $('#benchmarklift option:selected').attr('value');
 	var liftrm = $('#liftrm').val();
 	var ratio = {};
@@ -93,6 +93,6 @@ $('#calculate').click(function(){
 	$('#wlhs').text(Math.round(squat*ratio.wlhs));
 	$('#wlms').text(Math.round(squat*ratio.wlms));
 	$('#wlsp').text(Math.round(squat*ratio.wlsp));
-});
+};
 </script>
 @endsection

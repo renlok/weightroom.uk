@@ -9,6 +9,7 @@ use Validator;
 use App\Log;
 use App\User;
 use App\User_follow;
+use App\Http\Controllers\LogsController;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 use Carbon\Carbon;
@@ -106,5 +107,13 @@ class MiscController extends Controller
         $random = false;
         $follow_count = 0;
         return view('dash', compact('logs', 'random', 'follow_count'));
+    }
+
+    public function mobile()
+    {
+        $exercises = LogsController::loadExerciseHints();
+        $exercise_groups = LogsController::loadExerciseGroupHints();
+        //$calender = Log_control::preload_calender_data($date, $user->user_id);
+        return view('pwa', compact('exercises', 'exercise_groups'));
     }
 }

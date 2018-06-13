@@ -3,7 +3,8 @@
 @section('title', 'List Exercises')
 
 @section('content')
-<p>This is a list of every exercise you have logged on WeightRoom so far.</p>
+	<h2>Exercise List</h2>
+<p>This is a list of every exercise you have logged so far.</p>
 <ul class="list-group">
 @forelse ($exercises as $exercise)
 	<li class="list-group-item">

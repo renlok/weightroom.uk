@@ -8,6 +8,7 @@ use App\Http\Requests;
 
 use App\User;
 use App\Admin;
+use App\Log;
 
 use Validator;
 
@@ -45,16 +46,23 @@ class ApiV1Controller extends Controller
     }
 
     public function getLogData($user_name, $log_date) {
-        $user = User::with('logs.log_exercises.log_items', 'logs.log_exercises.exercise')
-            ->where('user_name', $user_name)->first();
-        if ($user == null) {
+        $user_id = User::where('user_name', $user_name)->value('user_id');
+        if ($user_id == null) {
             return response()->json(['error' => 1, 'errors'=>'Cannot find user'], 401);
         }
-        $log = $user->logs()->where('log_date', $log_date)->first();
+        $log = Log::with('log_exercises.log_items', 'log_exercises.exercise')->where('log_date', $log_date)->where('user_id', $user_id)->get();
         if ($log == null) {
             return response()->json(['log_data' => null], 401);
         } else {
-            return response()->json(['log_data' => $log->toJson()]);
+            return response()->json(['log_data' => $log]);
         }
+    }
+
+    public function getCalenderData($user_name) {
+        $user_id = User::where('user_name', $user_name)->value('user_id');
+        $log_dates = Log::where('user_id', $user_id)->pluck('log_date')->map(function($item){
+            return $item->format('D M d Y');
+        });
+        return json_encode($log_dates);
     }
 }

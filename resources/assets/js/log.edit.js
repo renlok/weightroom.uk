@@ -1,22 +1,24 @@
-$('#openhelp').click(function() {
-    if ($("#formattinghelp").val() == '')
-    {
-        // load text
-        CodeMirror.runMode(
-            $('#formattinghelptext').val(),
-            "logger",
-            $("#formattinghelp").get(0)
-        );
-    }
-    $('#formattinghelp').slideToggle('fast');
-    return false;
-});
+if (document.getElementById('openhelp')) {
+    $('#openhelp').click(function() {
+        if ($("#formattinghelp").val() == '')
+        {
+            // load text
+            CodeMirror.runMode(
+                $('#formattinghelptext').val(),
+                "logger",
+                $("#formattinghelp").get(0)
+            );
+        }
+        $('#formattinghelp').slideToggle('fast');
+        return false;
+    });
+}
 
 function getHints(cm) {
     var cur = cm.getCursor(),
         token = cm.getTokenAt(cur),
         str = token.string,
-        ustr = $.trim(token.string.substr(1)),
+        ustr = token.string.substr(1).trim(),
         arr = [],
         list = [],
         searchList = $ELIST;
@@ -78,7 +80,7 @@ CodeMirror.defineMode("logger", function(config, parserConfig) {
             }
             if (ch == "#" && (stream.pos == 0 || /\s/.test(stream.string.charAt(stream.pos - 1)))) {
                 stream.skipToEnd();
-                $FORMAT.entry()
+                $FORMAT.entry();
                 o.erow = true;
                 o.hayErow = false;
                 return "ENAME";
@@ -195,7 +197,7 @@ CodeMirror.commands.autocomplete = function(cm) {
     cm.showHint({hint: CodeMirror.hint.logger});
 }
 var editor = CodeMirror.fromTextArea(
-    $("#log").get(0),
+    document.getElementById('log'),
     {
         mode: "logger",
         lineWrapping: true,

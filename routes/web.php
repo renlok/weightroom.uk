@@ -260,3 +260,5 @@ Route::group(['prefix' => 'blog'], function () {
 Route::get('test', function () {
     return view('landing_new');
 })->name('test');
+
+ Route::get('m', 'MiscController@mobile')->name('mobile');
