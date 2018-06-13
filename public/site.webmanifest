@@ -10,6 +10,6 @@
     ],
     "theme_color": "#ffffff",
     "background_color": "#ffffff",
-    "start_url": "https://weightroom.uk/dashboard",
+    "start_url": "https://weightroom.uk/m",
     "display": "standalone"
 }
