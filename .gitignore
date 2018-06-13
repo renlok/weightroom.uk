@@ -4,3 +4,7 @@
 Homestead.yaml
 Homestead.json
 .env
+/public/js/comments.js
+/public/js/graphing.js
+/public/js/log.edit.js
+/public/css/global.css
