@@ -69,3 +69,7 @@
 .datepicker-table td.is-today {
   color: #26a69a !important;
 }
+
+h2 {
+  margin-top: 0 !important;
+}

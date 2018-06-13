@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <base href="https://weightroom.uk/">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WeightRoom PWA</title>
+    <title>WeightRoom</title>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.20.0/codemirror.min.css">
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/5.20.0/addon/hint/show-hint.min.css">
     <link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection"/>
@@ -39,13 +39,13 @@
 </div>
 
 <main class="main" hidden>
-    <h5 id="date"></h5>
+    <h5 id="date" class="center-align"></h5>
     <div id="add-log-wrapper" hidden>
         <div class="card-panel cardTemplate" id="add-log">
             <h2>Add Workout</h2>
             <form action="" method="post" id="log-form">
             <div id="log-box">
-                <textarea rows="30" cols="50" name="log" id="log" class="form-control" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
+                <textarea rows="20" cols="50" name="log" id="log" class="form-control" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"></textarea>
             </div>
             <label for="log-weight">Bodyweight</label>
             <input placeholder="Bodyweight" aria-describedby="bodyweight-addon" name="weight" id="log-weight" type="text" class="validate">
@@ -138,6 +138,7 @@
 <script>
     var $ELIST = [{!! $exercises !!}];
     var $GLIST = [{!! $exercise_groups !!}];
+    var userName = '{{ Auth::user()->user_name }}';
     const $ = (cssQuery) => document.querySelector(cssQuery);
 </script>
 <script src="{{ mix('js/log.edit.js') }}"></script>

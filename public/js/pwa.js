@@ -13,7 +13,7 @@ Date.prototype.dateString = function() {
 var app = {
   isLoading: true,
   logDates: [],
-  user: 'renlok',
+  user: userName,
   currentDate: (new Date).dateString(),
   spinner: document.querySelector('.loader'),
   container: document.querySelector('.main'),
@@ -46,8 +46,9 @@ app.addLogForm.addEventListener('submit', function(event) {
     request.onreadystatechange = function() {
         if (request.readyState === XMLHttpRequest.DONE) {
             if (request.status === 200) {
+                app.isLoading = true;
+                app.toggleLoading();
                 app.getAPIrequest(url, app.updateLog, true);
-                app.toggleLog('view');
             }
         } else {
             // Return the initial weather forecast since no data is available.
@@ -149,6 +150,7 @@ app.updateLog = function(logData) {
   editor.setValue(logData ? logData.log_text : '');
   editor.refresh();
   app.addLogWeight.value = logData ? logData.log_weight : '';
+  app.toggleLog('view');
   app.isLoading = false;
   app.toggleLoading();
 };
