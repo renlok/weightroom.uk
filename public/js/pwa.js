@@ -48,7 +48,9 @@ app.addLogForm.addEventListener('submit', function(event) {
             if (request.status === 200) {
                 app.isLoading = true;
                 app.toggleLoading();
-                app.getAPIrequest(url, app.updateLog, true);
+                app.getAPIrequest(url, null, true);
+                url = 'https://weightroom.uk/api/v1/log/'+ app.user +'/'+ app.currentDate;
+                app.getAPIrequest(url, app.updateLog);
             }
         } else {
             // Return the initial weather forecast since no data is available.
@@ -67,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 document.addEventListener('DOMContentLoaded', function() {
     var elems = document.querySelectorAll('.sidenav');
-    var instances = M.Sidenav.init(elems, options);
+    M.Sidenav.init(elems, {});
 });
 
 
@@ -126,11 +128,9 @@ app.requestURLData = function(url, func) {
   var request = new XMLHttpRequest();
   request.onreadystatechange = function() {
     if (request.readyState === XMLHttpRequest.DONE) {
-      if (request.status === 200) {
-          try {
-              var response = JSON.parse(request.response);
-              func(response);
-          } catch (e) {}
+      if (request.status === 200 && func != null) {
+          var response = JSON.parse(request.response);
+          func(response);
       }
     } else {
       // Return the initial weather forecast since no data is available.
