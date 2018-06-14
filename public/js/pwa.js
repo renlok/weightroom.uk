@@ -65,6 +65,11 @@ document.addEventListener('DOMContentLoaded', function() {
   app.getAPIrequest(url, app.updateCalDates);
 });
 
+document.addEventListener('DOMContentLoaded', function() {
+    var elems = document.querySelectorAll('.sidenav');
+    var instances = M.Sidenav.init(elems, options);
+});
+
 
 /*****************************************************************************
  *
@@ -122,8 +127,10 @@ app.requestURLData = function(url, func) {
   request.onreadystatechange = function() {
     if (request.readyState === XMLHttpRequest.DONE) {
       if (request.status === 200) {
-        var response = JSON.parse(request.response);
-        func(response);
+          try {
+              var response = JSON.parse(request.response);
+              func(response);
+          } catch (e) {}
       }
     } else {
       // Return the initial weather forecast since no data is available.

@@ -32,11 +32,17 @@
             <ul class="right">
                 <li><a id="add-log-button"><i class="material-icons">add</i></a></li>
                 <li><a id="datepicker"><i class="material-icons">event</i></a></li>
-                <li><a><i class="material-icons">menu</i></a></li>
+                <li><a data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a></li>
             </ul>
         </div>
     </nav>
 </div>
+
+<ul id="slide-out" class="sidenav">
+    <li><a href="#!">RM Calculator</a></li>
+    <li><a href="#!">PRE Calculator</a></li>
+    <li><a href="#!">WL Ratios</a></li>
+</ul>
 
 <main class="main" hidden>
     <h5 id="date" class="center-align"></h5>
