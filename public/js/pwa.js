@@ -119,6 +119,7 @@ app.toggleLog = function(force) {
         app.addLog.removeAttribute('hidden');
         app.viewLog.setAttribute('hidden', 'true');
         app.addLogButton.children[0].innerText = 'close';
+        editor.focus();
     } else {
         app.viewLog.removeAttribute('hidden');
         app.addLog.setAttribute('hidden', 'true');
