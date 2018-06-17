@@ -1,7 +1,7 @@
 var dataCacheName = 'weightRoom-v1';
 var cacheName = 'weightRoomPWA';
 var filesToCache = [
-    'https://weightroom.uk/m',
+    'https://weightroom.uk/m/',
     'https://weightroom.uk/js/pwa.js',
     'https://weightroom.uk/js/vue.min.js',
     'https://weightroom.uk/css/pwa.css',

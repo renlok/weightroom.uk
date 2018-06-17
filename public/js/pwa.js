@@ -90,17 +90,17 @@ window.addEventListener("touchstart",function(event){
 
 window.addEventListener("touchend",function(event){
     var offset = 100;//at least 100px are a swipe
-    if(start){
+    if(start) {
         //the only finger that hit the screen left it
         var end = event.changedTouches.item(0).clientX;
         var date = new Date(app.currentDate)
 
         if(end > start + offset) {
-            date.setDate(date.getDate() + 1);
+            date.setDate(date.getDate() - 1);
             app.loadLog(date);
         }
         else if(end < start - offset) {
-            date.setDate(date.getDate() - 1);
+            date.setDate(date.getDate() + 1);
             app.loadLog(date);
         }
     }
@@ -219,9 +219,9 @@ app.loadLog = function(date, force) {
 };
 
 app.round = function(number) {
-    number = number * 10;
+    number = number * 100;
     number = Math.round(number);
-    number = number / 10;
+    number = number / 100;
     return number;
 };
 
