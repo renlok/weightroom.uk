@@ -52,7 +52,12 @@ class ApiV1Controller extends Controller
         }
         $log = Log::with('log_exercises.log_items', 'log_exercises.exercise')->where('log_date', $log_date)->where('user_id', $user_id)->get();
         if ($log == null) {
-            return response()->json(['log_data' => null], 401);
+            //try and get bodyweight
+            if ($bodyweight = Log::getlastbodyweight(Auth::user()->user_id, $date)->value('log_weight')) {
+                return response()->json(['log_data' => ['log_weight' => $bodyweight]]);
+            } else {
+                return response()->json(['log_data' => null]);
+            }
         } else {
             return response()->json(['log_data' => $log]);
         }

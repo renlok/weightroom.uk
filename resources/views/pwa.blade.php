@@ -31,6 +31,7 @@
             <a href="/m/#" class="brand-logo hide-on-small-only">WeightRoom</a>
             <ul class="right">
                 <li><a id="add-log-button"><i class="material-icons">add</i></a></li>
+                <li><a id="refresh-log-button"><i class="material-icons">refresh</i></a></li>
                 <li><a id="datepicker"><i class="material-icons">event</i></a></li>
                 <li><a data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a></li>
             </ul>
@@ -71,7 +72,7 @@
             <div v-else>
             <p class="logrow">
               <span v-if="log_data.log_total_volume > 0">
-              Volume: <span class="heavy">@{{ log_data.log_total_volume }}</span>kg - Reps: <span class="heavy">@{{ log_data.log_total_reps }}</span> - Sets: <span class="heavy">@{{ log_data.log_total_sets }}</span>
+              Volume: <span class="heavy">@{{ app.round(log_data.log_total_volume) }}</span>kg - Reps: <span class="heavy">@{{ log_data.log_total_reps }}</span> - Sets: <span class="heavy">@{{ log_data.log_total_sets }}</span>
               - Avg. Intensity: <span class="heavy"></span>
               </span>
                 <p class="logrow" v-if="log_data.log_total_time > 0">
@@ -81,15 +82,15 @@
                     Distance: @{{ log_data.log_total_distance }}</span>
                 </p>
             </p>
-            <p class="logrow marginl"><small>Bodyweight: <span class="heavy">@{{ log_data.log_weight }}</span>kg</small></p>
+            <p class="logrow marginl"><small>Bodyweight: <span class="heavy">@{{ app.round(log_data.log_weight) }}</span>kg</small></p>
             <blockquote v-if="log_data.log_comment != ''">@{{ log_data.log_comment }}</blockquote>
             <div v-for="log_exercise in log_data.log_exercises">
                 <h3 class="exercise">@{{ log_exercise.exercise.exercise_name_clean }}</h3>
                 <p class="logrow">
                   <span v-if="log_exercise.logex_volume > 0">
-                  Volume: <span class="heavy">@{{ log_exercise.logex_volume }}</span>kg - Reps: <span class="heavy">@{{ log_exercise.logex_reps }}</span> - Sets: <span class="heavy">@{{ log_exercise.logex_sets }}</span>
+                  Volume: <span class="heavy">@{{ app.round(log_exercise.logex_volume) }}</span>kg - Reps: <span class="heavy">@{{ log_exercise.logex_reps }}</span> - Sets: <span class="heavy">@{{ log_exercise.logex_sets }}</span>
                    - Avg. Intensity: <span class="heavy">@{{ log_exercise.average_intensity }}</span>
-                   - INoL: <span class="heavy">@{{ log_exercise.logex_inol }}</span>
+                   - INoL: <span class="heavy">@{{ app.round(log_exercise.logex_inol) }}</span>
                   </span>
                 <p class="logrow" v-if="log_exercise.logex_time > 0">
                     Time: @{{ log_exercise.logex_time }}</span>
@@ -110,7 +111,7 @@
                                 <span class="heavy">@{{ log_item.display_value }}</span>@{{ log_item.show_unit ? 'kg' : '' }}
                                 x <span class="heavy">@{{ log_item.logitem_reps }}</span>
                                 <span v-if="log_item.logitem_sets > 0">x <span class="heavy">@{{ log_item.logitem_sets }}</span></span>
-                                <small class="leftspace" v-if="log_item.logitem_reps && !log_item.is_time && !log_item.is_distance"><i>&#8776; @{{ log_item.logitem_1rm }} kg</i></small>
+                                <small class="leftspace" v-if="log_item.logitem_reps && !log_item.is_time && !log_item.is_distance"><i>&#8776; @{{ app.round(log_item.logitem_1rm) }} kg</i></small>
                                 <span class="leftspace" v-if="typeof log_item.logitem_pre == 'number'">@ @{{ log_item.logitem_pre }}</span>
                                 <blockquote class="small" v-if="log_item.logitem_comment != ''">@{{ log_item.logitem_comment }}</blockquote>
                             </td>
