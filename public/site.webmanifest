@@ -12,5 +12,5 @@
     "background_color": "#ffffff",
     "start_url": "/m/",
     "display": "standalone",
-    ​​"orientation": "any"
+    "orientation": "any"
 }
