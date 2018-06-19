@@ -231,6 +231,8 @@ app.round = function(number) {
 app.setUsername = function(userData) {
     if (userData.user_name) {
         app.user = userData.user_name;
+        // load start up data
+        app.loadLog(new Date(app.currentDate));
     } else {
         window.location = 'https://weightroom.uk/login';
     }
@@ -238,9 +240,6 @@ app.setUsername = function(userData) {
 
 var url = 'https://weightroom.uk/api/v1/username/';
 app.getAPIrequest(url, app.setUsername, true);
-
-// load start up data
-app.loadLog(new Date(app.currentDate));
 
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker
