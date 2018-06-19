@@ -231,10 +231,8 @@ app.setUserdata = function(userData) {
         // load start up data
         app.loadLog(new Date(app.currentDate));
         // load calender
-        document.addEventListener('DOMContentLoaded', function() {
-            var url = 'https://weightroom.uk/api/v1/cal/'+ app.user;
-            app.getAPIrequest(url, app.updateCalDates);
-        });
+        var url = 'https://weightroom.uk/api/v1/cal/'+ app.user;
+        app.getAPIrequest(url, app.updateCalDates);
     } else {
         window.location = 'https://weightroom.uk/login';
     }
@@ -245,6 +243,6 @@ app.getAPIrequest(url, app.setUserdata, true);
 
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker
-        .register('../js/serviceworker.js')
+        .register('https://weightroom.uk/serviceworker.js', {scope:'/'})
         .then(function() { console.log('Service Worker Registered'); });
 }

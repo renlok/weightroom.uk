@@ -9,7 +9,8 @@ use App\Http\Requests;
 use App\User;
 use App\Admin;
 use App\Log;
-use App\Http\Controllers\LogsController;
+use App\Exercise;
+use App\Exercise_group;
 
 use Auth;
 use Validator;
@@ -75,10 +76,22 @@ class ApiV1Controller extends Controller
 
     public function getUserdata() {
         if (Auth::check()) {
+            $exercise_list = Exercise::listexercises(true)->get();
+            $exercises = [];
+            foreach ($exercise_list as $exercise)
+            {
+                $exercises[] = ["{$exercise['exercise_name']}", $exercise['COUNT']];
+            }
+            $group_list = Exercise_group::select('exgroup_name', 'exercise_groups.exgroup_id')->where('user_id', Auth::user()->user_id)->orderBy('exgroup_name', 'asc')->get();
+            $groups = [];
+            foreach ($group_list as $group)
+            {
+                $groups[] = ["{$group['exgroup_name']}", 0];
+            }
             return response()->json([
                 'user_name' => Auth::user()->user_name,
-                'exercises' => LogsController::loadExerciseHints(),
-                'exercise_groups' => LogsController::loadExerciseGroupHints()
+                'exercises' => $exercises,
+                'exercise_groups' => $groups
             ]);
         } else {
             return response()->json(['user_name' => '', 'exercises' => [], 'exercise_groups' => []]);
