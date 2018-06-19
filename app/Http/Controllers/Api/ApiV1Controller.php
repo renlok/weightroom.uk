@@ -72,11 +72,15 @@ class ApiV1Controller extends Controller
         return json_encode($log_dates);
     }
 
-    public function getUsername() {
+    public function getUserdata() {
         if (Auth::check()) {
-            return response()->json(['user_name' => Auth::user()->user_name]);
+            return response()->json([
+                'user_name' => Auth::user()->user_name,
+                'exercises' => LogsController::loadExerciseHints(),
+                'exercise_groups' => LogsController::loadExerciseGroupHints()
+            ]);
         } else {
-            return response()->json(['user_name' => '']);
+            return response()->json(['user_name' => '', 'exercises' => [], 'exercise_groups' => []]);
         }
     }
 }

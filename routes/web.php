@@ -242,7 +242,7 @@ Route::get('plans', 'MiscController@plans')->name('plans');
 Route::get('faq', 'MiscController@faq')->name('faq');
 Route::get('/', 'MiscController@landing')->name('home');
 Route::get('m', 'MiscController@mobile')->name('mobile');
-Route::get('api/v1/username', 'Api\ApiV1Controller@getUsername');
+Route::get('api/v1/userdata', 'Api\ApiV1Controller@getUserdata');
 
 // legal guff
 Route::get('help/privacy', 'MiscController@privacyPolicy')->name('privacyPolicy');

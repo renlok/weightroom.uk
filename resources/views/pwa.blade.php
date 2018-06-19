@@ -143,8 +143,8 @@
 </div>
 
 <script>
-    var $ELIST = [{!! $exercises !!}];
-    var $GLIST = [{!! $exercise_groups !!}];
+    var $ELIST = [];
+    var $GLIST = [];
 </script>
 <script src="{{ mix('js/log.edit.js') }}"></script>
 <script type="text/javascript" src="js/materialize.min.js"></script>

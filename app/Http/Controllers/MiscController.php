@@ -111,9 +111,6 @@ class MiscController extends Controller
 
     public function mobile()
     {
-        $exercises = LogsController::loadExerciseHints();
-        $exercise_groups = LogsController::loadExerciseGroupHints();
-        //$calender = Log_control::preload_calender_data($date, $user->user_id);
-        return view('pwa', compact('exercises', 'exercise_groups'));
+        return view('pwa');
     }
 }

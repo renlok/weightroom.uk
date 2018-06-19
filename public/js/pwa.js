@@ -223,9 +223,11 @@ app.round = function(number) {
     return number;
 };
 
-app.setUsername = function(userData) {
+app.setUserdata = function(userData) {
     if (userData.user_name) {
         app.user = userData.user_name;
+        $ELIST = userData.exercises;
+        $GLIST = userData.exercise_groups;
         // load start up data
         app.loadLog(new Date(app.currentDate));
         // load calender
@@ -238,8 +240,8 @@ app.setUsername = function(userData) {
     }
 };
 
-var url = 'https://weightroom.uk/api/v1/username/';
-app.getAPIrequest(url, app.setUsername, true);
+var url = 'https://weightroom.uk/api/v1/userdata/';
+app.getAPIrequest(url, app.setUserdata, true);
 
 if ('serviceWorker' in navigator) {
     navigator.serviceWorker
