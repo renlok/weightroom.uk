@@ -13,7 +13,7 @@ Date.prototype.dateString = function() {
 var app = {
     isLoading: true,
     logDates: [],
-    user: userName,
+    user: '',
     currentDate: (new Date).dateString(),
     spinner: document.querySelector('.loader'),
     container: document.querySelector('.main'),
@@ -119,6 +119,8 @@ app.toggleLog = function(force) {
         app.addLog.removeAttribute('hidden');
         app.viewLog.setAttribute('hidden', 'true');
         app.addLogButton.children[0].innerText = 'close';
+        // make sure content is loaded
+        editor.reload();
         editor.focus();
     } else {
         app.viewLog.removeAttribute('hidden');
@@ -225,6 +227,17 @@ app.round = function(number) {
     number = number / 100;
     return number;
 };
+
+app.setUsername = function(userData) {
+    if (userData.user_name) {
+        app.user = userData.user_name;
+    } else {
+        window.location = 'https://weightroom.uk/login';
+    }
+};
+
+var url = 'https://weightroom.uk/api/v1/username/';
+app.getAPIrequest(url, app.setUsername, true);
 
 // load start up data
 app.loadLog(new Date(app.currentDate));

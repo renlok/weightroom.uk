@@ -36,7 +36,7 @@ blockquote.small {
 @endif
 <p class="small"><a href="{{ route('templatesHome') }}">← Back to templates</a></p>
 @if ($template->template_description != '')
-	<p>{{ $template->template_description }}</p>
+	<p>{!! $template->template_description !!}</p>
 @endif
 
 @include('errors.validation')

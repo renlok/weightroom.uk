@@ -20,6 +20,7 @@ use App\Extend\Templates;
 use Auth;
 use DB;
 use Validator;
+use Markdown;
 use Carbon\Carbon;
 use Stripe\Account as StripeAccount;
 
@@ -509,7 +510,7 @@ class TemplateController extends Controller
         $template = new \App\Template;
         $template->template_name = $request->input('template_name');
         $template->user_id = Auth::user()->user_id;
-        $template->template_description = $request->input('template_description');
+        $template->template_description = Markdown::convertToHtml($request->input('template_description'));
         $template->template_type = $request->input('template_type');
         $template->template_charge = $request->input('template_charge');
         $template->template_is_lp = $request->input('template_is_lp', 0);
@@ -554,7 +555,7 @@ class TemplateController extends Controller
         // update template
         Template::where('template_id', $template_id)->update([
             'template_name' => $request->input('template_name'),
-            'template_description' => $request->input('template_description'),
+            'template_description' => Markdown::convertToHtml($request->input('template_description')),
             'user_id' => Auth::user()->user_id,
             'template_type' => $request->input('template_type'),
             'template_charge' => $request->input('template_charge'),

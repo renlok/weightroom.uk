@@ -10,6 +10,7 @@ use App\User;
 use App\Admin;
 use App\Log;
 
+use Auth;
 use Validator;
 
 class ApiV1Controller extends Controller
@@ -69,5 +70,13 @@ class ApiV1Controller extends Controller
             return $item->format('D M d Y');
         });
         return json_encode($log_dates);
+    }
+
+    public function getUsername() {
+        if (Auth::check()) {
+            return response()->json(['user_name' => Auth::user()->user_name]);
+        } else {
+            return response()->json(['user_name' => '']);
+        }
     }
 }
