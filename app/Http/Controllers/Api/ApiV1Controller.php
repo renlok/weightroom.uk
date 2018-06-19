@@ -9,6 +9,7 @@ use App\Http\Requests;
 use App\User;
 use App\Admin;
 use App\Log;
+use App\Http\Controllers\LogsController;
 
 use Auth;
 use Validator;
