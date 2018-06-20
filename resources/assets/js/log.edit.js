@@ -195,7 +195,7 @@ var WxRxS = {
 var $FORMAT = WxRxS;
 CodeMirror.commands.autocomplete = function(cm) {
     cm.showHint({hint: CodeMirror.hint.logger});
-}
+};
 var editor = CodeMirror.fromTextArea(
     document.getElementById('log'),
     {
@@ -212,3 +212,16 @@ var editor = CodeMirror.fromTextArea(
         }, 150);
     }
 });
+
+var _isDirty = false;
+editor.on("change",function(cm,change) {
+    _isDirty = true;
+});
+$("#log-submit").click(function () {
+    _isDirty = false;
+});
+window.onbeforeunload = function () {
+    if (_isDirty) {
+        return "If you leave this page you will lose your unsaved changes."
+    }
+};

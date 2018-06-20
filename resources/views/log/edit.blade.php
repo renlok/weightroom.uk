@@ -100,7 +100,7 @@ you can also have the same exercise multiple times
 </div>
 <div class="input-group margintb">
   {!! csrf_field() !!}
-  <input type="submit" name="action" class="btn btn-default" id="log-submit" value="{{ ($type == 'new') ? 'Submit' : 'Update' }} log">
+  <input type="submit" name="action" class="btn btn-default" id="log-submit" value="Save log">
 </div>
 </form>
 @endsection
