@@ -88,6 +88,11 @@ class User extends Model implements AuthenticatableContract,
             return 1;
     }
 
+    public function getNotificationsAttribute()
+    {
+        return Notification::where('user_id', $this->attributes['user_id'])->get();
+    }
+
     public static function findForPassport($username)
     {
         return User::where('user_name', $username)->first();

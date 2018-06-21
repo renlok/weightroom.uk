@@ -139,7 +139,7 @@ class UserController extends Controller
         $user->user_showinol = $request->input('showinol');
         $user->user_inolincwarmup = $request->input('inolincwarmup');
         $user->user_volumeincwarmup = $request->input('volumeincwarmup');
-        $user->user_private = $request->input('privacy');
+        $user->user_private = $user->subscribed('weightroom_gold') ? $request->input('privacy') : 0;
         $user->save();
         return redirect()
                 ->route('userSettings')

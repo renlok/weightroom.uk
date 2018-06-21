@@ -164,7 +164,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'import'], function () {
 });
 
 // export
-Route::group(['middleware' => 'auth', 'prefix' => 'export'], function () {
+Route::group(['middleware' => ['auth', 'gold'], 'prefix' => 'export'], function () {
     Route::get('/', 'ImportController@exportForm')->name('export');
     Route::post('process', 'ImportController@processExport')->name('processExport');
     Route::get('download', 'ImportController@downloadExport')->name('downloadExport');

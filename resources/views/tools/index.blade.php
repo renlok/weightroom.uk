@@ -83,7 +83,7 @@
     <p>Import workouts via CSV</p>
   </div>
   <div class="col-md-4">
-    <a href="{{ route('export') }}">Export workouts</a>
+    <a href="{{ route('export') }}">Export workouts</a>@if (!Auth::user()->subscribed('weightroom_gold')) <span class="glyphicon glyphicon-lock" aria-hidden="true"></span> @endif
     <p>Export your workout data</p>
   </div>
 </div>

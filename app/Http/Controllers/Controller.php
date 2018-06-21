@@ -17,17 +17,6 @@ abstract class Controller extends BaseController
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
-            if (Auth::check())
-            {
-                $header_notifications = Notification::where('user_id', Auth::user()->user_id);
-                View::share('header_notifications', $header_notifications->get());
-                View::share('header_notifications_count', $header_notifications->count());
-            }
-            else
-            {
-                View::share('header_notifications', []);
-                View::share('header_notifications_count', 0);
-            }
             return $next($request);
         });
     }

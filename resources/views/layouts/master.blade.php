@@ -67,18 +67,18 @@
         @if (Admin::InvitesEnabled())
           <li role="presentation"><a href="{{ route('invites') }}">{{ trans('master.inviteCodes') }}</a></li>
         @endif
-          <li role="presentation"><a href="{{ route('userPremium') }}">{{ trans('master.premium') }}</a></li>
+          <li role="presentation"><a href="{{ route('userPremium') }}" class="alert-warning strong"><span class="alert-warning strong"><span class="glyphicon glyphicon-star" aria-hidden="true"></span>&nbsp;{{ trans('master.premium') }}</span></a></li>
           <li role="presentation"><a href="{{ route('viewBlog') }}">{{ trans('master.blog') }}</a></li>
           <li role="presentation"><a href="{{ route('faq') }}">{{ trans('master.faq') }}</a></li>
           <li role="presentation"><a href="{{ route('userSettings') }}">{{ trans('master.settings') }}</a></li>
           <li role="presentation"><a href="{{ route('logout') }}">{{ trans('master.logout') }}</a></li>
         </ul>
       </li>
-      @if ($header_notifications_count > 0)
+      @if (Auth::check() && Auth::user()->notifications->count() > 0)
       <li class="dropdown" id="notification_bubble">
-        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="badge" id="notifications_count">{{ $header_notifications_count }}</span></a>
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="badge" id="notifications_count">{{ Auth::user()->notifications->count() }}</span></a>
         <ul class="dropdown-menu">
-        @foreach ($header_notifications as $note)
+        @foreach (Auth::user()->notifications as $note)
           @if ($note->notification_type == 'comment')
             <li role="presentation"><a href="{{ route('viewLog', ['date' => $note->notification_from['log_date']]) }}#comments">{{ trans('notifications.logComment', ['username' => $note->notification_value]) }}</a><button type="button" class="close pull-right clear_note" aria-label="Close" note-id="{{ $note->notification_id }}"><span aria-hidden="true">×</span></button></li>
           @endif
@@ -161,8 +161,8 @@
 @if (Session::has('flash_message'))
     $('div.alert').not('.alert-important').delay(3000).slideUp(300);
 @endif
-@if ($header_notifications_count > 0)
-    var notifications_count = {{ $header_notifications_count }};
+@if (Auth::user()->notifications->count() > 0)
+    var notifications_count = {{ Auth::user()->notifications->count() }};
     $('#clear_notes').click(function(){
         $.ajax({
             url: "{{ route('clearNotifications') }}",

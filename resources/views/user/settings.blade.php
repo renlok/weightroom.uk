@@ -127,14 +127,14 @@
   </div>
   <div class="form-group">
     <div>
-  		<label for="privacy">Make logs private</label>
+  		<label for="privacy">Make logs private</label>@if (!Auth::user()->subscribed('weightroom_gold')) <span class="glyphicon glyphicon-lock" aria-hidden="true"></span> @endif
   		<p><small><i>Means only people you accept will be able to see your logs</i></small></p>
   	</div>
 	<label class="radio-inline">
-	  <input type="radio" id="privacy" name="privacy" value="0" {{ $user->user_private == '0' ? 'checked' : '' }}> No
+	  <input type="radio" id="privacy" name="privacy" value="0" {{ ($user->user_private == '0' || !Auth::user()->subscribed('weightroom_gold')) ? 'checked' : '' }} {{ !Auth::user()->subscribed('weightroom_gold') ? 'disabled' : '' }}> No
 	</label>
 	<label class="radio-inline">
-	  <input type="radio" id="privacy" name="privacy" value="1" {{ $user->user_private == '1' ? 'checked' : '' }}> Yes
+	  <input type="radio" id="privacy" name="privacy" value="1" {{ ($user->user_private == '1' && Auth::user()->subscribed('weightroom_gold')) ? 'checked' : '' }} {{ !Auth::user()->subscribed('weightroom_gold') ? 'disabled' : '' }}> Yes
 	</label>
   </div>
   <div class="form-group">
