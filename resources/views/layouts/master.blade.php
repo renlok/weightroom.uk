@@ -161,7 +161,7 @@
 @if (Session::has('flash_message'))
     $('div.alert').not('.alert-important').delay(3000).slideUp(300);
 @endif
-@if (Auth::user()->notifications->count() > 0)
+@if (Auth::check() && Auth::user()->notifications->count() > 0)
     var notifications_count = {{ Auth::user()->notifications->count() }};
     $('#clear_notes').click(function(){
         $.ajax({
