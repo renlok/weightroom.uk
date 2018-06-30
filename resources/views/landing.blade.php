@@ -18,7 +18,7 @@
 
 <style>
 #background-box {
-	background-image: url('http://weightroom.uk/img/background-1.jpg');
+	background-image: url('//weightroom.uk/img/background-1.jpg');
 	background-position: 0 -100px;
 	height: 600px;
 }
@@ -212,7 +212,7 @@ button.btn-default:hover {
 
 <footer class="footer">
   <div class="container">
-	<p class="text-muted">2016 &#169; weightroom.uk.<span class="hidden-xs"> Use of this site constitutes acceptance of the site's <a href="{{ route('privacyPolicy') }}" target="_blank">Privacy Policy and Terms of Use</a>.</span></p>
+	<p class="text-muted">2018 &#169; weightroom.uk.<span class="hidden-xs"> Use of this site constitutes acceptance of the site's <a href="{{ route('privacyPolicy') }}" target="_blank">Privacy Policy and Terms of Use</a>.</span></p>
   </div>
 </footer>
 

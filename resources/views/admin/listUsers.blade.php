@@ -11,6 +11,7 @@
     <tr>
       <th>#</th>
       <th>Username</th>
+      <th>Joined</th>
       <th>&nbsp;</th>
       <th>&nbsp;</th>
     </tr>
@@ -26,6 +27,7 @@
   @endif
       <td>{{ $user->user_id }}</td>
       <td>{{ $user->user_name }}</td>
+      <td>{{ $user->created_at->toDateString() }}</td>
       <td><a href="#">Edit</a></td>
       <td>
         <form action="{{ route('adminBanUser') }}" method="post">
