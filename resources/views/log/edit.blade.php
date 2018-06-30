@@ -50,7 +50,10 @@
 @endsection
 
 @section('content')
-<h1 id="track_header">{{ ucfirst($type) }} log: {!! Carbon::createFromFormat('Y-m-d', $date)->format('F j\<\s\u\p\>S\<\/\s\u\p\>, Y') !!} <button class="btn btn-default glyphicon glyphicon-calendar" aria-hidden="true" id="track_date"></button></h1>
+<h1 id="track_header">
+    <span class="hidden-xs">{{ ucfirst($type) }} log: {!! Carbon::createFromFormat('Y-m-d', $date)->format('F j\<\s\u\p\>S\<\/\s\u\p\>, Y') !!} <button class="btn btn-default glyphicon glyphicon-calendar" aria-hidden="true" id="track_date"></button></span>
+    <span class="visible-xs">{{ Carbon::createFromFormat('Y-m-d', $date)->format('j M Y') }} <button class="btn btn-default glyphicon glyphicon-calendar" aria-hidden="true" id="track_date"></button></span>
+</h1>
 <small><a href="{{ route('viewLog', ['date' => $date]) }}">&larr; Back to log</a></small>
 
 <form action="{{ url('log/' . $date . '/' . $type) }}" method="post">

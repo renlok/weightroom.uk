@@ -60,7 +60,7 @@
       <li role="presentation" class="hidden-xs {{ Request::is('exercise/*') ? 'active' : '' }}"><a href="{{ route('listExercises') }}">{{ trans('master.exerciseList') }}</a></li>
       <li role="presentation" class="hidden-xs {{ (Request::is('tools*') || Request::is('log/volume*') || Request::is('log/search*')) ? 'active' : '' }}"><a href="{{ route('tools') }}">{{ trans('master.tools') }}</a></li>
       <li role="presentation" class="hidden-xs {{ (Request::is('templates*')) ? 'active' : '' }}"><a href="{{ route('templatesHome') }}">{{ trans('master.templates') }}</a></li>
-      <li role="presentation" class="{{ Request::is('user/search') ? 'active' : '' }}"><a href="#" data-toggle="modal" data-target="#searchUsers"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></a></li>
+      <li role="presentation" class="hidden-xs {{ Request::is('user/search') ? 'active' : '' }}"><a href="#" data-toggle="modal" data-target="#searchUsers"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></a></li>
       <li class="dropdown {{ (Request::is('user/settings') || Request::is('faq')) ? 'active' : '' }}">
         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> <span class="caret"></span></a>
         <ul class="dropdown-menu">

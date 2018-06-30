@@ -11,7 +11,7 @@
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <meta http-equiv="Content-Language" content="en">
 
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.css" rel="stylesheet" />
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
 
     <!--     Fonts     -->
     <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css" rel="stylesheet">
@@ -216,8 +216,8 @@ button.btn-default:hover {
   </div>
 </footer>
 
-<script src="//code.jquery.com/jquery-2.1.3.min.js" charset="utf-8"></script>
-<script src="//getbootstrap.com/dist/js/bootstrap.min.js" charset="utf-8"></script>
+<script src="//code.jquery.com/jquery-3.3.1.min.js" charset="utf-8"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" charset="utf-8"></script>
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
