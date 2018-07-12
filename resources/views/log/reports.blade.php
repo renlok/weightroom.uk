@@ -25,7 +25,7 @@ svg {
     <div class="col-md-6">
       <select class="form-control reportform" name="view_type" id="view_type">
         <option value="volume">Volume</option>
-        <option value="intensity">Intensity</option>
+        <option value="intensity">Intensity (INoL)</option>
         <option value="repsweek">Reps/Week</option>
         <option value="setsweek">Sets/Week</option>
         <option value="workoutsweek">Workouts/Week</option>

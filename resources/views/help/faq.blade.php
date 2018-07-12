@@ -55,6 +55,10 @@
 </div>
 <h2>Other</h2>
 <div class="faq-group">
+<h3>What does INoL mean?</h3>
+  <p>INoL stands for Intensity and number of lifts. It gives a method of tracking intensity of either an entire workout, or for a single exercise where different set and rep ranges have been used.
+  Using the equation reps/(100-intensity) a number is calculated for each set and added together, this final value will be the INoL.
+    The INoL to aim for for a single exercise in a single workout are 0.4-2. For more information <a href="https://www.powerliftingwatch.com/files/prelipins.pdf">this paper</a> goes into more detail.</p>
 <h3>My sinclair/wilks graphs aren't showing anything?</h3>
   <p>First make sure you have set which exercises to use in your <a href="{{ route('userSettings') }}">settings</a> page.</p>
   <p>Secondly make sure you have actually entered some logs using those exercises. We can't know how strong you are if you don't tell us.</p>
