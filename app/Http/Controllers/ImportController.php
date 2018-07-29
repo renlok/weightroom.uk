@@ -140,11 +140,22 @@ class ImportController extends Controller
         {
             if ($request->file('csvfile')->isValid())
             {
-                // do stuff
+                // exercise csv file
                 $csvfile = $request->file('csvfile');
                 $reader = Excel::load($csvfile, function($reader){});
+                // first row should be a header row
                 $first_row = $reader->first()->toArray();
-                $file_headers = $reader->first()->keys()->toArray(); // returns array of headers
+                $file_headers = $reader->all()->getHeading(); // returns array of headers
+                // check if header and first row have values
+                if (count(array_filter($first_row,'strlen')) == 0 || count(array_filter($file_headers,'strlen')) == 0) {
+                    return redirect('import')
+                        ->with([
+                            'flash_message' => 'Either the header row or the data for this file appears to be empty. Please check it is in the correct format and try again.',
+                            'flash_message_type' => 'danger',
+                            'flash_message_important' => 'true'
+                        ])
+                        ->withInput();
+                }
                 $link_array = array_flip($file_headers);
                 $map_match = '';
                 // run this against $map see if we get a match
@@ -203,6 +214,9 @@ class ImportController extends Controller
 
         $column_string = '';
         $extra_sql = '';
+        // checks each has been seleced once
+        $duplicate_error = false;
+        $used_colomns = [];
         foreach ($request->input() as $key => $column)
         {
             if ($key == '_token')
@@ -223,25 +237,34 @@ class ImportController extends Controller
                     $dateTime = \DateTime::createFromFormat($date_format, $validator_values[$key]);
                     $errors = \DateTime::getLastErrors();
                     if (!empty($errors['warning_count'])) {
-                        return back()->withInput()->with('flash_message', 'Date format doesn\'t match');
+                        return back()->withInput()->with(['flash_message' => 'Date format doesn\'t match', 'flash_message_type' => 'danger', 'flash_message_important' => 'true']);
                     }
                     $extra_sql .= ", log_date_format = '{$parts[1]}'";
+                    // duplicate check
+                    if (isset($used_colomns['log_date'])) $duplicate_error = true;
+                    $used_colomns['log_date'] = true;
                     break;
                 case 'log_date:other':
                     // check date format is correct
                     try {
                         $date = new \DateTime($validator_values[$key]);
                     } catch (Exception $e) {
-                        return back()->withInput()->with('flash_message', 'Date format doesn\'t match');
+                        return back()->withInput()->with(['flash_message' => 'Date format doesn\'t match', 'flash_message_type' => 'danger', 'flash_message_important' => 'true']);
                     }
                     $column_string .= 'log_date';
                     $extra_sql .= ", log_date_format = 'other'";
+                    // duplicate check
+                    if (isset($used_colomns['log_date'])) $duplicate_error = true;
+                    $used_colomns['log_date'] = true;
                     break;
                 case 'logitem_weight:kg':
                 case 'logitem_weight:lb':
                     $column_string .= 'logitem_weight';
                     $is_kg = intval($column == 'logitem_weight:kg');
                     $extra_sql .= ", logitem_weight_is_kg = '$is_kg'";
+                    // duplicate check
+                    if (isset($used_colomns['logitem_weight'])) $duplicate_error = true;
+                    $used_colomns['logitem_weight'] = true;
                     break;
                 case 'log_weight':
                 case 'logitem_distance':
@@ -252,16 +275,27 @@ class ImportController extends Controller
                 case 'logex_order':
                 case 'logitem_order':
                     if (!is_numeric($validator_values[$key]) && !empty($validator_values[$key])) {
-                        return back()->withInput()->with('flash_message', 'Format doesn\'t match');
+                        return back()->withInput()->with(['flash_message' => 'Format doesn\'t match', 'flash_message_type' => 'danger', 'flash_message_important' => 'true']);
                     }
+                    $column_string .= $column;
+                    // duplicate check
+                    if (isset($used_colomns[$column])) $duplicate_error = true;
+                    $used_colomns[$column] = true;
+                    break;
                 case 'exercise_name':
                 case 'logitem_comment':
                 case 'logitem_weight_is_bw':
                     $column_string .= $column;
+                    // duplicate check
+                    if (isset($used_colomns[$column]) && $column != 'logitem_comment') $duplicate_error = true;
+                    $used_colomns[$column] = true;
                     break;
                 default:
                     $column_string .= '@dummy';
                     break;
+            }
+            if ($duplicate_error) {
+                return back()->withInput()->with(['flash_message' => 'Apart from comments each data type can only be used once.', 'flash_message_type' => 'danger', 'flash_message_important' => 'true']);
             }
         }
         $csvfile = new UploadedFile($csv_file_data[0] . $csv_file_data[1], $csv_file_data[1], $csv_file_data[2]);
