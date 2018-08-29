@@ -1,2 +1,2 @@
 
-All of your worksups have been successfully imported into WeightRoom.uk
+All of your workouts have been successfully imported into WeightRoom.uk

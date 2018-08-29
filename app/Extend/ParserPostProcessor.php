@@ -33,14 +33,14 @@ class ParserPostProcessor extends ParserCore
     private $warnings = [];
     private $goals_hit = [];
 
-    public function __construct($log_text, $log_date, $user_weight, $auth_user = true)
+    public function __construct($log_text, $log_date, $user_weight, $user = null)
     {
         parent::__construct($log_text);
         $this->log_date = $log_date;
-        if ($auth_user)
+        if ($user)
         {
             // load the user
-            $this->user = Auth::user();
+            $this->user = $user;
             $this->getUserWeight ($user_weight);
         }
     }

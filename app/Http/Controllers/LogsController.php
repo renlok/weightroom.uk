@@ -193,7 +193,7 @@ class LogsController extends Controller
 
     public function postEdit($date, LogRequest $request)
     {
-        $parser = new ParserPostProcessor($request->input('log'), $date, $request->input('weight'));
+        $parser = new ParserPostProcessor($request->input('log'), $date, $request->input('weight'), Auth::user());
         $parser->parseText ();
         $parser->formatLogData (false);
         $parser->saveLogData ();
@@ -224,7 +224,7 @@ class LogsController extends Controller
 
     public function postNew($date, LogRequest $request)
     {
-        $parser = new ParserPostProcessor($request->input('log'), $date, $request->input('weight'));
+        $parser = new ParserPostProcessor($request->input('log'), $date, $request->input('weight'), Auth::user());
         $parser->parseText ();
         $parser->formatLogData (true);
         $parser->saveLogData ();
