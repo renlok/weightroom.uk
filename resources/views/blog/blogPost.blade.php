@@ -16,6 +16,7 @@
     <div class="pull-right" style="margin-top: 20px;">
       <div class="btn-group btn-group-sm" role="group" aria-label="type">
         <a href="{{ route('viewBlogPost', ['url' => $prev_url]) }}" class="btn btn-default"{{ ($prev_url == '#') ? ' disabled="disabled"' : '' }}>Previous</a>
+        <a href="{{ route('viewBlog') }}" class="btn btn-default">Blog Home</a>
         <a href="{{ route('viewBlogPost', ['url' => $next_url]) }}" class="btn btn-default"{{ ($next_url == '#') ? ' disabled="disabled"' : '' }}>Next</a>
       </div>
     </div>
