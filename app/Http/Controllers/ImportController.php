@@ -144,8 +144,8 @@ class ImportController extends Controller
                 $csvfile = $request->file('csvfile');
                 $reader = Excel::load($csvfile, function($reader){});
                 // first row should be a header row
-                $first_row = $reader->first()->toArray();
-                $file_headers = $reader->all()->getHeading(); // returns array of headers
+                $first_row = $reader->first()->toArray(); // returns first row with header names as array keys i.w. 'Date' => '2018-01-01'
+                $file_headers = $reader->all()->getHeading(); // returns array of headers i.e. 0 => 'Date'
                 // check if header and first row have values
                 if (count(array_filter($first_row,'strlen')) == 0 || count(array_filter($file_headers,'strlen')) == 0) {
                     return redirect('import')
@@ -156,9 +156,11 @@ class ImportController extends Controller
                         ])
                         ->withInput();
                 }
-                $link_array = array_flip($file_headers);
+                // We need to create an array with the same keys as $first_row the actual data doesn't matter
+                $link_array = $first_row;
+                // If we get a match so we can print the match name
                 $map_match = '';
-                // run this against $map see if we get a match
+                // compare $file_headers against $map values to try find an exact match
                 foreach ($map as $map_name => $map_values)
                 {
                     $map_item_keys = array_keys($map_values);
