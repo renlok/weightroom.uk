@@ -231,6 +231,8 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
 Route::group(['middleware' => 'auth'], function () {
     Route::get('dashboard', 'MiscController@dash')->name('dashboard');
     Route::get('dash', 'MiscController@dash');
+    Route::get('dashboard/me', 'MiscController@dashMe')->name('dashboardMe');
+    Route::get('dash/me', 'MiscController@dashMe');
     Route::get('dashboard/all', 'MiscController@dashAll')->name('dashboardAll');
     Route::get('dash/all', 'MiscController@dashAll');
     Route::get('help/contact', 'MiscController@getContactUs')->name('contactUs');

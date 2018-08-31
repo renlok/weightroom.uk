@@ -98,7 +98,17 @@ class MiscController extends Controller
             $follow_count = $followed_users->count();
         }
         $logs = Log::whereIn('user_id', $followed_users)->where('log_date', '<=', Carbon::now()->toDateString())->whereRaw("TRIM(log_text) != ''")->orderBy('log_date', 'desc')->orderBy('created_at', 'desc')->paginate(50);
-        return view('dash', compact('logs', 'random', 'follow_count'));
+        $button = 'follow';
+        return view('dash', compact('logs', 'random', 'follow_count', 'button'));
+    }
+
+    public function dashMe()
+    {
+        $logs = Log::whereRaw("TRIM(log_text) != ''")->where('user_id', Auth::user()->user_id)->orderBy('log_date', 'desc')->orderBy('created_at', 'desc')->paginate(50);
+        $random = false;
+        $follow_count = 0;
+        $button = 'me';
+        return view('dash', compact('logs', 'random', 'follow_count', 'button'));
     }
 
     public function dashAll()
@@ -106,7 +116,8 @@ class MiscController extends Controller
         $logs = Log::whereRaw("TRIM(log_text) != ''")->whereNotIn('user_id', User::shadowBanList())->where('log_date', '<=', Carbon::now()->toDateString())->orderBy('log_date', 'desc')->orderBy('created_at', 'desc')->paginate(50);
         $random = false;
         $follow_count = 0;
-        return view('dash', compact('logs', 'random', 'follow_count'));
+        $button = 'all';
+        return view('dash', compact('logs', 'random', 'follow_count', 'button'));
     }
 
     public function mobile()
