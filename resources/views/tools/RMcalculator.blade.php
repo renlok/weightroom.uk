@@ -13,8 +13,8 @@
 
 @section('content')
 <h2>Rep Max Calculator</h2>
-<p>This tool calculates estimated rep maxes based of different formulas.</p>
-<p>These may not be perfectly acurate but they can be used as a good reference point.</p>
+<p>Calculate your rep max values of any lift. Simply enter how much you lifted and for how many reps and we'll do the hard maths for you.</p>
+<p>Disclaimer: These may not be perfectly acurate but they can be used as a good reference point.</p>
 <div class="container-fluid">
 	<div class="form-inline">
 		<div class="form-group">
@@ -64,6 +64,9 @@
 		</tbody>
 	</table>
 </div>
+<p>We offer seven possible formulas to calculate the values. They won't all be perfect for everyone, so it is often worth using Compare All to get a range of where your strength may lie.</p>
+<p>It is important to point out these formulas are designs with experienced lifters in mind so will be less accurate for novices. They also become much less accurate if using rep ranges over ten.</p>
+<p>If you would like to find more details about the formulas used you can check out the <a href="https://en.wikipedia.org/wiki/One-repetition_maximum">Wikipedia page.</a></p>
 @endsection
 
 @section('endjs')
