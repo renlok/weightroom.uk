@@ -5,7 +5,6 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\Http\Requests\TemplateRequest;
-use Illuminate\Http\Response;
 
 use Auth;
 use Carbon\Carbon;
@@ -255,15 +254,7 @@ class AdminController extends Controller
     {
         try
         {
-            $content = File::get(storage_path() . '/logs/' . $log . '.log');
-            $headers = [
-                'Content-type' => 'text/plain',
-                'Content-Disposition' => sprintf('attachment; filename="%s"', $log . '.log'),
-                'Content-Length' => sizeof($content)
-            ];
-
-            // make a response, with the content, a 200 response code and the headers
-            return Response::make($content, 200, $headers);
+            return response()->download(storage_path() . '/logs/' . $log . '.log');
         }
         catch (Illuminate\Filesystem\FileNotFoundException $exception)
         {
