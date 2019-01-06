@@ -27,6 +27,7 @@
         </div>
         <button class="btn btn-default" id="view-log">View log</button>
         <a href="{{ route('adminViewLogs', ['raw' => 1, 'log' => $log]) }}" class="btn btn-default">View Raw</a>
+        <a href="{{ route('adminDownloadLog', ['log' => $log]) }}" class="btn btn-default">Download</a>
         <a href="{{ route('adminDeleteLog', ['log' => $log]) }}" class="btn btn-danger">Clear log</a>
     </form>
     <div class="log-data">{!! $raw ? '<pre>' . $log_contents . '</pre>' : (new \Illuminate\Support\Debug\Dumper)->dump($log_contents) !!}</div>

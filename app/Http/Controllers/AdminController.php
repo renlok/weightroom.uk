@@ -250,6 +250,33 @@ class AdminController extends Controller
             ->route('adminViewLogs');
     }
 
+    public function downloadLogFile($log)
+    {
+        try
+        {
+            $content = File::get(storage_path() . '/logs/' . $log . '.log');
+            $headers = [
+                'Content-type' => 'text/plain',
+                'Content-Disposition' => sprintf('attachment; filename="%s"', $log . '.log'),
+                'Content-Length' => sizeof($content)
+            ];
+
+            // make a response, with the content, a 200 response code and the headers
+            return Response::make($content, 200, $headers);
+        }
+        catch (Illuminate\Filesystem\FileNotFoundException $exception)
+        {
+            return redirect()
+                ->route('adminViewLogs')
+                ->with([
+                    'flash_message' => 'No such file.',
+                    'flash_message_type' => 'danger'
+                ]);
+        }
+        return redirect()
+            ->route('adminViewLogs');
+    }
+
     public function getListUsers()
     {
         $users = User::paginate(50);

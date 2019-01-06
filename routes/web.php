@@ -199,6 +199,7 @@ Route::group(['middleware' => 'auth', 'prefix' => 'admin'], function () {
     Route::get('stats', 'AdminController@getStats')->name('adminStats');
     Route::get('logs/{raw?}/{log?}', 'AdminController@getViewLogs')->name('adminViewLogs');
     Route::get('delete-log/{log}', 'AdminController@cleanLogFile')->name('adminDeleteLog');
+    Route::get('download-log/{log}', 'AdminController@downloadLogFile')->name('adminDownloadLog');
     Route::get('settings', 'AdminController@getSettings')->name('adminSettings');
     Route::post('settings', 'AdminController@postSettings');
 
@@ -244,7 +245,6 @@ Route::get('plans', 'MiscController@plans')->name('plans');
 Route::get('faq', 'MiscController@faq')->name('faq');
 Route::get('/', 'MiscController@landing')->name('home');
 Route::get('m', 'MiscController@mobile')->name('mobile');
-Route::get('api/v1/userdata', 'Api\ApiV1Controller@getUserdata');
 
 // legal guff
 Route::get('help/privacy', 'MiscController@privacyPolicy')->name('privacyPolicy');

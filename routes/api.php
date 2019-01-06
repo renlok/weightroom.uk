@@ -12,10 +12,15 @@ use Illuminate\Http\Request;
 */
 
 Route::prefix('v1')->group(function () {
+    // auth routes (password grant)
+    Route::post('login/refresh', 'ApiV1Controller@refresh');
+    Route::post('login', 'ApiV1Controller@login');
     Route::post('user/register', 'ApiV1Controller@register');
-    Route::get('log/{user_name}/{log_date}', 'ApiV1Controller@getLogData');
-    Route::get('cal/{user_name}', 'ApiV1Controller@getCalenderData');
-    Route::get('/user', function (Request $request) {
-        return $request->user();
-    })->middleware('auth:api');
+    Route::group(['middleware' => 'auth:api'], function () {
+        Route::post('logout', 'ApiV1Controller@logout');
+        Route::post('log/submit', 'ApiV1Controller@submitLog');
+        Route::get('log/{log_date}', 'ApiV1Controller@getLogData');
+        Route::get('cal', 'ApiV1Controller@getCalenderData');
+        Route::get('userdata', 'ApiV1Controller@getUserData');
+    });
 });
