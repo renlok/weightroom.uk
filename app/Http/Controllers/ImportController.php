@@ -143,19 +143,19 @@ class ImportController extends Controller
                 // exercise csv file
                 $csvfile = $request->file('csvfile');
                 $reader = Excel::load($csvfile, function($reader){});
-                // first row should be a header row
-                $first_row = $reader->first()->toArray(); // returns first row with header names as array keys i.w. 'Date' => '2018-01-01'
-                $file_headers = $reader->all()->getHeading(); // returns array of headers i.e. 0 => 'Date'
-                // check if header and first row have values
-                if (count(array_filter($first_row,'strlen')) == 0 || count(array_filter($file_headers,'strlen')) == 0) {
+                // check if csv file is valid
+                if (!ImportController::checkCSVFile($reader, $csvfile)) {
                     return redirect('import')
                         ->with([
-                            'flash_message' => 'Either the header row or the data for this file appears to be empty. Please check it is in the correct format and try again.',
+                            'flash_message' => 'Either the header row or the data for this file appears to be empty or invalid. Please check it is in the correct format and try again.',
                             'flash_message_type' => 'danger',
                             'flash_message_important' => 'true'
                         ])
                         ->withInput();
                 }
+                // first row should be a header row
+                $first_row = $reader->first()->toArray(); // returns first row with header names as array keys i.w. 'Date' => '2018-01-01'
+                $file_headers = $reader->all()->getHeading(); // returns array of headers i.e. 0 => 'Date'
                 // We need to create an array with the same keys as $first_row the actual data doesn't matter
                 $link_array = $first_row;
                 // If we get a match so we can print the match name
@@ -196,16 +196,39 @@ class ImportController extends Controller
                     $first_row[$new_key] = $value;
                     $file_headers[$new_key] = $key;
                 }
-                $link_array = array_flip($link_array);
-                array_walk($link_array, function(&$value, $key) {
-                    $value = preg_replace("/[^A-Za-z0-9]/", '_', $value);
-                });
-                $link_array = array_flip($link_array);
+                // clean link_array keys
+                $link_array = array_combine(
+                    array_map(
+                        function ($str) {
+                            return preg_replace("/[^A-Za-z0-9]/", '_', $str);
+                        },
+                        array_keys($link_array)
+                    ),
+                    array_values($link_array)
+                );
                 $request->session()->put('csvfirstline', $first_row);
                 $csvfile->move(public_path() . $tmpFilePath, $tmpFileName);
                 return view('import.matchUpload', compact('column_names', 'file_headers', 'first_row', 'link_array', 'map_match'));
             }
         }
+    }
+
+    // try to check if imported csv file is valid
+    private static function checkCSVFile(&$reader, &$csvfile)
+    {
+        $first_row = $reader->first()->toArray();
+        $file_headers = $reader->all()->getHeading();
+        // first header and row should have atleast 2 columns
+        if (count(array_filter($first_row, function($k) { return $k === null || strlen($k) == 0; })) > 1)
+            return false;
+        if (count(array_filter($file_headers, function($k) { return $k === null || strlen($k) == 0; })) > 1)
+            return false;
+
+        $csvdata = array_map('str_getcsv', file($csvfile->getRealPath()));
+        if (count($csvdata[0]) !== count($file_headers))
+            return false;
+
+        return true;
     }
 
     public function storeImport(Request $request)
