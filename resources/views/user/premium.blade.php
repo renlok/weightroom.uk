@@ -20,10 +20,10 @@
     <p class="lead">We hope you are finding WeightRoom useful and we would love to hear from you. Why not send us an <a href="mailto:chris@weightroom.uk">email</a>.</p>
     <a class="btn btn-default" href="{{ route('userCancelPremium') }}" role="button">Cancel Premium</a>
   @else
-    <p class="lead">Why not support us for just $5 a month and of course if you just want to support us with a one off payment you can easily cancel the subscription at any time.</p>
+    <p class="lead">Why not support us for just $2 a month and of course if you just want to support us with a one off payment you can easily cancel the subscription at any time.</p>
     <p class="lead">By supporting us you are helping keep the site running, making sure we have time to dedicate to adding new features.</p>
     <h3 class="strong">What are the benefits</h3>
-    <p class="lead">Besides showing that you love us, you will gain access to export log and private logs.</p>
+    <p class="lead">Besides showing that you love us, you will also be able to export your logs, as well as gaining the option to make them private.</p>
     @include('common.stripePayment', ['paymentRoute' => route('userPremium'), 'subscription' => true])
   @endif
   </div>

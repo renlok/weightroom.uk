@@ -22,7 +22,7 @@
     <div class="form-group">
         {{ csrf_field() }}
         @if ($subscription)
-        <p class="small">This will start a recurrent payment of $5 a month</p>
+        <p class="small">This will start a recurrent payment of $2 a month</p>
         @endif
         <input type="submit" id="submit-button" class="btn btn-default btn-lg" value="Submit Payment Details">
         <p class="small text-muted">*All of your card details are securely handled by <a href="https://stripe.com/">stripe</a>, none of your payment information will be saved by us.</p>

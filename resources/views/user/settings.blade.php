@@ -40,10 +40,10 @@
 		<p><small><i>What the site is displayed in also the default weight unit to use to use when no explicit weight unit is specified</i></small></p>
 	</div>
 	<label class="radio-inline">
-	  <input type="radio" id="weightunit" name="weightunit" value="kg" {{ $user->user_unit == 'kg' ? 'checked' : '' }}> kg
+	  <input type="radio" class="weightunit" name="weightunit" value="kg" {{ $user->user_unit == 'kg' ? 'checked' : '' }}> kg
 	</label>
 	<label class="radio-inline">
-	  <input type="radio" id="weightunit" name="weightunit" value="lb" {{ $user->user_unit == 'lb' ? 'checked' : '' }}> lb
+	  <input type="radio" class="weightunit" name="weightunit" value="lb" {{ $user->user_unit == 'lb' ? 'checked' : '' }}> lb
 	</label>
   </div>
   <div class="form-group">
@@ -52,10 +52,10 @@
   		<p><small><i>Which day do you want the calenders to show as the start of the week</i></small></p>
   	</div>
   	<label class="radio-inline">
-  	  <input type="radio" id="weekstart" name="weekstart" value="1" {{ $user->user_weekstart == '1' ? 'checked' : '' }}> Monday
+  	  <input type="radio" class="weekstart" name="weekstart" value="1" {{ $user->user_weekstart == '1' ? 'checked' : '' }}> Monday
   	</label>
   	<label class="radio-inline">
-  	  <input type="radio" id="weekstart" name="weekstart" value="0" {{ $user->user_weekstart == '0' ? 'checked' : '' }}> Sunday
+  	  <input type="radio" class="weekstart" name="weekstart" value="0" {{ $user->user_weekstart == '0' ? 'checked' : '' }}> Sunday
   	</label>
   </div>
   <div class="form-group">
@@ -127,14 +127,14 @@
   </div>
   <div class="form-group">
     <div>
-  		<label for="privacy">Make logs private</label>@if (!Auth::user()->subscribed('weightroom_gold')) <span class="glyphicon glyphicon-lock" aria-hidden="true"></span> @endif
+		<label for="privacy">Make logs private</label>@if (!Auth::user()->subscribed('weightroom_gold')) <a href="{{ route('userPremium') }}" class="text-muted" data-toggle="tooltip" data-placement="right" title="Premium Feature"><span class="glyphicon glyphicon-lock" aria-hidden="true"></span></a> @endif
   		<p><small><i>Means only people you accept will be able to see your logs</i></small></p>
   	</div>
 	<label class="radio-inline">
-	  <input type="radio" id="privacy" name="privacy" value="0" {{ ($user->user_private == '0' || !Auth::user()->subscribed('weightroom_gold')) ? 'checked' : '' }} {{ !Auth::user()->subscribed('weightroom_gold') ? 'disabled' : '' }}> No
+	  <input type="radio" class="privacy" name="privacy" value="0" {{ ($user->user_private == '0' || !Auth::user()->subscribed('weightroom_gold')) ? 'checked' : '' }} {{ !Auth::user()->subscribed('weightroom_gold') ? 'disabled' : '' }}> No
 	</label>
 	<label class="radio-inline">
-	  <input type="radio" id="privacy" name="privacy" value="1" {{ ($user->user_private == '1' && Auth::user()->subscribed('weightroom_gold')) ? 'checked' : '' }} {{ !Auth::user()->subscribed('weightroom_gold') ? 'disabled' : '' }}> Yes
+	  <input type="radio" class="privacy" name="privacy" value="1" {{ ($user->user_private == '1' && Auth::user()->subscribed('weightroom_gold')) ? 'checked' : '' }} {{ !Auth::user()->subscribed('weightroom_gold') ? 'disabled' : '' }}> Yes
 	</label>
   </div>
   <div class="form-group">
@@ -151,10 +151,10 @@
     		<p><small><i>If enabled when the total tonnage is calculatedfailed lifts will be included as a completed lift</i></small></p>
     	</div>
     	<label class="radio-inline">
-    	  <input type="radio" id="volumeincfails" name="volumeincfails" value="1" {{ $user->user_volumeincfails == '1' ? 'checked' : '' }}> enable
+    	  <input type="radio" class="volumeincfails" name="volumeincfails" value="1" {{ $user->user_volumeincfails == '1' ? 'checked' : '' }}> enable
     	</label>
     	<label class="radio-inline">
-    	  <input type="radio" id="volumeincfails" name="volumeincfails" value="0" {{ $user->user_volumeincfails == '0' ? 'checked' : '' }}> disable
+    	  <input type="radio" class="volumeincfails" name="volumeincfails" value="0" {{ $user->user_volumeincfails == '0' ? 'checked' : '' }}> disable
     	</label>
       </div>
       <div class="form-group">
@@ -162,10 +162,10 @@
     		<label for="volumeincwarmup">Include warmup lifts in total tonnage (volume)</label>
     	</div>
     	<label class="radio-inline">
-    	  <input type="radio" id="volumeincwarmup" name="volumeincwarmup" value="1" {{ $user->user_volumeincwarmup == '1' ? 'checked' : '' }}> enable
+    	  <input type="radio" class="volumeincwarmup" name="volumeincwarmup" value="1" {{ $user->user_volumeincwarmup == '1' ? 'checked' : '' }}> enable
     	</label>
     	<label class="radio-inline">
-    	  <input type="radio" id="volumeincwarmup" name="volumeincwarmup" value="0" {{ $user->user_volumeincwarmup == '0' ? 'checked' : '' }}> disable
+    	  <input type="radio" class="volumeincwarmup" name="volumeincwarmup" value="0" {{ $user->user_volumeincwarmup == '0' ? 'checked' : '' }}> disable
     	</label>
       </div>
       <div class="form-group">
@@ -173,13 +173,13 @@
     		<label for="viewintensityabs">Show average intensity as % of current 1RM or as abolute value</label>
     	</div>
     	<label class="radio-inline">
-    	  <input type="radio" id="viewintensityabs" name="viewintensityabs" value="p" {{ $user->user_showintensity == 'p' ? 'checked' : '' }}> % of 1RM value
+    	  <input type="radio" class="viewintensityabs" name="viewintensityabs" value="p" {{ $user->user_showintensity == 'p' ? 'checked' : '' }}> % of 1RM value
     	</label>
     	<label class="radio-inline">
-    	  <input type="radio" id="viewintensityabs" name="viewintensityabs" value="a" {{ $user->user_showintensity == 'a' ? 'checked' : '' }}> absolute value
+    	  <input type="radio" class="viewintensityabs" name="viewintensityabs" value="a" {{ $user->user_showintensity == 'a' ? 'checked' : '' }}> absolute value
     	</label>
     	<label class="radio-inline">
-    	  <input type="radio" id="viewintensityabs" name="viewintensityabs" value="h" {{ $user->user_showintensity == 'h' ? 'checked' : '' }}> hidden
+    	  <input type="radio" class="viewintensityabs" name="viewintensityabs" value="h" {{ $user->user_showintensity == 'h' ? 'checked' : '' }}> hidden
     	</label>
       </div>
       <div class="form-group">
@@ -187,10 +187,10 @@
     		<label for="limitintensity">Remove warmup sets from average intensity calculation</label>
     	</div>
         <label class="radio-inline">
-    	  <input type="radio" id="limitintensitywarmup" name="limitintensitywarmup" value="1" {{ $user->user_limitintensitywarmup == '1' ? 'checked' : '' }}> enable
+    	  <input type="radio" class="limitintensitywarmup" name="limitintensitywarmup" value="1" {{ $user->user_limitintensitywarmup == '1' ? 'checked' : '' }}> enable
     	</label>
     	<label class="radio-inline">
-    	  <input type="radio" id="limitintensitywarmup" name="limitintensitywarmup" value="0" {{ $user->user_limitintensitywarmup == '0' ? 'checked' : '' }}> disable
+    	  <input type="radio" class="limitintensitywarmup" name="limitintensitywarmup" value="0" {{ $user->user_limitintensitywarmup == '0' ? 'checked' : '' }}> disable
     	</label>
       </div>
       <div class="form-group">
@@ -208,10 +208,10 @@
     		<label for="showinol">Show INoL value in logs</label>
     	</div>
         <label class="radio-inline">
-    	  <input type="radio" id="showinol" name="showinol" value="1" {{ $user->user_showinol == '1' ? 'checked' : '' }}> enable
+    	  <input type="radio" class="showinol" name="showinol" value="1" {{ $user->user_showinol == '1' ? 'checked' : '' }}> enable
     	</label>
     	<label class="radio-inline">
-    	  <input type="radio" id="showinol" name="showinol" value="0" {{ $user->user_showinol == '0' ? 'checked' : '' }}> disable
+    	  <input type="radio" class="showinol" name="showinol" value="0" {{ $user->user_showinol == '0' ? 'checked' : '' }}> disable
     	</label>
       </div>
       <div class="form-group">
@@ -219,10 +219,10 @@
     		<label for="inolincwarmup">Include warmup sets from INoL calculation</label>
     	</div>
         <label class="radio-inline">
-    	  <input type="radio" id="inolincwarmup" name="inolincwarmup" value="1" {{ $user->user_inolincwarmup == '1' ? 'checked' : '' }}> enable
+    	  <input type="radio" class="inolincwarmup" name="inolincwarmup" value="1" {{ $user->user_inolincwarmup == '1' ? 'checked' : '' }}> enable
     	</label>
     	<label class="radio-inline">
-    	  <input type="radio" id="inolincwarmup" name="inolincwarmup" value="0" {{ $user->user_inolincwarmup == '0' ? 'checked' : '' }}> disable
+    	  <input type="radio" class="inolincwarmup" name="inolincwarmup" value="0" {{ $user->user_inolincwarmup == '0' ? 'checked' : '' }}> disable
     	</label>
       </div>
       <div class="form-group">
