@@ -141,13 +141,14 @@
 <footer class="footer">
   <div class="container text-muted">
     <ul class="list-inline pull-left footer-links">
-      <li>2018 &#169; weightroom.uk</li>
+      <li>2019 &#169; weightroom.uk</li>
       <li><a href="{{ route('privacyPolicy') }}">Privacy</a></li>
       <li><a href="{{ route('termsOfService') }}">Terms</a></li>
       <li><a href="{{ route('contactUs') }}">Contact</a></li>
       <li><a href="{{ route('faq') }}">Help</a></li>
     </ul>
     <ul class="list-inline pull-right hidden-xs footer-social">
+      <li><a href="https://github.com/renlok/weightroom.uk/"><img src="{{ asset('img/social/github.png') }}"></a></li>
       <li><a href="https://www.reddit.com/r/weightroomuk/"><img src="{{ asset('img/social/reddit.png') }}"></a></li>
       <li><a href="https://www.facebook.com/weightroom.uk"><img src="{{ asset('img/social/facebook.png') }}"></a></li>
       <li><a href="https://twitter.com/weightroom_uk"><img src="{{ asset('img/social/twitter.png') }}"></a></li>
