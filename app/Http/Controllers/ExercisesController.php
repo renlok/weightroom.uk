@@ -70,9 +70,18 @@ class ExercisesController extends Controller
         $exercise_old = Exercise::where('exercise_name_clean', $exercise_name)->where('user_id', Auth::user()->user_id)->firstOrFail();
         $exercise_new = Exercise::where('exercise_name', $new_name)->where('user_id', Auth::user()->user_id)->first();
         $exercise_name = $exercise_old->exercise_name;
+
         // new name already exists
         if($exercise_new != null)
         {
+            // if exercise old and exercise new are actually the same
+            if ($exercise_new->exercise_id === $exercise_old->exercise_id) {
+                // say it updates even though it is the same
+                $message = "No update required - names are the same.";
+                return redirect()
+                    ->route('viewExercise', ['exercise_name' => rawurlencode(Format::urlSafeString($new_name))])
+                    ->with(['flash_message' => $message]);
+            }
             $final_id = $exercise_new->exercise_id;
             // remove the old exercise and merge it with an exsisting one
             // update the exercise id
